@@ -8,9 +8,23 @@ npm install
 ```
 
 ### Start the app in development mode (hot-code reloading, error reporting, etc.)
-```bash
-quasar dev
-```
+
+* web mode
+    ```bash
+    quasar dev
+    ```
+* electron mode
+    ```bash
+    quasar dev -m electron
+    ```
+* ios mode
+    ```bash
+    quasar dev -m ios
+    ```
+* android mode
+    ```bash
+    quasar dev -m android
+    ```
 
 ### Lint the files
 ```bash
