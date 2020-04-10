@@ -1,3 +1,3 @@
 export function someAction (/* context */) {
-  // your code
+    // your code
 }

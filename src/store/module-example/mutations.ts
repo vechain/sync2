@@ -1,3 +1,3 @@
 export function someMutation (/* state */) {
-  // your code
+    // your code
 }
