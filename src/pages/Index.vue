@@ -16,7 +16,7 @@ import { Todo, Meta } from 'components/models'
 export default {
     name: 'PageIndex',
     components: { ExampleComponent },
-    data () {
+    data() {
         const todos: Todo[] = [
             {
                 id: 1,

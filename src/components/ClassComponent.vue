@@ -29,15 +29,15 @@ export default class ClassComponent extends Vue {
 
     clickCount = 0;
 
-    increment () {
+    increment() {
         this.clickCount++
     }
 
-    get todoCount () {
+    get todoCount() {
         return this.todos.length
     }
 
-    prettyTodo (todo: Todo) {
+    prettyTodo(todo: Todo) {
         return `${todo.id} - ${todo.content}`
     }
 }

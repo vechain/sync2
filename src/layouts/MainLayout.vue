@@ -56,7 +56,7 @@ export default {
         EssentialLink
     },
 
-    data () {
+    data() {
         return {
             leftDrawerOpen: false,
             essentialLinks: [

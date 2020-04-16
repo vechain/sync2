@@ -16,7 +16,7 @@ if (process.env.PROD) {
 
 let mainWindow
 
-function createWindow () {
+function createWindow() {
     /**
      * Initial window options
      */
