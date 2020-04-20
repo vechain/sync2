@@ -12,7 +12,8 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
-    "keytar": "^5.5.0"
+    "keytar": "^5.5.0",
+    "sqlite3": "^4.1.1"
   },
   "devDependencies": {
     "@quasar/app": "^1.6.2",
