@@ -159,6 +159,10 @@ module.exports = configure(function (/* ctx */) {
         ]
       }
     },
+    sourceFiles : {
+      electronMainProd: 'src-electron/main-process/electron-main.ts',
+      electronMainDev: 'src-electron/main-process/electron-main.dev.ts'
+    },
 
     // Full list of options: https://quasar.dev/quasar-cli/developing-cordova-apps/configuring-cordova
     cordova: {
@@ -211,7 +215,18 @@ module.exports = configure(function (/* ctx */) {
         // to avoid warning like 'Critical dependency: the request of a dependency is an expression'
         cfg.externals.push({
           'electron-debug': 'electron-debug'
-        })        
+        })
+
+        cfg.resolve.extensions.push('.ts')         
+        cfg.module.rules.push({
+          test: /\.ts$/,
+          use :{
+            loader: 'ts-loader',
+            options: {
+              transpileOnly: true
+            }
+          }
+        })
       }
     }
   }

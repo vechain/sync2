@@ -15,10 +15,10 @@ require('electron').app.on('ready', () => {
     const installExtension = require('electron-devtools-installer')
     installExtension.default(installExtension.VUEJS_DEVTOOLS)
         .then(() => { })
-        .catch(err => {
+        .catch((err: unknown) => {
             console.log('Unable to install `vue-devtools`: \n', err)
         })
 })
 
 // Require `main` process to boot app
-require('./electron-main')
+import './electron-main'

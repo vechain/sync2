@@ -1,5 +1,9 @@
 import { app, BrowserWindow, nativeTheme } from 'electron'
 
+declare global {
+    const QUASAR_NODE_INTEGRATION: boolean
+}
+
 try {
     if (process.platform === 'win32' && nativeTheme.shouldUseDarkColors === true) {
         require('fs').unlinkSync(require('path').join(app.getPath('userData'), 'DevTools Extensions'))
@@ -14,7 +18,7 @@ if (process.env.PROD) {
     global.__statics = require('path').join(__dirname, 'statics').replace(/\\/g, '\\\\')
 }
 
-let mainWindow
+let mainWindow: BrowserWindow | null
 
 function createWindow() {
     /**
@@ -35,7 +39,8 @@ function createWindow() {
         }
     })
 
-    mainWindow.loadURL(process.env.APP_URL)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    mainWindow.loadURL(process.env.APP_URL!)
 
     mainWindow.on('closed', () => {
         mainWindow = null
