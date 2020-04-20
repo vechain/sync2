@@ -173,7 +173,7 @@ module.exports = configure(function (/* ctx */) {
 
     // Full list of options: https://quasar.dev/quasar-cli/developing-electron-apps/configuring-electron
     electron: {
-      bundler: 'packager', // 'packager' or 'builder'
+      bundler: 'builder', // 'packager' or 'builder'
 
       packager: {
         // https://github.com/electron-userland/electron-packager/blob/master/docs/api.md#options
@@ -193,6 +193,13 @@ module.exports = configure(function (/* ctx */) {
 
         appId: 'sync2'
       },
+
+       // Requires: @quasar/app v1.4.2+
+      // Specify additional parameters when yarn/npm installing
+      // the UnPackaged folder, right before bundling with either
+      // electron packager or electron builder;
+      // Example: [ '--ignore-optional', '--some-other-param' ]
+      unPackagedInstallParams: [],
 
       // More info: https://quasar.dev/quasar-cli/developing-electron-apps/node-integration
       nodeIntegration: true,
