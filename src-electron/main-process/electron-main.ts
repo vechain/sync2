@@ -1,7 +1,15 @@
 import { app, BrowserWindow, nativeTheme } from 'electron'
+import * as SQLite from 'sqlite'
+import * as Path from 'path'
 
 declare global {
     const QUASAR_NODE_INTEGRATION: boolean
+}
+
+declare module 'electron' {
+    interface App {
+        openSQLite(): Promise<SQLite.Database>
+    }
 }
 
 try {
@@ -47,7 +55,15 @@ function createWindow() {
     })
 }
 
-app.on('ready', createWindow)
+app.on('ready', () => {
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    app.openSQLite = () => SQLite.open({
+        filename: Path.resolve(app.getPath('userData'), 'storage.db'),
+        driver: require('sqlite3').Database
+    })
+
+    createWindow()
+})
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
