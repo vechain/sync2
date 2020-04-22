@@ -38,6 +38,7 @@
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
     "eslint-plugin-vue": "^6.1.2",
+    "more-entropy": "0.0.7",
     "quasar": "^1.9.5",
     "sqlite": "^4.0.7",
     "vue-class-component": "^7.2.2",
