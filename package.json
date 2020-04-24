@@ -44,7 +44,8 @@
     "thor-devkit": "^1.2.4",
     "vue-class-component": "^7.2.2",
     "vue-i18n": "^8.0.0",
-    "vue-property-decorator": "^8.3.0"
+    "vue-property-decorator": "^8.3.0",
+    "worker-loader": "^2.0.0"
   },
   "engines": {
     "node": ">= 10.18.1",
