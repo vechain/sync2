@@ -83,6 +83,7 @@ module.exports = {
     'import/no-unresolved': 'off',
     'import/no-extraneous-dependencies': 'off',
     'prefer-promise-reject-errors': 'off',
+    'import/no-webpack-loader-syntax': 'off',
 
     // TypeScript
     'quotes': ['warn', 'single'],
