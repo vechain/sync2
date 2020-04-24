@@ -4,7 +4,6 @@ import { secp256k1 } from 'thor-devkit/dist/cry/secp256k1'
 import { blake2b256 } from 'thor-devkit/dist/cry/blake2b'
 import { HDNode } from 'thor-devkit/dist/cry/hdnode'
 import { mnemonic } from 'thor-devkit/dist/cry/mnemonic'
-import { generate } from '../key-generator'
 
 interface VaultFactory {
     generateMnemonic(): Promise<string>
@@ -91,10 +90,10 @@ function newVault(salt: Buffer, entity: Entity): Vault {
     return vault
 }
 
-export function newFactory(salt: Buffer): VaultFactory {
+export function newFactory(salt: Buffer, keyGen: () => Promise<Buffer>): VaultFactory {
     return {
         generateMnemonic: async () => {
-            const key = await generate()
+            const key = await keyGen()
             const words = mnemonic.generate(() => key)
             return words.join(' ')
         },
