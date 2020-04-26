@@ -1,123 +1,76 @@
-import { CipherGlob, encrypt, decrypt } from './cipher'
-import { publicKeyToAddress } from 'thor-devkit/dist/cry/address'
-import { secp256k1 } from 'thor-devkit/dist/cry/secp256k1'
-import { blake2b256 } from 'thor-devkit/dist/cry/blake2b'
-import { HDNode } from 'thor-devkit/dist/cry/hdnode'
+import { createHmac, randomBytes } from 'crypto'
 import { mnemonic } from 'thor-devkit/dist/cry/mnemonic'
+import { HDNode } from 'thor-devkit/dist/cry/hdnode'
+import { secp256k1 } from 'thor-devkit/dist/cry/secp256k1'
+import { encrypt } from './cipher'
+import { init as initSalt } from './salt'
+import { newVault } from './vault'
+import { collectEntropy } from '../worker'
 
-interface VaultFactory {
-    generateMnemonic(): Promise<string>
+export interface Vault {
+    readonly type: Vault.Type
 
-    encryptHD(words: string, password: string): Promise<Vault>
-    encryptSK(sk: Buffer, password: string): Promise<Vault>
+    derive(index: number): Promise<Vault.Node>
 
-    load(encoded: string): Promise<Vault>
+    decrypt(password: string): Promise<string | Buffer>
+    clone(password: string, newPassword: string): Promise<Vault>
+
+    encode(): string
 }
 
-type Entity = {
-    type: Vault.Type
-    pub: string
-    chainCode?: string
-    cipherGlob?: CipherGlob
-}
+export namespace Vault {
+    export type Type = 'hd' | 'sk' | 'usb'
 
-function newNode(salt: Buffer, entity: Entity, index: number): Vault.Node {
-    if (entity.type === 'sk') {
-        if (index !== 0) {
-            throw new Error('invalid node index')
-        }
-        const addr = '0x' + publicKeyToAddress(Buffer.from(entity.pub, 'hex')).toString('hex')
-        return {
-            get address() { return addr },
-            get index() { return index },
-            sign: async (msg, password) => {
-                const key = await decrypt(entity.cipherGlob!, password, salt)
-                const sig = secp256k1.sign(blake2b256(msg), key)
-                key.fill(0)
-                return sig
-            }
-        }
-    } else {
-        const n = HDNode.fromPublicKey(
-            Buffer.from(entity.pub, 'hex'),
-            Buffer.from(entity.chainCode!, 'hex'))
-            .derive(index)
-        return {
-            get address() { return n.address },
-            get index() { return index },
-            sign: async (msg, password) => {
-                const buf = await decrypt(entity.cipherGlob!, password, salt)
-                const words = buf.toString('utf8').split(' ')
-                const key = HDNode.fromMnemonic(words)
-                    .derive(index)
-                    .privateKey!
-                const sig = secp256k1.sign(blake2b256(msg), key)
-                key.fill(0)
-                return sig
-            }
-        }
+    export interface Node {
+        readonly address: string
+        readonly index: number
+        unlock(password: string): Promise<Buffer>
     }
-}
 
-function newVault(salt: Buffer, entity: Entity): Vault {
-    const vault: Vault = {
-        get type() { return entity.type },
-        node: index => {
-            return newNode(salt, entity, index)
-        },
-        decrypt: async password => {
-            if (entity.type === 'usb') {
-                return ''
-            }
-            const key = await decrypt(entity.cipherGlob!, password, salt)
-            if (entity.type === 'sk') {
-                return key
-            }
-            return key.toString('utf8')
-        },
-        clone: async (password, newPassword) => {
-            if (entity.type === 'usb') {
-                return vault
-            }
-            const key = await decrypt(entity.cipherGlob!, password, salt)
-            return newVault(salt, {
-                ...entity,
-                cipherGlob: await encrypt(key, newPassword, salt)
-            })
-        },
-        encode: () => JSON.stringify(entity)
-    }
-    return vault
-}
-
-export function newFactory(salt: Buffer, keyGen: () => Promise<Buffer>): VaultFactory {
-    return {
-        generateMnemonic: async () => {
-            const key = await keyGen()
-            const words = mnemonic.generate(() => key)
-            return words.join(' ')
-        },
-        encryptHD: async (words, password) => {
-            const root = HDNode.fromMnemonic(words.split(' '))
-            const glob = await encrypt(Buffer.from(words, 'utf8'), password, salt)
-            return newVault(salt, {
-                type: 'hd',
-                pub: root.publicKey.toString('hex'),
-                chainCode: root.chainCode.toString('hex'),
-                cipherGlob: glob
-            })
-        },
-        encryptSK: async (sk, password) => {
-            const glob = await encrypt(sk, password, salt)
-            return newVault(salt, {
-                type: 'sk',
-                pub: secp256k1.derivePublicKey(sk).toString('hex'),
-                cipherGlob: glob
-            })
-        },
-        load: (encoded) => {
-            const entity = JSON.parse(encoded)
-            return Promise.resolve(newVault(salt, entity))
+    export async function generateMnemonic(len = 32) {
+        if (len < 12 || len > 32 || len % 4 !== 0) {
+            throw new Error('invalid arg')
         }
+        const entropy = await collectEntropy()
+        return mnemonic.generate(() => {
+            const mac = createHmac('sha256', randomBytes(32))
+            return mac.update(entropy).digest().slice(0, len)
+        })
+    }
+
+    export async function decode(data: string): Promise<Vault> {
+        const salt = await initSalt()
+        const entity = JSON.parse(data)
+        return newVault(salt, entity)
+    }
+
+    export async function createHD(words: string[], password: string): Promise<Vault> {
+        const salt = await initSalt()
+        const root = HDNode.fromMnemonic(words)
+        const glob = await encrypt(Buffer.from(words.join(' '), 'utf8'), password, salt)
+        return newVault(salt, {
+            type: 'hd',
+            pub: root.publicKey.toString('hex'),
+            chainCode: root.chainCode.toString('hex'),
+            cipherGlob: glob
+        })
+    }
+
+    export async function createSK(sk: Buffer, password: string): Promise<Vault> {
+        const salt = await initSalt()
+        const glob = await encrypt(sk, password, salt)
+        return newVault(salt, {
+            type: 'sk',
+            pub: secp256k1.derivePublicKey(sk).toString('hex'),
+            cipherGlob: glob
+        })
+    }
+
+    export function bindUSB(pub: Buffer, chainCode: Buffer): Promise<Vault> {
+        return Promise.resolve(newVault(Buffer.from([]), {
+            type: 'usb',
+            pub: pub.toString('hex'),
+            chainCode: chainCode.toString('hex')
+        }))
     }
 }
