@@ -1,3 +1,4 @@
+import type { Storage } from './index'
 const schema =
     `CREATE TABLE IF NOT EXISTS configs (
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -24,11 +25,11 @@ CREATE INDEX IF NOT EXISTS activities_i0 ON activities(network, walletId, create
 `
 
 export interface SQLRunner {
-    query<T extends DataStore.Entity>(sql: string, ...params: unknown[]): Promise<T[]>
+    query<T extends Storage.Entity>(sql: string, ...params: unknown[]): Promise<T[]>
     exec(sql: string, ...params: unknown[]): Promise<void>
 }
 
-function wrapTable<T extends DataStore.Entity>(runner: SQLRunner, tableName: string): DataStore.Table<T> {
+function wrapTable<T extends Storage.Entity>(runner: SQLRunner, tableName: string): Storage.Table<T> {
     return {
         insert: row => {
             const keys = []
@@ -114,7 +115,7 @@ function wrapTable<T extends DataStore.Entity>(runner: SQLRunner, tableName: str
     }
 }
 
-export async function wrap(runner: SQLRunner): Promise<DataStore> {
+export async function wrap(runner: SQLRunner): Promise<Storage> {
     await runner.exec(schema)
     return {
         configs: wrapTable(runner, 'configs'),

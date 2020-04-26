@@ -1,6 +1,7 @@
 import Dexie from 'dexie'
+import type { Storage } from './index'
 
-function wrapTable<T extends DataStore.Entity>(table: Dexie.Table<T, number>): DataStore.Table<T> {
+function wrapTable<T extends Storage.Entity>(table: Dexie.Table<T, number>): Storage.Table<T> {
     return {
         insert: row => {
             return table.add(row as T).then(() => { })
@@ -65,7 +66,7 @@ function wrapTable<T extends DataStore.Entity>(table: Dexie.Table<T, number>): D
     }
 }
 
-export async function open(): Promise<DataStore> {
+export async function open(): Promise<Storage> {
     const db = new Dexie('data-store')
     db.version(1).stores({
         configs: '++id, &key',
@@ -75,9 +76,9 @@ export async function open(): Promise<DataStore> {
     await db.open()
 
     return {
-        configs: wrapTable(db.table<DataStore.ConfigEntity, number>('configs')),
-        wallets: wrapTable(db.table<DataStore.WalletEntity, number>('wallets')),
-        activities: wrapTable(db.table<DataStore.ActivityEntity, number>('activities')),
+        configs: wrapTable(db.table<Storage.ConfigEntity, number>('configs')),
+        wallets: wrapTable(db.table<Storage.WalletEntity, number>('wallets')),
+        activities: wrapTable(db.table<Storage.ActivityEntity, number>('activities')),
         transaction: scope => {
             return db.transaction('rw', db.tables, () => {
                 return scope()
