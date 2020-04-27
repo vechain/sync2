@@ -1,3 +1,5 @@
+// codes in this file run in web worker
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const m = require('more-entropy')
@@ -12,6 +14,7 @@ import {
     createHash
 } from 'crypto'
 
+/** collect CPU based extra entropy */
 function collectEntropy() {
     return new Promise<Int16Array>(resolve => {
         new m.Generator().generate(512, (entropy: number[]) => {
@@ -84,9 +87,6 @@ async function handleCommand(cmd: string, arg: any): Promise<any> {
         const entropy = await collectEntropy()
         const mac = createHmac('sha256', randomBytes(32))
         return mac.update(entropy).digest()
-    } else if (cmd === 'kdf') {
-        const [password, salt, n] = arg
-        return kdf(password, Buffer.from(salt), n)
     } else if (cmd === 'encrypt') {
         const [clearText, password, salt] = arg
         return encrypt(Buffer.from(clearText), password, Buffer.from(salt))
@@ -122,6 +122,7 @@ ctx.onmessage = async (ev) => {
         const result = await handleCommand(cmd, arg)
         ctx.postMessage([result])
     } catch (err) {
+        // TODO error translation
         ctx.postMessage([undefined, err])
     }
 }
