@@ -1,30 +1,35 @@
 // common logics for sqlite
 
 import type { Storage } from './index'
-const schema =
+
+const schemas = [
     `CREATE TABLE IF NOT EXISTS configs (
-    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    key TEXT NOT NULL UNIQUE,
-    value TEXT
-);
-
-CREATE TABLE IF NOT EXISTS wallets (
-    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    network TEXT NOT NULL,  
-    vault TEXT
-    meta TEXT  
-);
-CREATE INDEX IF NOT EXISTS wallets_i0 ON wallets(network);
-
-CREATE TABLE IF NOT EXISTS activities (
-    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    network TEXT NOT NULL, 
-    walletId INTEGER NOT NULL,
-    createdTime INTEGER NOT NULL,
-    glob TEXT
-);
-CREATE INDEX IF NOT EXISTS activities_i0 ON activities(network, walletId, createdTime);
-`
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        key TEXT NOT NULL UNIQUE,
+        value TEXT
+    )`,
+    `CREATE TABLE IF NOT EXISTS wallets (
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        network TEXT NOT NULL,  
+        vault TEXT,
+        meta TEXT  
+    )`,
+    `CREATE INDEX IF NOT EXISTS wallets_i0 ON wallets(
+        network
+    )`,
+    `CREATE TABLE IF NOT EXISTS activities (
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        network TEXT NOT NULL, 
+        walletId INTEGER NOT NULL,
+        createdTime INTEGER NOT NULL,
+        glob TEXT
+    )`,
+    `CREATE INDEX IF NOT EXISTS activities_i0 ON activities(
+        network,
+        walletId,
+        createdTime
+    )`
+]
 
 export interface SQLRunner {
     query<T extends Storage.Entity>(sql: string, ...params: unknown[]): Promise<T[]>
@@ -118,7 +123,10 @@ function wrapTable<T extends Storage.Entity>(runner: SQLRunner, tableName: strin
 }
 
 export async function wrap(runner: SQLRunner): Promise<Storage> {
-    await runner.exec(schema)
+    for (const schema of schemas) {
+        await runner.exec(schema)
+    }
+
     return {
         configs: wrapTable(runner, 'configs'),
         wallets: wrapTable(runner, 'wallets'),
