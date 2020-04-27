@@ -1,3 +1,5 @@
+// common logics for sqlite
+
 import type { Storage } from './index'
 const schema =
     `CREATE TABLE IF NOT EXISTS configs (

@@ -3,21 +3,22 @@ import type { Storage } from './index'
 
 function wrapTable<T extends Storage.Entity>(table: Dexie.Table<T, number>): Storage.Table<T> {
     return {
-        insert: row => {
-            return table.add(row as T).then(() => { })
+        insert: async row => {
+            await table.add(row as T)
         },
-        update: (cond, values) => {
+        update: async (cond, values) => {
             if (Object.keys(cond).length > 0) {
-                return table.where(cond as {}).modify(values).then(() => { })
+                await table.where(cond as {}).modify(values)
             } else {
-                return table.toCollection().modify(values).then(() => { })
+                await table.toCollection().modify(values)
             }
         },
-        delete: cond => {
+        delete: async cond => {
             if (Object.keys(cond).length > 0) {
-                return table.where(cond as {}).delete().then(() => { })
+                await table.where(cond as {}).delete()
+            } else {
+                await table.toCollection().delete()
             }
-            return table.toCollection().delete().then(() => { })
         },
         all: () => {
             const opt: {
@@ -67,8 +68,10 @@ function wrapTable<T extends Storage.Entity>(table: Dexie.Table<T, number>): Sto
 }
 
 export async function open(): Promise<Storage> {
-    const dbName = process.env.PROD ? 'data-store' : 'data-store-dev'
-    const db = new Dexie(dbName)
+    const db = new Dexie(
+        process.env.PROD ? 'data-store' : 'data-store-dev'
+    )
+
     db.version(1).stores({
         configs: '++id, &key',
         wallets: '++id, network',

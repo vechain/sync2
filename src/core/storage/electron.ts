@@ -9,8 +9,8 @@ export async function open() {
         query: (sql, ...params) => {
             return db.all(sql, ...params)
         },
-        exec: (sql, ...params) => {
-            return db.run(sql, ...params).then(() => { })
+        exec: async (sql, ...params) => {
+            await db.run(sql, ...params)
         }
     })
 }
