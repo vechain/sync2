@@ -1,12 +1,5 @@
-import { collectEntropy } from '../worker'
-import { createHmac, randomBytes } from 'crypto'
+import { generateSalt } from '../worker'
 import { Storage } from '../storage'
-
-async function generateSalt() {
-    const entropy = await collectEntropy()
-    const mac = createHmac('sha256', randomBytes(32))
-    return mac.update(entropy).digest()
-}
 
 async function loadOrGenerateSalt() {
     const saltStorageKey = 'vault-salt'

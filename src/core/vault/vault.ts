@@ -1,17 +1,17 @@
 
 import type { Vault } from './index'
-import { CipherGlob, decrypt, encrypt } from './cipher'
 import { deriveNode } from './node'
+import { decrypt, encrypt } from '../worker'
 
 export type Entity = {
     type: Vault.Type
     pub: string
     chainCode?: string
-    cipherGlob?: CipherGlob
+    cipherGlob?: string
 }
 
 export function newVault(salt: Buffer, entity: Entity): Vault {
-    const vault: Vault = {
+    return {
         get type() { return entity.type },
         derive: index => {
             return deriveNode(salt, entity, index)
@@ -38,5 +38,4 @@ export function newVault(salt: Buffer, entity: Entity): Vault {
         },
         encode: () => JSON.stringify(entity)
     }
-    return vault
 }

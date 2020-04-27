@@ -16,8 +16,23 @@ function call<R>(cmd: string, ...args: unknown[]): Promise<R> {
     })
 }
 
-export function collectEntropy() {
-    return call<Int16Array>('collectEntropy')
+export function generateSalt() {
+    return call<Uint8Array>('generateSalt')
+        .then(r => Buffer.from(r))
+}
+
+export function kdf(password: string, salt: Buffer, n: number) {
+    return call<Uint8Array>('kdf', password, salt, n)
+        .then(k => Buffer.from(k))
+}
+
+export function encrypt(clearText: Buffer, password: string, salt: Buffer) {
+    return call<string>('encrypt', clearText, password, salt)
+}
+
+export function decrypt(jsonGlob: string, password: string, salt: Buffer) {
+    return call<Uint8Array>('decrypt', jsonGlob, password, salt)
+        .then(r => Buffer.from(r))
 }
 
 export function hdGenerateMnemonic(len = 32) {
@@ -47,9 +62,4 @@ export function hdDeriveXPub(pub: Buffer, chainCode: Buffer, index: number) {
                 address
             }
         })
-}
-
-export function kdf(password: string, salt: Buffer, n: number) {
-    return call<Uint8Array>('kdf', password, salt, n)
-        .then(k => Buffer.from(k))
 }

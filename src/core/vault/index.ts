@@ -1,8 +1,7 @@
 import { secp256k1 } from 'thor-devkit/dist/cry/secp256k1'
-import { encrypt } from './cipher'
 import { init as initSalt } from './salt'
 import { newVault } from './vault'
-import { hdGenerateMnemonic, hdDeriveMnemonic } from '../worker'
+import { hdGenerateMnemonic, hdDeriveMnemonic, encrypt } from '../worker'
 
 export interface Vault {
     readonly type: Vault.Type
