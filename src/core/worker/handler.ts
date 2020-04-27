@@ -2,28 +2,38 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const m = require('more-entropy')
 import { HDNode } from 'thor-devkit/dist/cry/hdnode'
-import { pbkdf2Sync } from 'crypto'
+import { mnemonic } from 'thor-devkit/dist/cry/mnemonic'
+import { pbkdf2Sync, createHmac, randomBytes } from 'crypto'
+
+function collectEntropy() {
+    return new Promise<Int16Array>(resolve => {
+        new m.Generator().generate(512, (entropy: number[]) => {
+            resolve(Int16Array.from(entropy))
+        })
+    })
+}
 
 async function handleCommand(cmd: string, arg: any): Promise<any> {
     if (cmd === 'collectEntropy') {
-        // generates 256-bit random key which is secured by extra CPU based entropy.
-        return new Promise(resolve => {
-            new m.Generator().generate(512, (entropy: number[]) => {
-                resolve(Int16Array.from(entropy))
-            })
+        return collectEntropy()
+    } else if (cmd === 'hdGenerateMnemonic') {
+        const [len] = arg
+        const entropy = await collectEntropy()
+        return mnemonic.generate(() => {
+            const mac = createHmac('sha256', randomBytes(32))
+            return mac.update(entropy).digest().slice(0, len)
         })
-    } else if (cmd === 'deriveAddress') {
+    } else if (cmd === 'hdDeriveMnemonic') {
+        const [words, index] = arg
+        const root = HDNode.fromMnemonic(words)
+        const node = index < 0 ? root : root.derive(index)
+        return [node.publicKey, node.chainCode, node.address, node.privateKey]
+    } else if (cmd === 'hdDeriveXPub') {
         const [pub, chainCode, index] = arg
-        return HDNode
+        const node = HDNode
             .fromPublicKey(Buffer.from(pub), Buffer.from(chainCode))
             .derive(index)
-            .address
-    } else if (cmd === 'derivePrivateKey') {
-        const [words, index] = arg
-        return HDNode
-            .fromMnemonic(words)
-            .derive(index)
-            .privateKey
+        return [node.publicKey, node.chainCode, node.address]
     } else if (cmd === 'kdf') {
         const [password, salt, n] = arg
         return pbkdf2Sync(password, Buffer.from(salt), n, 32, 'sha256')

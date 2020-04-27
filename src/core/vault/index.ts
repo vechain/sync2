@@ -1,11 +1,8 @@
-import { createHmac, randomBytes } from 'crypto'
-import { mnemonic } from 'thor-devkit/dist/cry/mnemonic'
-import { HDNode } from 'thor-devkit/dist/cry/hdnode'
 import { secp256k1 } from 'thor-devkit/dist/cry/secp256k1'
 import { encrypt } from './cipher'
 import { init as initSalt } from './salt'
 import { newVault } from './vault'
-import { collectEntropy } from '../worker'
+import { hdGenerateMnemonic, hdDeriveMnemonic } from '../worker'
 
 export interface Vault {
     readonly type: Vault.Type
@@ -28,14 +25,10 @@ export namespace Vault {
     }
 
     export async function generateMnemonic(len = 32) {
-        if (len < 12 || len > 32 || len % 4 !== 0) {
+        if (len < 16 || len > 32 || len % 4 !== 0) {
             throw new Error('invalid arg')
         }
-        const entropy = await collectEntropy()
-        return mnemonic.generate(() => {
-            const mac = createHmac('sha256', randomBytes(32))
-            return mac.update(entropy).digest().slice(0, len)
-        })
+        return hdGenerateMnemonic(len)
     }
 
     export async function decode(data: string): Promise<Vault> {
@@ -46,11 +39,11 @@ export namespace Vault {
 
     export async function createHD(words: string[], password: string): Promise<Vault> {
         const salt = await initSalt()
-        const root = HDNode.fromMnemonic(words)
+        const root = await hdDeriveMnemonic(words, -1)
         const glob = await encrypt(Buffer.from(words.join(' '), 'utf8'), password, salt)
         return newVault(salt, {
             type: 'hd',
-            pub: root.publicKey.toString('hex'),
+            pub: root.pub.toString('hex'),
             chainCode: root.chainCode.toString('hex'),
             cipherGlob: glob
         })
