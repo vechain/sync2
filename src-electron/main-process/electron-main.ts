@@ -57,9 +57,10 @@ function createWindow() {
 }
 
 app.on('ready', () => {
+    const basename = process.env.PROD ? 'data-store.db' : 'data-store-dev.db'
     // eslint-disable-next-line @typescript-eslint/unbound-method
     app.openSQLite = () => SQLite.open({
-        filename: Path.resolve(app.getPath('userData'), 'data-store.db'),
+        filename: Path.resolve(app.getPath('userData'), basename),
         driver: require('sqlite3').Database
     })
 

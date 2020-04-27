@@ -67,7 +67,8 @@ function wrapTable<T extends Storage.Entity>(table: Dexie.Table<T, number>): Sto
 }
 
 export async function open(): Promise<Storage> {
-    const db = new Dexie('data-store')
+    const dbName = process.env.PROD ? 'data-store' : 'data-store-dev'
+    const db = new Dexie(dbName)
     db.version(1).stores({
         configs: '++id, &key',
         wallets: '++id, network',

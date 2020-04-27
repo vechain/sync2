@@ -12,7 +12,7 @@ async function loadOrGenerateSalt() {
     const saltStorageKey = 'vault-salt'
     if (process.env.MODE === 'electron') {
         const Keytar = await import('keytar')
-        const service = 'org.vechain.sync2'
+        const service = process.env.PROD ? 'org.vechain.sync2' : 'org.vechain.sync2.dev'
         const savedSalt = await Keytar.getPassword(service, saltStorageKey)
         if (savedSalt) {
             return Buffer.from(savedSalt, 'hex')

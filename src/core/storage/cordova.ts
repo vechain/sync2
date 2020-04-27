@@ -1,9 +1,10 @@
 import { wrap } from './sqlite'
 
 export function open() {
+    const name = process.env.PROD ? 'data-store.db' : 'data-store-dev.db'
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const db = (window as any).sqlitePlugin.openDatabase({
-        name: 'data-store.db',
+        name,
         location: 'default',
         androidDatabaseProvider: 'system'
     })
