@@ -1,8 +1,11 @@
-export interface Todo {
-  id: number;
-  content: string;
-}
+// here define view models
+declare namespace M {
+    interface Todo {
+        id: number;
+        content: string;
+    }
 
-export interface Meta {
-  totalCount: number;
+    interface Meta {
+        totalCount: number;
+    }
 }

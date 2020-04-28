@@ -16,9 +16,9 @@ module.exports = configure(function (/* ctx */) {
     // --> boot files are part of "main.js"
     // https://quasar.dev/quasar-cli/cli-documentation/boot-files
     boot: [
-
       'i18n',
-      'axios'
+      'axios',
+      'register-components'
     ],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
@@ -52,9 +52,23 @@ module.exports = configure(function (/* ctx */) {
       //            (fastest compile time; minimum bundle size; most tedious)
       // * true   - Import everything from Quasar
       //            (not treeshaking Quasar; biggest bundle size; convenient)
-      all: 'auto',
+      all: false,
 
-      components: [],
+      components: [
+        "QLayout",
+        "QHeader",
+        "QToolbar",
+        "QToolbarTitle",
+        "QDrawer",
+        "QList",
+        "QPageContainer",
+        "QPage",
+        "QItem",
+        "QItemSection",
+        "QIcon",
+        "QBtn",
+        "QItemLabel"        
+      ],
       directives: [],
 
       // Quasar plugins
