@@ -32,9 +32,8 @@ export namespace Storage {
     /** the wallet entity */
     export interface WalletEntity extends Entity {
         network: string // the network(genesis id) bound to
-        type: string // the wallet type
-        name: string // the given name to wallet
-        glob: string // the JSON encoded glob contains underlying wallet data
+        vault: string // encoded vault
+        meta: string // wallet meta data
     }
 
     /** the wallet activity entity */
