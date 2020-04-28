@@ -1,5 +1,5 @@
-import { generateSalt } from '../worker'
-import { Storage } from '../storage'
+import { generateSalt } from 'core/worker'
+import { Storage } from 'core/storage'
 
 async function loadOrGenerateSalt() {
     const saltStorageKey = 'vault-salt'

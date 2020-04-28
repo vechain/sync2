@@ -1,7 +1,7 @@
 
 import type { Vault } from './index'
 import { deriveNode } from './node'
-import { decrypt, encrypt } from '../worker'
+import { decrypt, encrypt } from 'core/worker'
 
 export type Entity = {
     type: Vault.Type

@@ -9,6 +9,7 @@
 // https://quasar.dev/quasar-cli/quasar-conf-js
 
 const { configure } = require('quasar/wrappers')
+const path = require('path')
 
 module.exports = configure(function (/* ctx */) {
   return {
@@ -98,6 +99,10 @@ module.exports = configure(function (/* ctx */) {
 
       // https://quasar.dev/quasar-cli/cli-documentation/handling-webpack
       extendWebpack (cfg) {
+        cfg.resolve.alias = {
+          ...cfg.resolve.alias,
+          core: path.resolve(__dirname, './src/core'),
+        }
         if (process.env.NODE_ENV === 'production') {
           // linting is slow in TS projects, we execute it only for production builds
           cfg.module.rules.push({

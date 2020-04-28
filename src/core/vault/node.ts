@@ -1,6 +1,6 @@
 import type { Entity } from './vault'
 import type { Vault } from './index'
-import { hdDeriveXPub, hdDeriveMnemonic, decrypt } from '../worker'
+import { hdDeriveXPub, hdDeriveMnemonic, decrypt } from 'core/worker'
 import { publicKeyToAddress } from 'thor-devkit/dist/cry/address'
 
 export async function deriveNode(salt: Buffer, entity: Entity, index: number): Promise<Vault.Node> {

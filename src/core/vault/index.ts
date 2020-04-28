@@ -1,7 +1,7 @@
 import { secp256k1 } from 'thor-devkit/dist/cry/secp256k1'
 import { init as initSalt } from './salt'
 import { newVault } from './vault'
-import { hdGenerateMnemonic, hdDeriveMnemonic, encrypt } from '../worker'
+import { hdGenerateMnemonic, hdDeriveMnemonic, encrypt } from 'core/worker'
 
 /** describes the secure container holds wallet key */
 export interface Vault {
@@ -58,7 +58,7 @@ export namespace Vault {
      * @param len entropy length in bytes. every 4 bytes produce 3 words.
      * @returns generated mnemonic words
      */
-    export async function generateMnemonic(len = 32): Promise<string[]> {
+    export function generateMnemonic(len = 32): Promise<string[]> {
         if (len < 16 || len > 32 || len % 4 !== 0) {
             throw new Error('invalid arg')
         }
