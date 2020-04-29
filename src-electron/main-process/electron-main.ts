@@ -12,20 +12,6 @@ declare module 'electron' {
     }
 }
 
-try {
-    if (process.platform === 'win32' && nativeTheme.shouldUseDarkColors === true) {
-        require('fs').unlinkSync(require('path').join(app.getPath('userData'), 'DevTools Extensions'))
-    }
-} catch (_) { }
-
-/**
- * Set `__statics` path to static files in production;
- * The reason we are setting it here is that the path needs to be evaluated at runtime
- */
-if (process.env.PROD) {
-    global.__statics = require('path').join(__dirname, 'statics').replace(/\\/g, '\\\\')
-}
-
 let mainWindow: BrowserWindow | null
 
 function createWindow() {
@@ -56,25 +42,56 @@ function createWindow() {
     })
 }
 
-app.on('ready', () => {
-    const basename = process.env.PROD ? 'data-store.db' : 'data-store-dev.db'
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    app.openSQLite = () => SQLite.open({
-        filename: Path.resolve(app.getPath('userData'), basename),
-        driver: require('sqlite3').Database
+(() => {
+    if (process.env.PROD) {
+        if (!app.requestSingleInstanceLock()) {
+            app.quit()
+            return
+        }
+
+        if (!app.isDefaultProtocolClient('connex')) {
+            app.setAsDefaultProtocolClient('connex')
+        }
+    }
+
+    try {
+        if (process.platform === 'win32' && nativeTheme.shouldUseDarkColors === true) {
+            require('fs').unlinkSync(require('path').join(app.getPath('userData'), 'DevTools Extensions'))
+        }
+    } catch (_) { }
+
+    /**
+     * Set `__statics` path to static files in production;
+     * The reason we are setting it here is that the path needs to be evaluated at runtime
+     */
+    if (process.env.PROD) {
+        global.__statics = require('path').join(__dirname, 'statics').replace(/\\/g, '\\\\')
+    }
+
+    app.on('ready', () => {
+        const basename = process.env.PROD ? 'data-store.db' : 'data-store-dev.db'
+        // eslint-disable-next-line @typescript-eslint/unbound-method
+        app.openSQLite = () => SQLite.open({
+            filename: Path.resolve(app.getPath('userData'), basename),
+            driver: require('sqlite3').Database
+        })
+
+        createWindow()
     })
 
-    createWindow()
-})
+    app.on('window-all-closed', () => {
+        if (process.platform !== 'darwin') {
+            app.quit()
+        }
+    })
 
-app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit()
-    }
-})
+    app.on('activate', () => {
+        if (mainWindow === null) {
+            createWindow()
+        }
+    })
 
-app.on('activate', () => {
-    if (mainWindow === null) {
-        createWindow()
-    }
-})
+    // app.on('open-url', (ev, externalUrl) => {
+    //     // TODO
+    // })
+})()
