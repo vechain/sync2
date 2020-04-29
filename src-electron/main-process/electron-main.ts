@@ -34,6 +34,31 @@ function createWindow() {
     })
 }
 
+function setupOpenUrlEmitter(): (url: string) => void {
+    // works for cold/hot start up
+    let pendingUrl = ''
+    let resolver: ((url: string) => void) | undefined
+
+    app.listenOpenUrl = () => {
+        return new Promise(resolve => {
+            if (pendingUrl) {
+                resolve(pendingUrl)
+                pendingUrl = ''
+            } else {
+                resolver = resolve
+            }
+        })
+    }
+    return (url) => {
+        if (resolver) {
+            resolver(url)
+            resolver = undefined
+        } else {
+            pendingUrl = url
+        }
+    }
+}
+
 (() => {
     if (process.env.PROD) {
         if (!app.requestSingleInstanceLock()) {
@@ -62,13 +87,20 @@ function createWindow() {
 
     app.on('ready', () => {
         const basename = process.env.PROD ? 'data-store.db' : 'data-store-dev.db'
-        // eslint-disable-next-line @typescript-eslint/unbound-method
         app.openSQLite = () => SQLite.open({
             filename: Path.resolve(app.getPath('userData'), basename),
             driver: require('sqlite3').Database
         })
 
         createWindow()
+    })
+
+    const emit = setupOpenUrlEmitter()
+    app.on('open-url', (ev, url) => {
+        emit(url)
+        if (mainWindow === null) {
+            createWindow()
+        }
     })
 
     app.on('window-all-closed', () => {
@@ -82,8 +114,4 @@ function createWindow() {
             createWindow()
         }
     })
-
-    // app.on('open-url', (ev, externalUrl) => {
-    //     // TODO
-    // })
 })()
