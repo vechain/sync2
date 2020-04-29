@@ -2,15 +2,7 @@ import { app, BrowserWindow, nativeTheme } from 'electron'
 import * as SQLite from 'sqlite'
 import * as Path from 'path'
 
-declare global {
-    const QUASAR_NODE_INTEGRATION: boolean
-}
-
-declare module 'electron' {
-    interface App {
-        openSQLite(): Promise<SQLite.Database>
-    }
-}
+declare const QUASAR_NODE_INTEGRATION: boolean
 
 let mainWindow: BrowserWindow | null
 

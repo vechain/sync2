@@ -3,3 +3,9 @@ declare namespace NodeJS {
         __statics: string
     }
 }
+
+declare module 'electron' {
+    interface App {
+        openSQLite(): Promise<SQLite.Database>
+    }
+}
