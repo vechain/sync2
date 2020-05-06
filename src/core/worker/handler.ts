@@ -4,6 +4,7 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const m = require('more-entropy')
 import { HDNode } from 'thor-devkit/dist/cry/hdnode'
+import { blake2b256 } from 'thor-devkit/dist/cry/blake2b'
 import { mnemonic } from 'thor-devkit/dist/cry/mnemonic'
 import {
     pbkdf2Sync,
@@ -23,8 +24,28 @@ function collectEntropy() {
     })
 }
 
+const kdfCache: { [k: string]: { v: Buffer, ts: number } } = {}
+
 function kdf(password: string, salt: Buffer, n: number) {
-    return pbkdf2Sync(password, Buffer.from(salt), n, 32, 'sha256')
+    const cacheKey = `${blake2b256(salt, password).toString('hex')}-${n}`
+    const now = Date.now()
+
+    let cached = kdfCache[cacheKey]
+    if (!cached) {
+        cached = {
+            v: pbkdf2Sync(password, Buffer.from(salt), n, 32, 'sha256'),
+            ts: now
+        }
+        kdfCache[cacheKey] = cached
+    }
+
+    // purge timeout cache entry
+    Object
+        .entries(kdfCache)
+        .filter(([, v]) => Date.now() > v.ts + 60 * 1000)
+        .forEach(([k]) => delete (kdfCache[k]))
+
+    return cached.v
 }
 
 type CipherGlob = {
