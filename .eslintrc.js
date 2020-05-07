@@ -94,6 +94,7 @@ module.exports = {
     '@typescript-eslint/no-empty-interface': 'off',
     'no-inner-declarations': 'off',
     'no-useless-constructor': 'off',
+    'import/named': 'off',
 
     // allow debugger during development only
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
