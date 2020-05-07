@@ -2,6 +2,7 @@ import { route } from 'quasar/wrappers'
 import VueRouter from 'vue-router'
 import { StoreInterface } from '../store'
 import routes from './routes'
+import VueRouterStack from 'vue-router-stack'
 
 /*
  * If not building with SSR mode, you can
@@ -22,5 +23,6 @@ export default route<StoreInterface>(function ({ Vue }) {
         base: process.env.VUE_ROUTER_BASE
     })
 
+    Vue.use(VueRouterStack, { router: Router })
     return Router
 })

@@ -70,7 +70,9 @@ module.exports = configure(function (/* ctx */) {
         "QBtn",
         "QItemLabel"        
       ],
-      directives: [],
+      directives: [
+        "TouchPan"
+      ],
 
       // Quasar plugins
       plugins: []
