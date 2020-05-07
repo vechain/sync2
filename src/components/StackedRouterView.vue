@@ -47,6 +47,7 @@ export default class StackedRouterView extends Vue {
             this.transitionDone = Promise.all([
                 transit(view1, {
                     from: 'top-view-in-from',
+                    to: 'top-view-in-to',
                     active: 'top-view-active'
                 }),
                 transit(view2, {
@@ -62,6 +63,7 @@ export default class StackedRouterView extends Vue {
 
             this.transitionDone = Promise.all([
                 transit(view1, {
+                    from: 'top-view-out-from',
                     to: 'top-view-out-to',
                     active: 'top-view-active'
                 }),
@@ -101,34 +103,39 @@ export default class StackedRouterView extends Vue {
         const view2 = views[views.length - 2]
 
         const panOffset = Math.max(0, ev.offset.x)
+        const ratio = Math.min(1, panOffset / view1.clientWidth)
 
         view1.style.transform = `translate(${panOffset}px)`
+        view1.style.boxShadow = `-100vw 0px 0px 100vw rgba(0, 0, 0, ${0.2 * (1 - ratio)})`
         if (ev.isFirst) {
             view1.__transitionFinalize = () => {
                 view1.style.transform = ''
+                view1.style.boxShadow = ''
+                view1.style.transition = ''
             }
         }
 
         if (view2) {
-            const ratio = Math.min(1, panOffset / view1.clientWidth)
-            const offset = -((1 - ratio) * view2.clientWidth / 5)
-            const brightness = 0.8 + 0.2 * ratio
+            const offset = (ratio - 1) * view2.clientWidth / 5
             view2.style.transform = `translate(${offset}px)`
-            view2.style.filter = `brightness(${brightness})`
             if (ev.isFirst) {
                 view2.classList.add('touch-pan-active')
                 view2.__transitionFinalize = () => {
                     view2.classList.remove('touch-pan-active')
                     view2.style.transform = ''
-                    view2.style.filter = ''
+                    view2.style.transition = ''
                 }
             }
         }
 
         if (ev.isFinal) {
             if (panOffset > view1.clientWidth / 2 || this.velocity.v > 0.3) {
+                view1.style.transition =
+                    view2.style.transition = 'all 0.2s'
                 this.$router.go(-1)
             } else {
+                view1.style.transition =
+                    view2.style.transition = 'all 0.2s cubic-bezier(0, 0, 0.2, 1)'
                 const transitions = [transit(view1, {
                     to: 'top-view-in-to',
                     active: 'top-view-active'
@@ -150,37 +157,43 @@ export default class StackedRouterView extends Vue {
 
 </script>
 <style >
+.top-view-out-from {
+    transform: translate(0px);
+    box-shadow: -100vw 0px 0px 100vw rgba(0, 0, 0, 0.2);
+}
+
 .top-view-out-to {
     transform: translate(100%) !important;
+    box-shadow: -100vw 0px 0px 100vw rgba(0, 0, 0, 0) !important;
 }
+
 .top-view-in-from {
     transform: translate(100%);
+    box-shadow: -100vw 0px 0px 100vw rgba(0, 0, 0, 0);
 }
 
 .top-view-in-to {
     transform: translate(0px) !important;
+    box-shadow: -100vw 0px 0px 100vw rgba(0, 0, 0, 0.2) !important;
 }
 
 .top-view-active {
-    transition: all 0.2s;
+    transition: all 0.3s cubic-bezier(0, 0, 0.2, 1);
 }
 
 .second-view-out-to {
     transform: translate(-20%) !important;
-    filter: brightness(0.8);
 }
 .second-view-in-from {
     transform: translate(-20%);
-    filter: brightness(0.8);
 }
 
 .second-view-in-to {
     transform: translate(0px) !important;
-    filter: brightness(1) !important;
 }
 
 .second-view-active {
-    transition: all 0.2s;
+    transition: all 0.3s cubic-bezier(0, 0, 0.2, 1);
     display: block !important;
 }
 
