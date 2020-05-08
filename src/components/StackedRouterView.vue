@@ -1,5 +1,5 @@
 <template>
-    <div class="absolute-full">
+    <q-page>
         <div
             class="absolute-top"
             v-for="(entry, i) in stack"
@@ -18,7 +18,7 @@
             style="width:16px;"
             v-touch-pan.up.right.prevent.mouse="onTouchPan"
         />
-    </div>
+    </q-page>
 </template>
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator'
