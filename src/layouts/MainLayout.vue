@@ -1,6 +1,10 @@
 <template>
     <q-layout view="lHh Lpr lFf">
         <q-header elevated>
+            <!-- a placeholder to enable toolbar style
+                body.q-ios-padding .q-layout--standard .q-header > .q-toolbar:nth-child(2)
+            -->
+            <div />
             <q-toolbar>
                 <q-btn
                     flat
