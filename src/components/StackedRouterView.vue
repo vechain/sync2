@@ -28,56 +28,63 @@ import { transit } from 'core/utils'
 @Component
 export default class StackedRouterView extends Vue {
     stack = this.$stack.scoped
-    transitionDone = new Promise<unknown>(resolve => { resolve() })
+    guard = (() => {
+        let done: unknown
+        return async (f: () => Promise<unknown>) => {
+            await done
+            document.body.classList.add('disable-pointer-events')
+            done = f().then(() => document.body.classList.remove('disable-pointer-events'))
+            return done
+        }
+    })()
 
     @Watch('$stack.scoped')
-    async stackChanged(newVal: ScopedEntry[], oldVal: ScopedEntry[]) {
-        await this.transitionDone
-        // TODO more accurate transition judgement
-        if (newVal.length > oldVal.length) {
-            // push in
-            this.stack = newVal
-            await this.$nextTick()
+    stackChanged(newVal: ScopedEntry[], oldVal: ScopedEntry[]) {
+        this.guard(async () => {
+            // TODO more accurate transition judgement
+            if (newVal.length > oldVal.length) {
+                // push in
+                this.stack = newVal
+                await this.$nextTick()
 
-            const views = this.$refs.views as HTMLElement[]
-            const view1 = views[views.length - 1]
-            const view2 = views[views.length - 2]
+                const views = this.$refs.views as HTMLElement[]
+                const view1 = views[views.length - 1]
+                const view2 = views[views.length - 2]
 
-            this.transitionDone = Promise.all([
-                transit(view1, {
-                    from: 'top-view-in-from',
-                    to: 'top-view-in-to',
-                    active: 'top-view-active'
-                }),
-                transit(view2, {
-                    to: 'second-view-out-to',
-                    active: 'second-view-active'
-                })
-            ])
-        } else if (newVal.length < oldVal.length) {
-            // pop out
-            const views = this.$refs.views as HTMLElement[]
-            const view1 = views[views.length - 1]
-            const view2 = views[views.length - 2]
+                await Promise.all([
+                    transit(view1, {
+                        from: 'top-view-in-from',
+                        to: 'top-view-in-to',
+                        active: 'top-view-active'
+                    }),
+                    transit(view2, {
+                        to: 'second-view-out-to',
+                        active: 'second-view-active'
+                    })
+                ])
+            } else if (newVal.length < oldVal.length) {
+                // pop out
+                const views = this.$refs.views as HTMLElement[]
+                const view1 = views[views.length - 1]
+                const view2 = views[views.length - 2]
 
-            this.transitionDone = Promise.all([
-                transit(view1, {
-                    from: 'top-view-out-from',
-                    to: 'top-view-out-to',
-                    active: 'top-view-active'
-                }),
-                transit(view2, {
-                    from: 'second-view-in-from',
-                    to: 'second-view-in-to',
-                    active: 'second-view-active'
-                })
-            ])
-
-            await this.transitionDone
-            this.stack = newVal
-        } else {
-            this.stack = newVal
-        }
+                await Promise.all([
+                    transit(view1, {
+                        from: 'top-view-out-from',
+                        to: 'top-view-out-to',
+                        active: 'top-view-active'
+                    }),
+                    transit(view2, {
+                        from: 'second-view-in-from',
+                        to: 'second-view-in-to',
+                        active: 'second-view-active'
+                    })
+                ])
+                this.stack = newVal
+            } else {
+                this.stack = newVal
+            }
+        })
     }
 
     velocity = {
@@ -94,9 +101,7 @@ export default class StackedRouterView extends Vue {
         }
     }
 
-    async onTouchPan({ ...ev }) {
-        await this.transitionDone
-
+    onTouchPan({ ...ev }) {
         const views = this.$refs.views as HTMLElement[]
         const view1 = views[views.length - 1]
         const view2 = views[views.length - 2]
@@ -133,20 +138,22 @@ export default class StackedRouterView extends Vue {
                     view2.style.transition = 'all 0.2s'
                 this.$router.go(-1)
             } else {
-                view1.style.transition =
-                    view2.style.transition = 'all 0.2s cubic-bezier(0, 0, 0.2, 1)'
-                const transitions = [transit(view1, {
-                    to: 'top-view-in-to',
-                    active: 'top-view-active'
-                })]
+                this.guard(async () => {
+                    view1.style.transition =
+                        view2.style.transition = 'all 0.2s cubic-bezier(0, 0, 0.2, 1)'
+                    const ts = [transit(view1, {
+                        to: 'top-view-in-to',
+                        active: 'top-view-active'
+                    })]
 
-                if (view2) {
-                    transitions.push(transit(view2, {
-                        to: 'second-view-out-to',
-                        active: 'second-view-active'
-                    }))
-                }
-                this.transitionDone = Promise.all(transitions)
+                    if (view2) {
+                        ts.push(transit(view2, {
+                            to: 'second-view-out-to',
+                            active: 'second-view-active'
+                        }))
+                    }
+                    await Promise.all(ts)
+                })
             }
         }
 
@@ -198,5 +205,9 @@ export default class StackedRouterView extends Vue {
 
 .touch-pan-active {
     display: block !important;
+}
+
+.disable-pointer-events {
+    pointer-events: none;
 }
 </style>
