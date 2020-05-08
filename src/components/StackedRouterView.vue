@@ -1,21 +1,20 @@
 <template>
     <div class="absolute-full">
         <div
-            class="absolute-full"
+            class="absolute-top"
             v-for="(entry, i) in stack"
             v-show="i >= stack.length - 1"
             ref="views"
             :key="entry.fullPath"
         >
             <component
-                class="absolute-full"
                 :is="entry.component"
                 :entry="entry"
             />
         </div>
         <div
             v-show="stack.length>1"
-            class="absolute absolute-left"
+            class="absolute-left"
             style="width:16px;"
             v-touch-pan.up.right.prevent.mouse="onTouchPan"
         />
