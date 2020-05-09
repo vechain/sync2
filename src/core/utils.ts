@@ -39,14 +39,14 @@ export function transit(
 ) {
     return new Promise<void>(resolve => {
         (async () => {
-            classes.from && el.classList.add(classes.from)
+            classes.from && el.classList.add(...classes.from.split(','))
             await new Promise(requestAnimationFrame)
 
-            classes.active && el.classList.add(classes.active)
+            classes.active && el.classList.add(...classes.active.split(','))
             await new Promise(requestAnimationFrame)
 
-            classes.from && el.classList.remove(classes.from)
-            classes.to && el.classList.add(classes.to)
+            classes.from && el.classList.remove(...classes.from.split(','))
+            classes.to && el.classList.add(...classes.to.split(','))
 
             const cb = (ev: TransitionEvent) => {
                 if (ev && ev.target !== el) {
@@ -67,8 +67,8 @@ export function transit(
                 el.removeEventListener('transitionend', cb)
                 clearTimeout(timer)
 
-                classes.to && el.classList.remove(classes.to)
-                classes.active && el.classList.remove(classes.active)
+                classes.to && el.classList.remove(...classes.to.split(','))
+                classes.active && el.classList.remove(...classes.active.split(','))
 
                 const finalize = el.__transitionFinalize
                 el.__transitionFinalize = undefined
