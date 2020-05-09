@@ -3,9 +3,10 @@
         <div
             class="absolute-top"
             v-for="(entry, i) in stack"
-            v-show="i >= stack.length - 1"
+            v-show="i === stack.length - 1"
             ref="views"
             :key="entry.fullPath"
+            :style="{zIndex: i === stack.length - 1 ? 1 : undefined}"
         >
             <component
                 :is="entry.component"
@@ -13,9 +14,14 @@
             />
         </div>
         <div
+            class="absolute-full srv--shade-bg"
+            ref="shade"
+            v-show="false"
+        />
+        <div
             v-show="stack.length>1"
             class="absolute-left"
-            style="width:16px;"
+            style="width:16px;zIndex:2;"
             v-touch-pan.up.right.prevent.mouse="onTouchPan"
         />
     </q-page>
@@ -32,11 +38,20 @@ export default class StackedRouterView extends Vue {
         let done: unknown
         return async (f: () => Promise<unknown>) => {
             await done
-            document.body.classList.add('disable-pointer-events')
-            done = f().then(() => document.body.classList.remove('disable-pointer-events'))
+            document.body.classList.add('srv--disable-pointer-events')
+            done = f().then(() => document.body.classList.remove('srv--disable-pointer-events'))
             return done
         }
     })()
+
+    getViews() {
+        const views = this.$refs.views as HTMLElement[]
+        return {
+            v1: views[views.length - 1],
+            v2: views[views.length - 2],
+            shade: this.$refs.shade as HTMLElement
+        }
+    }
 
     @Watch('$stack.scoped')
     stackChanged(newVal: ScopedEntry[], oldVal: ScopedEntry[]) {
@@ -46,38 +61,39 @@ export default class StackedRouterView extends Vue {
                 // push in
                 this.stack = newVal
                 await this.$nextTick()
-
-                const views = this.$refs.views as HTMLElement[]
-                const view1 = views[views.length - 1]
-                const view2 = views[views.length - 2]
-
+                const { v1, v2, shade } = this.getViews()
                 await Promise.all([
-                    transit(view1, {
-                        from: 'top-view-in-from',
-                        to: 'top-view-in-to',
-                        active: 'top-view-active'
+                    transit(v1, {
+                        from: 'srv--v1-out',
+                        to: 'srv--v1-in-enforce',
+                        active: 'srv--transition-ease-out'
                     }),
-                    transit(view2, {
-                        to: 'second-view-out-to',
-                        active: 'second-view-active'
+                    transit(v2, {
+                        to: 'srv--v2-out-enforce',
+                        active: 'srv--transition,srv--show-enforce'
+                    }),
+                    transit(shade, {
+                        from: 'srv--shade-transparent',
+                        to: 'srv--shade-opaque-enforce',
+                        active: 'srv--transition,srv--show-enforce'
                     })
                 ])
             } else if (newVal.length < oldVal.length) {
                 // pop out
-                const views = this.$refs.views as HTMLElement[]
-                const view1 = views[views.length - 1]
-                const view2 = views[views.length - 2]
-
+                const { v1, v2, shade } = this.getViews()
                 await Promise.all([
-                    transit(view1, {
-                        from: 'top-view-out-from',
-                        to: 'top-view-out-to',
-                        active: 'top-view-active'
+                    transit(v1, {
+                        to: 'srv--v1-out-enforce',
+                        active: 'srv--transition'
                     }),
-                    transit(view2, {
-                        from: 'second-view-in-from',
-                        to: 'second-view-in-to',
-                        active: 'second-view-active'
+                    transit(v2, {
+                        from: 'srv--v2-out',
+                        to: 'srv--v2-in-enforce',
+                        active: 'srv--transition,srv--show-enforce'
+                    }),
+                    transit(shade, {
+                        to: 'srv--shade-transparent-enforce',
+                        active: 'srv--transition,srv--show-enforce'
                     })
                 ])
                 this.stack = newVal
@@ -102,54 +118,63 @@ export default class StackedRouterView extends Vue {
     }
 
     onTouchPan({ ...ev }) {
-        const views = this.$refs.views as HTMLElement[]
-        const view1 = views[views.length - 1]
-        const view2 = views[views.length - 2]
+        const { v1, v2, shade } = this.getViews()
 
         const panOffset = Math.max(0, ev.offset.x)
-        const ratio = Math.min(1, panOffset / view1.clientWidth)
+        const ratio = Math.min(1, panOffset / v1.clientWidth)
 
-        view1.style.transform = `translate(${panOffset}px)`
-        view1.style.boxShadow = `-100vw 0px 0px 100vw rgba(0, 0, 0, ${0.2 * (1 - ratio)})`
+        v1.style.transform = `translate(${panOffset}px)`
+        shade.style.opacity = `${1 - ratio}`
+        shade.classList.add('srv--show-enforce')
         if (ev.isFirst) {
-            view1.__transitionFinalize = () => {
-                view1.style.transform = ''
-                view1.style.boxShadow = ''
-                view1.style.transition = ''
+            v1.__transitionFinalize = () => {
+                v1.style.transform = ''
+                v1.style.transition = ''
+            }
+            shade.__transitionFinalize = () => {
+                shade.style.opacity = ''
+                shade.style.transition = ''
+                shade.classList.remove('srv--show-enforce')
             }
         }
 
-        if (view2) {
-            const offset = (ratio - 1) * view2.clientWidth / 5
-            view2.style.transform = `translate(${offset}px)`
+        if (v2) {
+            const offset = (ratio - 1) * v2.clientWidth / 5
+            v2.style.transform = `translate(${offset}px)`
             if (ev.isFirst) {
-                view2.classList.add('touch-pan-active')
-                view2.__transitionFinalize = () => {
-                    view2.classList.remove('touch-pan-active')
-                    view2.style.transform = ''
-                    view2.style.transition = ''
+                v2.classList.add('srv--show-enforce')
+                v2.__transitionFinalize = () => {
+                    v2.classList.remove('srv--show-enforce')
+                    v2.style.transform = ''
+                    v2.style.transition = ''
                 }
             }
         }
 
         if (ev.isFinal) {
-            if (panOffset > view1.clientWidth / 2 || this.velocity.v > 0.3) {
-                view1.style.transition =
-                    view2.style.transition = 'all 0.2s'
+            if (panOffset > v1.clientWidth / 2 || this.velocity.v > 0.3) {
+                v1.style.transition =
+                    v2.style.transition =
+                    shade.style.transition = 'all 0.2s'
                 this.$router.go(-1)
             } else {
                 this.guard(async () => {
-                    view1.style.transition =
-                        view2.style.transition = 'all 0.2s cubic-bezier(0, 0, 0.2, 1)'
-                    const ts = [transit(view1, {
-                        to: 'top-view-in-to',
-                        active: 'top-view-active'
-                    })]
+                    v1.style.transition =
+                        v2.style.transition =
+                        shade.style.transition = 'all 0.2s cubic-bezier(0, 0, 0.2, 1)'
 
-                    if (view2) {
-                        ts.push(transit(view2, {
-                            to: 'second-view-out-to',
-                            active: 'second-view-active'
+                    const ts = [
+                        transit(v1, {
+                            to: 'srv--v1-in-enforce'
+                        }),
+                        transit(shade, {
+                            to: 'srv--shade-opaque-enforce'
+                        })
+                    ]
+
+                    if (v2) {
+                        ts.push(transit(v2, {
+                            to: 'srv--v2-out-enforce'
                         }))
                     }
                     await Promise.all(ts)
@@ -163,51 +188,49 @@ export default class StackedRouterView extends Vue {
 
 </script>
 <style >
-.top-view-out-from {
-    transform: translate(0px);
-    box-shadow: -100vw 0px 0px 100vw rgba(0, 0, 0, 0.2);
+.srv--transition-ease-out {
+    transition: all 0.35s cubic-bezier(0, 0, 0.2, 1);
 }
-
-.top-view-out-to {
+.srv--transition {
+    transition: all 0.35s;
+}
+.srv--v1-out-enforce {
     transform: translate(100%) !important;
-    box-shadow: -100vw 0px 0px 100vw rgba(0, 0, 0, 0) !important;
 }
-
-.top-view-in-from {
+.srv--v1-out {
     transform: translate(100%);
-    box-shadow: -100vw 0px 0px 100vw rgba(0, 0, 0, 0);
 }
-
-.top-view-in-to {
+.srv--v1-in-enforce {
     transform: translate(0px) !important;
-    box-shadow: -100vw 0px 0px 100vw rgba(0, 0, 0, 0.2) !important;
 }
-
-.top-view-active {
-    transition: all 0.3s cubic-bezier(0, 0, 0.2, 1);
-}
-
-.second-view-out-to {
+.srv--v2-out-enforce {
     transform: translate(-20%) !important;
 }
-.second-view-in-from {
+.srv--v2-out {
     transform: translate(-20%);
 }
-
-.second-view-in-to {
+.srv--v2-in-enforce {
     transform: translate(0px) !important;
 }
-
-.second-view-active {
-    transition: all 0.3s cubic-bezier(0, 0, 0.2, 1);
+.srv--show-enforce {
     display: block !important;
 }
-
-.touch-pan-active {
-    display: block !important;
-}
-
-.disable-pointer-events {
+.srv--disable-pointer-events {
     pointer-events: none;
+}
+.srv--shade-transparent {
+    opacity: 0;
+}
+.srv--shade-transparent-enforce {
+    opacity: 0 !important;
+}
+.srv--shade-opaque {
+    opacity: 1;
+}
+.srv--shade-opaque-enforce {
+    opacity: 1 !important;
+}
+.srv--shade-bg {
+    background-color: rgba(0, 0, 0, 0.2);
 }
 </style>
