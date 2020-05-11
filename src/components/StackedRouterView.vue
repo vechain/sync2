@@ -1,5 +1,9 @@
 <template>
-    <q-page>
+    <q-page
+        @mousedown.capture="testTouchPan"
+        @touchstart.capture="testTouchPan"
+        v-touch-pan.right.mouse.prevent="onTouchPan"
+    >
         <div
             class="absolute-top"
             v-for="(entry, i) in stack"
@@ -18,12 +22,6 @@
             ref="shade"
             v-show="false"
         />
-        <div
-            v-show="stack.length>1"
-            class="absolute-left"
-            style="width:16px;zIndex:2;"
-            v-touch-pan.up.right.prevent.mouse="onTouchPan"
-        />
     </q-page>
 </template>
 <script lang="ts">
@@ -34,15 +32,15 @@ import { transit } from 'core/utils'
 @Component
 export default class StackedRouterView extends Vue {
     stack = this.$stack.scoped
-    guard = (() => {
-        let done: unknown
-        return async (f: () => Promise<unknown>) => {
-            await done
-            document.body.classList.add('srv--disable-pointer-events')
-            done = f().then(() => document.body.classList.remove('srv--disable-pointer-events'))
-            return done
-        }
-    })()
+    transitionDone: unknown
+
+    // guard the transition process by disable pointer events
+    async guard(f: () => Promise<unknown>) {
+        await this.transitionDone
+        this.$el.classList.add('srv--disable-pointer-events')
+        this.transitionDone = f().then(() => this.$el.classList.remove('srv--disable-pointer-events'))
+        return this.transitionDone
+    }
 
     getViews() {
         const views = this.$refs.views as HTMLElement[]
@@ -117,20 +115,46 @@ export default class StackedRouterView extends Vue {
         }
     }
 
-    onTouchPan({ ...ev }) {
+    testTouchPan(ev: TouchEvent & MouseEvent) {
+        const clientX = ev.targetTouches ? ev.targetTouches[0].clientX : ev.clientX;
+        (clientX > 64 || this.stack.length < 2) && ev.stopImmediatePropagation()
+    }
+
+    rafId?: number
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onTouchPan(ev: any) {
         const { v1, v2, shade } = this.getViews()
 
         const panOffset = Math.max(0, ev.offset.x)
         const ratio = Math.min(1, panOffset / v1.clientWidth)
 
-        v1.style.transform = `translate(${panOffset}px)`
-        shade.style.opacity = `${1 - ratio}`
-        shade.classList.add('srv--show-enforce')
+        if (this.rafId) {
+            cancelAnimationFrame(this.rafId)
+        }
+
+        if (!ev.isFirst && !ev.isFinal) {
+            this.rafId = requestAnimationFrame(() => {
+                v1.style.transform = `translate(${panOffset}px)`
+                v2.style.transform = `translate(${(ratio - 1) * v2.clientWidth / 5}px)`
+                shade.style.opacity = `${1 - ratio}`
+                this.rafId = undefined
+            })
+        }
+
         if (ev.isFirst) {
             v1.__transitionFinalize = () => {
                 v1.style.transform = ''
                 v1.style.transition = ''
             }
+
+            v2.classList.add('srv--show-enforce')
+            v2.__transitionFinalize = () => {
+                v2.classList.remove('srv--show-enforce')
+                v2.style.transform = ''
+                v2.style.transition = ''
+            }
+
+            shade.classList.add('srv--show-enforce')
             shade.__transitionFinalize = () => {
                 shade.style.opacity = ''
                 shade.style.transition = ''
@@ -138,21 +162,9 @@ export default class StackedRouterView extends Vue {
             }
         }
 
-        if (v2) {
-            const offset = (ratio - 1) * v2.clientWidth / 5
-            v2.style.transform = `translate(${offset}px)`
-            if (ev.isFirst) {
-                v2.classList.add('srv--show-enforce')
-                v2.__transitionFinalize = () => {
-                    v2.classList.remove('srv--show-enforce')
-                    v2.style.transform = ''
-                    v2.style.transition = ''
-                }
-            }
-        }
-
         if (ev.isFinal) {
-            if (panOffset > v1.clientWidth / 2 || this.velocity.v > 0.3) {
+            const v = this.velocity.v
+            if ((panOffset > v1.clientWidth / 2 && v > 0) || v > 0.3) {
                 v1.style.transition =
                     v2.style.transition =
                     shade.style.transition = 'all 0.2s'
@@ -185,7 +197,6 @@ export default class StackedRouterView extends Vue {
         this.velocity.update(ev.duration, ev.delta.x)
     }
 }
-
 </script>
 <style >
 .srv--transition-ease-out {
