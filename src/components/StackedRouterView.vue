@@ -18,7 +18,7 @@
             />
         </div>
         <div
-            class="absolute-full srv--shade-bg"
+            class="absolute-full stack--shade-bg"
             ref="shade"
             v-show="false"
         />
@@ -62,8 +62,8 @@ export default Vue.extend({
     methods: {
         async guard(f: () => Promise<unknown>) {
             await this.transitionDone
-            this.$el.classList.add('srv--disable-pointer-events')
-            this.transitionDone = f().then(() => this.$el.classList.remove('srv--disable-pointer-events'))
+            this.$el.classList.add('stack--disable-pointer-events')
+            this.transitionDone = f().then(() => this.$el.classList.remove('stack--disable-pointer-events'))
             return this.transitionDone
         },
         getViews() {
@@ -92,7 +92,7 @@ export default Vue.extend({
             if (!ev.isFirst && !ev.isFinal) {
                 this.rafId = requestAnimationFrame(() => {
                     v1.style.transform = `translate(${panOffset}px)`
-                    v2.style.transform = `translate(${(ratio - 1) * v2.clientWidth / 5}px)`
+                    v2.style.transform = `translate(calc(var(--stack-v2-offset)*${(1 - ratio)}))`
                     shade.style.opacity = `${1 - ratio}`
                     this.rafId = undefined
                 })
@@ -104,46 +104,46 @@ export default Vue.extend({
                     v1.style.transition = ''
                 }
 
-                v2.classList.add('srv--show-enforce')
+                v2.classList.add('stack--show-important')
                 v2.__transitionFinalize = () => {
-                    v2.classList.remove('srv--show-enforce')
+                    v2.classList.remove('stack--show-important')
                     v2.style.transform = ''
                     v2.style.transition = ''
                 }
 
-                shade.classList.add('srv--show-enforce')
+                shade.classList.add('stack--show-important')
                 shade.__transitionFinalize = () => {
                     shade.style.opacity = ''
                     shade.style.transition = ''
-                    shade.classList.remove('srv--show-enforce')
+                    shade.classList.remove('stack--show-important')
                 }
             }
 
             if (ev.isFinal) {
                 const v = this.velometer.velocity
-                if ((panOffset > v1.clientWidth / 2 && v > 0) || v > 0.3) {
+                if ((panOffset > v1.clientWidth / 2 && v >= 0) || v > 0.3) {
                     v1.style.transition =
                         v2.style.transition =
-                        shade.style.transition = 'all 0.2s'
+                        shade.style.transition = 'var(--stack-transition-short)'
                     this.$router.go(-1)
                 } else {
                     this.guard(async () => {
                         v1.style.transition =
                             v2.style.transition =
-                            shade.style.transition = 'all 0.2s cubic-bezier(0, 0, 0.2, 1)'
+                            shade.style.transition = 'var(--stack-transition-short)'
 
                         const ts = [
                             transit(v1, {
-                                to: 'srv--v1-in-enforce'
+                                to: 'stack--v1-in-important'
                             }),
                             transit(shade, {
-                                to: 'srv--shade-opaque-enforce'
+                                to: 'stack--shade-mask-important'
                             })
                         ]
 
                         if (v2) {
                             ts.push(transit(v2, {
-                                to: 'srv--v2-out-enforce'
+                                to: 'stack--v2-out-important'
                             }))
                         }
                         await Promise.all(ts)
@@ -165,18 +165,18 @@ export default Vue.extend({
                     const { v1, v2, shade } = this.getViews()
                     await Promise.all([
                         transit(v1, {
-                            from: 'srv--v1-out',
-                            to: 'srv--v1-in-enforce',
-                            active: 'srv--transition-ease-out'
+                            from: 'stack--v1-out',
+                            to: 'stack--v1-in-important',
+                            active: 'stack--transition'
                         }),
                         transit(v2, {
-                            to: 'srv--v2-out-enforce',
-                            active: 'srv--transition,srv--show-enforce'
+                            to: 'stack--v2-out-important',
+                            active: 'stack--transition,stack--show-important'
                         }),
                         transit(shade, {
-                            from: 'srv--shade-transparent',
-                            to: 'srv--shade-opaque-enforce',
-                            active: 'srv--transition,srv--show-enforce'
+                            from: 'stack--shade-clear',
+                            to: 'stack--shade-mask-important',
+                            active: 'stack--transition,stack--show-important'
                         })
                     ])
                 } else if (newVal.length < oldVal.length) {
@@ -184,17 +184,17 @@ export default Vue.extend({
                     const { v1, v2, shade } = this.getViews()
                     await Promise.all([
                         transit(v1, {
-                            to: 'srv--v1-out-enforce',
-                            active: 'srv--transition'
+                            to: 'stack--v1-out-important',
+                            active: 'stack--transition'
                         }),
                         transit(v2, {
-                            from: 'srv--v2-out',
-                            to: 'srv--v2-in-enforce',
-                            active: 'srv--transition,srv--show-enforce'
+                            from: 'stack--v2-out',
+                            to: 'stack--v2-in-important',
+                            active: 'stack--transition,stack--show-important'
                         }),
                         transit(shade, {
-                            to: 'srv--shade-transparent-enforce',
-                            active: 'srv--transition,srv--show-enforce'
+                            to: 'stack--shade-clear-important',
+                            active: 'stack--transition,stack--show-important'
                         })
                     ])
                     this.stack = newVal
@@ -207,49 +207,48 @@ export default Vue.extend({
 })
 </script>
 <style >
-.srv--transition-ease-out {
-    transition: all 0.35s cubic-bezier(0, 0, 0.2, 1);
+:root {
+    --stack-transition: all 0.35s;
+    --stack-transition-short: all 0.2s;
+    --stack-v2-offset: -20%;
 }
-.srv--transition {
-    transition: all 0.35s;
+.stack--transition {
+    transition: var(--stack-transition);
 }
-.srv--v1-out-enforce {
-    transform: translate(100%) !important;
-}
-.srv--v1-out {
+.stack--v1-out {
     transform: translate(100%);
 }
-.srv--v1-in-enforce {
+.stack--v1-out-important {
+    transform: translate(100%) !important;
+}
+.stack--v1-in-important {
     transform: translate(0px) !important;
 }
-.srv--v2-out-enforce {
-    transform: translate(-20%) !important;
+.stack--v2-out {
+    transform: translate(var(--stack-v2-offset));
 }
-.srv--v2-out {
-    transform: translate(-20%);
+.stack--v2-out-important {
+    transform: translate(var(--stack-v2-offset)) !important;
 }
-.srv--v2-in-enforce {
+.stack--v2-in-important {
     transform: translate(0px) !important;
 }
-.srv--show-enforce {
+.stack--show-important {
     display: block !important;
 }
-.srv--disable-pointer-events {
+.stack--disable-pointer-events {
     pointer-events: none;
 }
-.srv--shade-transparent {
+.stack--shade-clear {
     opacity: 0;
 }
-.srv--shade-transparent-enforce {
+.stack--shade-clear-important {
     opacity: 0 !important;
 }
-.srv--shade-opaque {
-    opacity: 1;
-}
-.srv--shade-opaque-enforce {
+.stack--shade-mask-important {
     opacity: 1 !important;
 }
-.srv--shade-bg {
+.stack--shade-bg {
     background-color: rgba(0, 0, 0, 0.2);
 }
 </style>
