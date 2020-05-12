@@ -22,13 +22,14 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import Vue from 'vue'
 
-@Component
-export default class EssentialLink extends Vue {
-    @Prop(String) title!: string
-    @Prop({ type: String, default: '' }) caption!: string
-    @Prop({ type: String, default: '#' }) link!: string
-    @Prop({ type: String, default: '' }) icon!: string
-}
+export default Vue.extend({
+    props: {
+        title: { type: String },
+        caption: { type: String, default: '' },
+        link: { type: String, default: '#' },
+        icon: { type: String, default: '' }
+    }
+})
 </script>

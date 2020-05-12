@@ -2,7 +2,7 @@
     <q-page
         @mousedown.capture="testTouchPan"
         @touchstart.capture="testTouchPan"
-        v-touch-pan.right.mouse.prevent="onTouchPan"
+        v-touch-pan.right.mouse.prevent="handleTouchPan"
     >
         <div
             class="absolute-top"
@@ -25,178 +25,186 @@
     </q-page>
 </template>
 <script lang="ts">
-import { Vue, Component, Watch } from 'vue-property-decorator'
+import Vue from 'vue'
 import { ScopedEntry } from 'vue-router-stack'
 import { transit } from 'core/utils'
 
-@Component
-export default class StackedRouterView extends Vue {
-    stack = this.$stack.scoped
-    transitionDone: unknown
-
-    // guard the transition process by disable pointer events
-    async guard(f: () => Promise<unknown>) {
-        await this.transitionDone
-        this.$el.classList.add('srv--disable-pointer-events')
-        this.transitionDone = f().then(() => this.$el.classList.remove('srv--disable-pointer-events'))
-        return this.transitionDone
-    }
-
-    getViews() {
-        const views = this.$refs.views as HTMLElement[]
-        return {
-            v1: views[views.length - 1],
-            v2: views[views.length - 2],
-            shade: this.$refs.shade as HTMLElement
-        }
-    }
-
-    @Watch('$stack.scoped')
-    stackChanged(newVal: ScopedEntry[], oldVal: ScopedEntry[]) {
-        this.guard(async () => {
-            // TODO more accurate transition judgement
-            if (newVal.length > oldVal.length) {
-                // push in
-                this.stack = newVal
-                await this.$nextTick()
-                const { v1, v2, shade } = this.getViews()
-                await Promise.all([
-                    transit(v1, {
-                        from: 'srv--v1-out',
-                        to: 'srv--v1-in-enforce',
-                        active: 'srv--transition-ease-out'
-                    }),
-                    transit(v2, {
-                        to: 'srv--v2-out-enforce',
-                        active: 'srv--transition,srv--show-enforce'
-                    }),
-                    transit(shade, {
-                        from: 'srv--shade-transparent',
-                        to: 'srv--shade-opaque-enforce',
-                        active: 'srv--transition,srv--show-enforce'
-                    })
-                ])
-            } else if (newVal.length < oldVal.length) {
-                // pop out
-                const { v1, v2, shade } = this.getViews()
-                await Promise.all([
-                    transit(v1, {
-                        to: 'srv--v1-out-enforce',
-                        active: 'srv--transition'
-                    }),
-                    transit(v2, {
-                        from: 'srv--v2-out',
-                        to: 'srv--v2-in-enforce',
-                        active: 'srv--transition,srv--show-enforce'
-                    }),
-                    transit(shade, {
-                        to: 'srv--shade-transparent-enforce',
-                        active: 'srv--transition,srv--show-enforce'
-                    })
-                ])
-                this.stack = newVal
-            } else {
-                this.stack = newVal
-            }
-        })
-    }
-
-    velocity = {
-        t1: 0,
-        t2: 0,
-        d: 0,
-        update(t: number, d: number) {
-            this.t1 = this.t2
-            this.t2 = t
-            this.d = d
+function newVelometer() {
+    let _t1 = 0
+    let _t2 = 0
+    let _delta = 0
+    return {
+        update(t: number, delta: number) {
+            _t1 = _t2
+            _t2 = t
+            _delta = delta
         },
-        get v() {
-            return this.d / (this.t2 - this.t1)
+        get velocity() {
+            return _delta / (_t2 - _t1)
         }
-    }
-
-    testTouchPan(ev: TouchEvent & MouseEvent) {
-        const clientX = ev.targetTouches ? ev.targetTouches[0].clientX : ev.clientX;
-        (clientX > 64 || this.stack.length < 2) && ev.stopImmediatePropagation()
-    }
-
-    rafId?: number
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onTouchPan(ev: any) {
-        const { v1, v2, shade } = this.getViews()
-
-        const panOffset = Math.max(0, ev.offset.x)
-        const ratio = Math.min(1, panOffset / v1.clientWidth)
-
-        if (this.rafId) {
-            cancelAnimationFrame(this.rafId)
-        }
-
-        if (!ev.isFirst && !ev.isFinal) {
-            this.rafId = requestAnimationFrame(() => {
-                v1.style.transform = `translate(${panOffset}px)`
-                v2.style.transform = `translate(${(ratio - 1) * v2.clientWidth / 5}px)`
-                shade.style.opacity = `${1 - ratio}`
-                this.rafId = undefined
-            })
-        }
-
-        if (ev.isFirst) {
-            v1.__transitionFinalize = () => {
-                v1.style.transform = ''
-                v1.style.transition = ''
-            }
-
-            v2.classList.add('srv--show-enforce')
-            v2.__transitionFinalize = () => {
-                v2.classList.remove('srv--show-enforce')
-                v2.style.transform = ''
-                v2.style.transition = ''
-            }
-
-            shade.classList.add('srv--show-enforce')
-            shade.__transitionFinalize = () => {
-                shade.style.opacity = ''
-                shade.style.transition = ''
-                shade.classList.remove('srv--show-enforce')
-            }
-        }
-
-        if (ev.isFinal) {
-            const v = this.velocity.v
-            if ((panOffset > v1.clientWidth / 2 && v > 0) || v > 0.3) {
-                v1.style.transition =
-                    v2.style.transition =
-                    shade.style.transition = 'all 0.2s'
-                this.$router.go(-1)
-            } else {
-                this.guard(async () => {
-                    v1.style.transition =
-                        v2.style.transition =
-                        shade.style.transition = 'all 0.2s cubic-bezier(0, 0, 0.2, 1)'
-
-                    const ts = [
-                        transit(v1, {
-                            to: 'srv--v1-in-enforce'
-                        }),
-                        transit(shade, {
-                            to: 'srv--shade-opaque-enforce'
-                        })
-                    ]
-
-                    if (v2) {
-                        ts.push(transit(v2, {
-                            to: 'srv--v2-out-enforce'
-                        }))
-                    }
-                    await Promise.all(ts)
-                })
-            }
-        }
-
-        this.velocity.update(ev.duration, ev.delta.x)
     }
 }
+
+export default Vue.extend({
+    data: () => {
+        let transitionDone: unknown
+        let rafId: number | undefined
+        return {
+            stack: [] as ScopedEntry[],
+            velometer: newVelometer(),
+            transitionDone,
+            rafId
+        }
+    },
+    created() {
+        this.stack = this.$stack.scoped
+    },
+    methods: {
+        async guard(f: () => Promise<unknown>) {
+            await this.transitionDone
+            this.$el.classList.add('srv--disable-pointer-events')
+            this.transitionDone = f().then(() => this.$el.classList.remove('srv--disable-pointer-events'))
+            return this.transitionDone
+        },
+        getViews() {
+            const views = this.$refs.views as HTMLElement[]
+            return {
+                v1: views[views.length - 1],
+                v2: views[views.length - 2],
+                shade: this.$refs.shade as HTMLElement
+            }
+        },
+        testTouchPan(ev: TouchEvent & MouseEvent) {
+            const x = (ev.targetTouches ? ev.targetTouches[0].clientX : ev.clientX) - this.$el.getBoundingClientRect().x;
+            (x < 0 || x > 64 || this.stack.length < 2) && ev.stopImmediatePropagation()
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        handleTouchPan(ev: any) {
+            const { v1, v2, shade } = this.getViews()
+
+            const panOffset = Math.max(0, ev.offset.x)
+            const ratio = Math.min(1, panOffset / v1.clientWidth)
+
+            if (this.rafId) {
+                cancelAnimationFrame(this.rafId)
+            }
+
+            if (!ev.isFirst && !ev.isFinal) {
+                this.rafId = requestAnimationFrame(() => {
+                    v1.style.transform = `translate(${panOffset}px)`
+                    v2.style.transform = `translate(${(ratio - 1) * v2.clientWidth / 5}px)`
+                    shade.style.opacity = `${1 - ratio}`
+                    this.rafId = undefined
+                })
+            }
+
+            if (ev.isFirst) {
+                v1.__transitionFinalize = () => {
+                    v1.style.transform = ''
+                    v1.style.transition = ''
+                }
+
+                v2.classList.add('srv--show-enforce')
+                v2.__transitionFinalize = () => {
+                    v2.classList.remove('srv--show-enforce')
+                    v2.style.transform = ''
+                    v2.style.transition = ''
+                }
+
+                shade.classList.add('srv--show-enforce')
+                shade.__transitionFinalize = () => {
+                    shade.style.opacity = ''
+                    shade.style.transition = ''
+                    shade.classList.remove('srv--show-enforce')
+                }
+            }
+
+            if (ev.isFinal) {
+                const v = this.velometer.velocity
+                if ((panOffset > v1.clientWidth / 2 && v > 0) || v > 0.3) {
+                    v1.style.transition =
+                        v2.style.transition =
+                        shade.style.transition = 'all 0.2s'
+                    this.$router.go(-1)
+                } else {
+                    this.guard(async () => {
+                        v1.style.transition =
+                            v2.style.transition =
+                            shade.style.transition = 'all 0.2s cubic-bezier(0, 0, 0.2, 1)'
+
+                        const ts = [
+                            transit(v1, {
+                                to: 'srv--v1-in-enforce'
+                            }),
+                            transit(shade, {
+                                to: 'srv--shade-opaque-enforce'
+                            })
+                        ]
+
+                        if (v2) {
+                            ts.push(transit(v2, {
+                                to: 'srv--v2-out-enforce'
+                            }))
+                        }
+                        await Promise.all(ts)
+                    })
+                }
+            }
+
+            this.velometer.update(ev.duration, ev.delta.x)
+        }
+    },
+    watch: {
+        '$stack.scoped'(newVal: ScopedEntry[], oldVal: ScopedEntry[]) {
+            this.guard(async () => {
+                // TODO more accurate transition judgement
+                if (newVal.length > oldVal.length) {
+                    // push in
+                    this.stack = newVal
+                    await this.$nextTick()
+                    const { v1, v2, shade } = this.getViews()
+                    await Promise.all([
+                        transit(v1, {
+                            from: 'srv--v1-out',
+                            to: 'srv--v1-in-enforce',
+                            active: 'srv--transition-ease-out'
+                        }),
+                        transit(v2, {
+                            to: 'srv--v2-out-enforce',
+                            active: 'srv--transition,srv--show-enforce'
+                        }),
+                        transit(shade, {
+                            from: 'srv--shade-transparent',
+                            to: 'srv--shade-opaque-enforce',
+                            active: 'srv--transition,srv--show-enforce'
+                        })
+                    ])
+                } else if (newVal.length < oldVal.length) {
+                    // pop out
+                    const { v1, v2, shade } = this.getViews()
+                    await Promise.all([
+                        transit(v1, {
+                            to: 'srv--v1-out-enforce',
+                            active: 'srv--transition'
+                        }),
+                        transit(v2, {
+                            from: 'srv--v2-out',
+                            to: 'srv--v2-in-enforce',
+                            active: 'srv--transition,srv--show-enforce'
+                        }),
+                        transit(shade, {
+                            to: 'srv--shade-transparent-enforce',
+                            active: 'srv--transition,srv--show-enforce'
+                        })
+                    ])
+                    this.stack = newVal
+                } else {
+                    this.stack = newVal
+                }
+            })
+        }
+    }
+})
 </script>
 <style >
 .srv--transition-ease-out {

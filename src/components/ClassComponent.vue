@@ -17,27 +17,33 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import Vue, { PropType } from 'vue'
 
-@Component
-export default class ClassComponent extends Vue {
-    @Prop({ type: String, required: true }) readonly title!: string;
-    @Prop({ type: Array, default: () => [] }) readonly todos!: M.Todo[];
-    @Prop({ type: Object, required: true }) readonly meta!: M.Meta;
-    @Prop(Boolean) readonly active!: boolean;
+export default Vue.extend({
+    props: {
+        title: { type: String, required: true },
+        todos: { type: Array, default: () => [] as M.Todo[] },
+        meta: { type: Object as PropType<M.Meta>, required: true },
+        active: { type: Boolean }
+    },
+    data: () => {
+        return {
+            clickCount: 0
+        }
+    },
+    computed: {
+        todoCount() {
+            return this.todos.length
+        }
+    },
+    methods: {
+        increment() {
+            this.clickCount++
+        },
 
-    clickCount = 0;
-
-    increment() {
-        this.clickCount++
+        prettyTodo(todo: M.Todo) {
+            return `${todo.id} - ${todo.content}`
+        }
     }
-
-    get todoCount() {
-        return this.todos.length
-    }
-
-    prettyTodo(todo: M.Todo) {
-        return `${todo.id} - ${todo.content}`
-    }
-}
+})
 </script>

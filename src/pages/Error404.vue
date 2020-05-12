@@ -19,9 +19,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import Vue from 'vue'
 
-@Component
-export default class Error404 extends Vue {
-}
+export default Vue.extend({})
 </script>
