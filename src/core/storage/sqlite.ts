@@ -1,6 +1,7 @@
 // common logics for sqlite
 
 import type { Storage } from './index'
+import { newObservable } from './observable'
 
 const schemas = [
     `CREATE TABLE IF NOT EXISTS configs (
@@ -37,6 +38,7 @@ export interface SQLRunner {
 }
 
 function wrapTable<T extends Storage.Entity>(runner: SQLRunner, tableName: string): Storage.Table<T> {
+    const ob = newObservable()
     return {
         insert: row => {
             const keys = []
@@ -47,6 +49,7 @@ function wrapTable<T extends Storage.Entity>(runner: SQLRunner, tableName: strin
             }
             return runner.exec(`INSERT INTO ${tableName} (${keys.join(',')}) VALUES(${keys.map(() => '?').join(',')})`,
                 ...values)
+                .then(() => ob.notify())
         },
         update: (cond, values) => {
             const keys = []
@@ -63,6 +66,7 @@ function wrapTable<T extends Storage.Entity>(runner: SQLRunner, tableName: strin
                 params.push(cond[key])
             }
             return runner.exec(sql, ...params)
+                .then(() => ob.notify())
         },
         delete: cond => {
             let sql = `DELETE FROM ${tableName} WHERE 1`
@@ -72,6 +76,7 @@ function wrapTable<T extends Storage.Entity>(runner: SQLRunner, tableName: strin
                 params.push(cond[key])
             }
             return runner.exec(sql, ...params)
+                .then(() => ob.notify())
         },
         all: () => {
             const opt: {
@@ -118,6 +123,9 @@ function wrapTable<T extends Storage.Entity>(runner: SQLRunner, tableName: strin
                     return runner.query(sql, ...params)
                 }
             }
+        },
+        observe: () => {
+            return ob.observe()
         }
     }
 }

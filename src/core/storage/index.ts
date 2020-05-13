@@ -69,6 +69,16 @@ export namespace Storage {
          * create a querier to filter result set upon all rows
          */
         all(): Querier<T>
+
+        /**
+         * create an observer to watch table change
+         */
+        observe(): Observer
+    }
+
+    /** the table observer */
+    export interface Observer {
+        changed(): Promise<void>
     }
 
     /** the querier */

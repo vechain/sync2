@@ -1,10 +1,13 @@
 import Dexie from 'dexie'
 import type { Storage } from './index'
+import { newObservable } from './observable'
 
 function wrapTable<T extends Storage.Entity>(table: Dexie.Table<T, number>): Storage.Table<T> {
+    const ob = newObservable()
     return {
         insert: async row => {
             await table.add(row as T)
+            ob.notify()
         },
         update: async (cond, values) => {
             if (Object.keys(cond).length > 0) {
@@ -12,6 +15,7 @@ function wrapTable<T extends Storage.Entity>(table: Dexie.Table<T, number>): Sto
             } else {
                 await table.toCollection().modify(values)
             }
+            ob.notify()
         },
         delete: async cond => {
             if (Object.keys(cond).length > 0) {
@@ -19,6 +23,7 @@ function wrapTable<T extends Storage.Entity>(table: Dexie.Table<T, number>): Sto
             } else {
                 await table.toCollection().delete()
             }
+            ob.notify()
         },
         all: () => {
             const opt: {
@@ -63,6 +68,9 @@ function wrapTable<T extends Storage.Entity>(table: Dexie.Table<T, number>): Sto
                     return (c || table).toArray()
                 }
             }
+        },
+        observe: () => {
+            return ob.observe()
         }
     }
 }
