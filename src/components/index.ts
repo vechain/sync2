@@ -1,11 +1,9 @@
-import ClassComponent from './ClassComponent.vue'
-import EssentialLink from './EssentialLink.vue'
 import StackedRouterView from './StackedRouterView.vue'
+import AccountCard from './AccountCard.vue'
 
 const components: { [name: string]: Vue.VueConstructor } = {
-    ClassComponent,
-    EssentialLink,
-    StackedRouterView
+    StackedRouterView,
+    AccountCard
 }
 
 export default components
