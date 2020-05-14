@@ -3,8 +3,13 @@ import { RouteConfig } from 'vue-router'
 const routes: RouteConfig[] = [
     {
         path: '/',
-        component: () => import('layouts/MainLayout.vue'),
-        children: [{ path: '', component: () => import('pages/Index.vue') }]
+        name: 'main',
+        component: () => import('layouts/Main.vue'),
+        children: [{
+            path: '/wallets/:id',
+            name: 'wallet',
+            component: () => import('pages/Wallet.vue')
+        }]
     }
 ]
 
