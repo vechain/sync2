@@ -54,23 +54,23 @@ module.exports = configure(function (/* ctx */) {
       //            (fastest compile time; minimum bundle size; most tedious)
       // * true   - Import everything from Quasar
       //            (not treeshaking Quasar; biggest bundle size; convenient)
-      all: false,
+      all: true,
 
-      components: [
-        "QLayout",
-        "QHeader",
-        "QToolbar",
-        "QToolbarTitle",
-        "QDrawer",
-        "QList",
-        "QPageContainer",
-        "QPage",
-        "QItem",
-        "QItemSection",
-        "QIcon",
-        "QBtn",
-        "QItemLabel"        
-      ],
+      // components: [
+      //   "QLayout",
+      //   "QHeader",
+      //   "QToolbar",
+      //   "QToolbarTitle",
+      //   "QDrawer",
+      //   "QList",
+      //   "QPageContainer",
+      //   "QPage",
+      //   "QItem",
+      //   "QItemSection",
+      //   "QIcon",
+      //   "QBtn",
+      //   "QItemLabel"
+      // ],
       directives: [
         "TouchPan"
       ],
