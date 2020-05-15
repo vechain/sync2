@@ -1,7 +1,8 @@
 import { secp256k1 } from 'thor-devkit/dist/cry/secp256k1'
 import { init as initSalt } from './salt'
 import { newVault } from './vault'
-import { hdGenerateMnemonic, hdDeriveMnemonic, encrypt } from 'core/worker'
+import { hdGenerateMnemonic, hdDeriveMnemonic, encrypt, decrypt } from 'core/worker'
+import { randomBytes } from 'crypto'
 
 /** describes the secure container holds wallet key */
 export interface Vault {
@@ -51,6 +52,28 @@ export namespace Vault {
          * @returns the private key
          */
         unlock(password: string): Promise<Buffer>
+    }
+
+    /**
+     * generate the password shadow, which is the cipher text of random bytes encrypted
+     * by user password
+     * @param password user password
+     * @returns password shadow
+     */
+    export async function shadowPassword(password: string) {
+        const salt = await initSalt()
+        const glob = await encrypt(randomBytes(32), password, salt)
+        return glob
+    }
+
+    /**
+     * verify use password against the given password shadow
+     * @param shadow the password shadow
+     * @param password use password
+     */
+    export async function verifyPassword(shadow: string, password: string) {
+        const salt = await initSalt()
+        await decrypt(shadow, password, salt)
     }
 
     /**
