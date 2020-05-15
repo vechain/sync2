@@ -4,9 +4,9 @@ import { hdDeriveXPub, hdDeriveMnemonic, decrypt } from 'core/worker'
 import { publicKeyToAddress } from 'thor-devkit/dist/cry/address'
 
 export async function deriveNode(salt: Buffer, entity: Entity, index: number): Promise<Vault.Node> {
-    if (entity.type === 'sk') {
+    if (entity.type === 'static') {
         if (index !== 0) {
-            // sk type vault only support 0-index node
+            // static type vault only support 0-index node
             throw new Error('invalid node index')
         }
         const addr = '0x' + publicKeyToAddress(Buffer.from(entity.pub, 'hex')).toString('hex')

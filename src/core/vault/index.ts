@@ -36,10 +36,10 @@ export interface Vault {
 export namespace Vault {
     /**
      * hd: hierarchical deterministic
-     * sk: non-HD, static private key
+     * static: non-HD, static private key
      * usb: external USB device
      */
-    export type Type = 'hd' | 'sk' | 'usb'
+    export type Type = 'hd' | 'static' | 'usb'
 
     /** the vault node corresponds to an account */
     export interface Node {
@@ -97,14 +97,14 @@ export namespace Vault {
 
     /**
      * create static key vault
-     * @param sk the static private key
+     * @param sk the private key
      * @param password user password
      */
-    export async function createSK(sk: Buffer, password: string): Promise<Vault> {
+    export async function createStatic(sk: Buffer, password: string): Promise<Vault> {
         const salt = await initSalt()
         const glob = await encrypt(sk, password, salt)
         return newVault(salt, {
-            type: 'sk',
+            type: 'static',
             pub: secp256k1.derivePublicKey(sk).toString('hex'),
             cipherGlob: glob
         })
