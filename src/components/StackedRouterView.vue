@@ -27,7 +27,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { ScopedEntry } from 'vue-router-stack'
-import { transit } from 'core/utils'
+import { transit } from 'src/utils/transit'
 
 function newVelometer() {
     let _t1 = 0
