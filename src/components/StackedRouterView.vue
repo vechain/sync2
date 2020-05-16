@@ -158,7 +158,7 @@ export default Vue.extend({
         '$stack.scoped'(newVal: ScopedEntry[], oldVal: ScopedEntry[]) {
             this.guard(async () => {
                 // TODO more accurate transition judgement
-                if (newVal.length > oldVal.length) {
+                if (newVal.length > oldVal.length && newVal.length > 1) {
                     // push in
                     this.stack = newVal
                     await this.$nextTick()
@@ -179,7 +179,7 @@ export default Vue.extend({
                             active: 'stack--transition,stack--show-important'
                         })
                     ])
-                } else if (newVal.length < oldVal.length) {
+                } else if (newVal.length < oldVal.length && newVal.length > 0) {
                     // pop out
                     const { v1, v2, shade } = this.getViews()
                     await Promise.all([
