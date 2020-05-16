@@ -20,7 +20,7 @@ module.exports = configure(function (/* ctx */) {
       'i18n',
       'axios',
       'register-components',
-      'state'
+      'misc'
     ],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
