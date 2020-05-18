@@ -2,8 +2,9 @@ import Vue from 'vue'
 import { Storage } from 'core/storage'
 
 export function build() {
+    // directly hold storage entities in state
     const state = Vue.observable({
-        items: [] as M.Wallet[],
+        entities: [] as Storage.WalletEntity[],
         currentIndex: 0
     });
 
@@ -12,13 +13,7 @@ export function build() {
         const ob = s.wallets.observe()
         for (; ;) {
             try {
-                const rows = await s.wallets.all().query()
-                state.items = rows.map(r => ({
-                    id: r.id,
-                    network: r.network,
-                    vault: r.vault,
-                    meta: JSON.parse(r.meta)
-                }))
+                state.entities = await s.wallets.all().query()
             } catch (err) {
                 console.warn(err)
             }
@@ -26,12 +21,21 @@ export function build() {
         }
     })()
 
+    // transform storage entities into models
     return {
-        get items() { return state.items },
+        get items() {
+            return state.entities.map<M.Wallet>(r => ({
+                id: r.id,
+                network: r.network,
+                vault: r.vault,
+                meta: JSON.parse(r.meta)
+            }))
+        },
         get current() {
+            const items = this.items
             const i = state.currentIndex
-            if (i >= 0 && i < state.items.length) {
-                return state.items[i]
+            if (i >= 0 && i < items.length) {
+                return items[i]
             }
             return null
         },
