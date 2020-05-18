@@ -1,11 +1,25 @@
-// here define view models
+// here define models
 declare namespace M {
-    interface Todo {
-        id: number;
-        content: string;
+    interface Network {
+        id: string
+        nodeUrl: string
+        givenName?: string
     }
 
-    interface Meta {
-        totalCount: number;
+    interface Wallet {
+        id: number
+        network: string
+        vault: string
+        meta: Wallet.Meta
+    }
+
+    namespace Wallet {
+        interface Meta {
+            name: string
+            addresses: {
+                index: number
+                address: string // cached address
+            }[]
+        }
     }
 }
