@@ -20,7 +20,8 @@ function newInstance(node: Node): Instance {
         driver = new DriverNoVendor(net, genesis)
         const framework = new Framework(driver)
 
-        await framework.thor.block('best').get()
+        // make sure the returned framework is warmed up
+        await framework.thor.block().get()
 
         return framework
     })()
