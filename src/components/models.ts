@@ -3,7 +3,7 @@ declare namespace M {
     interface Network {
         id: string
         nodeUrl: string
-        givenName?: string
+        name: string
     }
 
     interface Wallet {
