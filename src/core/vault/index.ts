@@ -9,7 +9,7 @@ export interface Vault {
     readonly type: Vault.Type
 
     /**
-     * derives a new vault node, which corresponds to an account.
+     * derives a new vault node, which corresponds to an address.
      * @param index node index start from 0
      * @returns derived node instance
      */
@@ -42,7 +42,7 @@ export namespace Vault {
      */
     export type Type = 'hd' | 'static' | 'usb'
 
-    /** the vault node corresponds to an account */
+    /** the vault node corresponds to an address */
     export interface Node {
         readonly address: string
         readonly index: number
