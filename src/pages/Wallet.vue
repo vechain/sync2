@@ -1,8 +1,8 @@
 <template>
-    <q-page>
+    <q-page v-if="wallet">
         <q-item class="q-px-lg">
             <q-item-section>
-                <span class="text-h6">{{wallet}}</span>
+                <span class="text-h6">{{wallet.meta.name}}</span>
             </q-item-section>
             <q-item-section side>
                 <q-btn
@@ -34,62 +34,9 @@
                 </q-btn>
             </q-item-section>
         </q-item>
-        <q-carousel
-            v-model="slide"
-            transition-prev="slide-right"
-            transition-next="slide-left"
-            swipeable
-            animated
-            :padding="true"
-            :vertical="false"
-            :arrows="false"
-            :navigation="false"
-            height="200px"
-            class="bg-grey-1"
-        >
-            <q-carousel-slide
-                :name="'style-' + i"
-                class="row justify-center"
-                v-for="i in 5"
-                :key="i"
-            >
-                <AccountCard
-                    class="col-10"
-                    :name="i"
-                />
-            </q-carousel-slide>
-        </q-carousel>
-        <q-list>
-            <q-separator />
-            <template v-for="i in 6">
-                <q-item :key="i">
-                    <q-item-section avatar>
-                        <q-avatar>
-                            <img src="https://cdn.quasar.dev/img/avatar2.jpg">
-                        </q-avatar>
-                    </q-item-section>
-
-                    <q-item-section>
-                        <q-item-label lines="1">VET</q-item-label>
-                        <q-item-label
-                            caption
-                            lines="2"
-                        >
-                            VeChainCoin
-                        </q-item-label>
-                    </q-item-section>
-
-                    <q-item-section side>
-                        {{(12312313).toLocaleString()}}
-                    </q-item-section>
-                </q-item>
-                <q-separator
-                    v-if="i !== 6"
-                    :key="i + 's'"
-                    inset="item"
-                />
-            </template>
-        </q-list>
+        <AddressCarousel :addresses="wallet.meta.addresses" />
+        <q-separator />
+        <Tokens />
         <q-separator />
     </q-page>
 </template>
@@ -98,13 +45,12 @@ import Vue from 'vue'
 export default Vue.extend({
     data() {
         return {
-            showMenu: false,
-            slide: 'style-1'
+            accounts: []
         }
     },
     computed: {
         wallet() {
-            return 'wallet ' + this.$route.params.id
+            return this.$state.wallet.current
         }
     }
 })
