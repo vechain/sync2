@@ -5,7 +5,7 @@ export function build() {
     // directly hold storage entities in state
     const state = Vue.observable({
         entities: [] as Storage.WalletEntity[],
-        currentIndex: 0
+        currentId: 0
     });
 
     (async () => {
@@ -32,15 +32,12 @@ export function build() {
             }))
         },
         get current() {
-            const items = this.items
-            const i = state.currentIndex
-            if (i >= 0 && i < items.length) {
-                return items[i]
-            }
-            return null
+            return this.items.find(item => {
+                return item.id === state.currentId
+            })
         },
-        setCurrentIndex(i: number) {
-            state.currentIndex = i
+        setCurrentId(id: number) {
+            state.currentId = id
         }
     }
 }
