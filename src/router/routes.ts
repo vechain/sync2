@@ -6,7 +6,7 @@ const routes: RouteConfig[] = [
         name: 'main',
         component: () => import('layouts/Main.vue'),
         children: [{
-            path: '/wallets/:id',
+            path: '/wallet',
             name: 'wallet',
             component: () => import('pages/Wallet.vue')
         }]
