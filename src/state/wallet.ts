@@ -5,7 +5,8 @@ export function build() {
     // directly hold storage entities in state
     const state = Vue.observable({
         entities: [] as Storage.WalletEntity[],
-        currentId: 0
+        currentId: 0,
+        ready: false
     });
 
     (async () => {
@@ -14,6 +15,7 @@ export function build() {
         for (; ;) {
             try {
                 state.entities = await s.wallets.all().query()
+                state.ready = true
             } catch (err) {
                 console.warn(err)
             }
@@ -23,7 +25,7 @@ export function build() {
 
     // transform storage entities into models
     return {
-        get items() {
+        get list() {
             return state.entities.map<M.Wallet>(r => ({
                 id: r.id,
                 network: r.network,
@@ -32,12 +34,13 @@ export function build() {
             }))
         },
         get current() {
-            return this.items.find(item => {
+            return this.list.find(item => {
                 return item.id === state.currentId
             })
         },
         setCurrentId(id: number) {
             state.currentId = id
-        }
+        },
+        get ready() { return state.ready }
     }
 }

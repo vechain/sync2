@@ -16,7 +16,8 @@ const preset: Glob = {
 
 export function build() {
     const state = Vue.observable({
-        glob: {} as Glob
+        glob: {} as Glob,
+        ready: false
     });
 
     (async () => {
@@ -35,6 +36,7 @@ export function build() {
                     state.glob = JSON.parse(data)
                     lastData = data
                 }
+                state.ready = true
             } catch (err) {
                 console.warn(err)
             }
@@ -42,7 +44,7 @@ export function build() {
         }
     })()
     return {
-        get items() {
+        get list() {
             const glob: Glob = {}
             // deeply merge preset with state
             for (const key in preset) {
@@ -59,7 +61,8 @@ export function build() {
                     name: v.givenName || 'private'
                 }
             })
-        }
+        },
+        get ready() { return state.ready }
     }
 }
 

@@ -83,7 +83,7 @@ import Vue from 'vue'
 export default Vue.extend({
     computed: {
         wallets() {
-            return this.$state.wallet.items
+            return this.$state.wallet.list
         },
         current() {
             return this.$state.wallet.current
