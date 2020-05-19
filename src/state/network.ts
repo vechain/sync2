@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import { Storage } from 'core/storage'
 
 const configKey = 'networks'
@@ -14,9 +15,9 @@ const preset: Glob = {
 }
 
 export function build() {
-    const state = {
+    const state = Vue.observable({
         glob: {} as Glob
-    };
+    });
 
     (async () => {
         const s = await Storage.init()
