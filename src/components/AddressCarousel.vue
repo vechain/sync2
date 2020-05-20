@@ -34,7 +34,7 @@ export default Vue.extend({
         }
     },
     props: {
-        addresses: Array // M.Wallet.Meta[addresses]
+        addresses: Array as () => M.Wallet.Meta['addresses']
     }
 })
 </script>

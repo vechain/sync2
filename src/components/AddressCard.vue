@@ -9,7 +9,7 @@
 import Vue from 'vue'
 export default Vue.extend({
     props: {
-        addressItem: Object // M.Wallet.Meta[addresses][item]
+        addressItem: Object as () => M.Wallet.Meta['addresses'][0]
     }
 })
 
