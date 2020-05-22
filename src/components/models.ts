@@ -1,14 +1,13 @@
 // here define models
 declare namespace M {
-    interface Network {
-        id: string
-        nodeUrl: string
-        name: string
+    interface Node {
+        gid: string // the genesis id
+        url: string
     }
 
     interface Wallet {
         id: number
-        network: string
+        gid: string
         vault: string
         meta: Wallet.Meta
     }

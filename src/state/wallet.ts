@@ -28,7 +28,7 @@ export function build() {
         get list() {
             return state.entities.map<M.Wallet>(r => ({
                 id: r.id,
-                network: r.network,
+                gid: r.gid,
                 vault: r.vault,
                 meta: JSON.parse(r.meta)
             }))
