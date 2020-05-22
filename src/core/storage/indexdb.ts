@@ -82,8 +82,8 @@ export async function open(): Promise<Storage> {
 
     db.version(1).stores({
         configs: '++id, &key',
-        wallets: '++id, network',
-        activities: '++id, [network+walletId+createdTime]'
+        wallets: '++id, gid',
+        activities: '++id, [gid+walletId+createdTime]'
     })
     await db.open()
 

@@ -11,22 +11,22 @@ const schemas = [
     )`,
     `CREATE TABLE IF NOT EXISTS wallets (
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-        network TEXT NOT NULL,  
+        gid TEXT NOT NULL,  
         vault TEXT,
         meta TEXT  
     )`,
     `CREATE INDEX IF NOT EXISTS wallets_i0 ON wallets(
-        network
+        gid
     )`,
     `CREATE TABLE IF NOT EXISTS activities (
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-        network TEXT NOT NULL, 
+        gid TEXT NOT NULL, 
         walletId INTEGER NOT NULL,
         createdTime INTEGER NOT NULL,
         glob TEXT
     )`,
     `CREATE INDEX IF NOT EXISTS activities_i0 ON activities(
-        network,
+        gid,
         walletId,
         createdTime
     )`
