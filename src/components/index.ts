@@ -3,7 +3,8 @@ import AddressCard from './AddressCard.vue'
 import AddressCarousel from './AddressCarousel.vue'
 import Tokens from './Tokens.vue'
 import MainDrawerContent from './MainDrawerContent.vue'
-import ConnexAccount from './ConnexAccount.vue'
+import ConnexObject from './ConnexObject'
+import ConnexContinuous from './ConnexContinuous'
 
 const components: { [name: string]: Vue.VueConstructor } = {
     StackedRouterView,
@@ -11,7 +12,8 @@ const components: { [name: string]: Vue.VueConstructor } = {
     AddressCarousel,
     Tokens,
     MainDrawerContent,
-    ConnexAccount
+    ConnexObject,
+    ConnexContinuous
 }
 
 export default components
