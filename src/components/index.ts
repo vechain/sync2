@@ -5,6 +5,7 @@ import Tokens from './Tokens.vue'
 import MainDrawerContent from './MainDrawerContent.vue'
 import ConnexObject from './ConnexObject'
 import ConnexContinuous from './ConnexContinuous'
+import PinCodeInput from './PinCodeInput.vue'
 
 const components: { [name: string]: Vue.VueConstructor } = {
     StackedRouterView,
@@ -13,7 +14,8 @@ const components: { [name: string]: Vue.VueConstructor } = {
     Tokens,
     MainDrawerContent,
     ConnexObject,
-    ConnexContinuous
+    ConnexContinuous,
+    PinCodeInput
 }
 
 export default components
