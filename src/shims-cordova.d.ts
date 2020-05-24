@@ -3,6 +3,9 @@
 declare interface Window {
     readonly sqlitePlugin: any
     handleOpenURL: ((url: string) => void) | undefined
+    plugins: {
+        touchid: any
+    }
 }
 
 declare var cordova: {
