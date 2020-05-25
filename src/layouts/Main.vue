@@ -4,6 +4,7 @@
             <!-- a placeholder to enable toolbar style
                 body.q-ios-padding .q-layout--standard .q-header > .q-toolbar:nth-child(2)
             -->
+            <div />
             <q-toolbar class="bg-white">
                 <q-btn
                     color="white"
