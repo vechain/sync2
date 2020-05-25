@@ -34,6 +34,10 @@ export interface BioPass {
 export namespace BioPass {
     export async function init(name: string): Promise<BioPass | null> {
         if (process.env.MODE === 'cordova') {
+            await new Promise(resolve => {
+                document.addEventListener('deviceready', () => resolve(), false)
+            })
+
             const touchid = window.plugins.touchid
 
             let type = ''
