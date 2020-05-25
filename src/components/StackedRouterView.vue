@@ -27,7 +27,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { ScopedEntry } from 'vue-router-stack'
-import { transit } from 'src/utils/transit'
+import { transitAdvanced } from 'src/utils/transit'
 
 function newVelometer() {
     let _t1 = 0
@@ -133,20 +133,20 @@ export default Vue.extend({
                             shade.style.transition = 'var(--stack-transition-short)'
 
                         const ts = [
-                            transit(v1, {
+                            transitAdvanced(v1, {
                                 to: 'stack--v1-in-important'
                             }),
-                            transit(shade, {
+                            transitAdvanced(shade, {
                                 to: 'stack--shade-mask-important'
                             })
                         ]
 
                         if (v2) {
-                            ts.push(transit(v2, {
+                            ts.push(transitAdvanced(v2, {
                                 to: 'stack--v2-out-important'
                             }))
                         }
-                        await Promise.all(ts)
+                        (await Promise.all(ts)).forEach(f => f())
                     })
                 }
             }
@@ -162,41 +162,41 @@ export default Vue.extend({
                     // push in
                     this.stack = newVal
                     await this.$nextTick()
-                    const { v1, v2, shade } = this.getViews()
-                    await Promise.all([
-                        transit(v1, {
+                    const { v1, v2, shade } = this.getViews();
+                    (await Promise.all([
+                        transitAdvanced(v1, {
                             from: 'stack--v1-out',
                             to: 'stack--v1-in-important',
                             active: 'stack--transition'
                         }),
-                        transit(v2, {
+                        transitAdvanced(v2, {
                             to: 'stack--v2-out-important',
                             active: 'stack--transition,stack--show-important'
                         }),
-                        transit(shade, {
+                        transitAdvanced(shade, {
                             from: 'stack--shade-clear',
                             to: 'stack--shade-mask-important',
                             active: 'stack--transition,stack--show-important'
                         })
-                    ])
+                    ])).forEach(f => f())
                 } else if (newVal.length < oldVal.length && newVal.length > 0) {
                     // pop out
-                    const { v1, v2, shade } = this.getViews()
-                    await Promise.all([
-                        transit(v1, {
+                    const { v1, v2, shade } = this.getViews();
+                    (await Promise.all([
+                        transitAdvanced(v1, {
                             to: 'stack--v1-out-important',
                             active: 'stack--transition'
                         }),
-                        transit(v2, {
+                        transitAdvanced(v2, {
                             from: 'stack--v2-out',
                             to: 'stack--v2-in-important',
                             active: 'stack--transition,stack--show-important'
                         }),
-                        transit(shade, {
+                        transitAdvanced(shade, {
                             to: 'stack--shade-clear-important',
                             active: 'stack--transition,stack--show-important'
                         })
-                    ])
+                    ])).forEach(f => f())
                     this.stack = newVal
                 } else {
                     this.stack = newVal

@@ -25,6 +25,58 @@ function getTimeout(el: HTMLElement) {
 }
 
 /**
+ * manually transit an element in advanced, that returns cleanup function to make it possible
+ * for synchronizing multi-transitions
+ * @param el the target element
+ * @param options transition options
+ */
+export async function transitAdvanced(
+    el: HTMLElement,
+    classes: {
+        from?: string
+        to?: string
+        active?: string
+    }
+) {
+    classes.from && el.classList.add(...classes.from.split(','))
+    await new Promise(requestAnimationFrame)
+
+    classes.active && el.classList.add(...classes.active.split(','))
+    await new Promise(requestAnimationFrame)
+
+    classes.from && el.classList.remove(...classes.from.split(','))
+    classes.to && el.classList.add(...classes.to.split(','))
+
+    let removeListener = () => { }
+    const transitionEnd = new Promise(resolve => {
+        const cb = (ev: TransitionEvent) => {
+            if (ev && ev.target !== el) {
+                return
+            }
+            if (!ev || ev.propertyName.endsWith('transform')) {
+                resolve()
+            }
+        }
+        el.addEventListener('transitionend', cb)
+        removeListener = () => el.removeEventListener('transitionend', cb)
+    })
+
+    const timeout = new Promise(resolve => setTimeout(resolve, getTimeout(el) + 1))
+    await Promise.race([transitionEnd, timeout])
+
+    removeListener()
+
+    return () => {
+        classes.to && el.classList.remove(...classes.to.split(','))
+        classes.active && el.classList.remove(...classes.active.split(','))
+
+        const finalize = el.__transitionFinalize
+        el.__transitionFinalize = undefined
+        finalize && finalize()
+    }
+}
+
+/**
  * manually transit an element
  * @param el the target element
  * @param options transition options
@@ -37,46 +89,7 @@ export function transit(
         active?: string
     }
 ) {
-    return new Promise<void>(resolve => {
-        (async () => {
-            classes.from && el.classList.add(...classes.from.split(','))
-            await new Promise(requestAnimationFrame)
-
-            classes.active && el.classList.add(...classes.active.split(','))
-            await new Promise(requestAnimationFrame)
-
-            classes.from && el.classList.remove(...classes.from.split(','))
-            classes.to && el.classList.add(...classes.to.split(','))
-
-            const cb = (ev: TransitionEvent) => {
-                if (ev && ev.target !== el) {
-                    return
-                }
-                if (!ev || ev.propertyName.endsWith('transform')) {
-                    resolve()
-                }
-            }
-            el.addEventListener('transitionend', cb)
-
-            const timer = setTimeout(() => {
-                resolve()
-            }, getTimeout(el) + 1)
-
-            const _resolve = resolve
-            resolve = () => {
-                el.removeEventListener('transitionend', cb)
-                clearTimeout(timer)
-
-                classes.to && el.classList.remove(...classes.to.split(','))
-                classes.active && el.classList.remove(...classes.active.split(','))
-
-                const finalize = el.__transitionFinalize
-                el.__transitionFinalize = undefined
-                finalize && finalize()
-                _resolve()
-            }
-        })()
-    })
+    return transitAdvanced(el, classes).then(f => f())
 }
 
 declare global {
