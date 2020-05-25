@@ -4,8 +4,7 @@
         <input
             :id="iid"
             :name="iid"
-            class="full-width"
-            style="opacity: 0"
+            class="full-width hidden-input"
             type="text"
             v-model="raw"
             autocorrect="off"
@@ -19,7 +18,7 @@
             class="absolute-full row justify-center items-center"
         >
             <span
-                class="col-1"
+                class="col-1 text-center"
                 v-for="(_, i) in len"
                 :key="i"
             >{{char(i)}}</span>
@@ -63,3 +62,14 @@ export default Vue.extend({
     }
 })
 </script>
+<style scoped>
+.hidden-input {
+    color: transparent;
+    border: none;
+    outline: none;
+    caret-color: transparent;
+}
+.hidden-input:focus {
+    outline: none;
+}
+</style>
