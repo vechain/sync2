@@ -1,6 +1,6 @@
 import { boot } from 'quasar/wrappers'
 import * as State from 'src/state'
-import { BioPass } from 'core/bio-pass'
+import { BioPass } from 'src/utils/bio-pass'
 
 declare module 'vue/types/vue' {
     interface Vue {
