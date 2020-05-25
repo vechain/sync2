@@ -5,3 +5,10 @@
 
 .serif
   font-family: Constantia, "Lucida Bright", Lucidabright, "Lucida Serif", Lucida, "DejaVu Serif", "Bitstream Vera Serif", "Liberation Serif", Georgia, serif
+
+body.q-ios-padding .q-dialog__inner.q-dialog__inner--maximized
+  padding: 0!important
+  > div
+    max-height: 100% !important
+    padding-top: env(safe-area-inset-top) !important
+    padding-bottom: env(safe-area-inset-bottom) !important
