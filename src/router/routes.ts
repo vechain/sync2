@@ -4,11 +4,16 @@ const routes: RouteConfig[] = [
     {
         path: '/',
         name: 'main',
+        redirect: '/wallet',
         component: () => import('layouts/Main.vue'),
         children: [{
             path: '/wallet',
             name: 'wallet',
             component: () => import('pages/Wallet.vue')
+        }, {
+            path: '/settings',
+            name: 'settings',
+            component: () => import('pages/Settings.vue')
         }]
     }
 ]
