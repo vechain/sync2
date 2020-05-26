@@ -3,11 +3,33 @@ import * as State from 'src/state'
 import { BioPass } from 'src/utils/bio-pass'
 import AuthenticationDialog from 'pages/AuthenticationDialog.vue'
 
+declare global {
+    type AuthenticateOptions = {
+        /** customized title text */
+        title?: string,
+
+        /** if set to true, the dialog will ask user to double-enter password as new password */
+        resetMode?: boolean
+    }
+}
+
 declare module 'vue/types/vue' {
     interface Vue {
         $state: ReturnType<typeof State.build>
+
+        /** biometric password service */
         $bioPass: BioPass | null
-        $authenticate<T>(task: (password: string) => Promise<T>): Promise<T>
+
+        /**
+         * pop up the authentication dialog to ask user entering password,
+         * then run the given task and return the result
+         * @param task a task which requires the password to finish
+         * @param options
+         */
+        $authenticate<T>(
+            task: (password: string) => Promise<T>,
+            options?: AuthenticateOptions
+        ): Promise<T>
     }
 }
 
@@ -26,12 +48,15 @@ export default boot(async ({ Vue }) => {
     Object.defineProperty(Vue.prototype, '$authenticate', {
         get(): Vue['$authenticate'] {
             const vm = this as Vue
-            return task => {
+            return (task, options) => {
                 return new Promise((resolve, reject) => {
+                    options = options || {}
                     vm.$q.dialog({
                         component: AuthenticationDialog,
                         parent: vm,
-                        task
+                        task,
+                        title: options.title,
+                        resetMode: options.resetMode
                     })
                         .onOk(resolve)
                         .onCancel(() => reject(new Error('cancelled')))
