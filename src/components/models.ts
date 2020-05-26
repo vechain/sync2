@@ -16,8 +16,8 @@ declare namespace M {
         interface Meta {
             name: string
             addresses: {
-                index: number
                 address: string // cached address
+                visible: boolean
             }[]
         }
     }
