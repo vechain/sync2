@@ -7,10 +7,10 @@
         transition-show="slide-up"
         transition-hide="slide-down"
     >
-        <q-card class="column items-center overflow-auto">
+        <q-card class="column items-center">
             <q-toolbar>
                 <q-toolbar-title>
-                    Authenticate
+                    {{title || 'Authenticate'}}
                 </q-toolbar-title>
                 <q-btn
                     flat
@@ -18,16 +18,25 @@
                 >Cancel</q-btn>
             </q-toolbar>
             <q-space />
-            <pin-code-input
-                v-model="code"
-                @fulfilled="runTask($event)"
-            />
-            <q-btn
-                v-if="bioPassReady"
-                :icon="bioAuthTypeIcon"
-                @click="recallBioPass"
-                flat
-            />
+            <p>{{message}}</p>
+            <template v-if="resetMode">
+                <pin-code-input
+                    v-model="clear"
+                    @fulfilled="handlePin($event)"
+                />
+            </template>
+            <template v-else>
+                <pin-code-input
+                    v-model="clear"
+                    @fulfilled="runTask($event)"
+                />
+                <q-btn
+                    v-if="bioPassReady"
+                    :icon="bioAuthTypeIcon"
+                    @click="recallBioPass"
+                    flat
+                />
+            </template>
             <q-space />
         </q-card>
     </q-dialog>
@@ -39,12 +48,15 @@ import { QSpinnerIos } from 'quasar'
 
 export default Vue.extend({
     props: {
+        title: String,
+        resetMode: Boolean,
         task: { type: Function as unknown as () => (<T>(password: string) => Promise<T>) }
     },
     data: () => {
         return {
             bioPassReady: false,
-            code: ''
+            clear: '', // used to clear pin
+            pin1: ''
         }
     },
     computed: {
@@ -53,6 +65,15 @@ export default Vue.extend({
                 return this.$bioPass.authType === 'face' ? 'sentiment_satisfied' : 'fingerprint'
             }
             return ''
+        },
+        message() {
+            if (this.resetMode) {
+                return this.pin1
+                    ? 'Confirm the new pin code'
+                    : 'Input your new pin code'
+            } else {
+                return 'Input your pin code'
+            }
         }
     },
     methods: {
@@ -65,22 +86,35 @@ export default Vue.extend({
         async recallBioPass() {
             if (this.$bioPass) {
                 try {
-                    const password = await this.$bioPass.recall('recall password')
-                    await this.runTask(password)
+                    const pin = await this.$bioPass.recall('recall pin')
+                    await this.runTask(pin)
                 } catch (err) {
                     console.warn(err)
                 }
             }
         },
-        async runTask(password: string) {
+        async runTask(pin: string) {
             try {
                 this.$q.loading.show({ spinner: QSpinnerIos as unknown as Vue, delay: 100 })
-                this.ok(await this.task(password))
+                this.ok(await this.task(pin))
             } catch (err) {
-                this.code = ''
+                this.clear = ''
                 console.log('run task error:', err)
             } finally {
                 this.$q.loading.hide()
+            }
+        },
+        handlePin(pin: string) {
+            if (!this.pin1) {
+                this.pin1 = pin
+                this.clear = ''
+            } else {
+                if (this.pin1 === pin) {
+                    this.runTask(pin)
+                } else {
+                    this.pin1 = ''
+                    this.clear = ''
+                }
             }
         }
     },
