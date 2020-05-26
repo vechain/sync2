@@ -5,8 +5,12 @@ import { newObservable } from './observable'
 function wrapTable<T extends Storage.Entity>(table: Dexie.Table<T, number>): Storage.Table<T> {
     const ob = newObservable()
     return {
-        insert: async row => {
-            await table.add(row as T)
+        insert: async (row, replace) => {
+            if (replace) {
+                await table.put(row as T)
+            } else {
+                await table.add(row as T)
+            }
             ob.notify()
         },
         update: async (cond, values) => {

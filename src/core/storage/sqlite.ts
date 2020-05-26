@@ -40,14 +40,14 @@ export interface SQLRunner {
 function wrapTable<T extends Storage.Entity>(runner: SQLRunner, tableName: string): Storage.Table<T> {
     const ob = newObservable()
     return {
-        insert: row => {
+        insert: (row, replace) => {
             const keys = []
             const values = []
             for (const key in row) {
                 keys.push(key)
                 values.push(row[key])
             }
-            return runner.exec(`INSERT INTO ${tableName} (${keys.join(',')}) VALUES(${keys.map(() => '?').join(',')})`,
+            return runner.exec(`${replace ? 'UPSERT' : 'INSERT'} INTO ${tableName} (${keys.join(',')}) VALUES(${keys.map(() => '?').join(',')})`,
                 ...values)
                 .then(() => ob.notify())
         },

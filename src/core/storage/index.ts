@@ -47,10 +47,11 @@ export namespace Storage {
     /** describes table methods */
     export interface Table<T extends Entity> {
         /**
-         * insert a new row
+         * insert or replace a row
          * @param row the row
+         * @param replace use upsert
          */
-        insert(row: Partial<T>): Promise<void>
+        insert(row: Partial<T>, replace?: boolean): Promise<void>
 
         /**
          * update rows that match the given condition
