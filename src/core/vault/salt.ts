@@ -42,11 +42,11 @@ async function loadOrGenerateSalt() {
     }
 }
 
-let cachedSalt: Buffer | null = null
+let cachedSalt: Promise<Buffer> | undefined
 
-export async function init() {
+export function init() {
     if (!cachedSalt) {
-        cachedSalt = await loadOrGenerateSalt()
+        cachedSalt = loadOrGenerateSalt()
     }
     return cachedSalt
 }
