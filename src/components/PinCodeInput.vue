@@ -24,11 +24,12 @@ export default Vue.extend({
     props: {
         value: String, // for v-model
         len: { default: 6 },
-        mask: { default: '-●' }
+        mask: { default: '○●' }
     },
     data: () => {
         return {
-            raw: ''
+            raw: '',
+            code: '' // sanitized code
         }
     },
     computed: {
@@ -45,14 +46,6 @@ export default Vue.extend({
                 pattern: '[0-9]*',
                 inputmode: 'numeric'
             }
-        },
-        // sanitized code
-        code() {
-            return this.raw
-                .split('')
-                .filter(c => c >= '0' && c <= '9')
-                .join('')
-                .slice(0, this.len)
         }
     },
     model: {
@@ -62,6 +55,13 @@ export default Vue.extend({
     watch: {
         value(newVal: string) {
             this.raw = newVal
+        },
+        raw(newValue: string) {
+            this.code = this.raw = newValue
+                .split('')
+                .filter(c => c >= '0' && c <= '9')
+                .join('')
+                .slice(0, this.len)
         },
         code(newVal: string) {
             this.$emit('input', newVal)
