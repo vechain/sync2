@@ -104,18 +104,20 @@ export namespace Storage {
         query(): Promise<T[]>
     }
 
-    let cachedInstance: Storage | undefined
+    let cachedInstance: Promise<Storage> | undefined
 
     /** initialize(only once) the storage. */
     export async function init(): Promise<Storage> {
         if (!cachedInstance) {
-            if (process.env.MODE === 'electron') {
-                cachedInstance = await (await import('./electron')).open()
-            } else if (process.env.MODE === 'cordova') {
-                cachedInstance = await (await import('./cordova')).open()
-            } else {
-                cachedInstance = await (await import('./indexdb')).open()
-            }
+            cachedInstance = (async () => {
+                if (process.env.MODE === 'electron') {
+                    return (await import('./electron')).open()
+                } else if (process.env.MODE === 'cordova') {
+                    return (await import('./cordova')).open()
+                } else {
+                    return (await import('./indexdb')).open()
+                }
+            })()
         }
         return cachedInstance
     }
