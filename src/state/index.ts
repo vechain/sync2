@@ -1,9 +1,9 @@
 import * as Wallet from './wallet'
-import * as Node from './node'
+import * as Config from './config'
 
 export function build() {
     return {
         wallet: Wallet.build(),
-        node: Node.build()
+        config: Config.build()
     }
 }
