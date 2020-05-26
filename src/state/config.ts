@@ -1,9 +1,6 @@
 import Vue from 'vue'
 import { Storage } from 'core/storage'
 
-const configKeyNodes = 'nodes'
-const configKeyPasswordShadow = 'password-shadow'
-
 const presetNodes: M.Node[] = [
     { // mainnet
         gid: '0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a',
@@ -17,7 +14,7 @@ const presetNodes: M.Node[] = [
 
 export function build() {
     const state = Vue.observable({
-        records: {} as Record<string, string>,
+        records: {} as Record<ConfigKey, string>,
         ready: false
     });
 
@@ -44,7 +41,7 @@ export function build() {
         get node() {
             return {
                 get list(): M.Node[] {
-                    const glob = state.records[configKeyNodes]
+                    const glob = state.records.nodes
                     if (glob) {
                         try {
                             return [...presetNodes, ...JSON.parse(glob)]
@@ -56,12 +53,14 @@ export function build() {
                 }
             }
         },
-        get passwordShadow() {
-            return state.records[configKeyPasswordShadow]
-        },
-        async setPasswordShadow(ps: string) {
+        get all() { return state.records },
+        async set(key: ConfigKey, value: string) {
             const s = await Storage.init()
-            await s.configs.insert({ key: configKeyPasswordShadow, value: ps }, true)
+            await s.configs.insert({ key, value }, true)
         }
     }
+}
+
+declare global {
+    type ConfigKey = 'nodes' | 'passwordShadow'
 }
