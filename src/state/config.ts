@@ -2,6 +2,7 @@ import Vue from 'vue'
 import { Storage } from 'core/storage'
 
 const configKeyNodes = 'nodes'
+const configKeyPasswordShadow = 'password-shadow'
 
 const presetNodes: M.Node[] = [
     { // mainnet
@@ -54,6 +55,13 @@ export function build() {
                     return [...presetNodes]
                 }
             }
+        },
+        get passwordShadow() {
+            return state.records[configKeyPasswordShadow]
+        },
+        async setPasswordShadow(ps: string) {
+            const s = await Storage.init()
+            await s.configs.insert({ key: configKeyPasswordShadow, value: ps }, true)
         }
     }
 }
