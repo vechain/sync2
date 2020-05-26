@@ -47,7 +47,7 @@ function wrapTable<T extends Storage.Entity>(runner: SQLRunner, tableName: strin
                 keys.push(key)
                 values.push(row[key])
             }
-            return runner.exec(`${replace ? 'UPSERT' : 'INSERT'} INTO ${tableName} (${keys.join(',')}) VALUES(${keys.map(() => '?').join(',')})`,
+            return runner.exec(`${replace ? 'REPLACE' : 'INSERT'} INTO ${tableName} (${keys.join(',')}) VALUES(${keys.map(() => '?').join(',')})`,
                 ...values)
                 .then(() => ob.notify())
         },

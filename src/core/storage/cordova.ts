@@ -13,7 +13,9 @@ export function open() {
     return wrap({
         query: (sql, ...params) => {
             return new Promise((resolve, reject) => {
-                db.executeSql(sql, params,
+                db.executeSql(
+                    sql,
+                    params,
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     (res: any) => {
                         const rows = []
@@ -23,13 +25,17 @@ export function open() {
                         resolve(rows)
                     },
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    (err: any) => reject(err))
+                    (err: any) => reject(new Error(err.message))) // err is not an Error object
             })
         },
         exec: (sql, ...params) => {
             return new Promise((resolve, reject) => {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                db.executeSql(sql, params, () => resolve(), (err: any) => reject(err))
+                db.executeSql(
+                    sql,
+                    params,
+                    () => resolve(),
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    (err: any) => reject(new Error(err.message)))
             })
         }
     })
