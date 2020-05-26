@@ -13,6 +13,7 @@
                         flat
                         dense
                         round
+                        :to="{name: 'settings'}"
                         icon="settings"
                         aria-label="Settings"
                     />

@@ -6,16 +6,30 @@
             -->
             <div />
             <q-toolbar class="bg-white">
-                <q-btn
-                    color="white"
-                    text-color="black"
-                    flat
-                    dense
-                    round
-                    icon="menu"
-                    aria-label="Menu"
-                    @click="leftDrawerOpen = !leftDrawerOpen"
-                />
+                <transition>
+                    <q-btn
+                        v-if="showMenuBtn"
+                        color="white"
+                        text-color="black"
+                        flat
+                        dense
+                        round
+                        icon="menu"
+                        aria-label="Menu"
+                        @click="leftDrawerOpen = !leftDrawerOpen"
+                    />
+                    <q-btn
+                        v-else
+                        color="white"
+                        text-color="black"
+                        flat
+                        dense
+                        round
+                        icon="keyboard_arrow_left"
+                        aria-label="Keyboard Arrow Left"
+                        @click="$router.back()"
+                    ></q-btn>
+                </transition>
                 <q-toolbar-title />
             </q-toolbar>
         </q-header>
@@ -30,7 +44,7 @@
         </q-drawer>
 
         <q-page-container>
-            <router-view />
+            <StackedRouterView />
         </q-page-container>
     </q-layout>
 </template>
@@ -41,6 +55,16 @@ export default Vue.extend({
     data() {
         return {
             leftDrawerOpen: false
+        }
+    },
+    watch: {
+        '$route'(to, from) {
+            this.leftDrawerOpen = false
+        }
+    },
+    computed: {
+        showMenuBtn() {
+            return this.$route.name === 'wallet'
         }
     },
     methods: {
