@@ -14,7 +14,7 @@ const presetNodes: M.Node[] = [
 
 export function build() {
     const state = Vue.observable({
-        records: {} as Record<ConfigKey, string>,
+        entities: [] as Storage.ConfigEntity[],
         ready: false
     });
 
@@ -23,11 +23,7 @@ export function build() {
         const ob = s.configs.observe()
         for (; ;) {
             try {
-                const entities = await s.configs.all().query()
-                state.records = entities.reduce<Record<string, string>>((r, e) => {
-                    r[e.key] = e.value
-                    return r
-                }, {})
+                state.entities = await s.configs.all().query()
                 state.ready = true
             } catch (err) {
                 console.warn(err)
@@ -38,10 +34,21 @@ export function build() {
 
     return {
         get ready() { return state.ready },
+        get all() {
+            return state.entities.reduce<Record<string, string>>((r, e) => {
+                r[e.key] = e.value
+                return r
+            }, {}) as Record<ConfigKey, string>
+        },
+        async set(key: ConfigKey, value: string) {
+            const s = await Storage.init()
+            await s.configs.insert({ key, value }, true)
+        },
         get node() {
+            const all = this.all
             return {
                 get list(): M.Node[] {
-                    const glob = state.records.nodes
+                    const glob = all.nodes
                     if (glob) {
                         try {
                             return [...presetNodes, ...JSON.parse(glob)]
@@ -52,11 +59,6 @@ export function build() {
                     return [...presetNodes]
                 }
             }
-        },
-        get all() { return state.records },
-        async set(key: ConfigKey, value: string) {
-            const s = await Storage.init()
-            await s.configs.insert({ key, value }, true)
         }
     }
 }
