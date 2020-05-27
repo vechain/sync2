@@ -66,9 +66,10 @@ export default Vue.extend({
         code(newVal: string) {
             this.$emit('input', newVal)
             if (newVal.length === this.len) {
-                this.$emit('fulfilled', newVal)
+                this.$nextTick(() => {
+                    this.$emit('fulfilled', newVal)
+                })
             }
-            this.raw = newVal
         }
     },
     methods: {
@@ -88,5 +89,10 @@ export default Vue.extend({
 }
 .hidden-input:focus {
     outline: none;
+}
+.hidden-input::selection {
+    color: transparent;
+    caret-color: transparent;
+    background-color: transparent;
 }
 </style>
