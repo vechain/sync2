@@ -18,25 +18,18 @@
                 >Cancel</q-btn>
             </q-toolbar>
             <q-space />
-            <p>{{message}}</p>
-            <template v-if="resetMode">
-                <pin-code-input
-                    v-model="clear"
-                    @fulfilled="handlePin($event)"
-                />
-            </template>
-            <template v-else>
-                <pin-code-input
-                    v-model="clear"
-                    @fulfilled="runTask($event)"
-                />
-                <q-btn
-                    v-if="bioPassReady"
-                    :icon="bioAuthTypeIcon"
-                    @click="recallBioPass"
-                    flat
-                />
-            </template>
+            <p>Incorrect pin code</p>
+            <pin-code-input
+                v-model="clearPin"
+                @fulfilled="runTask($event)"
+            />
+            <p :style="{visibility: wrong? 'visible': 'hidden'}">Incorrect Pin Code</p>
+            <q-btn
+                v-if="hasBioPass"
+                :icon="bioAuthTypeIcon"
+                @click="recallBioPass"
+                flat
+            />
             <q-space />
         </q-card>
     </q-dialog>
@@ -44,19 +37,17 @@
 <script lang="ts">
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Vue from 'vue'
-import { QSpinnerIos } from 'quasar'
 
 export default Vue.extend({
     props: {
         title: String,
-        resetMode: Boolean,
         task: { type: Function as unknown as () => (<T>(password: string) => Promise<T>) }
     },
     data: () => {
         return {
-            bioPassReady: false,
-            clear: '', // used to clear pin
-            pin1: ''
+            hasBioPass: false,
+            clearPin: '', // used to clear pin
+            wrong: false
         }
     },
     computed: {
@@ -65,19 +56,19 @@ export default Vue.extend({
                 return this.$bioPass.authType === 'face' ? 'sentiment_satisfied' : 'fingerprint'
             }
             return ''
-        },
-        message() {
-            if (this.resetMode) {
-                return this.pin1
-                    ? 'Confirm the new pin code'
-                    : 'Input your new pin code'
-            } else {
-                return 'Input your pin code'
+        }
+    },
+    watch: {
+        clearPin(newVal: string) {
+            if (newVal) {
+                this.wrong = false // clear wrong flag
             }
         }
     },
     methods: {
+        // method is REQUIRED by $q.dialog
         show() { (this.$refs.dialog as any).show() },
+        // method is REQUIRED by $q.dialog
         hide() { (this.$refs.dialog as any).hide() },
         ok(result: unknown) {
             this.$emit('ok', result)
@@ -94,34 +85,21 @@ export default Vue.extend({
             }
         },
         async runTask(pin: string) {
-            try {
-                this.$q.loading.show({ spinner: QSpinnerIos as unknown as Vue, delay: 100 })
-                this.ok(await this.task(pin))
-            } catch (err) {
-                this.clear = ''
-                console.log('run task error:', err)
-            } finally {
-                this.$q.loading.hide()
-            }
-        },
-        handlePin(pin: string) {
-            if (!this.pin1) {
-                this.pin1 = pin
-                this.clear = ''
-            } else {
-                if (this.pin1 === pin) {
-                    this.runTask(pin)
-                } else {
-                    this.pin1 = ''
-                    this.clear = ''
+            await this.$loading(async () => {
+                try {
+                    this.ok(await this.task(pin))
+                } catch (err) {
+                    this.clearPin = ''
+                    this.wrong = true
+                    console.log('run task error:', err)
                 }
-            }
+            })
         }
     },
     async created() {
         if (this.$bioPass) {
             try {
-                this.bioPassReady = await this.$bioPass.has()
+                this.hasBioPass = await this.$bioPass.has()
             } catch (err) {
                 console.warn(err)
             }

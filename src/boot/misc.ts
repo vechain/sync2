@@ -8,10 +8,7 @@ import { QSpinnerIos } from 'quasar'
 declare global {
     type AuthenticateOptions = {
         /** customized title text */
-        title?: string,
-
-        /** if set to true, the dialog will ask user to double-enter password as new password */
-        resetMode?: boolean
+        title?: string
     }
 }
 
@@ -65,8 +62,7 @@ export default boot(async ({ Vue }) => {
                             component: AuthenticationDialog,
                             parent: vm,
                             task,
-                            title: options.title,
-                            resetMode: options.resetMode
+                            title: options.title
                         })
                             .onOk(resolve)
                             .onCancel(() => reject(new Error('cancelled')))
