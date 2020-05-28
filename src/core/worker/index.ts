@@ -14,7 +14,7 @@ function call<R>(cmd: string, ...args: unknown[]): Promise<R> {
         worker.onmessage = ev => {
             const [result, err] = ev.data
             if (err) {
-                reject(err)
+                reject(new Error(err.message))
             } else {
                 resolve(result)
             }

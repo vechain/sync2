@@ -144,6 +144,6 @@ ctx.onmessage = async (ev) => {
         ctx.postMessage([result])
     } catch (err) {
         // TODO error translation
-        ctx.postMessage([undefined, err])
+        ctx.postMessage([undefined, { message: err.message }])
     }
 }
