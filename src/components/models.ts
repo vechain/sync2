@@ -21,4 +21,14 @@ declare namespace M {
             }[]
         }
     }
+
+    interface Token {
+        name: string
+        symbol: string
+        decimals: number
+        address: string
+        desc: string
+        icon: string
+        totalSupply: string
+    }
 }
