@@ -2,7 +2,7 @@
     <q-page
         @mousedown.capture="testTouchPan"
         @touchstart.capture="testTouchPan"
-        v-touch-pan.right.mouse.prevent="handleTouchPan"
+        v-touch-pan.right.mouse.prevent="shouldHandlePan? handleTouchPan: undefined"
     >
         <div
             class="absolute-top"
@@ -47,13 +47,12 @@ function newVelometer() {
 
 export default Vue.extend({
     data: () => {
-        let transitionDone: unknown
-        let rafId: number | undefined
         return {
             stack: [] as ScopedEntry[],
             velometer: newVelometer(),
-            transitionDone,
-            rafId
+            rafId: 0,
+            transitionDone: Promise.resolve(),
+            shouldHandlePan: false
         }
     },
     created() {
@@ -75,8 +74,8 @@ export default Vue.extend({
             }
         },
         testTouchPan(ev: TouchEvent & MouseEvent) {
-            const x = (ev.targetTouches ? ev.targetTouches[0].clientX : ev.clientX) - this.$el.getBoundingClientRect().x;
-            (x < 0 || x > 64 || this.stack.length < 2) && ev.stopImmediatePropagation()
+            const x = (ev.targetTouches ? ev.targetTouches[0].clientX : ev.clientX) - this.$el.getBoundingClientRect().x
+            this.shouldHandlePan = x >= 0 && x < 64 && this.stack.length > 1
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         handleTouchPan(ev: any) {
@@ -94,7 +93,7 @@ export default Vue.extend({
                     v1.style.transform = `translate(${panOffset}px)`
                     v2.style.transform = `translate(calc(var(--stack-v2-offset)*${(1 - ratio)}))`
                     shade.style.opacity = `${1 - ratio}`
-                    this.rafId = undefined
+                    this.rafId = 0
                 })
             }
 
