@@ -16,7 +16,7 @@
         >
             <q-carousel-slide
                 name="a"
-                class="column flex-center"
+                class="column flex-center q-pa-none"
             >
                 <p>Input new pin code</p>
                 <pin-code
@@ -29,7 +29,7 @@
             </q-carousel-slide>
             <q-carousel-slide
                 name="b"
-                class="column flex-center"
+                class="column flex-center q-pa-none"
             >
                 <p>Confirm the new pin code</p>
                 <pin-code

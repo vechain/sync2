@@ -8,19 +8,37 @@
         transition-hide=""
         seamless
     >
-        <q-card>
-            <confirmed-pin-code-input
-                class="full-height"
-                v-if="step===0"
-                @fulfilled="handlePin($event)"
-            />
-            <div
-                v-else
-                class="full-width full-height column flex-center"
+        <q-carousel
+            v-model="slide"
+            vertical
+            transition-prev="slide-down"
+            transition-next="slide-up"
+            animated
+        >
+            <q-carousel-slide
+                name="setPin"
+                class="q-pa-none"
+            >
+                <confirmed-pin-code-input
+                    class="full-height"
+                    @fulfilled="handlePin($event)"
+                />
+            </q-carousel-slide>
+            <q-carousel-slide
+                name="createWallet"
+                class="column flex-center q-pa-none"
             >
                 Creating wallet...
-            </div>
-        </q-card>
+            </q-carousel-slide>
+            <q-carousel-slide
+                name="done"
+                class="column flex-center q-pa-none"
+            >
+                Congrats!
+                <q-btn @click="ok({})">OK</q-btn>
+            </q-carousel-slide>
+        </q-carousel>
+
     </q-dialog>
 </template>
 <script lang="ts">
@@ -31,7 +49,7 @@ import { Vault } from 'core/vault'
 export default Vue.extend({
     data: () => {
         return {
-            step: 0
+            slide: 'setPin'
         }
     },
     methods: {
@@ -44,7 +62,7 @@ export default Vue.extend({
             this.hide()
         },
         async handlePin(pin: string) {
-            this.step++
+            this.slide = 'createWallet'
             try {
                 const words = await Vault.generateMnemonic()
                 const vault = await Vault.createHD(words, pin)
@@ -66,11 +84,12 @@ export default Vue.extend({
                         meta: JSON.stringify(meta)
                     })
                 })
+                this.slide = 'done'
             } catch (err) {
                 console.warn(err)
                 alert('something wrong')
+                this.hide()
             }
-            this.ok({})
         }
     }
 })
