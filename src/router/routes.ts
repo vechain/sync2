@@ -14,6 +14,10 @@ const routes: RouteConfig[] = [
             path: '/settings',
             name: 'settings',
             component: () => import('pages/Settings.vue')
+        }, {
+            path: '/settings/tokens',
+            name: 'tokens',
+            component: () => import('pages/TokenList.vue')
         }]
     }
 ]
