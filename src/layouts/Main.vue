@@ -51,6 +51,8 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import FirstRunDialog from 'pages/FirstRunDialog.vue'
+
 export default Vue.extend({
     data() {
         return {
@@ -70,6 +72,14 @@ export default Vue.extend({
     methods: {
         onWalletChange(active: number) {
             this.leftDrawerOpen = false
+        }
+    },
+    created() {
+        if (!this.$state.config.all.passwordShadow) {
+            this.$q.dialog({
+                component: FirstRunDialog,
+                parent: this
+            })
         }
     }
 })
