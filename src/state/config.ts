@@ -11,6 +11,13 @@ const presetNodes: M.Node[] = [
         url: 'http://localhost:8669'
     }
 ]
+const tokenApi = 'https://vechain.github.io/token-registry'
+
+type AllTokens = {
+    updated: number
+    main: M.Token[]
+    test: M.Token[]
+}
 
 export function build() {
     const state = Vue.observable({
@@ -59,10 +66,83 @@ export function build() {
                     return [...presetNodes]
                 }
             }
+        },
+        get token() {
+            // eslint-disable-next-line @typescript-eslint/no-this-alias
+            const config = this
+            return {
+                get all(): AllTokens | undefined {
+                    if (config.all.tokens) {
+                        return JSON.parse(config.all.tokens)
+                    }
+                },
+                get active() {
+                    return config.all.activeTokens ? JSON.parse(config.all.activeTokens) as string[] : []
+                },
+                get distinctList() {
+                    if (this.all) {
+                        const { main, test } = { ...this.all }
+                        const result = new Map<string, {
+                            name: string,
+                            symbol: string
+                        }>()
+
+                        main.concat(test).map(item => {
+                            result.set(item.symbol, {
+                                name: item.name,
+                                symbol: item.symbol
+                            })
+                        })
+
+                        return Array.from(result.values())
+                    } else {
+                        return []
+                    }
+                },
+                getList(gid: string) {
+                    const gids = presetNodes.map(item => { return item.gid })
+                    if (this.all && gids.includes(gid)) {
+                        return gid === '0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a' ? this.all.main : this.all.test
+                    } else {
+                        return []
+                    }
+                },
+                async fetch() {
+                    if (this.all) {
+                        const { updated } = { ...this.all }
+                        if (updated && updated > Date.now() - 6 * 60 * 60 * 1000) {
+                            return
+                        }
+                    }
+                    const nets = ['main', 'test']
+                    const tokens: {
+                        [k: string]: M.Token[]
+                    } = {
+                        main: [],
+                        test: []
+                    }
+                    for (const net of nets) {
+                        const resp = await fetch(`${tokenApi}/${net}.json`)
+                        if (resp.status !== 200) {
+                            tokens[net] = []
+                            return
+                        }
+                        const list = await resp.json()
+                        list.shift()
+                        tokens[net] = list
+                    }
+                    const allTokens: AllTokens = {
+                        updated: Date.now(),
+                        main: tokens.main,
+                        test: tokens.test
+                    }
+                    await config.set('tokens', JSON.stringify(allTokens))
+                }
+            }
         }
     }
 }
 
 declare global {
-    type ConfigKey = 'nodes' | 'passwordShadow'
+    type ConfigKey = 'nodes' | 'passwordShadow' | 'tokens' | 'activeTokens'
 }
