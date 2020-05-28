@@ -34,9 +34,10 @@ export function build() {
             }))
         },
         get current() {
-            return this.list.find(item => {
+            const list = this.list
+            return list.find(item => {
                 return item.id === state.currentId
-            })
+            }) || list[0]
         },
         setCurrentId(id: number) {
             state.currentId = id
