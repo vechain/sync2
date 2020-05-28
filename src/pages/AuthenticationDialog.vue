@@ -18,12 +18,21 @@
                 >Cancel</q-btn>
             </q-toolbar>
             <q-space />
-            <p>Incorrect pin code</p>
-            <pin-code-input
-                v-model="clearPin"
-                @fulfilled="runTask($event)"
-            />
-            <p :style="{visibility: wrong? 'visible': 'hidden'}">Incorrect Pin Code</p>
+            <p>Input the pin code</p>
+            <div class="relative-position">
+                <input
+                    class="invisible-input absolute-full"
+                    v-model="clearPin"
+                    v-bind="inputBinds"
+                >
+                <pin-code
+                    class="full-width full-height"
+                    :for-id="inputBinds.id"
+                    v-model="clearPin"
+                    @fulfilled="runTask($event)"
+                />
+            </div>
+            <p :class="{invisible: !wrong}">Incorrect Pin Code</p>
             <q-btn
                 v-if="hasBioPass"
                 :icon="bioAuthTypeIcon"
@@ -44,10 +53,22 @@ export default Vue.extend({
         task: { type: Function as unknown as () => (<T>(password: string) => Promise<T>) }
     },
     data: () => {
+        const inputId = `pin-${Date.now().toString(16)}`
         return {
             hasBioPass: false,
             clearPin: '', // used to clear pin
-            wrong: false
+            wrong: false,
+            inputBinds: {
+                id: inputId,
+                name: inputId,
+                type: 'text',
+                autocomplete: 'off',
+                autocapitalize: 'off',
+                autocorrect: 'off',
+                // pattern="[0-9]*" and inputmode="numeric" are needed to bring up numeric keypad
+                pattern: '[0-9]*',
+                inputmode: 'numeric'
+            }
         }
     },
     computed: {

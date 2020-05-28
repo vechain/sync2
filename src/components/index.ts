@@ -5,7 +5,7 @@ import Tokens from './Tokens.vue'
 import MainDrawerContent from './MainDrawerContent.vue'
 import ConnexObject from './ConnexObject'
 import ConnexContinuous from './ConnexContinuous'
-import PinCodeInput from './PinCodeInput.vue'
+import PinCode from './PinCode.vue'
 import ConfirmedPinCodeInput from './ConfirmedPinCodeInput.vue'
 
 const components: { [name: string]: Vue.VueConstructor } = {
@@ -16,7 +16,7 @@ const components: { [name: string]: Vue.VueConstructor } = {
     MainDrawerContent,
     ConnexObject,
     ConnexContinuous,
-    PinCodeInput,
+    PinCode,
     ConfirmedPinCodeInput
 }
 
