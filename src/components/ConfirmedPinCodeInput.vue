@@ -76,7 +76,10 @@ export default Vue.extend({
             }
         },
         focus(ref: Vue) {
-            (ref.$el as HTMLElement).getElementsByTagName('input')[0].focus()
+            // focusing a input may break running transition, so need to wait for
+            // transition end
+            const el = ref.$el as HTMLElement
+            setTimeout(() => el.getElementsByTagName('input')[0].focus(), 300)
         }
     },
     mounted() {
