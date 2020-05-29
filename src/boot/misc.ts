@@ -28,6 +28,11 @@ declare module 'vue/types/vue' {
             options?: AuthenticateOptions
         ): Promise<T>
 
+        /**
+         * protected the async task with a loading mask
+         * @param task the async task
+         * @returns the result of the task
+         */
         $loading<T>(task: () => Promise<T>): Promise<T>
     }
 }
@@ -36,6 +41,24 @@ export default boot(async ({ Vue }) => {
     const state = State.build()
     const storage = await Storage.init()
     let loadingCount = 0
+
+    const delayedSpinner = Vue.component('DelayedSpinner', {
+        data: () => { return { display: false } },
+        props: { color: String, size: Number },
+        created() { setTimeout(() => { this.display = true }, 200) },
+        render(h) {
+            if (!this.display) {
+                return h()
+            }
+            const spinner = h(QSpinnerIos, { props: this.$props })
+            return h('transition', {
+                props: {
+                    name: 'q-transition--fade',
+                    appear: true
+                }
+            }, [spinner])
+        }
+    })
 
     Object.defineProperties(Vue.prototype, {
         $state: {
@@ -68,10 +91,10 @@ export default boot(async ({ Vue }) => {
                 return async (task) => {
                     try {
                         if (loadingCount++ === 0) {
-                            root.$el.classList.add('loading-disable-all')
+                            // set 0 delay to block mouse/touch event
                             root.$q.loading.show({
-                                spinner: QSpinnerIos as unknown as Vue,
-                                delay: 200,
+                                spinner: delayedSpinner as unknown as Vue,
+                                delay: 0,
                                 backgroundColor: 'transparent',
                                 spinnerColor: 'black'
                             })
@@ -80,7 +103,6 @@ export default boot(async ({ Vue }) => {
                     } finally {
                         if (--loadingCount === 0) {
                             root.$q.loading.hide()
-                            root.$el.classList.remove('loading-disable-all')
                         }
                     }
                 }
