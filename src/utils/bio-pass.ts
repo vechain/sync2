@@ -19,7 +19,7 @@ export interface BioPass {
     readonly name: string
 
     /** if the password previously saved */
-    has(): Promise<boolean>
+    saved(): Promise<boolean>
 
     /** save the password */
     save(password: string): Promise<void>
@@ -32,7 +32,7 @@ export interface BioPass {
 }
 
 export namespace BioPass {
-    export async function init(name: string): Promise<BioPass | null> {
+    export async function open(name = 'main'): Promise<BioPass | null> {
         if (process.env.MODE === 'cordova') {
             await new Promise(resolve => {
                 document.addEventListener('deviceready', () => resolve(), false)
@@ -50,7 +50,7 @@ export namespace BioPass {
             return {
                 get authType() { return type === 'face' ? 'face' : 'touch' },
                 get name() { return name },
-                has: () => {
+                saved: () => {
                     return promisify(touchid.has.bind(touchid), name)
                         .then(() => true)
                         .catch(() => false)

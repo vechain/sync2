@@ -34,7 +34,7 @@
             </div>
             <p :class="{invisible: !wrong}">Incorrect Pin Code</p>
             <q-btn
-                v-if="hasBioPass"
+                v-if="bioPassSaved"
                 :icon="bioAuthTypeIcon"
                 @click="recallBioPass"
                 flat
@@ -46,6 +46,7 @@
 <script lang="ts">
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Vue from 'vue'
+import { BioPass } from 'src/utils/bio-pass'
 
 export default Vue.extend({
     props: {
@@ -55,7 +56,8 @@ export default Vue.extend({
     data: () => {
         const inputId = `pin-${Date.now().toString(16)}`
         return {
-            hasBioPass: false,
+            bioPassType: null as BioPass['authType'] | null,
+            bioPassSaved: false,
             clearPin: '', // used to clear pin
             wrong: false,
             inputBinds: {
@@ -73,10 +75,7 @@ export default Vue.extend({
     },
     computed: {
         bioAuthTypeIcon() {
-            if (this.$bioPass) {
-                return this.$bioPass.authType === 'face' ? 'sentiment_satisfied' : 'fingerprint'
-            }
-            return ''
+            return this.bioPassType === 'face' ? 'sentiment_satisfied' : 'fingerprint'
         }
     },
     watch: {
@@ -96,9 +95,10 @@ export default Vue.extend({
             this.hide()
         },
         async recallBioPass() {
-            if (this.$bioPass) {
+            const bioPass = await BioPass.open()
+            if (bioPass) {
                 try {
-                    const pin = await this.$bioPass.recall('recall pin')
+                    const pin = await bioPass.recall('recall pin')
                     await this.runTask(pin)
                 } catch (err) {
                     console.warn(err)
@@ -118,12 +118,10 @@ export default Vue.extend({
         }
     },
     async created() {
-        if (this.$bioPass) {
-            try {
-                this.hasBioPass = await this.$bioPass.has()
-            } catch (err) {
-                console.warn(err)
-            }
+        const bioPass = await BioPass.open()
+        if (bioPass) {
+            this.bioPassType = bioPass.authType
+            this.bioPassSaved = await bioPass.saved()
         }
     }
 })
