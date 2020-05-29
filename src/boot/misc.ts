@@ -1,6 +1,5 @@
 import { boot } from 'quasar/wrappers'
 import * as State from 'src/state'
-import { BioPass } from 'src/utils/bio-pass'
 import AuthenticationDialog from 'pages/AuthenticationDialog.vue'
 import { Storage } from 'core/storage'
 import { QSpinnerIos } from 'quasar'
@@ -15,9 +14,6 @@ declare global {
 declare module 'vue/types/vue' {
     interface Vue {
         $state: ReturnType<typeof State.build>
-
-        /** biometric password service */
-        $bioPass: BioPass | null
 
         $storage: Storage
 
@@ -38,16 +34,12 @@ declare module 'vue/types/vue' {
 
 export default boot(async ({ Vue }) => {
     const state = State.build()
-    const bioPass = await BioPass.init('main')
     const storage = await Storage.init()
     let loadingCount = 0
 
     Object.defineProperties(Vue.prototype, {
         $state: {
             get() { return state }
-        },
-        $bioPass: {
-            get() { return bioPass }
         },
         $storage: {
             get() { return storage }
