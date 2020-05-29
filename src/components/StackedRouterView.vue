@@ -235,8 +235,9 @@ export default Vue.extend({
 .stack--show-important {
     display: block !important;
 }
-.stack--disable-pointer-events {
-    pointer-events: none;
+.stack--disable-pointer-events,
+.stack--disable-pointer-events * {
+    pointer-events: none !important;
 }
 .stack--shade-clear {
     opacity: 0;
