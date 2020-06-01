@@ -14,6 +14,10 @@
                 :active="isActive(i)"
             />
         </div>
+        <q-resize-observer
+            @resize="onResize"
+            :debounce="0"
+        />
     </div>
 </template>
 <script lang="ts">
@@ -55,6 +59,9 @@ export default Vue.extend({
             if (Math.abs(newIndex - this.currentIndex) > 0.8) {
                 this.currentIndex = Math.round(newIndex)
             }
+        },
+        onResize() {
+            this.scrollToIndex(this.currentIndex, false)
         },
         isActive(i: number) {
             return [i, i - 1, i + 1].includes(this.currentIndex)
