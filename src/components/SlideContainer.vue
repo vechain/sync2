@@ -36,44 +36,47 @@ export default Vue.extend({
         count: Number
     },
     data: () => {
-        return {
-            currentIndex: 0
-        }
+        return { current: 0 }
     },
     model: {
         prop: 'value',
         event: 'input'
     },
     watch: {
-        currentIndex(newVal: number) {
-            this.$emit('input', newVal)
+        current(newVal: number) {
+            if (this.value !== newVal) {
+                this.$emit('input', newVal)
+            }
         },
         value(newVal: number) {
-            this.scrollToIndex(newVal, true)
+            if (newVal !== this.current) {
+                const smooth = Math.abs(newVal - this.current) === 1
+                this.scrollTo(newVal, smooth)
+            }
         }
     },
     methods: {
         onScrolled() {
             const container = this.$refs.container as HTMLElement
-            const newIndex = container.scrollLeft / container.scrollWidth * this.count
-            if (Math.abs(newIndex - this.currentIndex) > 0.8) {
-                this.currentIndex = Math.round(newIndex)
+            const mul = container.scrollLeft / container.scrollWidth * this.count
+            if (Math.abs(mul - this.current) > 0.8) {
+                this.current = Math.round(mul)
             }
         },
         onResize() {
-            this.scrollToIndex(this.currentIndex, false)
+            this.scrollTo(this.current, false)
         },
         isActive(i: number) {
-            return [i, i - 1, i + 1].includes(this.currentIndex)
+            return [i, i - 1, i + 1].includes(this.current)
         },
-        scrollToIndex(i: number, smooth: boolean) {
+        scrollTo(i: number, smooth: boolean) {
             const container = this.$refs.container as HTMLElement
             const x = Math.ceil(i * container.scrollWidth / this.count)
             container.scrollTo({ left: x, behavior: smooth ? 'smooth' : undefined })
         }
     },
     mounted() {
-        this.scrollToIndex(this.value, false)
+        this.scrollTo(this.value, false)
     }
 })
 </script>
