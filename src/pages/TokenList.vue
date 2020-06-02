@@ -44,11 +44,13 @@ export default Vue.extend({
         this.activeTokens = this.$state.config.token.active
     },
     async beforeDestroy() {
-        await this.$state.config.set('activeTokens', JSON.stringify(this.activeTokens))
+        await this.$state.config.set('activeTokens', JSON.stringify(['VTHO'].concat(this.activeTokens)))
     },
     computed: {
         tokens() {
-            return this.$state.config.token.distinctList
+            return this.$state.config.token.distinctList.filter(item => {
+                return item.symbol !== 'VTHO'
+            })
         }
     }
 })
