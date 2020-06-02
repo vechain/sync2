@@ -102,7 +102,10 @@ export function build() {
                 getList(gid: string) {
                     const gids = presetNodes.map(item => { return item.gid })
                     if (this.all && gids.includes(gid)) {
-                        return gid === '0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a' ? this.all.main : this.all.test
+                        const tempList = gid === '0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a' ? this.all.main : this.all.test
+                        return tempList.filter(item => {
+                            return config.token.active.includes(item.symbol)
+                        })
                     } else {
                         return []
                     }
@@ -128,7 +131,6 @@ export function build() {
                             return
                         }
                         const list = await resp.json()
-                        list.shift()
                         tokens[net] = list
                     }
                     const allTokens: AllTokens = {
