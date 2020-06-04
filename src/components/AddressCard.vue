@@ -1,7 +1,7 @@
 <template>
     <q-card class="bg-yellow">
         <q-card-section>
-            Account {{addressItem.index}}
+            Account {{addressItem.address}}
         </q-card-section>
     </q-card>
 </template>
