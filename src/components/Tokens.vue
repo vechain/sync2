@@ -1,27 +1,27 @@
 <template>
     <q-list>
-        <template v-for="i in 6">
-            <q-item :key="i">
+        <template v-for="(item, i) in list">
+            <q-item :key="item.address">
                 <q-item-section avatar>
                     <q-avatar>
                         <img src="https://cdn.quasar.dev/img/avatar2.jpg">
                     </q-avatar>
                 </q-item-section>
                 <q-item-section>
-                    <q-item-label lines="1">VET</q-item-label>
+                    <q-item-label lines="1">{{item.symbol}}</q-item-label>
                     <q-item-label
                         caption
                         lines="2"
                     >
-                        VeChainCoin
+                        {{item.name}}
                     </q-item-label>
                 </q-item-section>
                 <q-item-section side>
-                    {{(12312313).toLocaleString()}}
+                    {{ balances ? balances[item.symbol] === undefined ? '--' : balances[item.symbol].toLocaleString() : '--'}}
                 </q-item-section>
             </q-item>
             <q-separator
-                v-if="i !== 6"
+                v-if="i !== list.length - 1"
                 :key="i + 's'"
                 inset="item"
             />
@@ -31,5 +31,10 @@
 
 <script lang="ts">
 import Vue from 'vue'
-export default Vue.extend({})
+export default Vue.extend({
+    props: {
+        list: Array as () => { name: string, symbol: string }[],
+        balances: Object as () => { [k: string]: number }[]
+    }
+})
 </script>
