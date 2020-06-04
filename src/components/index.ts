@@ -8,6 +8,7 @@ import ConnexContinuous from './ConnexContinuous'
 import PinCode from './PinCode.vue'
 import ConfirmedPinCodeInput from './ConfirmedPinCodeInput.vue'
 import SlideContainer from './SlideContainer.vue'
+import Drawer from './Drawer.vue'
 
 const components: { [name: string]: Vue.VueConstructor } = {
     StackedRouterView,
@@ -19,7 +20,8 @@ const components: { [name: string]: Vue.VueConstructor } = {
     ConnexContinuous,
     PinCode,
     ConfirmedPinCodeInput,
-    SlideContainer
+    SlideContainer,
+    Drawer
 }
 
 export default components

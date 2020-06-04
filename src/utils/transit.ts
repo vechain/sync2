@@ -97,3 +97,69 @@ declare global {
         __transitionFinalize?: () => void
     }
 }
+
+export function nextFrame() {
+    return new Promise(resolve => requestAnimationFrame(resolve))
+}
+
+export function transitionEnd(el: HTMLElement) {
+    let removeListener = () => { }
+    const end = new Promise(resolve => {
+        const cb = (ev: TransitionEvent) => {
+            if (ev && ev.target !== el) {
+                return
+            }
+            if (!ev || ev.propertyName.endsWith('transform')) {
+                resolve()
+            }
+        }
+        el.addEventListener('transitionend', cb)
+        removeListener = () => el.removeEventListener('transitionend', cb)
+    })
+
+    const timeout = new Promise(resolve => setTimeout(resolve, getTimeout(el) + 1))
+    return Promise.race([end, timeout])
+        .then(() => removeListener())
+}
+
+export function newGuard(
+    before?: () => unknown,
+    after?: () => unknown
+) {
+    let done: Promise<void> | undefined
+    return {
+        run(task: () => Promise<unknown>) {
+            const _done = done
+            done = (async () => {
+                await _done
+                try {
+                    try {
+                        before && (await before())
+                        await task()
+                    } finally {
+                        after && (await after())
+                    }
+                } catch (err) {
+                    console.warn(err)
+                }
+            })()
+            return done
+        }
+    }
+}
+
+export function newVelometer() {
+    let _t1 = 0
+    let _t2 = 0
+    let _delta = 0
+    return {
+        update(t: number, delta: number) {
+            _t1 = _t2
+            _t2 = t
+            _delta = delta
+        },
+        get velocity() {
+            return _delta / (_t2 - _t1)
+        }
+    }
+}
