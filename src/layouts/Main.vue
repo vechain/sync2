@@ -34,14 +34,12 @@
             </q-toolbar>
         </q-header>
 
-        <q-drawer
-            v-model="leftDrawerOpen"
-            show-if-above
-            bordered
-            content-class="bg-grey-1"
-        >
-            <MainDrawerContent @wallet-change="onWalletChange" />
-        </q-drawer>
+        <drawer v-model="leftDrawerOpen">
+            <MainDrawerContent
+                @wallet-change="onWalletChange"
+                style="width:300px"
+            />
+        </drawer>
 
         <q-page-container>
             <StackedRouterView />
