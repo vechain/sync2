@@ -20,8 +20,8 @@
             />
         </div>
         <div
-            ref="shade"
-            class="absolute-full stack-shade"
+            ref="backdrop"
+            class="absolute-full stack-backdrop"
             v-show="panning||transiting"
         />
         <q-resize-observer @resize="onResize" />
@@ -96,7 +96,7 @@ export default Vue.extend({
             return [
                 views[views.length - 1],
                 views[views.length - 2],
-                this.$refs.shade as HTMLElement
+                this.$refs.backdrop as HTMLElement
             ]
         },
         testTouchPan(ev: TouchEvent & MouseEvent) {
@@ -178,9 +178,9 @@ export default Vue.extend({
         )
     );
 }
-.stack-shade {
+.stack-backdrop {
     background: black;
-    opacity: calc(0.2 - var(--stack-pan-ratio) * 0.2);
+    opacity: calc((1 - var(--stack-pan-ratio)) * 0.1);
 }
 .stack-transition {
     transition: all 0.3s;

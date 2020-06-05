@@ -145,7 +145,7 @@ export default Vue.extend({
 }
 .drawer-backdrop {
     background: black;
-    opacity: calc(var(--drawer-open-ratio) / 5);
+    opacity: calc(var(--drawer-open-ratio) *0.1);
 }
 .drawer-opener {
     width: 15px;
