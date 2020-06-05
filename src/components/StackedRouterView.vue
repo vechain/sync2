@@ -1,6 +1,5 @@
 <template>
     <q-page
-        ref="container"
         @mousedown.capture="testTouchPan"
         @touchstart.capture="testTouchPan"
         v-touch-pan.right.mouse.prevent="shouldHandlePan? handleTouchPan: undefined"
@@ -44,12 +43,27 @@ export default Vue.extend({
             pipeline: newPipeline()
         }
     },
+    computed: {
+        animatedViews() {
+            // eslint-disable-next-line no-unused-expressions
+            this.stack // make reactive
+            const views = this.$refs.views as HTMLElement[]
+            return [
+                views[views.length - 1],
+                views[views.length - 2],
+                this.$refs.backdrop as HTMLElement
+            ]
+        }
+    },
     created() {
         this.stack = this.$stack.scoped
     },
     methods: {
         setPanRatio(ratio: number) {
-            ((this.$refs.container as Vue).$el as HTMLElement).style.setProperty('--stack-pan-ratio', `${ratio}`)
+            (this.$el as HTMLElement).style.setProperty('--stack-pan-ratio', `${ratio}`)
+        },
+        setTransitionDurationMul(m: number) {
+            (this.$el as HTMLElement).style.setProperty('--stack-transition-mul', `${m}`)
         },
         async transit(pushIn: boolean) {
             this.transiting = true
@@ -57,7 +71,7 @@ export default Vue.extend({
 
             await nextFrame()
 
-            const views = this.animatedViews()
+            const views = this.animatedViews
             views.forEach(v => v.classList.add('stack-transition'))
 
             await nextFrame()
@@ -69,11 +83,12 @@ export default Vue.extend({
             views.forEach(v => v.classList.remove('stack-transition'))
 
             document.body.classList.remove('stack-body--prevent-scroll')
+            this.setTransitionDurationMul(1)
             this.transiting = false
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onResize(size: any) {
-            ((this.$refs.container as Vue).$el as HTMLElement).style.setProperty('--stack-container-width', `${size.width}`)
+            (this.$el as HTMLElement).style.setProperty('--stack-container-width', `${size.width}`)
             this.width = size.width
         },
         viewClass(i: number) {
@@ -83,21 +98,14 @@ export default Vue.extend({
             }
         },
         viewShow(i: number) {
-            if (i === this.stack.length - 1) {
+            switch (i) {
+            case this.stack.length - 1:
                 return true
-            }
-            if (i === this.stack.length - 2) {
+            case this.stack.length - 2:
                 return this.panning || this.transiting
+            default:
+                return false
             }
-            return false
-        },
-        animatedViews() {
-            const views = this.$refs.views as HTMLElement[]
-            return [
-                views[views.length - 1],
-                views[views.length - 2],
-                this.$refs.backdrop as HTMLElement
-            ]
         },
         testTouchPan(ev: TouchEvent & MouseEvent) {
             const x = (ev.targetTouches ? ev.targetTouches[0].clientX : ev.clientX) - this.$el.getBoundingClientRect().x
@@ -108,8 +116,8 @@ export default Vue.extend({
             const offset = Math.max(0, ev.offset.x)
             const width = Math.max(1, this.width)
 
+            const ratio = offset / width
             if (!ev.isFirst && !ev.isFinal) {
-                const ratio = offset / width
                 this.setPanRatio(ratio)
             }
             if (ev.isFirst) {
@@ -120,6 +128,7 @@ export default Vue.extend({
                 this.panning = false
                 const v = this.velometer.velocity
                 const triggered = (offset > width / 3 && v >= 0) || v > 0.3
+                this.setTransitionDurationMul(0.7)
                 if (triggered) {
                     this.$router.go(-1)
                     this.transiting = true
@@ -127,7 +136,6 @@ export default Vue.extend({
                     this.pipeline.run(() => this.transit(true))
                 }
             }
-
             this.velometer.update(ev.duration, ev.delta.x)
         }
     },
@@ -162,6 +170,7 @@ export default Vue.extend({
 :root {
     --stack-pan-ratio: 0;
     --stack-container-width: 0;
+    --stack-transition-mul: 1;
 }
 
 .stack-v1 {
@@ -183,7 +192,7 @@ export default Vue.extend({
     opacity: calc((1 - var(--stack-pan-ratio)) * 0.1);
 }
 .stack-transition {
-    transition: all 0.3s;
+    transition: all calc(0.3s * var(--stack-transition-mul));
 }
 .stack-body--prevent-scroll {
     position: fixed !important;

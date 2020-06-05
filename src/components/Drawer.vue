@@ -48,7 +48,12 @@ export default Vue.extend({
         event: 'open'
     },
     computed: {
-        parent() { return this.$parent.$el as HTMLElement }
+        animatedViews() {
+            return [
+                this.$parent.$el as HTMLElement,
+                this.$refs.backdrop as HTMLElement
+            ]
+        }
     },
     watch: {
         value(newVal: boolean) {
@@ -65,43 +70,48 @@ export default Vue.extend({
                 this.$emit('open', false)
             }
         },
+        setOpenRatio(ratio: number) {
+            (this.$parent.$el as HTMLElement).style.setProperty('--drawer-open-ratio', `${ratio}`)
+        },
+        setTransitionDurationMul(m: number) {
+            (this.$parent.$el as HTMLElement).style.setProperty('--drawer-transition-mul', `${m}`)
+        },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onContentResize(size: any) {
+            (this.$parent.$el as HTMLElement).style.setProperty('--drawer-width', `${size.width}`)
             this.drawerWidth = size.width
-            this.parent.style.setProperty('--drawer-width', `${this.drawerWidth}`)
         },
         async transit() {
             this.transiting = true
             document.body.classList.add('drawer-body--prevent-scroll')
-            const parent = this.$parent.$el as HTMLElement
-            const backdrop = this.$refs.backdrop as HTMLElement
 
             await nextFrame()
 
-            parent.classList.add('drawer-transition')
-            backdrop.classList.add('drawer-transition')
+            const views = this.animatedViews
+            views.forEach(v => v.classList.add('drawer-transition'))
+
             await nextFrame()
 
-            parent.style.setProperty('--drawer-open-ratio', `${this.opened ? 1 : 0}`)
+            this.setOpenRatio(this.opened ? 1 : 0)
 
-            await transitionEnd(parent)
-            parent.classList.remove('drawer-transition')
-            backdrop.classList.remove('drawer-transition')
+            await Promise.all(views.map(v => transitionEnd(v)))
+
+            views.forEach(v => v.classList.remove('drawer-transition'))
+
             if (!this.opened) {
                 document.body.classList.remove('drawer-body--prevent-scroll')
             }
+            this.setTransitionDurationMul(1)
             this.transiting = false
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         handleTouchPan(ev: Record<string, any>) {
-            const parent = this.$parent.$el as HTMLElement
-
             const width = Math.max(1, this.drawerWidth)
             const offset = Math.min(Math.abs(ev.offset.x), width)
 
             if (!ev.isFirst && !ev.isFinal) {
                 const ratio = this.opened ? (width - offset) / width : offset / width
-                parent.style.setProperty('--drawer-open-ratio', `${ratio}`)
+                this.setOpenRatio(ratio)
             }
 
             if (ev.isFirst) {
@@ -114,7 +124,7 @@ export default Vue.extend({
                 const v = this.opened ? -this.velometer.velocity : this.velometer.velocity
 
                 const triggered = (offset > width / 3 && v >= 0) || v > 0.3
-
+                this.setTransitionDurationMul(0.7)
                 if (triggered) {
                     this.opened = !this.opened
                     this.$emit('open', this.opened)
@@ -139,13 +149,14 @@ export default Vue.extend({
 :root {
     --drawer-width: 0;
     --drawer-open-ratio: 0;
+    --drawer-transition-mul: 1;
 }
 .drawer-container {
     z-index: 2001;
 }
 .drawer-backdrop {
     background: black;
-    opacity: calc(var(--drawer-open-ratio) *0.1);
+    opacity: calc(var(--drawer-open-ratio) * 0.1);
 }
 .drawer-opener {
     width: 15px;
@@ -159,7 +170,7 @@ export default Vue.extend({
     );
 }
 .drawer-transition {
-    transition: all 0.25s;
+    transition: all calc(0.25s * var(--drawer-transition-mul));
 }
 .drawer-body--prevent-scroll {
     position: fixed !important;
