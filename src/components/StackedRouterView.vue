@@ -1,16 +1,18 @@
 <template>
     <q-page
+        ref="container"
         @mousedown.capture="testTouchPan"
         @touchstart.capture="testTouchPan"
         v-touch-pan.right.mouse.prevent="shouldHandlePan? handleTouchPan: undefined"
+        :class="{'stack--disable-pointer-events': transiting}"
     >
         <div
-            class="absolute-top"
-            v-for="(entry, i) in stack"
-            v-show="i === stack.length - 1"
             ref="views"
+            v-for="(entry, i) in stack"
             :key="entry.fullPath"
-            :style="{zIndex: i === stack.length - 1 ? 1 : undefined}"
+            class="absolute-top"
+            :class="viewClass(i)"
+            v-show="viewShow(i)"
         >
             <component
                 :is="entry.component"
@@ -18,60 +20,84 @@
             />
         </div>
         <div
-            class="absolute-full stack--shade-bg"
             ref="shade"
-            v-show="false"
+            class="absolute-full stack-shade"
+            v-show="panning||transiting"
         />
+        <q-resize-observer @resize="onResize" />
     </q-page>
 </template>
 <script lang="ts">
 import Vue from 'vue'
 import { ScopedEntry } from 'vue-router-stack'
-import { transitAdvanced } from 'src/utils/transit'
-
-function newVelometer() {
-    let _t1 = 0
-    let _t2 = 0
-    let _delta = 0
-    return {
-        update(t: number, delta: number) {
-            _t1 = _t2
-            _t2 = t
-            _delta = delta
-        },
-        get velocity() {
-            return _delta / (_t2 - _t1)
-        }
-    }
-}
+import { newVelometer, newPipeline, nextFrame, transitionEnd } from 'src/utils/transit'
 
 export default Vue.extend({
     data: () => {
         return {
             stack: [] as ScopedEntry[],
+            width: 0,
+            panning: false,
+            transiting: false,
+            shouldHandlePan: false,
             velometer: newVelometer(),
-            rafId: 0,
-            transitionDone: Promise.resolve(),
-            shouldHandlePan: false
+            pipeline: newPipeline()
         }
     },
     created() {
         this.stack = this.$stack.scoped
     },
     methods: {
-        async guard(f: () => Promise<unknown>) {
-            await this.transitionDone
-            this.$el.classList.add('stack--disable-pointer-events')
-            this.transitionDone = f().then(() => this.$el.classList.remove('stack--disable-pointer-events'))
-            return this.transitionDone
+        setPanRatio(ratio: number) {
+            ((this.$refs.container as Vue).$el as HTMLElement).style.setProperty('--stack-pan-ratio', `${ratio}`)
         },
-        getViews() {
-            const views = this.$refs.views as HTMLElement[]
+        async transit(pushIn: boolean) {
+            this.transiting = true
+            document.body.classList.add('stack-body--prevent-scroll')
+
+            await nextFrame()
+
+            const views = this.animatedViews()
+            views.forEach(v => v.classList.add('stack-transition'))
+
+            await nextFrame()
+
+            this.setPanRatio(pushIn ? 0 : 1)
+
+            await Promise.all(views.map(v => transitionEnd(v)))
+
+            views.forEach(v => v.classList.remove('stack-transition'))
+
+            document.body.classList.remove('stack-body--prevent-scroll')
+            this.transiting = false
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onResize(size: any) {
+            ((this.$refs.container as Vue).$el as HTMLElement).style.setProperty('--stack-container-width', `${size.width}`)
+            this.width = size.width
+        },
+        viewClass(i: number) {
             return {
-                v1: views[views.length - 1],
-                v2: views[views.length - 2],
-                shade: this.$refs.shade as HTMLElement
+                'stack-v1': i === this.stack.length - 1,
+                'stack-v2': i === this.stack.length - 2
             }
+        },
+        viewShow(i: number) {
+            if (i === this.stack.length - 1) {
+                return true
+            }
+            if (i === this.stack.length - 2) {
+                return this.panning || this.transiting
+            }
+            return false
+        },
+        animatedViews() {
+            const views = this.$refs.views as HTMLElement[]
+            return [
+                views[views.length - 1],
+                views[views.length - 2],
+                this.$refs.shade as HTMLElement
+            ]
         },
         testTouchPan(ev: TouchEvent & MouseEvent) {
             const x = (ev.targetTouches ? ev.targetTouches[0].clientX : ev.clientX) - this.$el.getBoundingClientRect().x
@@ -79,74 +105,26 @@ export default Vue.extend({
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         handleTouchPan(ev: any) {
-            const { v1, v2, shade } = this.getViews()
-
-            const panOffset = Math.max(0, ev.offset.x)
-            const ratio = Math.min(1, panOffset / v1.clientWidth)
-
-            if (this.rafId) {
-                cancelAnimationFrame(this.rafId)
-            }
+            const offset = Math.max(0, ev.offset.x)
+            const width = Math.max(1, this.width)
 
             if (!ev.isFirst && !ev.isFinal) {
-                this.rafId = requestAnimationFrame(() => {
-                    v1.style.transform = `translate(${panOffset}px)`
-                    v2.style.transform = `translate(calc(var(--stack-v2-offset)*${(1 - ratio)}))`
-                    shade.style.opacity = `${1 - ratio}`
-                    this.rafId = 0
-                })
+                const ratio = offset / width
+                this.setPanRatio(ratio)
             }
-
             if (ev.isFirst) {
-                v1.__transitionFinalize = () => {
-                    v1.style.transform = ''
-                    v1.style.transition = ''
-                }
-
-                v2.classList.add('stack--show-important')
-                v2.__transitionFinalize = () => {
-                    v2.classList.remove('stack--show-important')
-                    v2.style.transform = ''
-                    v2.style.transition = ''
-                }
-
-                shade.classList.add('stack--show-important')
-                shade.__transitionFinalize = () => {
-                    shade.style.opacity = ''
-                    shade.style.transition = ''
-                    shade.classList.remove('stack--show-important')
-                }
+                document.body.classList.add('stack-body--prevent-scroll')
+                this.panning = true
             }
-
             if (ev.isFinal) {
+                this.panning = false
                 const v = this.velometer.velocity
-                if ((panOffset > v1.clientWidth / 2 && v >= 0) || v > 0.3) {
-                    v1.style.transition =
-                        v2.style.transition =
-                        shade.style.transition = 'var(--stack-transition-short)'
+                const triggered = (offset > width / 3 && v >= 0) || v > 0.3
+                if (triggered) {
                     this.$router.go(-1)
+                    this.transiting = true
                 } else {
-                    this.guard(async () => {
-                        v1.style.transition =
-                            v2.style.transition =
-                            shade.style.transition = 'var(--stack-transition-short)'
-
-                        const ts = [
-                            transitAdvanced(v1, {
-                                to: 'stack--v1-in-important'
-                            }),
-                            transitAdvanced(shade, {
-                                to: 'stack--shade-mask-important'
-                            })
-                        ]
-
-                        if (v2) {
-                            ts.push(transitAdvanced(v2, {
-                                to: 'stack--v2-out-important'
-                            }))
-                        }
-                        (await Promise.all(ts)).forEach(f => f())
-                    })
+                    this.pipeline.run(() => this.transit(true))
                 }
             }
 
@@ -155,50 +133,25 @@ export default Vue.extend({
     },
     watch: {
         '$stack.scoped'(newVal: ScopedEntry[], oldVal: ScopedEntry[]) {
-            this.guard(async () => {
-                // TODO more accurate transition judgement
+            // TODO more accurate transition judgement
+            this.pipeline.run(async () => {
                 if (newVal.length > oldVal.length && newVal.length > 1) {
                     // push in
+                    this.transiting = true
+                    this.setPanRatio(1)
                     this.stack = newVal
+
                     await this.$nextTick()
-                    const { v1, v2, shade } = this.getViews();
-                    (await Promise.all([
-                        transitAdvanced(v1, {
-                            from: 'stack--v1-out',
-                            to: 'stack--v1-in-important',
-                            active: 'stack--transition'
-                        }),
-                        transitAdvanced(v2, {
-                            to: 'stack--v2-out-important',
-                            active: 'stack--transition,stack--show-important'
-                        }),
-                        transitAdvanced(shade, {
-                            from: 'stack--shade-clear',
-                            to: 'stack--shade-mask-important',
-                            active: 'stack--transition,stack--show-important'
-                        })
-                    ])).forEach(f => f())
+                    await this.transit(true)
                 } else if (newVal.length < oldVal.length && newVal.length > 0) {
                     // pop out
-                    const { v1, v2, shade } = this.getViews();
-                    (await Promise.all([
-                        transitAdvanced(v1, {
-                            to: 'stack--v1-out-important',
-                            active: 'stack--transition'
-                        }),
-                        transitAdvanced(v2, {
-                            from: 'stack--v2-out',
-                            to: 'stack--v2-in-important',
-                            active: 'stack--transition,stack--show-important'
-                        }),
-                        transitAdvanced(shade, {
-                            to: 'stack--shade-clear-important',
-                            active: 'stack--transition,stack--show-important'
-                        })
-                    ])).forEach(f => f())
+                    await this.transit(false)
                     this.stack = newVal
+                    this.setPanRatio(0)
+                    await this.$nextTick()
                 } else {
                     this.stack = newVal
+                    await this.$nextTick()
                 }
             })
         }
@@ -207,48 +160,36 @@ export default Vue.extend({
 </script>
 <style >
 :root {
-    --stack-transition: all 0.35s;
-    --stack-transition-short: all 0.2s;
-    --stack-v2-offset: -20%;
+    --stack-pan-ratio: 0;
+    --stack-container-width: 0;
 }
-.stack--transition {
-    transition: var(--stack-transition);
+
+.stack-v1 {
+    transform: translateX(
+        calc(var(--stack-container-width) * var(--stack-pan-ratio) * 1px)
+    );
+    z-index: 1;
 }
-.stack--v1-out {
-    transform: translate(100%);
+.stack-v2 {
+    transform: translateX(
+        calc(
+            var(--stack-container-width) * (var(--stack-pan-ratio) - 1) * 0.2 *
+                1px
+        )
+    );
 }
-.stack--v1-out-important {
-    transform: translate(100%) !important;
+.stack-shade {
+    background: black;
+    opacity: calc(0.2 - var(--stack-pan-ratio) * 0.2);
 }
-.stack--v1-in-important {
-    transform: translate(0px) !important;
+.stack-transition {
+    transition: all 0.3s;
 }
-.stack--v2-out {
-    transform: translate(var(--stack-v2-offset));
-}
-.stack--v2-out-important {
-    transform: translate(var(--stack-v2-offset)) !important;
-}
-.stack--v2-in-important {
-    transform: translate(0px) !important;
-}
-.stack--show-important {
-    display: block !important;
+.stack-body--prevent-scroll {
+    position: fixed !important;
 }
 .stack--disable-pointer-events,
 .stack--disable-pointer-events * {
     pointer-events: none !important;
-}
-.stack--shade-clear {
-    opacity: 0;
-}
-.stack--shade-clear-important {
-    opacity: 0 !important;
-}
-.stack--shade-mask-important {
-    opacity: 1 !important;
-}
-.stack--shade-bg {
-    background-color: rgba(0, 0, 0, 0.12);
 }
 </style>

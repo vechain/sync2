@@ -27,7 +27,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import { nextFrame, transitionEnd, newVelometer, newGuard } from 'src/utils/transit'
+import { nextFrame, transitionEnd, newVelometer, newPipeline } from 'src/utils/transit'
 
 export default Vue.extend({
     props: {
@@ -40,7 +40,7 @@ export default Vue.extend({
             transiting: false,
             opened: false,
             velometer: newVelometer(),
-            guard: newGuard()
+            pipeline: newPipeline()
         }
     },
     model: {
@@ -55,7 +55,7 @@ export default Vue.extend({
             this.opened = newVal
         },
         opened() {
-            this.transit()
+            this.pipeline.run(() => this.transit())
         }
     },
     methods: {
@@ -70,26 +70,27 @@ export default Vue.extend({
             this.drawerWidth = size.width
             this.parent.style.setProperty('--drawer-width', `${this.drawerWidth}`)
         },
-        transit() {
-            this.guard.run(async () => {
-                this.transiting = true
-                document.body.classList.add('drawer-body--prevent-scroll')
-                const parent = this.$parent.$el as HTMLElement
-                const backdrop = this.$refs.backdrop as HTMLElement
-                parent.classList.add('drawer-transition')
-                backdrop.classList.add('drawer-transition')
-                await nextFrame()
+        async transit() {
+            this.transiting = true
+            document.body.classList.add('drawer-body--prevent-scroll')
+            const parent = this.$parent.$el as HTMLElement
+            const backdrop = this.$refs.backdrop as HTMLElement
 
-                parent.style.setProperty('--drawer-open-ratio', `${this.opened ? 1 : 0}`)
+            await nextFrame()
 
-                await transitionEnd(parent)
-                parent.classList.remove('drawer-transition')
-                backdrop.classList.remove('drawer-transition')
-                if (!this.opened) {
-                    document.body.classList.remove('drawer-body--prevent-scroll')
-                }
-                this.transiting = false
-            })
+            parent.classList.add('drawer-transition')
+            backdrop.classList.add('drawer-transition')
+            await nextFrame()
+
+            parent.style.setProperty('--drawer-open-ratio', `${this.opened ? 1 : 0}`)
+
+            await transitionEnd(parent)
+            parent.classList.remove('drawer-transition')
+            backdrop.classList.remove('drawer-transition')
+            if (!this.opened) {
+                document.body.classList.remove('drawer-body--prevent-scroll')
+            }
+            this.transiting = false
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         handleTouchPan(ev: Record<string, any>) {
@@ -118,7 +119,7 @@ export default Vue.extend({
                     this.opened = !this.opened
                     this.$emit('open', this.opened)
                 } else {
-                    this.transit()
+                    this.pipeline.run(() => this.transit())
                 }
             }
 

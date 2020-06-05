@@ -25,83 +25,16 @@ function getTimeout(el: HTMLElement) {
 }
 
 /**
- * manually transit an element in advanced, that returns cleanup function to make it possible
- * for synchronizing multi-transitions
- * @param el the target element
- * @param options transition options
+ * returns the promise which is resolved by requestAnimationFrame
  */
-export async function transitAdvanced(
-    el: HTMLElement,
-    classes: {
-        from?: string
-        to?: string
-        active?: string
-    }
-) {
-    classes.from && el.classList.add(...classes.from.split(','))
-    await new Promise(requestAnimationFrame)
-
-    classes.active && el.classList.add(...classes.active.split(','))
-    await new Promise(requestAnimationFrame)
-
-    classes.from && el.classList.remove(...classes.from.split(','))
-    classes.to && el.classList.add(...classes.to.split(','))
-
-    let removeListener = () => { }
-    const transitionEnd = new Promise(resolve => {
-        const cb = (ev: TransitionEvent) => {
-            if (ev && ev.target !== el) {
-                return
-            }
-            if (!ev || ev.propertyName.endsWith('transform')) {
-                resolve()
-            }
-        }
-        el.addEventListener('transitionend', cb)
-        removeListener = () => el.removeEventListener('transitionend', cb)
-    })
-
-    const timeout = new Promise(resolve => setTimeout(resolve, getTimeout(el) + 1))
-    await Promise.race([transitionEnd, timeout])
-
-    removeListener()
-
-    return () => {
-        classes.to && el.classList.remove(...classes.to.split(','))
-        classes.active && el.classList.remove(...classes.active.split(','))
-
-        const finalize = el.__transitionFinalize
-        el.__transitionFinalize = undefined
-        finalize && finalize()
-    }
-}
-
-/**
- * manually transit an element
- * @param el the target element
- * @param options transition options
- */
-export function transit(
-    el: HTMLElement,
-    classes: {
-        from?: string
-        to?: string
-        active?: string
-    }
-) {
-    return transitAdvanced(el, classes).then(f => f())
-}
-
-declare global {
-    interface HTMLElement {
-        __transitionFinalize?: () => void
-    }
-}
-
 export function nextFrame() {
     return new Promise(resolve => requestAnimationFrame(resolve))
 }
 
+/**
+ * returns the promise which is resolved when the given element's 'transitionend' event fired
+ * @param el the element to watch
+ */
 export function transitionEnd(el: HTMLElement) {
     let removeListener = () => { }
     const end = new Promise(resolve => {
@@ -122,10 +55,10 @@ export function transitionEnd(el: HTMLElement) {
         .then(() => removeListener())
 }
 
-export function newGuard(
-    before?: () => unknown,
-    after?: () => unknown
-) {
+/**
+ * create a pipeline which to ensure tasks running serialized
+ */
+export function newPipeline() {
     let done: Promise<void> | undefined
     return {
         run(task: () => Promise<unknown>) {
@@ -133,12 +66,7 @@ export function newGuard(
             done = (async () => {
                 await _done
                 try {
-                    try {
-                        before && (await before())
-                        await task()
-                    } finally {
-                        after && (await after())
-                    }
+                    await task()
                 } catch (err) {
                     console.warn(err)
                 }
