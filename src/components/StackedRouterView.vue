@@ -9,8 +9,8 @@
             ref="views"
             v-for="(entry, i) in stack"
             :key="entry.fullPath"
-            class="absolute-top"
-            :class="viewClasss(i)"
+            class="absolute-full"
+            :class="viewClasses(i)"
         >
             <component
                 :is="entry.component"
@@ -91,17 +91,20 @@ export default Vue.extend({
             (this.$el as HTMLElement).style.setProperty('--stack-container-width', `${size.width}`)
             this.width = size.width
         },
-        viewClasss(i: number) {
+        viewClasses(i: number) {
             const classes: Record<string, boolean> = {}
             if (i === this.stack.length - 1) {
                 classes['stack-v1'] = true
                 classes['stack-will-change-transform'] = this.panning || this.transiting
+                classes['overflow-auto'] = true
             } else if (i === this.stack.length - 2) {
                 classes['stack-v2'] = true
                 classes['stack-display-none'] = !this.panning && !this.transiting
                 classes['stack-will-change-transform'] = this.panning || this.transiting
+                classes['overflow-hidden'] = true
             } else {
                 classes['stack-display-none'] = true
+                classes['overflow-hidden'] = true
             }
             return classes
         },
