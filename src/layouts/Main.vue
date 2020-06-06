@@ -34,7 +34,10 @@
             </q-toolbar>
         </q-header>
 
-        <drawer v-model="leftDrawerOpen">
+        <drawer
+            :disable="!showMenuBtn"
+            v-model="leftDrawerOpen"
+        >
             <MainDrawerContent
                 @wallet-change="onWalletChange"
                 style="width:300px"
