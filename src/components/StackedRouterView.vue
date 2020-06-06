@@ -10,8 +10,7 @@
             v-for="(entry, i) in stack"
             :key="entry.fullPath"
             class="absolute-top"
-            :class="viewClass(i)"
-            v-show="viewShow(i)"
+            :class="viewClasss(i)"
         >
             <component
                 :is="entry.component"
@@ -22,6 +21,7 @@
             ref="backdrop"
             class="absolute-full stack-backdrop"
             v-show="panning||transiting"
+            :class="{'stack-will-change-opacity': panning||transiting}"
         />
         <q-resize-observer @resize="onResize" />
     </q-page>
@@ -91,21 +91,19 @@ export default Vue.extend({
             (this.$el as HTMLElement).style.setProperty('--stack-container-width', `${size.width}`)
             this.width = size.width
         },
-        viewClass(i: number) {
-            return {
-                'stack-v1': i === this.stack.length - 1,
-                'stack-v2': i === this.stack.length - 2
+        viewClasss(i: number) {
+            const classes: Record<string, boolean> = {}
+            if (i === this.stack.length - 1) {
+                classes['stack-v1'] = true
+                classes['stack-will-change-transform'] = this.panning || this.transiting
+            } else if (i === this.stack.length - 2) {
+                classes['stack-v2'] = true
+                classes['stack-display-none'] = !this.panning && !this.transiting
+                classes['stack-will-change-transform'] = this.panning || this.transiting
+            } else {
+                classes['stack-display-none'] = true
             }
-        },
-        viewShow(i: number) {
-            switch (i) {
-            case this.stack.length - 1:
-                return true
-            case this.stack.length - 2:
-                return this.panning || this.transiting
-            default:
-                return false
-            }
+            return classes
         },
         testTouchPan(ev: TouchEvent & MouseEvent) {
             const x = (ev.targetTouches ? ev.targetTouches[0].clientX : ev.clientX) - this.$el.getBoundingClientRect().x
@@ -117,9 +115,8 @@ export default Vue.extend({
             const width = Math.max(1, this.width)
 
             const ratio = offset / width
-            if (!ev.isFirst && !ev.isFinal) {
-                this.setPanRatio(ratio)
-            }
+            this.setPanRatio(ratio)
+
             if (ev.isFirst) {
                 document.body.classList.add('stack-body--prevent-scroll')
                 this.panning = true
@@ -127,12 +124,13 @@ export default Vue.extend({
             if (ev.isFinal) {
                 this.panning = false
                 const v = this.velometer.velocity
-                const triggered = (offset > width / 3 && v >= 0) || v > 0.3
-                this.setTransitionDurationMul(0.7)
+                const triggered = (offset > width / 2 && v >= 0) || v > 0.3
                 if (triggered) {
+                    this.setTransitionDurationMul(0.4)
                     this.$router.go(-1)
                     this.transiting = true
                 } else {
+                    this.setTransitionDurationMul(0.6)
                     this.pipeline.run(() => this.transit(true))
                 }
             }
@@ -192,7 +190,7 @@ export default Vue.extend({
     opacity: calc((1 - var(--stack-pan-ratio)) * 0.1);
 }
 .stack-transition {
-    transition: all calc(0.3s * var(--stack-transition-mul));
+    transition: all calc(0.35s * var(--stack-transition-mul));
 }
 .stack-body--prevent-scroll {
     position: fixed !important;
@@ -200,5 +198,14 @@ export default Vue.extend({
 .stack--disable-pointer-events,
 .stack--disable-pointer-events * {
     pointer-events: none !important;
+}
+.stack-display-none {
+    display: none;
+}
+.stack-will-change-transform {
+    will-change: transform;
+}
+.stack-will-change-opacity {
+    will-change: opacity;
 }
 </style>

@@ -7,10 +7,11 @@
             v-show="panning||opened||transiting"
             v-touch-pan.left.mouse.prevent="transiting? undefined:handleTouchPan"
             @click="onClickBackdrop"
+            :class="{'drawer-will-change-opacity':panning||transiting}"
         />
         <!-- the opener -->
         <div
-            v-show="!opened&&!transiting"
+            v-show="!opened&&!transiting&&!disable"
             class="drawer-opener fixed-left"
             v-touch-pan.right.mouse.prevent="handleTouchPan"
         />
@@ -31,7 +32,8 @@ import { nextFrame, transitionEnd, newVelometer, newPipeline } from 'src/utils/t
 
 export default Vue.extend({
     props: {
-        value: Boolean
+        value: Boolean,
+        disable: Boolean
     },
     data: () => {
         return {
@@ -101,6 +103,7 @@ export default Vue.extend({
             if (!this.opened) {
                 document.body.classList.remove('drawer-body--prevent-scroll')
             }
+            this.$parent.$el.classList.remove('drawer-will-change-transform')
             this.setTransitionDurationMul(1)
             this.transiting = false
         },
@@ -109,13 +112,12 @@ export default Vue.extend({
             const width = Math.max(1, this.drawerWidth)
             const offset = Math.min(Math.abs(ev.offset.x), width)
 
-            if (!ev.isFirst && !ev.isFinal) {
-                const ratio = this.opened ? (width - offset) / width : offset / width
-                this.setOpenRatio(ratio)
-            }
+            const ratio = this.opened ? (width - offset) / width : offset / width
+            this.setOpenRatio(ratio)
 
             if (ev.isFirst) {
                 document.body.classList.add('drawer-body--prevent-scroll')
+                this.$parent.$el.classList.add('drawer-will-change-transform')
                 this.panning = true
             }
 
@@ -174,5 +176,11 @@ export default Vue.extend({
 }
 .drawer-body--prevent-scroll {
     position: fixed !important;
+}
+.drawer-will-change-transform {
+    will-change: transform;
+}
+.drawer-will-change-opacity {
+    will-change: opacity;
 }
 </style>
