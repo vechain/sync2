@@ -1,5 +1,5 @@
 <template>
-    <div class="drawer-container fixed">
+    <div class="drawer-container fixed q-drawer--top-padding">
         <!-- the backdrop -->
         <div
             ref="backdrop"
@@ -17,7 +17,7 @@
         />
         <!-- content wrapper-->
         <aside
-            class="drawer fixed-left"
+            class="drawer fixed-left q-drawer__content"
             :class="{invisible: !(panning||opened||transiting)}"
             v-touch-pan.left.mouse.prevent="transiting? undefined:handleTouchPan"
         >
