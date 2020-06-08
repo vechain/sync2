@@ -9,6 +9,7 @@ import PinCode from './PinCode.vue'
 import ConfirmedPinCodeInput from './ConfirmedPinCodeInput.vue'
 import SlideContainer from './SlideContainer.vue'
 import Drawer from './Drawer.vue'
+import WalletItem from './WalletItem.vue'
 
 const components: { [name: string]: Vue.VueConstructor } = {
     StackedRouterView,
@@ -21,7 +22,8 @@ const components: { [name: string]: Vue.VueConstructor } = {
     PinCode,
     ConfirmedPinCodeInput,
     SlideContainer,
-    Drawer
+    Drawer,
+    WalletItem
 }
 
 export default components
