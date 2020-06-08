@@ -14,7 +14,7 @@
         >
             <component
                 :is="entry.component"
-                :entry="entry"
+                :stacked-full-path="entry.fullPath"
             />
         </div>
         <div

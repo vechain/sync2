@@ -3,6 +3,7 @@ import * as State from 'src/state'
 import AuthenticationDialog from 'pages/AuthenticationDialog.vue'
 import { Storage } from 'core/storage'
 import { QSpinnerIos } from 'quasar'
+import type { Entry } from 'vue-router-stack'
 
 declare global {
     type AuthenticateOptions = {
@@ -34,6 +35,11 @@ declare module 'vue/types/vue' {
          * @returns the result of the task
          */
         $loading<T>(task: () => Promise<T>): Promise<T>
+
+        /** the route object which leads to render this component by StackedRouterView.
+         * unlike $route, $stackedRoute is permanently bound to a component instance.
+         */
+        $stackedRoute: Entry | null
     }
 }
 
@@ -124,6 +130,20 @@ export default boot(async ({ Vue }) => {
                         }
                     }
                 }
+            }
+        },
+        $stackedRoute: {
+            get(): Entry | null {
+                let vm = this as Vue
+                const stack = vm.$stack.full
+                do {
+                    const path = vm.$attrs['stacked-full-path']
+                    if (path) {
+                        return stack.find(e => e.fullPath === path) || null
+                    }
+                    vm = vm.$parent
+                } while (vm)
+                return null
             }
         }
     })
