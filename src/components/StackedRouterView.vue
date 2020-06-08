@@ -146,12 +146,16 @@ export default Vue.extend({
             this.pipeline.run(async () => {
                 if (newVal.length > oldVal.length && newVal.length > 1) {
                     // push in
-                    this.transiting = true
-                    this.setPanRatio(1)
-                    this.stack = newVal
+                    if (newVal[newVal.length - 1].query['no-transition']) {
+                        this.stack = newVal
+                    } else {
+                        this.transiting = true
+                        this.setPanRatio(1)
+                        this.stack = newVal
 
-                    await this.$nextTick()
-                    await this.transit(true)
+                        await this.$nextTick()
+                        await this.transit(true)
+                    }
                 } else if (newVal.length < oldVal.length && newVal.length > 0) {
                     // pop out
                     await this.transit(false)
