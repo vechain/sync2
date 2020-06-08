@@ -8,7 +8,7 @@
             <q-toolbar class="bg-white">
                 <transition>
                     <q-btn
-                        v-if="showMenuBtn"
+                        v-if="hasDrawer"
                         color="white"
                         text-color="black"
                         flat
@@ -16,7 +16,7 @@
                         round
                         icon="menu"
                         aria-label="Menu"
-                        @click="leftDrawerOpen = !leftDrawerOpen"
+                        @click="drawerOpen = !drawerOpen"
                     />
                     <q-btn
                         v-else
@@ -35,13 +35,64 @@
         </q-header>
 
         <drawer
-            :disable="!showMenuBtn"
-            v-model="leftDrawerOpen"
+            :disable="!hasDrawer"
+            v-model="drawerOpen"
         >
-            <MainDrawerContent
-                @wallet-change="onWalletChange"
+            <div
+                class="column full-height"
                 style="width:300px"
-            />
+            >
+                <!-- drawer content header -->
+                <q-toolbar>
+                    <q-avatar
+                        color="primary"
+                        text-color="white"
+                        size="md"
+                    >S</q-avatar>
+                    <q-toolbar-title>
+                        Sync
+                    </q-toolbar-title>
+                    <q-space />
+                    <q-btn
+                        icon="settings"
+                        flat
+                        dense
+                        round
+                        @click="onClickSettings"
+                    ></q-btn>
+                </q-toolbar>
+                <!-- the grouped wallet list -->
+                <q-list class="col overflow-auto">
+                    <template v-for="(list, gid) in walletGroups">
+                        <!-- network name -->
+                        <q-item-label
+                            header
+                            :key="`${gid}-label`"
+                            class="text-capitalize"
+                        >
+                            {{gid | net}}
+                        </q-item-label>
+                        <wallet-item
+                            v-for="(wallet,i) in list"
+                            :key="`${gid}-${i}`"
+                            :name="wallet.meta.name"
+                            @click="onSelectWallet(wallet.id)"
+                            clickable
+                            :active="wallet.id === $state.wallet.current.id"
+                        />
+                    </template>
+                </q-list>
+                <!-- drawer content footer -->
+                <q-toolbar class="flex-center">
+                    <q-btn
+                        icon="add"
+                        unelevated
+                        size="sm"
+                        color="amber"
+                        @click="onNewWallet"
+                    >New</q-btn>
+                </q-toolbar>
+            </div>
         </drawer>
 
         <q-page-container>
@@ -57,22 +108,37 @@ import FirstRunDialog from 'pages/FirstRunDialog.vue'
 export default Vue.extend({
     data() {
         return {
-            leftDrawerOpen: false
-        }
-    },
-    watch: {
-        '$route'(to, from) {
-            this.leftDrawerOpen = false
+            drawerOpen: false
         }
     },
     computed: {
-        showMenuBtn() {
+        hasDrawer() {
             return this.$route.name === 'wallet'
+        },
+        walletGroups() {
+            return this.$state.wallet.list.reduce<Record<string, M.Wallet[]>>((groups, w) => {
+                const g = groups[w.gid]
+                if (g) {
+                    g.push(w)
+                } else {
+                    groups[w.gid] = [w]
+                }
+                return groups
+            }, {})
         }
     },
     methods: {
-        onWalletChange(active: number) {
-            this.leftDrawerOpen = false
+        onClickSettings() {
+            this.$router.push({ name: 'settings', query: { 'no-transition': '1' } })
+            this.drawerOpen = false
+        },
+        onSelectWallet(id: number) {
+            this.$state.wallet.setCurrentId(id)
+            this.drawerOpen = false
+        },
+        onNewWallet() {
+            alert('TODO: New Wallet')
+            // TODO
         }
     },
     created() {
