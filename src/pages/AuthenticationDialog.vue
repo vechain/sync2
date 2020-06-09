@@ -47,6 +47,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Vue from 'vue'
 import { BioPass } from 'src/utils/bio-pass'
+import { Vault } from 'core/vault'
 
 export default Vue.extend({
     props: {
@@ -105,9 +106,10 @@ export default Vue.extend({
                 }
             }
         },
-        async runTask(pin: string) {
-            await this.$loading(async () => {
+        runTask(pin: string) {
+            return this.$loading(async () => {
                 try {
+                    await Vault.verifyPassword(this.$state.config.all.passwordShadow, pin)
                     this.ok(await this.task(pin))
                 } catch (err) {
                     this.clearPin = ''

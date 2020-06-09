@@ -76,7 +76,6 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import { Vault } from 'core/vault'
 import { BioPass } from 'src/utils/bio-pass'
 
 export default Vue.extend({
@@ -96,11 +95,7 @@ export default Vue.extend({
             this.bioPassSaved = null
             try {
                 if (newVal) {
-                    const password = await this.$authenticate(password =>
-                        Vault.verifyPassword(this.$state.config.all.passwordShadow, password)
-                            .then(() => password)
-                    )
-                    await bioPass.save(password)
+                    await this.$authenticate(password => bioPass.save(password))
                 } else {
                     await bioPass.delete()
                 }
