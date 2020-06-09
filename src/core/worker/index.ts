@@ -1,25 +1,34 @@
 import Worker from 'worker-loader!./handler'
+import { Deferred } from 'src/utils/deferred'
 
 const worker = new Worker()
 
+const queue = [] as Array<Deferred<unknown>>
+
+worker.onmessage = ev => {
+    const [result, err] = ev.data
+    const first = queue.shift()
+    if (first) {
+        if (err) {
+            first.reject(new Error(err.message))
+        } else {
+            first.resolve(result)
+        }
+    } else {
+        throw new Error('unexpected message')
+    }
+}
 /**
  * convenient method for calling functions in web worker
  * @param cmd the command name
  * @param args command arguments
  */
 function call<R>(cmd: string, ...args: unknown[]): Promise<R> {
-    return new Promise<R>((resolve, reject) => {
-        // args are passed in tuple
-        worker.postMessage([cmd, args])
-        worker.onmessage = ev => {
-            const [result, err] = ev.data
-            if (err) {
-                reject(new Error(err.message))
-            } else {
-                resolve(result)
-            }
-        }
-    })
+    // args are passed in tuple
+    worker.postMessage([cmd, args])
+    const deferred = new Deferred<unknown>()
+    queue.push(deferred)
+    return deferred as Promise<R>
 }
 
 /** generate 256-bit salt */
