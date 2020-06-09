@@ -40,6 +40,7 @@
                 unelevated
                 size="sm"
                 color="amber"
+                @click="onAdd"
             >Add</q-btn>
         </q-footer>
         <q-page-container>
@@ -81,6 +82,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { Vault } from 'core/vault'
 export default Vue.extend({
     computed: {
         wallets() {
@@ -94,6 +96,33 @@ export default Vue.extend({
         onClick(id: number) {
             this.$state.wallet.setCurrentId(id)
             this.$emit('wallet-change', id)
+        },
+        async onAdd() {
+            const password = await this.$authenticate(password =>
+                Vault.verifyPassword(this.$state.config.all.passwordShadow, password)
+                    .then(() => password)
+            ).catch(e => {
+                console.log(e)
+            })
+
+            if (!password) { return }
+            try {
+                const words = await Vault.generateMnemonic()
+                const vault = await Vault.createHD(words, password)
+                const node0 = await vault.derive(0)
+                const meta: M.Wallet.Meta = {
+                    name: 'my wallet',
+                    addresses: [{ address: node0.address, visible: true }]
+                }
+                await this.$storage.wallets.insert({
+                    gid: this.$state.config.node.list[0].gid,
+                    vault: vault.encode(),
+                    meta: JSON.stringify(meta)
+                })
+            } catch (error) {
+                console.warn(error)
+                alert('something wrong')
+            }
         }
     }
 })
