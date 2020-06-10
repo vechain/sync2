@@ -4,6 +4,7 @@ import AuthenticationDialog from 'pages/AuthenticationDialog.vue'
 import { Storage } from 'core/storage'
 import { QSpinnerIos } from 'quasar'
 import type { Entry } from 'vue-router-stack'
+import AsyncComputed from 'vue-async-computed'
 
 declare global {
     type AuthenticateOptions = {
@@ -147,4 +148,6 @@ export default boot(async ({ Vue }) => {
             }
         }
     })
+
+    Vue.use(AsyncComputed)
 })
