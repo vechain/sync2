@@ -23,7 +23,10 @@
                             <q-item>
                                 <q-item-section>Activity</q-item-section>
                             </q-item>
-                            <q-item>
+                            <q-item
+                                v-close-popup
+                                :to="{name: 'backup'}"
+                            >
                                 <q-item-section>Backup</q-item-section>
                             </q-item>
                             <q-item>
