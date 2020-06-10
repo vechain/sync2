@@ -18,6 +18,10 @@ const routes: RouteConfig[] = [
             path: '/settings/tokens',
             name: 'tokens',
             component: () => import('pages/TokenList.vue')
+        }, {
+            path: '/wallet/backup',
+            name: 'backup',
+            component: () => import('pages/Backup.vue')
         }]
     }
 ]
