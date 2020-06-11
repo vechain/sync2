@@ -33,11 +33,11 @@ export function build() {
                 meta: JSON.parse(r.meta)
             }))
         },
-        get current() {
+        get current(): M.Wallet | null {
             const list = this.list
             return list.find(item => {
                 return item.id === state.currentId
-            }) || list[0]
+            }) || list[0] || null
         },
         setCurrentId(id: number) {
             state.currentId = id
