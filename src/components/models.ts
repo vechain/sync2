@@ -13,12 +13,15 @@ declare namespace M {
     }
 
     namespace Wallet {
+        interface Card {
+            address: string
+            hidden?: boolean
+        }
+
         interface Meta {
             name: string
-            addresses: {
-                address: string // cached address
-                visible: boolean
-            }[]
+            cards: Card[]
+            backedUp?: boolean
         }
     }
 
