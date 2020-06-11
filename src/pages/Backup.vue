@@ -1,11 +1,17 @@
 <template>
     <q-page class="bg-white">
         <div
-            v-show="isAuthorized"
+            v-show="words.length"
             style="max-width: 600px"
-            class="q-mx-auto"
+            class="q-mx-auto q-mt-lg"
         >
             <template v-if="step === 1">
+                <div class="q-px-lg">
+                    <span class="text-subtitle2 q-py-sm">Backup mnemonic</span>
+                    <div class="text-body2 text-grey q-py-sm">
+                        These 24 words are used to recover your wallet. Please write down in order and keep it in a secure place.
+                    </div>
+                </div>
                 <div class="row justify-around q-pt-lg ">
                     <div
                         v-for="(item, index) in words"
@@ -16,11 +22,14 @@
                         <span class="text-weight-medium">{{item}}</span>
                     </div>
                 </div>
-                <div class="text-body2 text-grey q-pa-lg">
-                    Recovery phrases are used to recover your wallet. Please write down in order and keep it in secure place.
-                </div>
             </template>
             <template v-if="step === 2">
+                <div class="q-px-lg">
+                    <span class="text-subtitle2 q-py-sm">Confirm your mnemonic words</span>
+                    <div class="text-body2 text-grey q-py-sm">
+                        Please choose mnemonic words in order and make sure your written mnemonic was correct written.
+                    </div>
+                </div>
                 <div style="min-height: 400px">
                     <div class="row justify-start">
                         <div
@@ -54,19 +63,45 @@
                     </div>
                 </div>
             </template>
+            <template v-if="step === 3">
+                <div class="q-pa-lg">
+                    <div class="q-pl-sm q-pb-md">
+                        <q-icon
+                            size="50px"
+                            name="verified_user"
+                        />
+                    </div>
+                    <span class="text-h4">Your wallet is now backed up</span>
+                    <div class="text-body2 text-grey q-py-md">
+                        The mnemonic words stores all the information that is needed at any point in time to recover your wallet.
+                    </div>
+                    <div class="text-body2 text-grey q-py-sm">
+                        The mnemonic words should be <strong class="text-black">stored in a secure place</strong>. It ensures you have had a backup in a scenario where your device breaks down or becomes unusable due to any reason.
+                    </div>
+                </div>
+            </template>
             <div class="row justify-center q-mt-lg">
                 <div class="col-8 text-center">
                     <q-btn
                         v-if="step === 1"
-                        label="Next"
+                        class="text-capitalize"
+                        label="I've written it down"
                         @click="onNext"
-                        color="primary"
+                        color="black"
                     />
                     <q-btn
                         v-if="step === 2"
-                        label="Back"
+                        class="text-capitalize"
+                        label="Check Mnemonic again"
                         @click="onBack"
-                        color="primary"
+                        color="black"
+                    />
+                    <q-btn
+                        v-if="step === 3"
+                        class="text-capitalize"
+                        label="Done"
+                        @click="$router.back()"
+                        color="black"
                     />
                 </div>
             </div>
@@ -81,7 +116,6 @@ export default Vue.extend({
         return {
             words: null as string[] | null,
             step: 1,
-            isAuthorized: false,
             verifyPosition: 0,
             indexGroup: [] as number[],
             groupSize: 3
@@ -104,7 +138,6 @@ export default Vue.extend({
         const vault = await Vault.decode(this.wallet!.vault)
         try {
             this.$authenticate(async (p) => {
-                this.isAuthorized = true
                 const words = await vault.decrypt(p)
                 this.words = (words as string).split(' ')
             })
@@ -129,7 +162,7 @@ export default Vue.extend({
                 ).length / this.groupSize
             )
             if (this.verifyPosition === this.words!.length / this.groupSize) {
-                this.$router.back()
+                this.step++
             }
         },
         onUncheck(index: number) {
