@@ -22,11 +22,15 @@ export default Vue.extend({
     computed: {
         background() {
             const svg = picasso(this.address)
+            const backgrounds = [
+                'radial-gradient(circle, grey 0%, black 100%)',
+                `url('data:image/svg+xml;utf8,${svg}')`
+            ]
             return {
-                'background-image': `url('data:image/svg+xml;utf8,${svg}')`,
-                'background-size': 'cover',
-                'background-repeat': 'no-repeat',
-                'border-radius': '16px'
+                background: backgrounds.join(','),
+                backgroundSize: 'cover',
+                backgroundBlendMode: 'soft-light',
+                borderRadius: '16px'
             }
         }
     }
