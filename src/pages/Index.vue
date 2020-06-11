@@ -1,60 +1,56 @@
 <template>
-    <div>
-        <div v-if="wallet">
-            <q-toolbar>
-                <q-toolbar-title> {{wallet.meta.name}}</q-toolbar-title>
+    <div
+        v-if="wallet"
+        class="fit column no-wrap"
+    >
+        <q-toolbar>
+            <q-toolbar-title> {{wallet.meta.name}}</q-toolbar-title>
+            <q-btn
+                flat
+                dense
+                round
+                icon="more_horiz"
+                aria-label="More"
+            >
+                <q-menu>
+                    <q-list>
+                        <q-item>
+                            <q-item-section>Accounts</q-item-section>
+                        </q-item>
+                        <q-item>
+                            <q-item-section>Activity</q-item-section>
+                        </q-item>
+                        <q-item
+                            v-close-popup
+                            :to="{name: 'backup'}"
+                        >
+                            <q-item-section>Backup</q-item-section>
+                        </q-item>
+                        <q-item>
+                            <q-item-section>Delete</q-item-section>
+                        </q-item>
+                    </q-list>
+                </q-menu>
+            </q-btn>
+        </q-toolbar>
+
+        <div class="row justify-center overflow-auto card-container">
+            <div
+                v-for="(card, i) in cards"
+                :key="i"
+                class="q-pa-md card-wrap"
+            >
+                <AddressCard
+                    class="fit shadow-6"
+                    :address="card.address"
+                    :index="i"
+                />
+            </div>
+            <div class="q-ma-md card-wrap row flex-center">
                 <q-btn
                     flat
-                    dense
-                    round
-                    icon="more_horiz"
-                    aria-label="More"
-                >
-                    <q-menu>
-                        <q-list>
-                            <q-item>
-                                <q-item-section>Accounts</q-item-section>
-                            </q-item>
-                            <q-item>
-                                <q-item-section>Activity</q-item-section>
-                            </q-item>
-                            <q-item
-                                v-close-popup
-                                :to="{name: 'backup'}"
-                            >
-                                <q-item-section>Backup</q-item-section>
-                            </q-item>
-                            <q-item>
-                                <q-item-section>Delete</q-item-section>
-                            </q-item>
-                        </q-list>
-                    </q-menu>
-                </q-btn>
-            </q-toolbar>
-            <div class="row justify-center q-gutter-lg">
-                <q-responsive
-                    v-for="(card, i) in cards"
-                    :key="i"
-                    :ratio="3/2"
-                    style="width:280px"
-                >
-                    <AddressCard
-                        class="shadow-4"
-                        :address="card.address"
-                        :index="i"
-                    />
-                </q-responsive>
-                <q-responsive
-                    :ratio="3/2"
-                    style="width:280px"
-                >
-                    <div class="row flex-center">
-                        <q-btn
-                            flat
-                            @click="onNewAddress"
-                        >New</q-btn>
-                    </div>
-                </q-responsive>
+                    @click="onNewAddress"
+                >New</q-btn>
             </div>
         </div>
     </div>
@@ -87,7 +83,6 @@ export default Vue.extend({
                     ...wallet.meta,
                     cards: [...wallet.meta.cards, { address: newAddress }]
                 }
-                console.log(newMeta)
 
                 await this.$storage.wallets.update(
                     { id: wallet.id },
@@ -97,3 +92,20 @@ export default Vue.extend({
     }
 })
 </script>
+<style>
+:root {
+    --card-width: min(100vw, 320px);
+    --card-height: calc(var(--card-width) * 0.7)
+}
+</style>
+<style scoped>
+.card-container {
+    scroll-snap-type: y mandatory;
+}
+.card-wrap {
+    width: var(--card-width);
+    height: var(--card-height);
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+}
+</style>
