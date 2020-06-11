@@ -73,7 +73,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import BigNumber from 'bignumber.js'
+// import BigNumber from 'bignumber.js'
 type TokenBaseInfo = { symbol: string, balance: string, decimals: number, name: string }
 export default Vue.extend({
     data() {
@@ -102,86 +102,86 @@ export default Vue.extend({
         }
     },
     computed: {
-        wallet() {
-            return this.$state.wallet.current
-        },
-        tokens() {
-            return this.$state.config.token.getList(this.$state.wallet.current.gid)
-        },
-        list() {
-            return [{ name: 'VeChain Token', symbol: 'VET' }, ...this.$state.config.token.getList(this.$state.wallet.current.gid)]
-        },
-        addresses() {
-            return this.$state.wallet.current.meta.addresses.filter(item => item.visible)
-        }
+        // wallet() {
+        //     return this.$state.wallet.current
+        // },
+        // tokens() {
+        //     return this.$state.config.token.getList(this.$state.wallet.current.gid)
+        // },
+        // list() {
+        //     return [{ name: 'VeChain Token', symbol: 'VET' }, ...this.$state.config.token.getList(this.$state.wallet.current.gid)]
+        // },
+        // addresses() {
+        //     return this.$state.wallet.current.meta.addresses.filter(item => item.visible)
+        // }
     },
     methods: {
-        async query(connex: Connex) {
-            const addr = this.wallet.meta.addresses[this.current].address
-            const account = await connex.thor.account(addr).get()
-            const tokenMethods = this.tokens.filter(item => {
-                return item.symbol !== 'VTHO'
-            }).map(item => {
-                return {
-                    balanceOf: (addr: string) => {
-                        return connex.thor
-                            .account(item.address)
-                            .method(this.balanceOfAbi)
-                            .cache([addr])
-                            .call(addr)
-                    },
-                    symbol: item.symbol,
-                    decimals: item.decimals,
-                    name: item.name
-                }
-            })
-            const getBalance = () => {
-                return {
-                    symbol: 'VET',
-                    balance: account.balance,
-                    decimals: 18,
-                    name: 'VeChain Token'
-                }
-            }
-            const getEnergy = () => {
-                return {
-                    symbol: 'VTHO',
-                    balance: account.energy,
-                    decimals: 18,
-                    name: 'VeChain Thor'
-                }
-            }
+        // async query(connex: Connex) {
+        //     const addr = this.wallet.meta.addresses[this.current].address
+        //     const account = await connex.thor.account(addr).get()
+        //     const tokenMethods = this.tokens.filter(item => {
+        //         return item.symbol !== 'VTHO'
+        //     }).map(item => {
+        //         return {
+        //             balanceOf: (addr: string) => {
+        //                 return connex.thor
+        //                     .account(item.address)
+        //                     .method(this.balanceOfAbi)
+        //                     .cache([addr])
+        //                     .call(addr)
+        //             },
+        //             symbol: item.symbol,
+        //             decimals: item.decimals,
+        //             name: item.name
+        //         }
+        //     })
+        //     const getBalance = () => {
+        //         return {
+        //             symbol: 'VET',
+        //             balance: account.balance,
+        //             decimals: 18,
+        //             name: 'VeChain Token'
+        //         }
+        //     }
+        //     const getEnergy = () => {
+        //         return {
+        //             symbol: 'VTHO',
+        //             balance: account.energy,
+        //             decimals: 18,
+        //             name: 'VeChain Thor'
+        //         }
+        //     }
 
-            const getTokenBalance = async () => {
-                const result: TokenBaseInfo[] = []
-                for (const item of tokenMethods) {
-                    const temp = await item.balanceOf(addr)
-                    result.push({
-                        symbol: item.symbol,
-                        name: item.name,
-                        balance: temp.decoded!.balance,
-                        decimals: item.decimals
-                    })
-                }
+        //     const getTokenBalance = async () => {
+        //         const result: TokenBaseInfo[] = []
+        //         for (const item of tokenMethods) {
+        //             const temp = await item.balanceOf(addr)
+        //             result.push({
+        //                 symbol: item.symbol,
+        //                 name: item.name,
+        //                 balance: temp.decoded!.balance,
+        //                 decimals: item.decimals
+        //             })
+        //         }
 
-                return result
-            }
-            const tokenBalances: TokenBaseInfo[] = await getTokenBalance()
+        //         return result
+        //     }
+        //     const tokenBalances: TokenBaseInfo[] = await getTokenBalance()
 
-            const result: Record<string, number> = {}
-            const temp = [getBalance(), getEnergy(), ...tokenBalances]
-            temp.forEach(item => {
-                result[item.symbol] =
-                    (() => {
-                        const temp = new BigNumber(item.balance)
-                        return temp.isGreaterThan(0)
-                            ? temp.div(new BigNumber('1e+' + (item.decimals))).toNumber()
-                            : 0
-                    })()
-            })
+        //     const result: Record<string, number> = {}
+        //     const temp = [getBalance(), getEnergy(), ...tokenBalances]
+        //     temp.forEach(item => {
+        //         result[item.symbol] =
+        //             (() => {
+        //                 const temp = new BigNumber(item.balance)
+        //                 return temp.isGreaterThan(0)
+        //                     ? temp.div(new BigNumber('1e+' + (item.decimals))).toNumber()
+        //                     : 0
+        //             })()
+        //     })
 
-            return result
-        }
+        //     return result
+        // }
     }
 })
 </script>

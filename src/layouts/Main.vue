@@ -113,7 +113,7 @@ export default Vue.extend({
     },
     computed: {
         hasDrawer() {
-            return this.$route.name === 'wallet'
+            return this.$route.name === 'index'
         },
         walletGroups() {
             return this.$state.wallet.list.reduce<Record<string, M.Wallet[]>>((groups, w) => {

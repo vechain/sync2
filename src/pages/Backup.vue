@@ -101,7 +101,7 @@ export default Vue.extend({
         }
     },
     async created() {
-        const vault = await Vault.decode(this.wallet.vault)
+        const vault = await Vault.decode(this.wallet!.vault)
         try {
             this.$authenticate(async (p) => {
                 this.isAuthorized = true
