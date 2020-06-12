@@ -45,14 +45,13 @@
                     v-for="(card, i) in cards"
                     :key="i"
                     root="list"
-                    class="q-pa-sm card-wrap q-my-sm"
+                    class="q-px-md q-py-sm card-wrap q-my-sm"
                     v-slot="{intersecting}"
                 >
                     <AddressCard
-                        v-if="intersecting"
-                        class="fit shadow-6"
+                        class="fit shadow-4 card-shape"
                         :address="card.address"
-                        :connex="connex"
+                        :connex="intersecting?connex:undefined"
                         :index="i"
                     />
                 </Intersecting>
@@ -105,7 +104,7 @@ export default Vue.extend({
 </script>
 <style>
 :root {
-    --card-width: min(100vw, 320px);
+    --card-width: min(100vw, 375px);
 }
 </style>
 <style scoped>
@@ -114,8 +113,11 @@ export default Vue.extend({
 }
 .card-wrap {
     width: var(--card-width);
-    height: calc(var(--card-width) * 0.7);
+    height: calc(var(--card-width) * 0.67);
     scroll-snap-align: start;
     scroll-snap-stop: always;
+}
+.card-shape {
+    border-radius: calc(var(--card-width) * 0.07);
 }
 </style>

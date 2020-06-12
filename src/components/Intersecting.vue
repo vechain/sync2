@@ -16,7 +16,9 @@ export default Vue.extend({
     },
     data: () => {
         return {
-            intersecting: false
+            intersecting: false,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            timer: undefined as any
         }
     },
     computed: {
@@ -35,10 +37,23 @@ export default Vue.extend({
         },
         options(): {} {
             return {
-                handler: (entry: { isIntersecting: boolean }) => { this.intersecting = entry.isIntersecting },
+                handler: (entry: { isIntersecting: boolean }) => this.update(entry.isIntersecting),
                 cfg: {
                     root: this.rootElement
                 }
+            }
+        }
+    },
+    methods: {
+        update(intersecting: boolean) {
+            if (this.timer) {
+                clearTimeout(this.timer)
+                this.timer = undefined
+            }
+            if (intersecting) {
+                this.intersecting = true
+            } else {
+                this.timer = setTimeout(() => { this.intersecting = false }, 2000)
             }
         }
     }
