@@ -36,9 +36,9 @@ export default Vue.extend({
             ]
             return {
                 background: backgrounds.join(','),
+                backgroundRepeat: 'no-repeat',
                 backgroundSize: 'cover',
-                backgroundBlendMode: 'soft-light',
-                borderRadius: '16px'
+                backgroundBlendMode: 'soft-light'
             }
         }
     }
