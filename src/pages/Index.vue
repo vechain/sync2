@@ -33,26 +33,37 @@
                 </q-menu>
             </q-btn>
         </q-toolbar>
-
-        <div class="row justify-center overflow-auto card-container">
+        <ConnexObject
+            :node="node"
+            v-slot="{connex}"
+        >
             <div
-                v-for="(card, i) in cards"
-                :key="i"
-                class="q-pa-md card-wrap"
+                id="list"
+                class="row justify-center overflow-auto card-container"
             >
-                <AddressCard
-                    class="fit shadow-6"
-                    :address="card.address"
-                    :index="i"
-                />
+                <Intersecting
+                    v-for="(card, i) in cards"
+                    :key="i"
+                    root="list"
+                    class="q-pa-sm card-wrap q-my-sm"
+                    v-slot="{intersecting}"
+                >
+                    <AddressCard
+                        v-if="intersecting"
+                        class="fit shadow-6"
+                        :address="card.address"
+                        :connex="connex"
+                        :index="i"
+                    />
+                </Intersecting>
+                <div class="q-ma-md card-wrap row flex-center">
+                    <q-btn
+                        flat
+                        @click="onNewAddress"
+                    >New</q-btn>
+                </div>
             </div>
-            <div class="q-ma-md card-wrap row flex-center">
-                <q-btn
-                    flat
-                    @click="onNewAddress"
-                >New</q-btn>
-            </div>
-        </div>
+        </ConnexObject>
     </div>
 </template>
 <script lang="ts">
@@ -70,7 +81,7 @@ export default Vue.extend({
                 : null
         },
         cards(): M.Wallet.Card[] {
-            return this.wallet ? this.wallet.meta.cards : []
+            return this.wallet ? this.wallet.meta.cards.filter(c => !c.hidden) : []
         }
     },
     methods: {
@@ -95,7 +106,6 @@ export default Vue.extend({
 <style>
 :root {
     --card-width: min(100vw, 320px);
-    --card-height: calc(var(--card-width) * 0.7)
 }
 </style>
 <style scoped>
@@ -104,7 +114,7 @@ export default Vue.extend({
 }
 .card-wrap {
     width: var(--card-width);
-    height: var(--card-height);
+    height: calc(var(--card-width) * 0.7);
     scroll-snap-align: start;
     scroll-snap-stop: always;
 }

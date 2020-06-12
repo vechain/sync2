@@ -4,10 +4,17 @@
         v-bind="$attrs"
         v-on="$listeners"
     >
-        <q-card-section class="text-white">
-            <div> #{{index}}</div>
-            <div class="ellipsis"> {{address}}</div>
-        </q-card-section>
+        <ConnexContinuous
+            :connex="connex"
+            :query="()=> connex.thor.account(address).get()"
+            v-slot="{data}"
+        >
+            <q-card-section class="text-white">
+                <div> #{{index}}</div>
+                <div class="ellipsis"> {{address}}</div>
+                {{data}}
+            </q-card-section>
+        </ConnexContinuous>
     </q-card>
 </template>
 <script lang="ts">
@@ -17,7 +24,8 @@ import { picasso } from '@vechain/picasso'
 export default Vue.extend({
     props: {
         address: String,
-        index: Number
+        index: Number,
+        connex: Object as () => Connex
     },
     computed: {
         background() {
