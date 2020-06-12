@@ -8,6 +8,7 @@ import ConfirmedPinCodeInput from './ConfirmedPinCodeInput.vue'
 import SlideContainer from './SlideContainer.vue'
 import Drawer from './Drawer.vue'
 import WalletItem from './WalletItem.vue'
+import Intersecting from './Intersecting.vue'
 
 const components: { [name: string]: Vue.VueConstructor } = {
     StackedRouterView,
@@ -19,7 +20,8 @@ const components: { [name: string]: Vue.VueConstructor } = {
     ConfirmedPinCodeInput,
     SlideContainer,
     Drawer,
-    WalletItem
+    WalletItem,
+    Intersecting
 }
 
 export default components
