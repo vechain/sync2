@@ -26,6 +26,7 @@
     "@vechain/picasso": "^2.0.0",
     "axios": "^0.18.1",
     "babel-eslint": "^10.0.1",
+    "bignumber.js": "^9.0.0",
     "devtron": "^1.4.0",
     "dexie": "^2.0.4",
     "electron": "^8.2.1",
