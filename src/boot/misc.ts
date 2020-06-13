@@ -5,6 +5,8 @@ import { Storage } from 'core/storage'
 import { QSpinnerIos } from 'quasar'
 import type { Entry } from 'vue-router-stack'
 import AsyncComputed from 'vue-async-computed'
+import { toChecksumAddress } from 'thor-devkit/dist/cry/address'
+import { BigNumber } from 'bignumber.js'
 
 declare global {
     type AuthenticateOptions = {
@@ -54,6 +56,28 @@ const filters = {
             return 'test net'
         }
         return 'private net'
+    },
+    /**
+     * convert s into abbreviation, where l1 l2 specifies length of head and tail
+     */
+    abbrev: (s: string, l1 = 6, l2 = 4) => {
+        if (s.length <= l1 + l2) {
+            return s
+        }
+        return s.slice(0, l1) + '⋯' + s.slice(-l2)
+    },
+    /** convert the address into checksum format */
+    checksum: (addr: string) => {
+        return toChecksumAddress(addr)
+    },
+    /** convert balance from unit WEI to common unit */
+    balance: (v: string | number, decimal = 18, digits = 2) => {
+        if (typeof v !== 'string' && typeof typeof v !== 'number') {
+            return new BigNumber(0).toFormat(digits).replace(/0/g, '-')
+        }
+        return new BigNumber(v)
+            .div(new BigNumber('1' + '0'.repeat(decimal)))
+            .toFormat(digits)
     }
 }
 
