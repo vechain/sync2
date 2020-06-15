@@ -78,16 +78,19 @@ export default Vue.extend({
         setTransitionDurationMul(m: number) {
             (this.$parent.$el as HTMLElement).style.setProperty('--drawer-transition-mul', `${m}`)
         },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onContentResize(size: any) {
-            (this.$parent.$el as HTMLElement).style.setProperty('--drawer-width', `${size.width}`)
-            this.drawerWidth = size.width
+        onContentResize(size: { width: number }) {
+            if (size.width > 0) {
+                (this.$parent.$el as HTMLElement).style.setProperty('--drawer-width', `${size.width}`)
+                this.drawerWidth = size.width
+            }
         },
         async transit() {
             this.transiting = true
             document.body.classList.add('drawer-body--prevent-scroll')
 
             await nextFrame()
+
+            this.$parent.$el.classList.add('drawer-will-change-transform')
 
             const views = this.animatedViews
             views.forEach(v => v.classList.add('drawer-transition'))
@@ -161,7 +164,7 @@ export default Vue.extend({
     opacity: calc(var(--drawer-open-ratio) * 0.1);
 }
 .drawer-opener {
-    width: 15px;
+    width: 20px;
 }
 .drawer {
     transform: translateX(-100%);

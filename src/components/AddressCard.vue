@@ -70,7 +70,9 @@ export default Vue.extend({
     },
     methods: {
         onResize(size: { height: number }) {
-            this.height = size.height
+            if (size.height > 0) {
+                this.height = size.height
+            }
         }
     }
 })

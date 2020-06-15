@@ -86,10 +86,11 @@ export default Vue.extend({
             this.setTransitionDurationMul(1)
             this.transiting = false
         },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onResize(size: any) {
-            (this.$el as HTMLElement).style.setProperty('--stack-container-width', `${size.width}`)
-            this.width = size.width
+        onResize(size: { width: number }) {
+            if (size.width > 0) {
+                (this.$el as HTMLElement).style.setProperty('--stack-container-width', `${size.width}`)
+                this.width = size.width
+            }
         },
         viewClasses(i: number) {
             const classes: Record<string, boolean> = {}
