@@ -42,7 +42,8 @@ export default Vue.extend({
             transiting: false,
             opened: false,
             velometer: newVelometer(),
-            pipeline: newPipeline()
+            pipeline: newPipeline(),
+            touchPanInitOffset: 0
         }
     },
     model: {
@@ -112,17 +113,17 @@ export default Vue.extend({
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         handleTouchPan(ev: Record<string, any>) {
-            const width = Math.max(1, this.drawerWidth)
-            const offset = Math.min(Math.abs(ev.offset.x), width)
-
-            const ratio = this.opened ? (width - offset) / width : offset / width
-            this.setOpenRatio(ratio)
-
             if (ev.isFirst) {
                 document.body.classList.add('drawer-body--prevent-scroll')
                 this.$parent.$el.classList.add('drawer-will-change-transform')
                 this.panning = true
+                this.touchPanInitOffset = ev.offset.x
             }
+
+            const width = Math.max(1, this.drawerWidth)
+            const offset = Math.min(Math.abs(ev.offset.x - this.touchPanInitOffset), width)
+            const ratio = this.opened ? (width - offset) / width : offset / width
+            this.setOpenRatio(ratio)
 
             if (ev.isFinal) {
                 this.panning = false

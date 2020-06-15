@@ -40,7 +40,8 @@ export default Vue.extend({
             transiting: false,
             shouldHandlePan: false,
             velometer: newVelometer(),
-            pipeline: newPipeline()
+            pipeline: newPipeline(),
+            touchPanInitOffset: 0
         }
     },
     computed: {
@@ -115,16 +116,18 @@ export default Vue.extend({
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         handleTouchPan(ev: any) {
-            const offset = Math.max(0, ev.offset.x)
+            if (ev.isFirst) {
+                document.body.classList.add('stack-body--prevent-scroll')
+                this.panning = true
+                this.touchPanInitOffset = ev.offset.x
+            }
+
+            const offset = Math.max(0, ev.offset.x - this.touchPanInitOffset)
             const width = Math.max(1, this.width)
 
             const ratio = offset / width
             this.setPanRatio(ratio)
 
-            if (ev.isFirst) {
-                document.body.classList.add('stack-body--prevent-scroll')
-                this.panning = true
-            }
             if (ev.isFinal) {
                 this.panning = false
                 const v = this.velometer.velocity
