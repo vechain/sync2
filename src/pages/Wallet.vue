@@ -54,7 +54,6 @@
         </SlideContainer>
         <q-separator />
         <ConnexObject
-            :node="{gid: wallet.gid, url: 'http://localhost:8080/main'}"
             v-slot="{connex}"
         >
             <ConnexContinuous
