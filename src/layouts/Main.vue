@@ -5,12 +5,10 @@
                 body.q-ios-padding .q-layout--standard .q-header > .q-toolbar:nth-child(2)
             -->
             <div />
-            <q-toolbar class="bg-white">
+            <q-toolbar class="bg-white text-black">
                 <transition>
                     <q-btn
-                        v-if="hasDrawer"
-                        color="white"
-                        text-color="black"
+                        v-if="isIndexPage"
                         flat
                         dense
                         round
@@ -20,8 +18,6 @@
                     />
                     <q-btn
                         v-else
-                        color="white"
-                        text-color="black"
                         flat
                         dense
                         round
@@ -30,12 +26,20 @@
                         @click="$router.back()"
                     ></q-btn>
                 </transition>
-                <q-toolbar-title />
+                <q-toolbar-title class="text-center text-black">{{title}}</q-toolbar-title>
+                <!-- action history button -->
+                <q-btn
+                    dense
+                    round
+                    flat
+                    icon="history"
+                    :class="{invisible: !isIndexPage}"
+                />
             </q-toolbar>
         </q-header>
 
         <drawer
-            :disable="!hasDrawer"
+            :disable="!isIndexPage"
             v-model="drawerOpen"
         >
             <div
@@ -50,7 +54,6 @@
                         size="md"
                     >S</q-avatar>
                     <q-toolbar-title>
-                        Sync
                     </q-toolbar-title>
                     <q-space />
                     <q-btn
@@ -112,9 +115,7 @@ export default Vue.extend({
         }
     },
     computed: {
-        hasDrawer() {
-            return this.$route.name === 'index'
-        },
+        isIndexPage() { return this.$route.name === 'index' },
         walletGroups() {
             return this.$state.wallet.list.reduce<Record<string, M.Wallet[]>>((groups, w) => {
                 const g = groups[w.gid]
@@ -125,7 +126,8 @@ export default Vue.extend({
                 }
                 return groups
             }, {})
-        }
+        },
+        title(): string { return this.$route.meta.title }
     },
     methods: {
         onClickSettings() {

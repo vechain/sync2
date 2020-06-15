@@ -53,6 +53,7 @@
                         :address="card.address"
                         :connex="intersecting?connex:undefined"
                         :index="i"
+                        @click="onClickAddress(i)"
                     />
                 </Intersecting>
                 <div class="q-ma-md card-wrap row flex-center">
@@ -98,6 +99,15 @@ export default Vue.extend({
                     { id: wallet.id },
                     { meta: JSON.stringify(newMeta) })
             }
+        },
+        onClickAddress(index: number) {
+            this.$router.push({
+                name: 'account',
+                query: {
+                    walletId: this.wallet!.id.toString(),
+                    addressIndex: index.toString()
+                }
+            })
         }
     }
 })

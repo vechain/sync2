@@ -7,19 +7,28 @@ const routes: RouteConfig[] = [
         children: [{
             path: '',
             name: 'index',
-            component: () => import('pages/Index.vue')
+            component: () => import('pages/Index.vue'),
+            meta: { title: 'Sync' }
         }, {
             path: '/settings',
             name: 'settings',
-            component: () => import('pages/Settings.vue')
+            component: () => import('pages/Settings.vue'),
+            meta: { title: 'Settings' }
         }, {
             path: '/settings/tokens',
             name: 'tokens',
-            component: () => import('pages/TokenList.vue')
+            component: () => import('pages/TokenList.vue'),
+            meta: { title: 'Tokens' }
         }, {
             path: '/wallet/backup',
             name: 'backup',
-            component: () => import('pages/Backup.vue')
+            component: () => import('pages/Backup.vue'),
+            meta: { title: 'Backup' }
+        }, {
+            path: '/wallet/account',
+            name: 'account',
+            component: () => import('pages/Account.vue'),
+            meta: { title: 'Account' }
         }]
     }
 ]
