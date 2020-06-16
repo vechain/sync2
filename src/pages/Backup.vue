@@ -1,10 +1,9 @@
 <template>
-    <q-page class="bg-white">
-        <div
-            v-show="words.length"
-            style="max-width: 600px"
-            class="q-mx-auto q-mt-lg"
-        >
+    <q-page
+        class="bg-white q-pt-lg"
+        v-show="words && words.length"
+    >
+        <div style="max-width: 500px" class="q-mx-auto">
             <template v-if="step === 1">
                 <div class="q-px-lg">
                     <span class="text-subtitle2 q-py-sm">Backup mnemonic</span>
@@ -15,7 +14,7 @@
                 <div class="row justify-around q-pt-lg ">
                     <div
                         v-for="(item, index) in words"
-                        :key="item"
+                        :key="index"
                         class="col-4 text-center q-my-sm serif"
                     >
                         <span class="text-grey">{{index + 1}}.</span>
@@ -24,42 +23,58 @@
                 </div>
             </template>
             <template v-if="step === 2">
-                <div class="q-px-lg">
+                <div class="q-px-md">
                     <span class="text-subtitle2 q-py-sm">Confirm your mnemonic words</span>
                     <div class="text-body2 text-grey q-py-sm">
                         Please choose mnemonic words in order and make sure your written mnemonic was correct written.
                     </div>
                 </div>
-                <div style="min-height: 400px">
-                    <div class="row justify-start">
+                <div class="q-px-lg">
+                    <div
+                        v-for="row of verifyRowNum"
+                        :key="row"
+                        class="row q-px-lg q-py-sm q-col-gutter-sm rounded-borders bg-grey-2"
+                    >
                         <div
-                            v-for="(item, index) in indexGroup"
-                            :key="item"
-                            class="col-4 text-center q-my-sm"
+                            class="col-4 text-center"
+                            v-for="i of groupSize"
+                            :key="i"
                         >
-                            <q-btn
-                                size="sm"
-                                :label="words[item]"
-                                class="text-lowercase serif"
-                                @click="onUncheck(index)"
-                                :color="words[item] === words[index] ? 'green' : 'red'"
-                            />
+                            <span class="text-grey">{{i + groupSize * (row - 1) }}.</span>
+                            <span class="serif">{{words[(i - 1) + groupSize * (row - 1)]}}</span>
+                        </div>
+                    </div>
+                    <div
+                        v-if="verifyRowNum < words.length / groupSize"
+                        class="row q-mt-sm q-px-lg q-py-sm q-col-gutter-sm rounded-borders "
+                        :class="isError ? 'bg-deep-orange-2' : 'bg-grey-2'"
+                    >
+                        <div
+                            class="col-4 text-center"
+                            v-for="i of groupSize"
+                            :key="i"
+                        >
+                            <span class="text-grey">{{i + groupSize * verifyRowNum }}.</span>
+                            <span class="serif">{{verifyingItems && words[verifyingItems[i-1]]}}</span>
                         </div>
                     </div>
                 </div>
-                <div class="row justify-around">
+                <div
+                    v-if="verifyRowNum < words.length / groupSize"
+                    class="absolute row justify-center q-pa-md q-col-gutter-md"
+                    style="bottom: 0"
+                >
                     <div
-                        v-for="item in nextGroupIndex"
-                        :key="item"
-                        class="col-4 text-center q-my-sm"
+                        class="col-4 text-center"
+                        v-for="(item, index) in nextGroupIndex"
+                        :key="index"
                     >
                         <q-btn
-                            size="sm"
-                            class="text-lowercase serif"
-                            :disabled="indexGroup.includes(item)"
                             @click="onCheck(item)"
-                            :label="words[item]"
-                        />
+                            size="md"
+                            class="text-lowercase serif rounded-borders"
+                            style="width: 100%"
+                        >{{words[item]}}</q-btn>
                     </div>
                 </div>
             </template>
@@ -80,20 +95,13 @@
                     </div>
                 </div>
             </template>
-            <div class="row justify-center q-mt-lg">
+            <div class="justify-center q-mt-lg">
                 <div class="col-8 text-center">
                     <q-btn
                         v-if="step === 1"
                         class="text-capitalize"
                         label="I've written it down"
                         @click="onNext"
-                        color="black"
-                    />
-                    <q-btn
-                        v-if="step === 2"
-                        class="text-capitalize"
-                        label="Check Mnemonic again"
-                        @click="onBack"
                         color="black"
                     />
                     <q-btn
@@ -116,8 +124,9 @@ export default Vue.extend({
         return {
             words: null as string[] | null,
             step: 1,
-            verifyPosition: 0,
-            indexGroup: [] as number[],
+            verifyRowNum: 0,
+            verifyingItems: null as number[] | null,
+            isError: false,
             groupSize: 3
         }
     },
@@ -126,12 +135,14 @@ export default Vue.extend({
             return this.$state.wallet.current
         },
         nextGroupIndex() {
-            const start = this.verifyPosition * this.groupSize
-            return this.words!.map(
+            const start = this.verifyRowNum * this.groupSize
+            const result = []
+            for (let i = 0; i < this.groupSize; i++) {
+                result.push(Math.floor(Math.random() * this.words!.length))
+            }
+            return [...this.words!.map(
                 (item, index) => { return index }
-            ).slice(start, start + this.groupSize).sort(
-                () => Math.random() - 0.5
-            )
+            ).slice(start, start + this.groupSize), ...result].sort(() => { return Math.random() - 0.5 })
         }
     },
     async created() {
@@ -154,22 +165,25 @@ export default Vue.extend({
         onBack() {
             this.step--
         },
-        onCheck(item: number) {
-            this.indexGroup.push(item)
-            this.verifyPosition = Math.floor(
-                this.indexGroup.filter(
-                    (item, index) => { return this.words![item] === this.words![index] }
-                ).length / this.groupSize
-            )
-            if (this.verifyPosition === this.words!.length / this.groupSize) {
-                this.step++
+        onCheck(index: number) {
+            if (!this.verifyingItems || this.verifyingItems.length === 3) {
+                this.verifyingItems = []
+                this.isError = false
             }
-        },
-        onUncheck(index: number) {
-            if (this.verifyPosition * this.groupSize > index) {
-                return
+            this.verifyingItems.push(index)
+
+            if (this.verifyingItems.length === 3) {
+                const items = this.verifyingItems.map(item => this.words![item]).join('')
+                const startIndex = this.groupSize * this.verifyRowNum
+                const words = this.words!.slice(startIndex, this.groupSize + startIndex).join('')
+                if (items === words) {
+                    this.verifyRowNum++
+                    this.verifyingItems = []
+                    this.verifyRowNum === 8 && this.step++
+                } else {
+                    this.isError = true
+                }
             }
-            this.indexGroup.splice(index, 1)
         }
     }
 })
