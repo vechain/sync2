@@ -13,14 +13,9 @@ declare namespace M {
     }
 
     namespace Wallet {
-        interface Card {
-            address: string
-            hidden?: boolean
-        }
-
         interface Meta {
             name: string
-            cards: Card[]
+            addresses: string[]
             backedUp?: boolean
         }
     }
