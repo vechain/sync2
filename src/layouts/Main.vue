@@ -129,14 +129,14 @@ export default Vue.extend({
         },
         title(): string { return this.$route.meta.title }
     },
+    watch: {
+        $route() {
+            this.drawerOpen = false
+        }
+    },
     methods: {
-        async onClickSettings() {
-            try {
-                await this.$router.push({ name: 'settings', query: { 'no-transition': '1' } })
-                // ignore router error
-            } finally {
-                this.drawerOpen = false
-            }
+        onClickSettings() {
+            this.$router.push({ name: 'settings', query: { 'no-transition': '1' } })
         },
         onSelectWallet(id: number) {
             this.$state.wallet.setCurrentId(id)

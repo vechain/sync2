@@ -70,8 +70,8 @@ export default Vue.extend({
                 const node0 = await vault.derive(0)
 
                 const meta: M.Wallet.Meta = {
-                    name: 'my wallet',
-                    cards: [{ address: node0.address }]
+                    name: 'My Wallet',
+                    addresses: [node0.address]
                 }
 
                 const shadow = await Vault.shadowPassword(pin)

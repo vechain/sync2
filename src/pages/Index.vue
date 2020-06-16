@@ -42,7 +42,7 @@
                 class="row justify-center overflow-auto card-container"
             >
                 <Intersecting
-                    v-for="(card, i) in cards"
+                    v-for="(address, i) in addresses"
                     :key="i"
                     root="list"
                     class="q-px-md q-py-sm card-wrap q-my-sm"
@@ -50,7 +50,7 @@
                 >
                     <AddressCard
                         class="fit shadow-4 card-shape"
-                        :address="card.address"
+                        :address="address"
                         :connex="intersecting?connex:undefined"
                         :index="i"
                         @click="onClickAddress(i)"
@@ -72,39 +72,35 @@ import { Vault } from 'core/vault'
 
 export default Vue.extend({
     computed: {
-        wallet(): M.Wallet | null {
-            return this.$state.wallet.current
+        wallet(): M.Wallet {
+            return this.$state.wallet.current!
         },
-        node(): M.Node | null {
-            return this.wallet
-                ? (this.$state.config.node.list.find(n => n.gid === this.wallet!.gid) || null)
-                : null
+        node(): M.Node {
+            return this.$state.config.node.list.find(n => n.gid === this.wallet.gid)!
         },
-        cards(): M.Wallet.Card[] {
-            return this.wallet ? this.wallet.meta.cards.filter(c => !c.hidden) : []
+        addresses(): string[] {
+            return this.wallet.meta.addresses
         }
     },
     methods: {
         async onNewAddress() {
             const wallet = this.wallet
-            if (wallet) {
-                const vault = await Vault.decode(wallet.vault)
-                const newAddress = (await vault.derive(wallet.meta.cards.length)).address
-                const newMeta: M.Wallet.Meta = {
-                    ...wallet.meta,
-                    cards: [...wallet.meta.cards, { address: newAddress }]
-                }
-
-                await this.$storage.wallets.update(
-                    { id: wallet.id },
-                    { meta: JSON.stringify(newMeta) })
+            const vault = await Vault.decode(wallet.vault)
+            const newAddress = (await vault.derive(wallet.meta.addresses.length)).address
+            const newMeta: M.Wallet.Meta = {
+                ...wallet.meta,
+                addresses: [...wallet.meta.addresses, newAddress]
             }
+
+            await this.$storage.wallets.update(
+                { id: wallet.id },
+                { meta: JSON.stringify(newMeta) })
         },
         onClickAddress(index: number) {
             this.$router.push({
                 name: 'account',
                 query: {
-                    walletId: this.wallet!.id.toString(),
+                    walletId: this.wallet.id.toString(),
                     addressIndex: index.toString()
                 }
             })
