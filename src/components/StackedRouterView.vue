@@ -21,7 +21,6 @@
             ref="backdrop"
             class="absolute-full stack-backdrop"
             v-show="panning||transiting"
-            :class="{'stack-will-change-opacity': panning||transiting}"
         />
         <q-resize-observer @resize="onResize" />
     </q-page>
@@ -97,12 +96,10 @@ export default Vue.extend({
             const classes: Record<string, boolean> = {}
             if (i === this.stack.length - 1) {
                 classes['stack-v1'] = true
-                classes['stack-will-change-transform'] = this.panning || this.transiting
                 classes['overflow-auto'] = true
             } else if (i === this.stack.length - 2) {
                 classes['stack-v2'] = true
                 classes['stack-display-none'] = !this.panning && !this.transiting
-                classes['stack-will-change-transform'] = this.panning || this.transiting
                 classes['overflow-hidden'] = true
             } else {
                 classes['stack-display-none'] = true
@@ -212,11 +209,5 @@ export default Vue.extend({
 }
 .stack-display-none {
     display: none;
-}
-.stack-will-change-transform {
-    will-change: transform;
-}
-.stack-will-change-opacity {
-    will-change: opacity;
 }
 </style>

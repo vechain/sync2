@@ -7,7 +7,6 @@
             v-show="panning||opened||transiting"
             v-touch-pan.left.mouse.prevent="transiting? undefined:handleTouchPan"
             @click="onClickBackdrop"
-            :class="{'drawer-will-change-opacity':panning||transiting}"
         />
         <!-- the opener -->
         <div
@@ -91,8 +90,6 @@ export default Vue.extend({
 
             await nextFrame()
 
-            this.$parent.$el.classList.add('drawer-will-change-transform')
-
             const views = this.animatedViews
             views.forEach(v => v.classList.add('drawer-transition'))
 
@@ -107,7 +104,6 @@ export default Vue.extend({
             if (!this.opened) {
                 document.body.classList.remove('drawer-body--prevent-scroll')
             }
-            this.$parent.$el.classList.remove('drawer-will-change-transform')
             this.setTransitionDurationMul(1)
             this.transiting = false
         },
@@ -115,7 +111,6 @@ export default Vue.extend({
         handleTouchPan(ev: Record<string, any>) {
             if (ev.isFirst) {
                 document.body.classList.add('drawer-body--prevent-scroll')
-                this.$parent.$el.classList.add('drawer-will-change-transform')
                 this.panning = true
                 this.touchPanInitOffset = ev.offset.x
             }
@@ -180,11 +175,5 @@ export default Vue.extend({
 }
 .drawer-body--prevent-scroll {
     position: fixed !important;
-}
-.drawer-will-change-transform {
-    will-change: transform;
-}
-.drawer-will-change-opacity {
-    will-change: opacity;
 }
 </style>
