@@ -174,4 +174,10 @@ export default boot(async ({ Vue }) => {
     })
 
     Vue.use(AsyncComputed)
+
+    if (process.env.MODE === 'cordova') {
+        document.addEventListener('deviceready', () => {
+            window.Keyboard.shrinkView(true)
+        })
+    }
 })

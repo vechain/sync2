@@ -6,6 +6,7 @@ declare interface Window {
     plugins: {
         touchid: any
     }
+    readonly Keyboard: any
 }
 
 declare var cordova: {
