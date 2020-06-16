@@ -11,12 +11,10 @@
         >
             <q-card-section class="text-white column no-wrap full-height">
                 <!-- logo -->
-                <img
-                    src="~assets/vechain-logo.svg"
+                <div
                     class="logo absolute-bottom-right"
-                    :width="height*0.8"
-                    :height="height*0.8"
-                >
+                    :style="{...logoSize}"
+                />
                 <!-- balances -->
                 <div class="text-right">
                     <span class="text-h6 text-weight-regular">{{data?data.balance:null | balance}}</span>
@@ -28,7 +26,8 @@
                 <q-space />
                 <!-- address -->
                 <div>
-                    <span class="text-h2 text-weight-thin">{{index+1}} </span>
+                    <!-- index -->
+                    <span class="index">{{index+1}}</span>
                     <span class="monospace text-overline">{{address | checksum | abbrev(8,6)}}</span>
                 </div>
             </q-card-section>
@@ -62,9 +61,16 @@ export default Vue.extend({
             ]
             return {
                 background: backgrounds.join(','),
-                backgroundRepeat: 'no-repeat',
-                backgroundSize: 'cover',
+                backgroundRepeat: 'no-repeat,no-repeat',
+                backgroundSize: 'cover,cover',
                 backgroundBlendMode: 'soft-light'
+            }
+        },
+        logoSize() {
+            const size = this.height * 0.8
+            return {
+                width: `${size}px`,
+                height: `${size}px`
             }
         }
     },
@@ -79,8 +85,14 @@ export default Vue.extend({
 </script>
 <style scoped>
 .logo {
-    opacity: 0.12;
+    opacity: 0.15;
     margin-right: -3%;
     margin-bottom: -9%;
+    background: url(~assets/vechain-logo.svg);
+}
+.index{
+    font-size: 4.5rem;
+    font-weight: 100;
+    line-height: 100%;
 }
 </style>
