@@ -96,14 +96,11 @@ export default Vue.extend({
             const classes: Record<string, boolean> = {}
             if (i === this.stack.length - 1) {
                 classes['stack-v1'] = true
-                classes['overflow-auto'] = true
             } else if (i === this.stack.length - 2) {
                 classes['stack-v2'] = true
-                classes['stack-display-none'] = !this.panning && !this.transiting
-                classes['overflow-hidden'] = true
+                classes.invisible = !this.panning && !this.transiting
             } else {
-                classes['stack-display-none'] = true
-                classes['overflow-hidden'] = true
+                classes.invisible = true
             }
             return classes
         },
@@ -206,8 +203,5 @@ export default Vue.extend({
 .stack--disable-pointer-events,
 .stack--disable-pointer-events * {
     pointer-events: none !important;
-}
-.stack-display-none {
-    display: none;
 }
 </style>
