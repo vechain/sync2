@@ -107,6 +107,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import FirstRunDialog from 'pages/FirstRunDialog.vue'
+import NewWalletDialog from 'pages/NewWalletDialog.vue'
 
 export default Vue.extend({
     data() {
@@ -143,8 +144,10 @@ export default Vue.extend({
             this.drawerOpen = false
         },
         onNewWallet() {
-            alert('TODO: New Wallet')
-            // TODO
+            this.$q.dialog({
+                component: NewWalletDialog,
+                parent: this
+            })
         }
     },
     created() {
