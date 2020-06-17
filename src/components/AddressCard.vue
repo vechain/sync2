@@ -56,13 +56,11 @@ export default Vue.extend({
         },
         background(): object {
             const backgrounds = [
-                'linear-gradient(160deg, grey 0%, black 100%)',
-                `url('data:image/svg+xml;utf8,${this.svg}')`
+                'linear-gradient(160deg, grey 0%, black 100%) 0% 0% / cover no-repeat',
+                `url('data:image/svg+xml;utf8,${this.svg}') 0% 0% / cover no-repeat`
             ]
             return {
                 background: backgrounds.join(','),
-                backgroundRepeat: 'no-repeat,no-repeat',
-                backgroundSize: 'cover,cover',
                 backgroundBlendMode: 'soft-light'
             }
         },
@@ -90,7 +88,7 @@ export default Vue.extend({
     margin-bottom: -9%;
     background: url(~assets/vechain-logo.svg);
 }
-.index{
+.index {
     font-size: 4.5rem;
     font-weight: 100;
     line-height: 100%;
