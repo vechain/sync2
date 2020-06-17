@@ -9,7 +9,7 @@
     >
         <q-card class="column items-center">
             <q-toolbar>
-                <q-toolbar-title>
+                <q-toolbar-title class="absolute-center">
                     {{title || 'Authenticate'}}
                 </q-toolbar-title>
                 <q-btn

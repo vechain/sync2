@@ -6,6 +6,7 @@
             -->
             <div />
             <q-toolbar class="bg-white text-black">
+                <q-toolbar-title class="absolute-center">{{title}}</q-toolbar-title>
                 <transition>
                     <q-btn
                         v-if="isIndexPage"
@@ -26,7 +27,7 @@
                         @click="$router.back()"
                     ></q-btn>
                 </transition>
-                <q-toolbar-title class="text-center text-black">{{title}}</q-toolbar-title>
+                <q-space />
                 <!-- action history button -->
                 <q-btn
                     dense
@@ -53,8 +54,6 @@
                         text-color="white"
                         size="md"
                     >S</q-avatar>
-                    <q-toolbar-title>
-                    </q-toolbar-title>
                     <q-space />
                     <q-btn
                         icon="settings"
