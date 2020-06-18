@@ -48,7 +48,7 @@
                     v-for="(address, i) in addresses"
                     :key="i"
                     root="list"
-                    class="q-px-md q-py-sm card-wrap q-my-sm"
+                    class="card-wrap q-px-md q-py-sm q-my-sm"
                     v-slot="{intersecting}"
                 >
                     <AddressCard
@@ -59,6 +59,7 @@
                         @click="onClickAddress(i)"
                     />
                 </Intersecting>
+                <div class="spacer q-my-sm" />
             </div>
         </ConnexObject>
     </div>
@@ -77,6 +78,12 @@ export default Vue.extend({
         },
         addresses(): string[] {
             return this.wallet.meta.addresses
+        }
+    },
+    watch: {
+        'wallet.id'() {
+            const list = this.$refs.list as HTMLElement
+            list.scrollTo({ top: 0, behavior: 'auto' })
         }
     },
     methods: {
@@ -135,5 +142,9 @@ export default Vue.extend({
 }
 .card-shape {
     border-radius: calc(var(--card-width) * 0.07);
+}
+.spacer {
+    width: var(--card-width);
+    height: calc(var(--card-width) * 0.67);
 }
 </style>
