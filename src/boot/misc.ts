@@ -5,6 +5,7 @@ import { Storage } from 'core/storage'
 import { QSpinnerIos } from 'quasar'
 import type { Entry } from 'vue-router-stack'
 import AsyncComputed from 'vue-async-computed'
+import ActionSheets from 'pages/ActionSheets.vue'
 
 declare global {
     type AuthenticateOptions = {
@@ -41,6 +42,9 @@ declare module 'vue/types/vue' {
          * unlike $route, $stackedRoute is permanently bound to a component instance.
          */
         $stackedRoute: Entry | null
+
+        /** display an action sheets */
+        $actionSheets(actions: Array<{ label: string, classes?: string | string[], onClick?: Function }>): void
     }
 }
 
@@ -127,6 +131,18 @@ export default boot(async ({ Vue }) => {
                     vm = vm.$parent
                 } while (vm)
                 return null
+            }
+        },
+        $actionSheets: {
+            get(): Vue['$actionSheets'] {
+                const vm = this as Vue
+                return actions => {
+                    vm.$q.dialog({
+                        component: ActionSheets,
+                        parent: vm,
+                        actions
+                    })
+                }
             }
         }
     })
