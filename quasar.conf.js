@@ -47,6 +47,11 @@ module.exports = configure(function (/* ctx */) {
     framework: {
       iconSet: 'material-icons', // Quasar icon set
       lang: 'en-us', // Quasar language pack
+      config: {
+        loadingBar: {
+            skipHijack: true
+        }
+      },
 
       // Possible values for "all":
       // * 'auto' - Auto-import needed Quasar components & directives
