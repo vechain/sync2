@@ -4,7 +4,7 @@
         class="fit column no-wrap"
     >
         <q-toolbar>
-            <q-toolbar-title> {{wallet.meta.name}}</q-toolbar-title>
+            <q-toolbar-title>{{wallet.meta.name}}</q-toolbar-title>
             <!-- menu -->
             <q-btn
                 flat
@@ -40,7 +40,6 @@
                         @click="onClickAddress(i)"
                     />
                 </Intersecting>
-                <div class="spacer q-my-sm" />
             </div>
         </ConnexObject>
     </div>
@@ -123,7 +122,6 @@ export default Vue.extend({
 <style scoped>
 .card-container {
     scroll-snap-type: y mandatory;
-    padding-bottom: calc(var(--card-width) * 0.67);
 }
 .card-wrap {
     width: var(--card-width);
@@ -133,9 +131,5 @@ export default Vue.extend({
 }
 .card-shape {
     border-radius: calc(var(--card-width) * 0.07);
-}
-.spacer {
-    width: var(--card-width);
-    height: calc(var(--card-width) * 0.67);
 }
 </style>
