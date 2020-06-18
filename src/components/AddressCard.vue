@@ -9,7 +9,7 @@
             :query="()=> connex.thor.account(address).get()"
             v-slot="{data}"
         >
-            <q-card-section class="text-white column no-wrap full-height">
+            <q-card-section class="text-white column no-wrap full-height overflow-hidden">
                 <!-- logo -->
                 <div
                     class="logo absolute-bottom-right"
