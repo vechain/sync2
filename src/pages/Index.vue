@@ -12,27 +12,8 @@
                 round
                 icon="more_horiz"
                 aria-label="More"
-            >
-                <q-menu auto-close>
-                    <!-- limit to 10 accounts -->
-                    <q-item
-                        v-if="addresses.length<10"
-                        clickable
-                        @click="onClickNewAccount"
-                    >
-                        <q-item-section no-wrap>New Account</q-item-section>
-                    </q-item>
-                    <q-item>
-                        <q-item-section no-wrap>Activity</q-item-section>
-                    </q-item>
-                    <q-item :to="{name: 'backup'}">
-                        <q-item-section no-wrap>Backup</q-item-section>
-                    </q-item>
-                    <q-item>
-                        <q-item-section no-wrap>Delete</q-item-section>
-                    </q-item>
-                </q-menu>
-            </q-btn>
+                @click="onClickMenu"
+            />
         </q-toolbar>
         <ConnexObject
             :node="node"
@@ -68,6 +49,8 @@
 import Vue from 'vue'
 import { Vault } from 'core/vault'
 
+const MAX_ADDRESS = 10
+
 export default Vue.extend({
     computed: {
         wallet(): M.Wallet {
@@ -87,13 +70,12 @@ export default Vue.extend({
         }
     },
     methods: {
-        onClickNewAccount() {
+        onClickNewAddress() {
             this.$loading(async () => {
                 const wallet = this.wallet
                 const addresses = wallet.meta.addresses
 
-                // limit to 10 accounts
-                if (addresses.length >= 10) {
+                if (addresses.length >= MAX_ADDRESS) {
                     return
                 }
                 const vault = await Vault.decode(wallet.vault)
@@ -120,6 +102,15 @@ export default Vue.extend({
                     addressIndex: index.toString()
                 }
             })
+        },
+        onClickMenu() {
+            const addressFull = this.addresses.length >= MAX_ADDRESS
+            this.$actionSheets([
+                { label: 'New Address', onClick: addressFull ? undefined : () => this.onClickNewAddress(), classes: addressFull ? 'text-grey' : '' },
+                { label: 'Backup', onClick: () => this.$router.push({ name: 'backup' }) },
+                { label: '-' }, // separator
+                { label: 'Delete', classes: 'text-negative', onClick: () => { alert('TODO: oops') } }
+            ])
         }
     }
 })
