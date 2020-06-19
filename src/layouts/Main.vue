@@ -6,6 +6,7 @@
             -->
             <div />
             <q-toolbar class="bg-white text-black">
+                <!-- drawer opener, or back button -->
                 <transition>
                     <q-btn
                         v-if="isIndexPage"
@@ -26,8 +27,9 @@
                         @click="$router.back()"
                     ></q-btn>
                 </transition>
+                <!-- title -->
                 <q-toolbar-title class="text-center">{{title}}</q-toolbar-title>
-                <!-- action history button -->
+                <!-- more button (overflow menu button) -->
                 <q-btn
                     :class="{invisible: !$route.meta.hasMenu}"
                     flat
@@ -56,44 +58,60 @@
                     <q-toolbar-title>
                         Sync
                     </q-toolbar-title>
+                </q-toolbar>
+                <q-toolbar>
+                    <q-toolbar-title>
+                        Wallets
+                    </q-toolbar-title>
+                    <q-btn
+                        flat
+                        round
+                        dense
+                        icon="add"
+                        @click="onClickNewWallet"
+                    />
+                </q-toolbar>
+                <!-- the grouped wallet list -->
+                <div class="col relative-position">
+                    <q-list class="fit overflow-auto">
+                        <scroll-divider />
+                        <scroll-divider bottom />
+                        <template v-for="(list, gid) in walletGroups">
+                            <!-- network name -->
+                            <q-item-label
+                                header
+                                :key="`${gid}-label`"
+                                class="text-capitalize text-caption"
+                            >
+                                {{gid | net}}
+                            </q-item-label>
+                            <wallet-item
+                                v-for="(wallet,i) in list"
+                                :key="`${gid}-${i}`"
+                                :name="wallet.meta.name"
+                                @click="onClickWallet(wallet.id)"
+                                clickable
+                                :active="wallet.id === $state.wallet.current.id"
+                            />
+                        </template>
+                    </q-list>
+                </div>
+                <!-- drawer content footer -->
+                <q-toolbar>
                     <q-btn
                         icon="settings"
                         flat
                         dense
                         round
                         @click="onClickSettings"
-                    ></q-btn>
-                </q-toolbar>
-                <!-- the grouped wallet list -->
-                <q-list class="col overflow-auto">
-                    <template v-for="(list, gid) in walletGroups">
-                        <!-- network name -->
-                        <q-item-label
-                            header
-                            :key="`${gid}-label`"
-                            class="text-capitalize"
-                        >
-                            {{gid | net}}
-                        </q-item-label>
-                        <wallet-item
-                            v-for="(wallet,i) in list"
-                            :key="`${gid}-${i}`"
-                            :name="wallet.meta.name"
-                            @click="onClickWallet(wallet.id)"
-                            clickable
-                            :active="wallet.id === $state.wallet.current.id"
-                        />
-                    </template>
-                </q-list>
-                <!-- drawer content footer -->
-                <q-toolbar class="flex-center">
+                    />
+                    <q-space />
                     <q-btn
-                        icon="add"
-                        unelevated
-                        size="sm"
-                        color="amber"
-                        @click="onClickNewWallet"
-                    >New</q-btn>
+                        icon="history"
+                        flat
+                        dense
+                        round
+                    />
                 </q-toolbar>
             </div>
         </drawer>
