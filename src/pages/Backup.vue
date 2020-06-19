@@ -156,15 +156,15 @@ export default Vue.extend({
         }
     },
     async created() {
-        const vault = await Vault.decode(this.wallet!.vault)
         try {
-            this.$authenticate(async (p) => {
-                const words = await vault.decrypt(p)
-                this.words = (words as string).split(' ')
+            const vault = await Vault.decode(this.wallet!.vault)
+            const pin = await this.$authenticate((p) => {
+                return Promise.resolve(p)
             })
+            const words = await vault.decrypt(pin)
+            this.words = (words as string).split(' ')
         } catch (error) {
             console.warn(error)
-            alert('something wrong')
             this.$router.back()
         }
     },
