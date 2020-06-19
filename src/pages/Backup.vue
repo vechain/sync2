@@ -3,7 +3,10 @@
         class="bg-white q-pt-lg"
         v-show="words && words.length"
     >
-        <div style="max-width: 500px" class="q-mx-auto">
+        <div
+            style="max-width: 500px"
+            class="q-mx-auto"
+        >
             <template v-if="step === 1">
                 <div class="q-px-lg">
                     <span class="text-subtitle2 q-py-sm">Backup mnemonic</span>
@@ -142,7 +145,14 @@ export default Vue.extend({
             }
             return [...this.words!.map(
                 (item, index) => { return index }
-            ).slice(start, start + this.groupSize), ...result].sort(() => { return Math.random() - 0.5 })
+            ).slice(start, start + this.groupSize), ...result].map(item => {
+                return {
+                    v: item,
+                    order: Math.random()
+                }
+            }).sort((item, nItem) => { return item.order - nItem.order }).map(item => {
+                return item.v
+            })
         }
     },
     async created() {
