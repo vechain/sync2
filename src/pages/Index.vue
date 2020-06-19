@@ -10,11 +10,12 @@
             ref="list"
             class="fit row justify-center overflow-auto card-container"
         >
+            <scroll-divider />
             <Intersecting
                 v-for="(address, i) in addresses"
                 :key="i"
                 root="list"
-                class="card-wrap q-px-md q-py-sm q-my-sm"
+                class="card-wrap q-px-md q-py-md"
                 v-slot="{intersecting}"
             >
                 <AddressCard
@@ -85,10 +86,8 @@ export default Vue.extend({
                     addressIndex: index.toString()
                 }
             })
-        }
-    },
-    created() {
-        this.$root.$on(`more-${this.$attrs['stacked-full-path']}`, () => {
+        },
+        onOpenMore() {
             const addressFull = this.addresses.length >= MAX_ADDRESS
             this.$actionSheets([
                 { label: 'New Account', onClick: addressFull ? undefined : () => this.onClickNewAccount(), classes: addressFull ? 'text-grey' : '' },
@@ -96,7 +95,13 @@ export default Vue.extend({
                 { label: '-' }, // separator
                 { label: 'Delete', classes: 'text-negative', onClick: () => { alert('TODO: oops') } }
             ])
-        })
+        }
+    },
+    created() {
+        const event = `more-${this.$attrs['stacked-full-path']}`
+        const cb = () => this.onOpenMore()
+        this.$root.$on(event, cb)
+        this.$once('hook:beforeDestroy', () => this.$root.$off(event, cb))
     }
 })
 </script>
