@@ -9,7 +9,7 @@ import SlideContainer from './SlideContainer.vue'
 import Drawer from './Drawer.vue'
 import WalletItem from './WalletItem.vue'
 import Intersecting from './Intersecting.vue'
-
+import ScrollDivider from './ScrollDivider.vue'
 const components: { [name: string]: Vue.VueConstructor } = {
     StackedRouterView,
     AddressCard,
@@ -21,7 +21,8 @@ const components: { [name: string]: Vue.VueConstructor } = {
     SlideContainer,
     Drawer,
     WalletItem,
-    Intersecting
+    Intersecting,
+    ScrollDivider
 }
 
 export default components
