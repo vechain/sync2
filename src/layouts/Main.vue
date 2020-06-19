@@ -14,7 +14,7 @@
                         round
                         icon="menu"
                         aria-label="Menu"
-                        @click="drawerOpen = !drawerOpen"
+                        @click="drawerOpen = true"
                     />
                     <q-btn
                         v-else
@@ -29,11 +29,12 @@
                 <q-toolbar-title class="text-center">{{title}}</q-toolbar-title>
                 <!-- action history button -->
                 <q-btn
+                    :class="{invisible: !$route.meta.hasMenu}"
+                    flat
                     dense
                     round
-                    flat
-                    icon="history"
-                    :class="{invisible: !isIndexPage}"
+                    icon="more_horiz"
+                    @click="onClickMore"
                 />
             </q-toolbar>
         </q-header>
@@ -51,9 +52,10 @@
                     <q-avatar
                         color="primary"
                         text-color="white"
-                        size="md"
                     >S</q-avatar>
-                    <q-space />
+                    <q-toolbar-title>
+                        Sync
+                    </q-toolbar-title>
                     <q-btn
                         icon="settings"
                         flat
@@ -77,7 +79,7 @@
                             v-for="(wallet,i) in list"
                             :key="`${gid}-${i}`"
                             :name="wallet.meta.name"
-                            @click="onSelectWallet(wallet.id)"
+                            @click="onClickWallet(wallet.id)"
                             clickable
                             :active="wallet.id === $state.wallet.current.id"
                         />
@@ -90,7 +92,7 @@
                         unelevated
                         size="sm"
                         color="amber"
-                        @click="onNewWallet"
+                        @click="onClickNewWallet"
                     >New</q-btn>
                 </q-toolbar>
             </div>
@@ -126,7 +128,13 @@ export default Vue.extend({
                 return groups
             }, {})
         },
-        title(): string { return this.$route.meta.title }
+        title(): string {
+            if (this.$route.name === 'index') {
+                const wallet = this.$state.wallet.current
+                return wallet ? wallet.meta.name : ''
+            }
+            return this.$route.meta.title
+        }
     },
     watch: {
         $route() {
@@ -137,15 +145,18 @@ export default Vue.extend({
         onClickSettings() {
             this.$router.push({ name: 'settings', query: { 'no-transition': '1' } })
         },
-        onSelectWallet(id: number) {
+        onClickWallet(id: number) {
             this.$state.wallet.setCurrentId(id)
             this.drawerOpen = false
         },
-        onNewWallet() {
+        onClickNewWallet() {
             this.$q.dialog({
                 component: NewWalletDialog,
                 parent: this
             })
+        },
+        onClickMore() {
+            this.$root.$emit(`more-${this.$route.fullPath}`)
         }
     },
     created() {

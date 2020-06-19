@@ -8,7 +8,7 @@ const routes: RouteConfig[] = [
             path: '',
             name: 'index',
             component: () => import('pages/Index.vue'),
-            meta: { title: 'Sync' }
+            meta: { title: 'Sync', hasMenu: true }
         }, {
             path: '/settings',
             name: 'settings',

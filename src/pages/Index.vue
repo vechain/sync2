@@ -1,48 +1,32 @@
 <template>
-    <div
+    <ConnexObject
         v-if="wallet"
-        class="fit column no-wrap"
+        :node="node"
+        v-slot="{connex}"
     >
-        <q-toolbar>
-            <q-toolbar-title>{{wallet.meta.name}}</q-toolbar-title>
-            <!-- menu -->
-            <q-btn
-                flat
-                dense
-                round
-                icon="more_horiz"
-                aria-label="More"
-                @click="onClickMenu"
-            />
-        </q-toolbar>
-        <ConnexObject
-            :node="node"
-            v-slot="{connex}"
+        <!-- address cart list -->
+        <div
+            id="list"
+            ref="list"
+            class="fit row justify-center overflow-auto card-container"
         >
-            <!-- address cart list -->
-            <div
-                id="list"
-                ref="list"
-                class="row justify-center overflow-auto card-container"
+            <Intersecting
+                v-for="(address, i) in addresses"
+                :key="i"
+                root="list"
+                class="card-wrap q-px-md q-py-sm q-my-sm"
+                v-slot="{intersecting}"
             >
-                <Intersecting
-                    v-for="(address, i) in addresses"
-                    :key="i"
-                    root="list"
-                    class="card-wrap q-px-md q-py-sm q-my-sm"
-                    v-slot="{intersecting}"
-                >
-                    <AddressCard
-                        class="fit shadow-4 card-shape"
-                        :address="address"
-                        :connex="intersecting?connex:undefined"
-                        :index="i"
-                        @click="onClickAddress(i)"
-                    />
-                </Intersecting>
-            </div>
-        </ConnexObject>
-    </div>
+                <AddressCard
+                    class="fit shadow-4 card-shape"
+                    :address="address"
+                    :connex="intersecting?connex:undefined"
+                    :index="i"
+                    @click="onClickCard(i)"
+                />
+            </Intersecting>
+        </div>
+    </ConnexObject>
 </template>
 <script lang="ts">
 import Vue from 'vue'
@@ -69,7 +53,7 @@ export default Vue.extend({
         }
     },
     methods: {
-        onClickNewAddress() {
+        onClickNewAccount() {
             this.$loading(async () => {
                 const wallet = this.wallet
                 const addresses = wallet.meta.addresses
@@ -93,7 +77,7 @@ export default Vue.extend({
                 list.scrollTo({ top: list.scrollHeight, behavior: 'smooth' })
             })
         },
-        onClickAddress(index: number) {
+        onClickCard(index: number) {
             this.$router.push({
                 name: 'account',
                 query: {
@@ -101,16 +85,18 @@ export default Vue.extend({
                     addressIndex: index.toString()
                 }
             })
-        },
-        onClickMenu() {
+        }
+    },
+    created() {
+        this.$root.$on(`more-${this.$attrs['stacked-full-path']}`, () => {
             const addressFull = this.addresses.length >= MAX_ADDRESS
             this.$actionSheets([
-                { label: 'New Address', onClick: addressFull ? undefined : () => this.onClickNewAddress(), classes: addressFull ? 'text-grey' : '' },
+                { label: 'New Account', onClick: addressFull ? undefined : () => this.onClickNewAccount(), classes: addressFull ? 'text-grey' : '' },
                 { label: 'Backup', onClick: () => this.$router.push({ name: 'backup' }) },
                 { label: '-' }, // separator
                 { label: 'Delete', classes: 'text-negative', onClick: () => { alert('TODO: oops') } }
             ])
-        }
+        })
     }
 })
 </script>
