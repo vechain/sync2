@@ -8,7 +8,7 @@
         <div
             id="list"
             ref="list"
-            class="fit row justify-center overflow-auto card-container"
+            class="fit row justify-center content-start overflow-auto card-container"
         >
             <scroll-divider />
             <Intersecting
@@ -19,7 +19,8 @@
                 v-slot="{intersecting}"
             >
                 <AddressCard
-                    class="fit shadow-4 card-shape"
+                    class="fit card-shape"
+                    flat
                     :address="address"
                     :connex="intersecting?connex:undefined"
                     :index="i"
