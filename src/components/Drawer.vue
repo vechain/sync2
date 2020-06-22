@@ -4,7 +4,7 @@
         <div
             ref="backdrop"
             class="drawer-backdrop fixed-full"
-            v-show="panning||opened||transiting"
+            v-show="!invisible"
             v-touch-pan.left.mouse.prevent="transiting? undefined:handleTouchPan"
             @click="onClickBackdrop"
         />
@@ -17,7 +17,7 @@
         <!-- content wrapper-->
         <aside
             class="drawer fixed-left q-drawer__content"
-            :class="{invisible: !(panning||opened||transiting)}"
+            :class="{invisible: invisible, 'drawer-disable-pointer-events': panning||transiting}"
             v-touch-pan.left.mouse.prevent="transiting? undefined:handleTouchPan"
         >
             <slot />
@@ -27,7 +27,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import { nextFrame, transitionEnd, newVelometer, newPipeline } from 'src/utils/transit'
+import { transitionEnd, newVelometer, newPipeline } from 'src/utils/transit'
 
 export default Vue.extend({
     props: {
@@ -36,13 +36,15 @@ export default Vue.extend({
     },
     data: () => {
         return {
-            drawerWidth: 0,
+            width: 0,
             panning: false,
             transiting: false,
+            openRatio: 0,
+            touchPanInitOffset: 0,
+            transitionMul: 1,
             opened: false,
             velometer: newVelometer(),
-            pipeline: newPipeline(),
-            touchPanInitOffset: 0
+            pipeline: newPipeline()
         }
     },
     model: {
@@ -50,6 +52,9 @@ export default Vue.extend({
         event: 'open'
     },
     computed: {
+        invisible() {
+            return !this.opened && !this.panning && !this.transiting
+        },
         animatedViews() {
             return [
                 this.$parent.$el as HTMLElement,
@@ -63,39 +68,39 @@ export default Vue.extend({
         },
         opened() {
             this.pipeline.run(() => this.transit())
+        },
+        width(newVal: boolean) {
+            (this.$parent.$el as HTMLElement).style.setProperty('--drawer-width', `${newVal}`)
+        },
+        openRatio(newVal: number) {
+            (this.$parent.$el as HTMLElement).style.setProperty('--drawer-open-ratio', `${newVal}`)
+        },
+        transitionMul(newVal: number) {
+            (this.$parent.$el as HTMLElement).style.setProperty('--drawer-transition-mul', `${newVal}`)
         }
     },
     methods: {
         onClickBackdrop() {
-            if (this.opened) {
+            if (this.opened && !this.panning && !this.transiting) {
                 this.opened = false
                 this.$emit('open', false)
             }
         },
-        setOpenRatio(ratio: number) {
-            (this.$parent.$el as HTMLElement).style.setProperty('--drawer-open-ratio', `${ratio}`)
-        },
-        setTransitionDurationMul(m: number) {
-            (this.$parent.$el as HTMLElement).style.setProperty('--drawer-transition-mul', `${m}`)
-        },
         onContentResize(size: { width: number }) {
             if (size.width > 0) {
-                (this.$parent.$el as HTMLElement).style.setProperty('--drawer-width', `${size.width}`)
-                this.drawerWidth = size.width
+                this.width = size.width
             }
         },
         async transit() {
             this.transiting = true
-            document.body.classList.add('drawer-body--prevent-scroll')
+            await this.$nextTick()
 
-            await nextFrame()
+            document.body.classList.add('drawer-body--prevent-scroll')
 
             const views = this.animatedViews
             views.forEach(v => v.classList.add('drawer-transition'))
 
-            await nextFrame()
-
-            this.setOpenRatio(this.opened ? 1 : 0)
+            this.openRatio = this.opened ? 1 : 0
 
             await Promise.all(views.map(v => transitionEnd(v)))
 
@@ -104,7 +109,7 @@ export default Vue.extend({
             if (!this.opened) {
                 document.body.classList.remove('drawer-body--prevent-scroll')
             }
-            this.setTransitionDurationMul(1)
+            this.transitionMul = 1
             this.transiting = false
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -115,17 +120,17 @@ export default Vue.extend({
                 this.touchPanInitOffset = ev.offset.x
             }
 
-            const width = Math.max(1, this.drawerWidth)
+            const width = Math.max(1, this.width)
             const offset = Math.min(Math.abs(ev.offset.x - this.touchPanInitOffset), width)
             const ratio = this.opened ? (width - offset) / width : offset / width
-            this.setOpenRatio(ratio)
+            this.openRatio = ratio
 
             if (ev.isFinal) {
                 this.panning = false
                 const v = this.opened ? -this.velometer.velocity : this.velometer.velocity
 
                 const triggered = (offset > width / 3 && v >= 0) || v > 0.3
-                this.setTransitionDurationMul(0.7)
+                this.transitionMul = 0.7
                 if (triggered) {
                     this.opened = !this.opened
                     this.$emit('open', this.opened)
@@ -157,7 +162,7 @@ export default Vue.extend({
 }
 .drawer-backdrop {
     background: black;
-    opacity: calc(var(--drawer-open-ratio) * 0.1);
+    opacity: calc(var(--drawer-open-ratio) * 0.2);
 }
 .drawer-opener {
     width: 20px;
@@ -175,5 +180,9 @@ export default Vue.extend({
 }
 .drawer-body--prevent-scroll {
     position: fixed !important;
+}
+.drawer-disable-pointer-events,
+.drawer-disable-pointer-events * {
+    pointer-events: none !important;
 }
 </style>
