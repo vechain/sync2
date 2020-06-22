@@ -3,6 +3,7 @@
         :style="{...background}"
         v-bind="$attrs"
         v-on="$listeners"
+        class="bg-transition"
     >
         <ConnexContinuous
             :connex="connex"
@@ -39,6 +40,41 @@
 import Vue from 'vue'
 import { picasso } from '@vechain/picasso'
 
+/**
+ * it rasterize svg into bitmap compressed in png format
+ * @param svg the svg string
+ * @returns url of bitmap
+ */
+function rasterize(svg: string) {
+    const size = 400
+    return new Promise<string>((resolve, reject) => {
+        const img = new Image()
+        img.onload = () => {
+            const canvas = document.createElement('canvas')
+            canvas.setAttribute('width', size.toString())
+            canvas.setAttribute('height', size.toString())
+            const ctx = canvas.getContext('2d')
+            if (!ctx) {
+                return reject(new Error('failed to get 2d context'))
+            }
+            ctx.drawImage(img, 0, 0, size, size)
+            ctx.globalCompositeOperation = 'soft-light'
+            const grd = ctx.createLinearGradient(0, 0, size, size)
+            grd.addColorStop(0, 'grey')
+            grd.addColorStop(1, 'black')
+            ctx.fillStyle = grd
+            ctx.fillRect(0, 0, size, size)
+            canvas.toBlob(r => {
+                resolve(URL.createObjectURL(r))
+            })
+        }
+        img.onerror = err => reject(err)
+        img.src = `data:image/svg+xml;utf8,${svg}`
+    })
+}
+
+const imageCache = new Map<string, Promise<string>>() // mapping address => imageurl
+
 export default Vue.extend({
     props: {
         address: String,
@@ -47,7 +83,8 @@ export default Vue.extend({
     },
     data: () => {
         return {
-            height: 0
+            height: 0,
+            backgroundImageUrl: ''
         }
     },
     computed: {
@@ -55,13 +92,8 @@ export default Vue.extend({
             return picasso(this.address)
         },
         background(): object {
-            const backgrounds = [
-                'linear-gradient(160deg, grey 0%, black 100%) 0% 0% / cover no-repeat',
-                `url('data:image/svg+xml;utf8,${this.svg}') 0% 0% / cover no-repeat`
-            ]
             return {
-                background: backgrounds.join(','),
-                backgroundBlendMode: 'soft-light'
+                background: this.backgroundImageUrl ? `url('${this.backgroundImageUrl}') 0% 0% / cover no-repeat` : 'none'
             }
         },
         logoSize() {
@@ -70,6 +102,28 @@ export default Vue.extend({
                 width: `${size}px`,
                 height: `${size}px`
             }
+        }
+    },
+    watch: {
+        address: {
+            handler(addr: string) {
+                if (!addr) {
+                    this.backgroundImageUrl = ''
+                    return
+                }
+                let img = imageCache.get(addr)
+                if (!img) {
+                    const svg = picasso(addr)
+                    img = rasterize(svg)
+                    imageCache.set(addr, img)
+                }
+                img.then(url => {
+                    if (addr === this.address) {
+                        this.backgroundImageUrl = url
+                    }
+                })
+            },
+            immediate: true
         }
     },
     methods: {
@@ -82,6 +136,9 @@ export default Vue.extend({
 })
 </script>
 <style scoped>
+.bg-transition {
+    transition: background 0.3s;
+}
 .logo {
     opacity: 0.15;
     margin-right: -3%;
