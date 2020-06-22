@@ -30,7 +30,7 @@
                 style="max-width: 500px"
                 class="q-mx-auto"
             >
-                <q-form class="q-px-md">
+                <q-form class="q-px-md" @submit="onNew">
                     <q-input
                         v-model.trim="name"
                         :rules="[val => val.length > 0 || 'Give it a name!']"
@@ -51,7 +51,7 @@
                             size="sm"
                             class="text-capitalize"
                             color="black"
-                            @click="onNew"
+                            type="submit"
                             label="Create"
                         ></q-btn>
                     </div>
@@ -110,7 +110,9 @@ export default Vue.extend({
                 })
                 this.ok({})
                 this.$q.notify(`New wallet ${this.name} created`)
-            } catch (e) { console.warn(e) } finally {
+            } catch (e) {
+                console.warn(e)
+            } finally {
                 this.creating = false
             }
         }

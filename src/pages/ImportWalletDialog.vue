@@ -30,7 +30,10 @@
                 style="max-width: 500px"
                 class="q-mx-auto"
             >
-                <q-form class="q-px-md">
+                <q-form
+                    class="q-px-md"
+                    @submit="onImport"
+                >
                     <q-input
                         v-model.trim="name"
                         :rules="[val => val.length > 0 || 'Give it a name!']"
@@ -51,6 +54,10 @@
                         v-model.trim="words"
                         label="Mnemonic phrases"
                         hint="Input the mnemonic phrases and seperated by single space"
+                        :rules="[
+                            val => val && val.length > 0 || 'Please type your mnemonic phrases',
+                            val => checkMnemonic(val) || 'Invalid mnemonic'
+                        ]"
                     />
 
                     <div class="text-center q-pt-md">
@@ -58,7 +65,7 @@
                             unelevated
                             size="sm"
                             color="black"
-                            @click="onImport"
+                            type="submit"
                             class="text-capitalize"
                             label="Import"
                         ></q-btn>
@@ -72,6 +79,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Vue from 'vue'
 import { Vault } from 'core/vault'
+import { mnemonic } from 'thor-devkit/dist/cry/mnemonic'
 
 export default Vue.extend({
     data: () => {
@@ -99,6 +107,9 @@ export default Vue.extend({
             this.$emit('ok', result)
             this.hide()
         },
+        checkMnemonic(words: string) {
+            return mnemonic.validate(words.split(' '))
+        },
         async onImport() {
             try {
                 const pin = await this.$authenticate(pin => Promise.resolve(pin))
@@ -118,7 +129,9 @@ export default Vue.extend({
                 })
                 this.ok({})
                 this.$q.notify(`Wallet ${this.name} was imported`)
-            } catch (e) { console.warn(e) } finally {
+            } catch (e) {
+                console.warn(e)
+            } finally {
                 this.importing = false
             }
         }
