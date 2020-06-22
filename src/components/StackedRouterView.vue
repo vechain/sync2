@@ -28,7 +28,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { ScopedEntry } from 'vue-router-stack'
-import { newVelometer, newPipeline, nextFrame, transitionEnd } from 'src/utils/transit'
+import { newVelometer, newPipeline, transitionEnd } from 'src/utils/transit'
 
 export default Vue.extend({
     data: () => {
@@ -37,6 +37,8 @@ export default Vue.extend({
             width: 0,
             panning: false,
             transiting: false,
+            panRatio: 0,
+            transitionMul: 1,
             shouldHandlePan: false,
             velometer: newVelometer(),
             pipeline: newPipeline(),
@@ -59,36 +61,34 @@ export default Vue.extend({
         this.stack = this.$stack.scoped
     },
     methods: {
-        setPanRatio(ratio: number) {
-            (this.$el as HTMLElement).style.setProperty('--stack-pan-ratio', `${ratio}`)
-        },
-        setTransitionDurationMul(m: number) {
-            (this.$el as HTMLElement).style.setProperty('--stack-transition-mul', `${m}`)
-        },
-        async transit(pushIn: boolean) {
+        async transit(ratios: { r1?: number, r2?: number, r3?: number }) {
             this.transiting = true
+            if (ratios.r1 !== undefined) {
+                this.panRatio = ratios.r1
+            }
+            await this.$nextTick()
+
             document.body.classList.add('stack-body--prevent-scroll')
-
-            await nextFrame()
-
             const views = this.animatedViews
             views.forEach(v => v.classList.add('stack-transition'))
 
-            await nextFrame()
-
-            this.setPanRatio(pushIn ? 0 : 1)
+            if (ratios.r2 !== undefined) {
+                this.panRatio = ratios.r2
+            }
 
             await Promise.all(views.map(v => transitionEnd(v)))
 
             views.forEach(v => v.classList.remove('stack-transition'))
 
             document.body.classList.remove('stack-body--prevent-scroll')
-            this.setTransitionDurationMul(1)
+            this.transitionMul = 1
+            if (ratios.r3 !== undefined) {
+                this.panRatio = ratios.r3
+            }
             this.transiting = false
         },
         onResize(size: { width: number }) {
             if (size.width > 0) {
-                (this.$el as HTMLElement).style.setProperty('--stack-container-width', `${size.width}`)
                 this.width = size.width
             }
         },
@@ -119,26 +119,38 @@ export default Vue.extend({
             const offset = Math.max(0, ev.offset.x - this.touchPanInitOffset)
             const width = Math.max(1, this.width)
 
-            const ratio = offset / width
-            this.setPanRatio(ratio)
-
             if (ev.isFinal) {
                 this.panning = false
                 const v = this.velometer.velocity
                 const triggered = (offset > width / 2 && v >= 0) || v > 0.3
                 if (triggered) {
-                    this.setTransitionDurationMul(0.4)
-                    this.$router.go(-1)
-                    this.transiting = true
+                    this.transitionMul = 0.4
+                    this.pipeline.run(() => this.transit({ r2: 1, r3: 0 }))
+                        .then(() => {
+                            this.stack.pop()
+                            this.$router.back()
+                        })
                 } else {
-                    this.setTransitionDurationMul(0.6)
-                    this.pipeline.run(() => this.transit(true))
+                    this.transitionMul = 0.6
+                    this.pipeline.run(() => this.transit({ r2: 0 }))
                 }
+            } else {
+                const ratio = offset / width
+                this.panRatio = ratio
             }
             this.velometer.update(ev.duration, ev.delta.x)
         }
     },
     watch: {
+        width(newVal: number) {
+            (this.$el as HTMLElement).style.setProperty('--stack-container-width', `${newVal}`)
+        },
+        panRatio(newVal: number) {
+            (this.$el as HTMLElement).style.setProperty('--stack-pan-ratio', `${newVal}`)
+        },
+        transitionMul(newVal: number) {
+            (this.$el as HTMLElement).style.setProperty('--stack-transition-mul', `${newVal}`)
+        },
         '$stack.scoped'(newVal: ScopedEntry[], oldVal: ScopedEntry[]) {
             // TODO more accurate transition judgement
             this.pipeline.run(async () => {
@@ -147,22 +159,15 @@ export default Vue.extend({
                     if (newVal[newVal.length - 1].query['no-transition']) {
                         this.stack = newVal
                     } else {
-                        this.transiting = true
-                        this.setPanRatio(1)
                         this.stack = newVal
-
-                        await this.$nextTick()
-                        await this.transit(true)
+                        await this.transit({ r1: 1, r2: 0 })
                     }
                 } else if (newVal.length < oldVal.length && newVal.length > 0) {
                     // pop out
-                    await this.transit(false)
+                    await this.transit({ r2: 1, r3: 0 })
                     this.stack = newVal
-                    this.setPanRatio(0)
-                    await this.$nextTick()
                 } else {
                     this.stack = newVal
-                    await this.$nextTick()
                 }
             })
         }
@@ -180,19 +185,21 @@ export default Vue.extend({
     transform: translateX(
         calc(var(--stack-container-width) * var(--stack-pan-ratio) * 1px)
     );
-    z-index: 1;
 }
 .stack-v2 {
     transform: translateX(
         calc(
-            var(--stack-container-width) * (var(--stack-pan-ratio) - 1) * 0.2 *
+            var(--stack-container-width) * (var(--stack-pan-ratio) - 1) * 0.3 *
                 1px
         )
     );
 }
 .stack-backdrop {
     background: black;
-    opacity: calc((1 - var(--stack-pan-ratio)) * 0.1);
+    opacity: calc((1 - var(--stack-pan-ratio)) * 0.2);
+    transform: translateX(
+        calc(var(--stack-container-width) * (var(--stack-pan-ratio) - 1) * 1px)
+    );
 }
 .stack-transition {
     transition: all calc(0.35s * var(--stack-transition-mul));
