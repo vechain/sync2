@@ -1,3 +1,5 @@
+import { deviceReady } from './cordova'
+
 function promisify<T>(f: (...args: unknown[]) => void, ...args: unknown[]) {
     return new Promise<T>((resolve, reject) => {
         args.push((r: T) => {
@@ -34,9 +36,7 @@ export interface BioPass {
 export namespace BioPass {
     export async function open(name = 'main'): Promise<BioPass | null> {
         if (process.env.MODE === 'cordova') {
-            await new Promise(resolve => {
-                document.addEventListener('deviceready', () => resolve(), false)
-            })
+            await deviceReady
 
             const touchid = window.plugins.touchid
 

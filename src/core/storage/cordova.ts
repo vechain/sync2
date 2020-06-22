@@ -1,7 +1,8 @@
 import { wrap } from './sqlite'
+import { deviceReady } from 'src/utils/cordova'
 
 export async function open() {
-    await new Promise(resolve => document.addEventListener('deviceready', resolve))
+    await deviceReady
 
     const name = process.env.PROD ? 'data-store.db' : 'data-store-dev.db'
     const db = window.sqlitePlugin.openDatabase({
