@@ -1,8 +1,9 @@
 import { wrap } from './sqlite'
 
-export function open() {
+export async function open() {
+    await new Promise(resolve => document.addEventListener('deviceready', resolve))
+
     const name = process.env.PROD ? 'data-store.db' : 'data-store-dev.db'
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const db = window.sqlitePlugin.openDatabase({
         name,
         location: 'default',
