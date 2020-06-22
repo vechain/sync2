@@ -68,7 +68,7 @@
                         round
                         dense
                         icon="add"
-                        @click="onClickNewWallet"
+                        @click="onClickAddWallet"
                     />
                 </q-toolbar>
                 <!-- the grouped wallet list -->
@@ -125,7 +125,8 @@
 <script lang="ts">
 import Vue from 'vue'
 import FirstRunDialog from 'pages/FirstRunDialog.vue'
-import NewWalletDialog from 'pages/NewWalletDialog.vue'
+import CreateWalletDialog from 'pages/CreateWalletDialog.vue'
+import ImportWalletDialog from 'pages/ImportWalletDialog.vue'
 
 export default Vue.extend({
     data() {
@@ -167,9 +168,21 @@ export default Vue.extend({
             this.$state.wallet.setCurrentId(id)
             this.drawerOpen = false
         },
-        onClickNewWallet() {
+        onClickAddWallet() {
+            this.$actionSheets([
+                { label: 'Create Wallet', onClick: () => { this.onClickCreateWallet() } },
+                { label: 'Import Wallet', onClick: () => { this.onClickImportWallet() } }
+            ])
+        },
+        onClickCreateWallet() {
             this.$q.dialog({
-                component: NewWalletDialog,
+                component: CreateWalletDialog,
+                parent: this
+            })
+        },
+        onClickImportWallet() {
+            this.$q.dialog({
+                component: ImportWalletDialog,
                 parent: this
             })
         },
