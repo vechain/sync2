@@ -17,8 +17,8 @@
     "cordova-ios": "^5.1.1",
     "cordova-plugin-customurlscheme": "^5.0.1",
     "cordova-plugin-inappbrowser": "^3.2.0",
+    "cordova-plugin-ionic-keyboard": "2.2.0",
     "cordova-plugin-ionic-webview": "^4.1.3",
-    "cordova-plugin-keyboard": "^1.2.0",
     "cordova-plugin-keychain-touch-id": "git+https://github.com/qianbin/cordova-plugin-keychain-touch-id.git",
     "cordova-sqlite-storage": "^5.0.0"
   },
@@ -42,7 +42,7 @@
       "cordova-plugin-keychain-touch-id": {
         "FACEID_USAGE_DESCRIPTION": "For saving vault pin code"
       },
-      "cordova-plugin-keyboard": {}
+      "cordova-plugin-ionic-keyboard": {}
     },
     "platforms": [
       "ios",

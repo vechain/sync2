@@ -23,4 +23,5 @@
     </platform>
     <allow-navigation href="about:*" />
     <preference name="DisallowOverscroll" value="true" />
+    <preference name="KeyboardResize" value="false" />
 </widget>

@@ -6,7 +6,6 @@ import { QSpinnerIos } from 'quasar'
 import type { Entry } from 'vue-router-stack'
 import AsyncComputed from 'vue-async-computed'
 import ActionSheets from 'pages/ActionSheets.vue'
-import { deviceReady } from 'src/utils/cordova'
 
 declare global {
     type AuthenticateOptions = {
@@ -149,9 +148,4 @@ export default boot(async ({ Vue }) => {
     })
 
     Vue.use(AsyncComputed)
-
-    if (process.env.MODE === 'cordova') {
-        await deviceReady
-        window.Keyboard.shrinkView(true)
-    }
 })
