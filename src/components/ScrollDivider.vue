@@ -23,14 +23,18 @@ export default Vue.extend({
     },
     data: () => {
         return {
-            y: 0
+            y: 0,
+            mounted: false
         }
     },
     computed: {
         opacity(): number {
             if (this.bottom) {
-                const parent = this.$el ? this.$el.parentElement : null
-                const sHeight = parent ? (parent.scrollHeight - parent.clientHeight) : 0
+                if (!this.mounted) {
+                    return 0
+                }
+                const parent = this.$el.parentElement!
+                const sHeight = parent.scrollHeight - parent.clientHeight
                 return Math.min(Math.max(sHeight - this.y, 0), 10) / 10
             } else {
                 return Math.min(Math.max(this.y, 0), 10) / 10
@@ -41,6 +45,10 @@ export default Vue.extend({
                 opacity: this.opacity
             }
         }
+    },
+    mounted() {
+        this.mounted = true
     }
+
 })
 </script>
