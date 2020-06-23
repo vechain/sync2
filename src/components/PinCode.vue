@@ -1,60 +1,59 @@
 <template>
-    <label
-        :for="forId"
-        class="row flex-center no-wrap"
-    >
-        <span
-            class="col-1 text-center"
-            style="min-width:1rem;"
+    <div class="row flex-center no-wrap">
+        <div
             v-for="(_, i) in len"
+            class="code q-ma-xs"
+            :class="{filled: i<code.length}"
             :key="i"
-        >{{char(i)}}</span>
-    </label>
+        />
+    </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
 
+const validCodes = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
+
 export default Vue.extend({
     props: {
-        value: String, // for v-model
-        len: { default: 6 },
-        forId: String,
-        mask: { default: '○●' }
+        value: String,
+        len: { default: 6 }
     },
     data: () => {
-        return {
-            code: ''
-        }
+        return { code: '' }
     },
     model: {
         prop: 'value',
         event: 'input'
     },
-    methods: {
-        char(i: number) {
-            const ch = this.code[i]
-            return ch ? (this.mask[1] || ch) : this.mask[0]
-        }
-    },
     watch: {
+        code(newVal: string) {
+            if (newVal.length === this.len) {
+                this.$emit('fulfilled', newVal)
+            }
+        },
         value: {
             handler(newVal: string) {
                 this.code = newVal
                     .split('')
-                    .filter(c => c >= '0' && c <= '9')
+                    .filter(c => validCodes.includes(c))
                     .join('')
                     .slice(0, this.len)
-                this.$emit('input', this.code)
+                if (newVal !== this.code) {
+                    this.$emit('input', this.code)
+                }
             },
             immediate: true
-        },
-        code(newVal: string) {
-            if (newVal.length === this.len) {
-                this.$nextTick(() => {
-                    this.$emit('fulfilled', newVal)
-                })
-            }
         }
     }
 })
 </script>
+<style scoped>
+.code {
+    width: 1.2rem;
+    height: 1.2rem;
+    border: 1px solid black;
+}
+.filled {
+    background-color: black;
+}
+</style>
