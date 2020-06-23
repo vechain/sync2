@@ -1,14 +1,20 @@
 <template>
-    <div class="row keypad">
-        <q-btn
+    <div class="row keypad q-col-gutter-xs q-mt-xs q-pb-xs q-pr-xs bg-grey-3">
+        <div
             v-for="(k, i) in keys"
             :key="i"
-            class="col-4 text-h6"
-            flat
-            :class="{invisible: !k}"
-            @click="onClickKey(k)"
-            :ripple="false"
-        >{{k[0]}}</q-btn>
+            class="col-4"
+        >
+            <q-btn
+                class="full-width text-h5"
+                unelevated
+                color="white"
+                text-color="black"
+                :class="{invisible: !k}"
+                @click="onClickKey(k)"
+                :ripple="false"
+            >{{k[0]}}</q-btn>
+        </div>
     </div>
 </template>
 <script lang="ts">
