@@ -16,8 +16,11 @@
                 </q-toolbar-title>
                 <q-btn
                     flat
+                    round
+                    dense
+                    icon="close"
                     @click="hide"
-                >Cancel</q-btn>
+                />
             </q-toolbar>
             <q-space />
             <p>Input the pin code</p>
