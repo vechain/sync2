@@ -33,6 +33,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Vault } from 'core/vault'
+import { scroll } from 'quasar'
 
 const MAX_ADDRESS = 10
 
@@ -51,7 +52,7 @@ export default Vue.extend({
     watch: {
         'wallet.id'() {
             const list = this.$refs.list as HTMLElement
-            list.scrollTo({ top: 0, behavior: 'auto' })
+            list && list.scrollTo({ top: 0, behavior: 'auto' })
         }
     },
     methods: {
@@ -76,7 +77,7 @@ export default Vue.extend({
 
                 await new Promise(resolve => setTimeout(resolve, 300))
                 const list = this.$refs.list as HTMLElement
-                list.scrollTo({ top: list.scrollHeight, behavior: 'smooth' })
+                scroll.setScrollPosition(list, list.scrollHeight, 500)
             })
         },
         onClickCard(index: number) {
@@ -114,6 +115,9 @@ export default Vue.extend({
 <style scoped>
 .card-container {
     scroll-snap-type: y mandatory;
+}
+body.q-ios-padding .card-container {
+    padding-bottom: env(safe-area-inset-bottom) !important;
 }
 .card-wrap {
     width: var(--card-width);
