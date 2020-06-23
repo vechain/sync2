@@ -6,8 +6,10 @@
         persistent
         transition-show="slide-up"
         transition-hide="slide-down"
+        @keydown.capture="handleKeyDown"
+        tabindex="0"
     >
-        <q-card class="column items-center">
+        <q-card class="column items-center no-wrap">
             <q-toolbar>
                 <q-toolbar-title class="absolute-center">
                     {{title || 'Authenticate'}}
@@ -19,19 +21,10 @@
             </q-toolbar>
             <q-space />
             <p>Input the pin code</p>
-            <div class="relative-position">
-                <input
-                    class="invisible-input absolute-full"
-                    v-model="clearPin"
-                    v-bind="inputBinds"
-                >
-                <pin-code
-                    class="full-width full-height"
-                    :for-id="inputBinds.id"
-                    v-model="clearPin"
-                    @fulfilled="runTask($event)"
-                />
-            </div>
+            <pin-code
+                v-model="pin"
+                @fulfilled="runTask($event)"
+            />
             <p :class="{invisible: !wrong}">Incorrect Pin Code</p>
             <q-btn
                 v-if="bioPassSaved"
@@ -40,6 +33,7 @@
                 flat
             />
             <q-space />
+            <digit-keypad :class="{'full-width': $q.screen.xs}" />
         </q-card>
     </q-dialog>
 </template>
@@ -55,23 +49,11 @@ export default Vue.extend({
         task: { type: Function as unknown as () => (<T>(password: string) => Promise<T>) }
     },
     data: () => {
-        const inputId = `pin-${Date.now().toString(16)}`
         return {
             bioPassType: null as BioPass['authType'] | null,
             bioPassSaved: false,
-            clearPin: '', // used to clear pin
-            wrong: false,
-            inputBinds: {
-                id: inputId,
-                name: inputId,
-                type: 'text',
-                autocomplete: 'off',
-                autocapitalize: 'off',
-                autocorrect: 'off',
-                // pattern="[0-9]*" and inputmode="numeric" are needed to bring up numeric keypad
-                pattern: '[0-9]*',
-                inputmode: 'numeric'
-            }
+            pin: '',
+            wrong: false
         }
     },
     computed: {
@@ -80,7 +62,7 @@ export default Vue.extend({
         }
     },
     watch: {
-        clearPin(newVal: string) {
+        pin(newVal: string) {
             if (newVal) {
                 this.wrong = false // clear wrong flag
             }
@@ -112,11 +94,19 @@ export default Vue.extend({
                     await Vault.verifyPassword(this.$state.config.all.passwordShadow, pin)
                     this.ok(await this.task(pin))
                 } catch (err) {
-                    this.clearPin = ''
+                    this.pin = ''
                     this.wrong = true
                     console.log('run task error:', err)
                 }
             })
+        },
+        handleKeyDown(ev: KeyboardEvent) {
+            const { key } = ev
+            if (key === 'Del' || key === 'Delete' || key === 'Backspace') {
+                this.pin = this.pin.slice(0, -1)
+            } else if (key.length === 1) {
+                this.pin += key
+            }
         }
     },
     async created() {
