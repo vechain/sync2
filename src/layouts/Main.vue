@@ -1,5 +1,8 @@
 <template>
-    <q-layout view="lHh Lpr lFf">
+    <q-layout
+        view="lHh Lpr lFf"
+        v-if="$state.config.all.passwordShadow"
+    >
         <q-header>
             <!-- a placeholder to enable toolbar style
                 body.q-ios-padding .q-layout--standard .q-header > .q-toolbar:nth-child(2)
@@ -120,15 +123,22 @@
             <StackedRouterView />
         </q-page-container>
     </q-layout>
+    <wizard
+        v-else
+        class="fullscreen"
+    />
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import FirstRunDialog from 'pages/FirstRunDialog.vue'
 import CreateWalletDialog from 'pages/CreateWalletDialog.vue'
 import ImportWalletDialog from 'pages/ImportWalletDialog.vue'
+import Wizard from 'pages/Wizard.vue'
 
 export default Vue.extend({
+    components: {
+        Wizard
+    },
     data() {
         return {
             drawerOpen: false
@@ -188,14 +198,6 @@ export default Vue.extend({
         },
         onClickMore() {
             this.$root.$emit(`more-${this.$route.fullPath}`)
-        }
-    },
-    created() {
-        if (!this.$state.config.all.passwordShadow) {
-            this.$q.dialog({
-                component: FirstRunDialog,
-                parent: this
-            })
         }
     }
 })
