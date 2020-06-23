@@ -1,46 +1,40 @@
 <template>
-    <div class="relative-position">
-        <div class="column flex-center absolute-full">
-            <input
-                class="invisible-input"
-                v-model="code[slide]"
-                v-bind="inputBinds"
-            >
-        </div>
+    <div
+        class="column no-wrap items-center no-border no-outline"
+        tabindex="0"
+        @keydown.capture="handleKeyDown"
+    >
         <q-carousel
+            class="col full-width"
             v-model="slide"
             animated
             transition-prev="slide-right"
             transition-next="slide-left"
-            class="full-width full-height"
         >
             <q-carousel-slide
                 name="a"
-                class="column flex-center q-pa-none"
+                class="column flex-center"
             >
                 <p>Input new pin code</p>
                 <pin-code
-                    :for-id="inputBinds.id"
-                    ref="inputA"
                     v-model="code.a"
-                    @fulfilled="handlePin($event)"
+                    @fulfilled="handlePinA"
                 />
                 <p :class="{invisible: !mismatch}">Mismatched</p>
             </q-carousel-slide>
             <q-carousel-slide
                 name="b"
-                class="column flex-center q-pa-none"
+                class="column flex-center"
             >
                 <p>Confirm the new pin code</p>
                 <pin-code
-                    :for-id="inputBinds.id"
-                    ref="inputB"
                     v-model="code.b"
-                    @fulfilled="handlePin($event)"
+                    @fulfilled="handlePinB"
                 />
                 <p class="invisible">placeholder</p>
             </q-carousel-slide>
         </q-carousel>
+        <digit-keypad :class="{'full-width': $q.screen.xs}" />
     </div>
 </template>
 <script lang="ts">
@@ -48,23 +42,10 @@ import Vue from 'vue'
 
 export default Vue.extend({
     data: () => {
-        const inputId = `pin-${Date.now().toString(16)}`
         return {
             code: { a: '', b: '' },
-            slide: 'a',
-            pin: '',
-            mismatch: false,
-            inputBinds: {
-                id: inputId,
-                name: inputId,
-                type: 'text',
-                autocomplete: 'off',
-                autocapitalize: 'off',
-                autocorrect: 'off',
-                // pattern="[0-9]*" and inputmode="numeric" are needed to bring up numeric keypad
-                pattern: '[0-9]*',
-                inputmode: 'numeric'
-            }
+            slide: 'a' as 'a' | 'b',
+            mismatch: false
         }
     },
     watch: {
@@ -76,22 +57,29 @@ export default Vue.extend({
         }
     },
     methods: {
-        handlePin(pin: string) {
-            if (this.pin) {
-                if (this.pin === pin) {
-                    this.$emit('fulfilled', pin)
-                } else {
-                    this.pin = ''
-                    this.code.a = ''
-                    this.code.b = ''
-                    this.slide = 'a'
-                    this.mismatch = true
-                }
+        handlePinA() {
+            this.slide = 'b'
+        },
+        handlePinB() {
+            if (this.code.a === this.code.b) {
+                this.$emit('fulfilled', this.code.a)
             } else {
-                this.pin = pin
-                this.slide = 'b'
+                this.code.a = this.code.b = ''
+                this.slide = 'a'
+                this.mismatch = true
+            }
+        },
+        handleKeyDown(ev: KeyboardEvent) {
+            const { key } = ev
+            if (key === 'Del' || key === 'Delete' || key === 'Backspace') {
+                this.code[this.slide] = this.code[this.slide].slice(0, -1)
+            } else if (key.length === 1) {
+                this.code[this.slide] += key
             }
         }
+    },
+    mounted() {
+        (this.$el as HTMLElement).focus()
     }
 })
 </script>
