@@ -1,5 +1,5 @@
 <template>
-    <div id="q-app">
+    <div id="q-app" class="non-selectable">
         <router-view v-if="ready" />
     </div>
 </template>
