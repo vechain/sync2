@@ -10,6 +10,8 @@ import Drawer from './Drawer.vue'
 import WalletItem from './WalletItem.vue'
 import Intersecting from './Intersecting.vue'
 import ScrollDivider from './ScrollDivider.vue'
+import DigitKeypad from './DigitKeypad.vue'
+
 const components: { [name: string]: Vue.VueConstructor } = {
     StackedRouterView,
     AddressCard,
@@ -22,7 +24,8 @@ const components: { [name: string]: Vue.VueConstructor } = {
     Drawer,
     WalletItem,
     Intersecting,
-    ScrollDivider
+    ScrollDivider,
+    DigitKeypad
 }
 
 export default components
