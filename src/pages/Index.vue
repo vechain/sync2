@@ -10,6 +10,13 @@
             ref="list"
             class="fit row justify-center content-start overflow-auto card-container"
         >
+            <q-badge
+                v-show="networkBadgeText"
+                color="orange"
+                floating
+                transparent
+                class="q-ma-md z-top text-subtitle2 text-capitalize"
+            >{{networkBadgeText}}</q-badge>
             <scroll-divider />
             <Intersecting
                 v-for="(address, i) in addresses"
@@ -47,6 +54,13 @@ export default Vue.extend({
         },
         addresses(): string[] {
             return this.wallet.meta.addresses
+        },
+        networkBadgeText(): string {
+            const net = this.$options.filters!.net(this.wallet.gid)
+            if (net === 'main') {
+                return ''
+            }
+            return (net || 'private') + ' net'
         }
     },
     watch: {
