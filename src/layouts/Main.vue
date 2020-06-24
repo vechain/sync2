@@ -63,7 +63,7 @@
                     </q-toolbar-title>
                 </q-toolbar>
                 <q-toolbar>
-                    <q-toolbar-title>
+                    <q-toolbar-title class="text-grey text-subtitle2">
                         Wallets
                     </q-toolbar-title>
                     <q-btn
@@ -79,24 +79,16 @@
                     <q-list class="fit overflow-auto">
                         <scroll-divider />
                         <scroll-divider bottom />
-                        <template v-for="(list, gid) in walletGroups">
-                            <!-- network name -->
-                            <q-item-label
-                                header
-                                :key="`${gid}-label`"
-                                class="text-capitalize text-caption"
-                            >
-                                {{gid | net}}
-                            </q-item-label>
-                            <wallet-item
-                                v-for="(wallet,i) in list"
-                                :key="`${gid}-${i}`"
-                                :name="wallet.meta.name"
-                                @click="onClickWallet(wallet.id)"
-                                clickable
-                                :active="wallet.id === $state.wallet.current.id"
-                            />
-                        </template>
+                        <wallet-item
+                            v-for="wallet in $state.wallet.list"
+                            :key="wallet.id"
+                            :name="wallet.meta.name"
+                            @click="onClickWallet(wallet.id)"
+                            clickable
+                            :active="wallet.id === $state.wallet.current.id"
+                            :net="wallet.gid | net"
+                            active-class="bg-blue-1"
+                        />
                     </q-list>
                 </div>
                 <!-- drawer content footer -->
@@ -146,17 +138,6 @@ export default Vue.extend({
     },
     computed: {
         isIndexPage() { return this.$route.name === 'index' },
-        walletGroups() {
-            return this.$state.wallet.list.reduce<Record<string, M.Wallet[]>>((groups, w) => {
-                const g = groups[w.gid]
-                if (g) {
-                    g.push(w)
-                } else {
-                    groups[w.gid] = [w]
-                }
-                return groups
-            }, {})
-        },
         title(): string {
             if (this.$route.name === 'index') {
                 const wallet = this.$state.wallet.current

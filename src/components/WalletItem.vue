@@ -3,23 +3,20 @@
         v-bind="$attrs"
         v-on="$listeners"
     >
-        <q-item-section
-            avatar
-            top
-        >
-            <q-avatar
-                color="primary"
-                text-color="white"
-                class="text-uppercase"
-            >{{avatarString}}</q-avatar>
+        <q-item-section avatar>
+            <q-icon name="credit_card" />
         </q-item-section>
-
-        <q-item-section>
-            <q-item-label
-                lines="1"
+        <q-item-section class="relative-position">
+            <q-item-label lines="1">
+                {{name}}
+            </q-item-label>
+            <q-badge
+                v-show="badgeText"
+                transparent
+                color="orange"
+                floating
                 class="text-capitalize"
-            >{{name}}</q-item-label>
-            <q-item-label caption>{{caption}}</q-item-label>
+            >{{badgeText}}</q-badge>
         </q-item-section>
     </q-item>
 </template>
@@ -28,18 +25,14 @@ import Vue from 'vue'
 export default Vue.extend({
     props: {
         name: String,
-        caption: String
+        net: String
     },
     computed: {
-        avatarString() {
-            if (this.name) {
-                const parts = this.name
-                    .split(' ')
-                    .map(p => p.trim()[0])
-                    .filter(p => !!p)
-                return parts.slice(0, 2).join('')
+        badgeText() {
+            if (this.net === 'main') {
+                return ''
             }
-            return ''
+            return (this.net || 'private') + ' net'
         }
     }
 })
