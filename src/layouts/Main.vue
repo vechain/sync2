@@ -3,14 +3,17 @@
         view="lHh Lpr lFf"
         v-if="$state.config.all.passwordShadow"
     >
-        <q-header>
-            <!-- a placeholder to enable toolbar style
+        <transition name="q-transition--fade">
+            <q-header
+                class="bg-white text-black"
+                :key="$route.name"
+            >
+                <!-- a placeholder to enable toolbar style
                 body.q-ios-padding .q-layout--standard .q-header > .q-toolbar:nth-child(2)
             -->
-            <div />
-            <q-toolbar class="bg-white text-black">
-                <!-- drawer opener, or back button -->
-                <transition>
+                <div />
+                <q-toolbar>
+                    <!-- drawer opener, or back button -->
                     <q-btn
                         v-if="isIndexPage"
                         flat
@@ -29,20 +32,20 @@
                         aria-label="Keyboard Arrow Left"
                         @click="$router.back()"
                     ></q-btn>
-                </transition>
-                <!-- title -->
-                <q-toolbar-title class="text-center">{{title}}</q-toolbar-title>
-                <!-- more button (overflow menu button) -->
-                <q-btn
-                    :class="{invisible: !$route.meta.hasMenu}"
-                    flat
-                    dense
-                    round
-                    icon="more_horiz"
-                    @click="onClickMore"
-                />
-            </q-toolbar>
-        </q-header>
+                    <!-- title -->
+                    <q-toolbar-title class="text-center">{{title}}</q-toolbar-title>
+                    <!-- more button (overflow menu button) -->
+                    <q-btn
+                        :class="{invisible: !$route.meta.hasMenu}"
+                        flat
+                        dense
+                        round
+                        icon="more_horiz"
+                        @click="onClickMore"
+                    />
+                </q-toolbar>
+            </q-header>
+        </transition>
 
         <drawer
             :disable="!isIndexPage"
