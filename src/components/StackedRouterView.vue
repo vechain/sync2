@@ -14,7 +14,7 @@
         >
             <component
                 :is="entry.component"
-                :stacked-full-path="entry.fullPath"
+                v-bind="entryToBinds(entry)"
             />
         </div>
         <div
@@ -139,6 +139,21 @@ export default Vue.extend({
                 this.panRatio = ratio
             }
             this.velometer.update(ev.duration, ev.delta.x)
+        },
+        entryToBinds(entry: ScopedEntry) {
+            const binds: Record<string, string> = {}
+            const varNameRegExp = /^[a-z][a-z0-9]*$/i
+            for (const e of Object.entries(entry.query)) {
+                if (varNameRegExp.test(e[0])) {
+                    binds[e[0]] = e[1].toString()
+                }
+            }
+            for (const e of Object.entries(entry.params)) {
+                if (varNameRegExp.test(e[0])) {
+                    binds[e[0]] = e[1]
+                }
+            }
+            return binds
         }
     },
     watch: {

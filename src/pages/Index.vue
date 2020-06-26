@@ -114,7 +114,7 @@ export default Vue.extend({
         }
     },
     created() {
-        const event = `more-${this.$stackedRoute!.fullPath}`
+        const event = `more-${this.$route.fullPath}`
         const cb = () => this.onOpenMore()
         this.$root.$on(event, cb)
         this.$once('hook:beforeDestroy', () => this.$root.$off(event, cb))
