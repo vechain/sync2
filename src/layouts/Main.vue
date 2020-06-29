@@ -101,7 +101,7 @@
                         flat
                         dense
                         round
-                        @click="onClickSettings"
+                        :to="{name: 'settings', query: {'no-transition-in': '1'}}"
                     />
                     <q-space />
                     <q-btn
@@ -109,6 +109,7 @@
                         flat
                         dense
                         round
+                        :to="{name: 'activities', query: {'no-transition-in': '1'}}"
                     />
                 </q-toolbar>
             </div>
@@ -156,9 +157,6 @@ export default Vue.extend({
         }
     },
     methods: {
-        onClickSettings() {
-            this.$router.push({ name: 'settings', query: { 'no-transition-in': '1' } })
-        },
         onClickWallet(id: number) {
             this.$state.wallet.setCurrentId(id)
             this.drawerOpen = false

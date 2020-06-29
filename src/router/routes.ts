@@ -35,6 +35,11 @@ const routes: RouteConfig[] = [
             name: 'sign',
             component: () => import('pages/Sign.vue'),
             meta: { title: 'Sign', noTransitionIn: true, noTransitionOut: true }
+        }, {
+            path: 'activities',
+            name: 'activities',
+            component: () => import('pages/Activities.vue'),
+            meta: { title: 'Activities' }
         }]
     }
 ]
