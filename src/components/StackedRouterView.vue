@@ -145,7 +145,7 @@ export default Vue.extend({
             const varNameRegExp = /^[a-z][a-z0-9]*$/i
             for (const e of Object.entries(entry.query)) {
                 if (varNameRegExp.test(e[0])) {
-                    binds[e[0]] = e[1].toString()
+                    binds[e[0]] = (e[1] || '').toString()
                 }
             }
             for (const e of Object.entries(entry.params)) {
