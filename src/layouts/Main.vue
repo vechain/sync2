@@ -156,7 +156,7 @@ export default Vue.extend({
     },
     methods: {
         onClickSettings() {
-            this.$router.push({ name: 'settings', query: { 'no-transition': '1' } })
+            this.$router.push({ name: 'settings', query: { 'no-transition-in': '1' } })
         },
         onClickWallet(id: number) {
             this.$state.wallet.setCurrentId(id)
