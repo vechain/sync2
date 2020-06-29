@@ -126,6 +126,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { listen } from 'core/connex/external-url'
 import CreateWalletDialog from 'pages/CreateWalletDialog.vue'
 import ImportWalletDialog from 'pages/ImportWalletDialog.vue'
 import Wizard from 'pages/Wizard.vue'
@@ -182,7 +183,27 @@ export default Vue.extend({
         },
         onClickMore() {
             this.$root.$emit(`more-${this.$route.fullPath}`)
+        },
+        handleExternalSigningRequest() {
+            (async () => {
+                for (; ;) {
+                    try {
+                        // the incoming url looks like connex://{net}/sign?rid=xxx
+                        const url = new URL(await listen())
+                        if (url.pathname === '/sign') {
+                            // const net = url.host
+                            // const rid = url.searchParams.get('rid')
+                            this.$sign()
+                        }
+                    } catch (err) {
+                        console.warn(err)
+                    }
+                }
+            })()
         }
+    },
+    created() {
+        this.handleExternalSigningRequest()
     }
 })
 </script>

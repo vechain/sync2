@@ -2,9 +2,10 @@ import { boot } from 'quasar/wrappers'
 import * as State from 'src/state'
 import AuthenticationDialog from 'pages/AuthenticationDialog.vue'
 import { Storage } from 'core/storage'
-import { QSpinnerIos } from 'quasar'
+import { QSpinnerIos, DialogChainObject } from 'quasar'
 import AsyncComputed from 'vue-async-computed'
 import ActionSheets from 'pages/ActionSheets.vue'
+import SigningDialog from 'pages/SigningDialog.vue'
 
 declare global {
     type AuthenticateOptions = {
@@ -39,6 +40,11 @@ declare module 'vue/types/vue' {
 
         /** display an action sheets */
         $actionSheets(actions: Array<{ label: string, classes?: string | string[], onClick?: Function }>): void
+
+        /** to sign something
+         * TODO: args and return value
+         */
+        $sign(): Promise<unknown>
     }
 }
 
@@ -64,6 +70,8 @@ export default boot(async ({ Vue }) => {
             }, [spinner])
         }
     })
+
+    let signingDialog: DialogChainObject | undefined
 
     Object.defineProperties(Vue.prototype, {
         $state: {
@@ -121,6 +129,33 @@ export default boot(async ({ Vue }) => {
                         component: ActionSheets,
                         parent: vm,
                         actions
+                    })
+                }
+            }
+        },
+        $sign: {
+            get(): Vue['$sign'] {
+                const vm = this as Vue
+                return () => {
+                    return new Promise((resolve, reject) => {
+                        // close the previous signing dialog if one opened
+                        if (signingDialog) {
+                            signingDialog.hide()
+                            signingDialog = undefined
+                        }
+                        const obj = vm.$q.dialog({
+                            component: SigningDialog,
+                            parent: vm
+                        })
+                            .onOk(resolve)
+                            .onCancel(() => reject(new Error('cancelled')))
+                            .onDismiss(() => {
+                                if (obj === signingDialog) {
+                                    signingDialog = undefined
+                                }
+                            })
+
+                        signingDialog = obj
                     })
                 }
             }

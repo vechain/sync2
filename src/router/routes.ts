@@ -29,6 +29,12 @@ const routes: RouteConfig[] = [
             name: 'account',
             component: () => import('pages/Account.vue'),
             meta: { title: 'Account' }
+        }, {
+            // this page is for handling external signing request in SPA mode only
+            path: 'sign',
+            name: 'sign',
+            component: () => import('pages/Sign.vue'),
+            meta: { title: 'Sign', noTransitionIn: true, noTransitionOut: true }
         }]
     }
 ]
