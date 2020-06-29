@@ -7,8 +7,7 @@
 import Vue from 'vue'
 export default Vue.extend({
     props: {
-        rid: String, // the request id
-        net: String
+        rid: String // the request id
     },
     async mounted() {
         try {

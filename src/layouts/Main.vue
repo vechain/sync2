@@ -186,14 +186,13 @@ export default Vue.extend({
             (async () => {
                 for (; ;) {
                     try {
-                        // the incoming url looks like connex://{net}/sign?rid=xxx
+                        // the incoming url looks like connex:sign?rid=xxx
                         const url = new URL(await listen())
-                        if (url.pathname === '/sign') {
-                            const net = url.host
+                        if (url.pathname === 'sign') {
                             const rid = url.searchParams.get('rid')
                             this.$router.push({
                                 name: 'sign',
-                                query: { net, rid }
+                                query: { rid }
                             })
                         }
                     } catch (err) {
