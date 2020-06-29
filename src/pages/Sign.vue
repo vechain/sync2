@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="bg-white fit">
         This is the entry page for external signing request in SPA mode
     </div>
 </template>

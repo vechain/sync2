@@ -189,9 +189,12 @@ export default Vue.extend({
                         // the incoming url looks like connex://{net}/sign?rid=xxx
                         const url = new URL(await listen())
                         if (url.pathname === '/sign') {
-                            // const net = url.host
-                            // const rid = url.searchParams.get('rid')
-                            this.$sign()
+                            const net = url.host
+                            const rid = url.searchParams.get('rid')
+                            this.$router.push({
+                                name: 'sign',
+                                query: { net, rid }
+                            })
                         }
                     } catch (err) {
                         console.warn(err)
@@ -200,7 +203,7 @@ export default Vue.extend({
             })()
         }
     },
-    created() {
+    mounted() {
         this.handleExternalSigningRequest()
     }
 })

@@ -19,8 +19,10 @@
                     icon="close"
                     @click="hide"
                 />
-                This is the signing dialog
             </q-toolbar>
+            <q-card-section>
+                This is the signing dialog
+            </q-card-section>
         </q-card>
     </q-dialog>
 </template>
@@ -29,6 +31,9 @@
 import Vue from 'vue'
 
 export default Vue.extend({
+    props: {
+
+    },
     methods: {
         // method is REQUIRED by $q.dialog
         show() { (this.$refs.dialog as any).show() },
