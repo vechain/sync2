@@ -1,44 +1,52 @@
 import { RouteConfig } from 'vue-router'
+import Main from 'layouts/Main.vue'
+import Index from 'pages/Index.vue'
+import Settings from 'pages/Settings.vue'
+import TokensSetting from 'pages/TokensSetting.vue'
+import Backup from 'pages/Backup.vue'
+import Account from 'pages/Account.vue'
+import Sign from 'pages/Sign.vue'
+import Activities from 'pages/Activities.vue'
 
 const routes: RouteConfig[] = [
     {
         path: '/',
-        component: () => import('layouts/Main.vue'),
+        component: Main,
         children: [{
             path: '',
             name: 'index',
-            component: () => import('pages/Index.vue'),
+            component: Index,
             meta: { title: 'Sync', hasMenu: true }
         }, {
-            path: '/settings',
+            path: 'settings',
             name: 'settings',
-            component: () => import('pages/Settings.vue'),
+            component: Settings,
             meta: { title: 'Settings' }
         }, {
-            path: '/settings/tokens',
-            name: 'tokens',
-            component: () => import('pages/TokenList.vue'),
+            path: 'tokens-setting',
+            name: 'tokens-setting',
+            component: TokensSetting,
             meta: { title: 'Tokens' }
         }, {
-            path: '/wallet/backup',
+            path: 'backup',
             name: 'backup',
-            component: () => import('pages/Backup.vue'),
+            component: Backup,
             meta: { title: 'Backup' }
         }, {
-            path: '/wallet/account',
+            path: 'account',
             name: 'account',
-            component: () => import('pages/Account.vue'),
+            component: Account,
             meta: { title: 'Account' }
         }, {
             // this page is for handling external signing request in SPA mode only
             path: 'sign',
             name: 'sign',
-            component: () => import('pages/Sign.vue'),
+            component: Sign,
             meta: { title: 'Sign', noTransitionIn: true, noTransitionOut: true }
         }, {
             path: 'activities',
             name: 'activities',
-            component: () => import('pages/Activities.vue'),
+            component: Activities,
             meta: { title: 'Activities' }
         }]
     }

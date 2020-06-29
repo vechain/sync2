@@ -57,7 +57,7 @@
                     <q-item-label caption> Selected token will be showing the balance of account balance </q-item-label>
                 </q-item-section>
             </q-item>
-            <q-item :to="{name: 'tokens'}">
+            <q-item :to="{name: 'tokens-setting'}">
                 <q-item-section avatar>
                     <q-avatar
                         color="primary"
