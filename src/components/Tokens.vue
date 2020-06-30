@@ -3,9 +3,10 @@
         <template v-for="(item, i) in list">
             <q-item :key="item.address">
                 <q-item-section avatar>
-                    <q-avatar>
-                        <img src="https://cdn.quasar.dev/img/avatar2.jpg">
-                    </q-avatar>
+                    <q-avatar
+                        color="primary"
+                        text-color="white"
+                    >{{item.symbol.slice(0,1)}}</q-avatar>
                 </q-item-section>
                 <q-item-section>
                     <q-item-label lines="1">{{item.symbol}}</q-item-label>
@@ -17,7 +18,10 @@
                     </q-item-label>
                 </q-item-section>
                 <q-item-section side>
-                    {{ balances ? balances[item.symbol] === undefined ? '--' : balances[item.symbol].toLocaleString() : '--'}}
+                    <span v-if="balances && balances[item.symbol]">
+                        {{ balances[item.symbol].balance | balance(balances[item.symbol].decimals) }}
+                    </span>
+                    <span v-else>--</span>
                 </q-item-section>
             </q-item>
             <q-separator
@@ -34,7 +38,7 @@ import Vue from 'vue'
 export default Vue.extend({
     props: {
         list: Array as () => { name: string, symbol: string }[],
-        balances: Object as () => { [k: string]: number }[]
+        balances: Object as () => { [k: string]: M.TokenBaseInfo }[]
     }
 })
 </script>
