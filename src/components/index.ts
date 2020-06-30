@@ -11,6 +11,7 @@ import WalletItem from './WalletItem.vue'
 import Intersecting from './Intersecting.vue'
 import ScrollDivider from './ScrollDivider.vue'
 import DigitKeypad from './DigitKeypad.vue'
+import QRCode from './QRCode.vue'
 
 const components: { [name: string]: Vue.VueConstructor } = {
     StackedRouterView,
@@ -25,7 +26,8 @@ const components: { [name: string]: Vue.VueConstructor } = {
     WalletItem,
     Intersecting,
     ScrollDivider,
-    DigitKeypad
+    DigitKeypad,
+    QRCode
 }
 
 export default components
