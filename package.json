@@ -43,6 +43,7 @@
     "eslint-plugin-standard": "^4.0.0",
     "eslint-plugin-vue": "^6.1.2",
     "more-entropy": "0.0.7",
+    "qrious": "^4.0.2",
     "quasar": "^1.9.16",
     "sqlite": "^4.0.7",
     "thor-devkit": "^1.2.4",
