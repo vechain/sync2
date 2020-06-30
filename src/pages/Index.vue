@@ -98,8 +98,8 @@ export default Vue.extend({
             this.$router.push({
                 name: 'account',
                 query: {
-                    walletId: this.wallet.id.toString(),
-                    addressIndex: index.toString()
+                    wId: this.wallet.id.toString(),
+                    i: index.toString()
                 }
             })
         },
