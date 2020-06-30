@@ -29,4 +29,10 @@ declare namespace M {
         icon: string
         totalSupply: string
     }
+    type TokenBaseInfo = {
+        symbol: string,
+        balance: string,
+        decimals: number,
+        name: string
+    }
 }
