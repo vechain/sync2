@@ -9,7 +9,7 @@
             ref="views"
             v-for="(entry, i) in stack"
             :key="entry.fullPath"
-            class="absolute-full"
+            class="absolute-full bg-white"
             :class="viewClasses(i)"
         >
             <component

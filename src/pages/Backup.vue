@@ -1,6 +1,5 @@
 <template>
-    <q-page
-        class="bg-white q-pt-lg"
+    <div
         v-show="words && words.length"
     >
         <div
@@ -117,7 +116,7 @@
                 </div>
             </div>
         </div>
-    </q-page>
+    </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'

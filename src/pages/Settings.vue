@@ -1,5 +1,5 @@
 <template>
-    <q-page class="bg-white">
+    <div>
         <h5 class="q-ma-none q-pa-md">General</h5>
         <q-list>
             <q-item>
@@ -72,7 +72,7 @@
                 </q-item-section>
             </q-item>
         </q-list>
-    </q-page>
+    </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'

@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white">
+    <div>
         <div class="q-px-xl">
             <div
                 class="q-mx-auto"
