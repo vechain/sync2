@@ -1,5 +1,5 @@
 <template>
-    <q-page class="bg-white">
+    <div>
         <q-list>
             <template v-for="(item, index) in tokens">
                 <q-separator
@@ -28,7 +28,7 @@
                 </q-item>
             </template>
         </q-list>
-    </q-page>
+    </div>
 </template>
 <script lang="ts">
 

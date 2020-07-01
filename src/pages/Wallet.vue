@@ -1,5 +1,5 @@
 <template>
-    <q-page v-if="wallet">
+    <div v-if="wallet">
         <q-item class="q-px-lg">
             <q-item-section>
                 <span class="text-h6">{{wallet.meta.name}}</span>
@@ -69,7 +69,7 @@
             </ConnexContinuous>
         </ConnexObject>
         <q-separator />
-    </q-page>
+    </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
