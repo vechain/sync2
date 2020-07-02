@@ -38,23 +38,23 @@
             v-slot="{connex}"
             :node="node"
         >
-            <ConnexContinuous
-                :connex="connex"
-                :query="()=> query(connex)"
-                v-slot="{data}"
-            >
-                <q-tab-panels v-model="tab">
-                    <q-tab-panel name="assets">
+            <q-tab-panels v-model="tab">
+                <q-tab-panel name="assets">
+                    <ConnexContinuous
+                        :connex="connex"
+                        :query="()=> query(connex)"
+                        v-slot="{data}"
+                    >
                         <Tokens
                             :list="list"
                             :balances="data"
                         />
-                    </q-tab-panel>
-                    <q-tab-panel name="transfers">
-                        Transfers
-                    </q-tab-panel>
-                </q-tab-panels>
-            </ConnexContinuous>
+                    </ConnexContinuous>
+                </q-tab-panel>
+                <q-tab-panel name="transfers">
+                    Transfers
+                </q-tab-panel>
+            </q-tab-panels>
         </ConnexObject>
         <q-dialog
             ref="dialog"
