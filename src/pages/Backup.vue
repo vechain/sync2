@@ -1,6 +1,6 @@
 <template>
     <div
-        v-show="words && words.length"
+        v-if="words && words.length"
     >
         <div
             style="max-width: 500px"
@@ -10,7 +10,7 @@
                 <div class="q-px-lg">
                     <span class="text-subtitle2 q-py-sm">Backup mnemonic</span>
                     <div class="text-body2 text-grey q-py-sm">
-                        These 24 words are used to recover your wallet. Please write down in order and keep it in a secure place.
+                        {{`These ${words.length} words are used to recover your wallet. Please write down in order and keep it in a secure place.`}}
                     </div>
                 </div>
                 <div class="row justify-around q-pt-lg ">
