@@ -1,30 +1,30 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { boot } from 'quasar/wrappers'
 
-const directives = {
+const directives: Record<string, Vue.DirectiveOptions> = {
     scrollDivider: {
-        inserted(el: HTMLElement, bind: any) {
-            const { top: t = true, bottom: b, both: bt } = bind.modifiers
-            const handler = (e: any) => {
-                const target = e.target
-                if (t || bt) {
-                    const opacity = 0.12 * (target.scrollTop > 50 ? 1 : target.scrollTop / 50)
+        inserted: (el, bind) => {
+            const { top = true, bottom, both } = bind.modifiers
+            const handler = () => {
+                if (top || both) {
+                    const opacity = 0.12 * (el.scrollTop > 50 ? 1 : el.scrollTop / 50)
                     el.style.borderTop = `1px solid rgba(0,0,0,${opacity})`
                 }
-                if (b || bt) {
-                    const st = target.scrollHeight - target.scrollTop - target.clientHeight
+                if (bottom || both) {
+                    const st = el.scrollHeight - el.scrollTop - el.clientHeight
                     const opacity = 0.12 * (st > 50 ? 1 : st / 50)
                     el.style.borderBottom = `1px solid rgba(0,0,0,${opacity})`
                 }
             }
-
-            const _el = el as any
-            _el._scrollHandler = handler
+            (el as any)._scrollHandler = handler
             el.addEventListener('scroll', handler)
+            // get correct initial state
+            handler()
+            // TODO: reactive to element resize
         },
-        unbind(el: HTMLElement) {
-            const _el = el as any
-            el.removeEventListener('scroll', _el._scrollHandler)
-            delete _el._scrollHandler
+        unbind: el => {
+            el.removeEventListener('scroll', (el as any)._scrollHandler)
+            delete (el as any)._scrollHandler
         }
     }
 }
