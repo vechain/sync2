@@ -78,20 +78,21 @@
                     />
                 </q-toolbar>
                 <!-- the grouped wallet list -->
-                <div class="col relative-position">
-                    <q-list class="fit overflow-auto" v-scrollDivider.both>
-                        <wallet-item
-                            v-for="wallet in $state.wallet.list"
-                            :key="wallet.id"
-                            :name="wallet.meta.name"
-                            @click="onClickWallet(wallet.id)"
-                            clickable
-                            :active="wallet.id === $state.wallet.current.id"
-                            :net="wallet.gid | net"
-                            active-class="bg-blue-1"
-                        />
-                    </q-list>
-                </div>
+                <q-list
+                    class="col fit overflow-auto"
+                    v-scrollDivider.both
+                >
+                    <wallet-item
+                        v-for="wallet in $state.wallet.list"
+                        :key="wallet.id"
+                        :name="wallet.meta.name"
+                        @click="onClickWallet(wallet.id)"
+                        clickable
+                        :active="wallet.id === $state.wallet.current.id"
+                        :net="wallet.gid | net"
+                        active-class="bg-blue-1"
+                    />
+                </q-list>
                 <!-- drawer content footer -->
                 <q-toolbar>
                     <q-btn
