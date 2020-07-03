@@ -1,5 +1,5 @@
 <template>
-    <div
+    <div v-scrollDivider class="fit overflow-auto"
         v-if="words && words.length"
     >
         <div

@@ -8,6 +8,7 @@
         <div
             id="list"
             ref="list"
+            v-scrollDivider
             class="fit row justify-center content-start overflow-auto card-container"
         >
             <q-badge
@@ -17,7 +18,6 @@
                 transparent
                 class="q-ma-md z-top text-subtitle2 text-capitalize"
             >{{networkBadgeText}}</q-badge>
-            <scroll-divider />
             <Intersecting
                 v-for="(address, i) in addresses"
                 :key="i"

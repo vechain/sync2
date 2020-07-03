@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="fit overflow-auto q-pt-lg" v-scrollDivider>
         <div class="q-px-xl">
             <div
                 class="q-mx-auto"

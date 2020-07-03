@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-scrollDivider class="fit overflow-auto">
         <q-list>
             <template v-for="(item, index) in tokens">
                 <q-separator
