@@ -79,9 +79,7 @@
                 </q-toolbar>
                 <!-- the grouped wallet list -->
                 <div class="col relative-position">
-                    <q-list class="fit overflow-auto">
-                        <scroll-divider />
-                        <scroll-divider bottom />
+                    <q-list class="fit overflow-auto" v-scrollDivider.both>
                         <wallet-item
                             v-for="wallet in $state.wallet.list"
                             :key="wallet.id"

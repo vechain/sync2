@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-scrollDivider class="fit overflow-auto">
         <h5 class="q-ma-none q-pa-md">General</h5>
         <q-list>
             <q-item>
