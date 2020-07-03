@@ -9,7 +9,6 @@ import SlideContainer from './SlideContainer.vue'
 import Drawer from './Drawer.vue'
 import WalletItem from './WalletItem.vue'
 import Intersecting from './Intersecting.vue'
-import ScrollDivider from './ScrollDivider.vue'
 import DigitKeypad from './DigitKeypad.vue'
 import QRCode from './QRCode.vue'
 
@@ -25,7 +24,6 @@ const components: { [name: string]: Vue.VueConstructor } = {
     Drawer,
     WalletItem,
     Intersecting,
-    ScrollDivider,
     DigitKeypad,
     QRCode
 }
