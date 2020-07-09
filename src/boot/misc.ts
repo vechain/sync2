@@ -37,7 +37,7 @@ declare module 'vue/types/vue' {
         /** to sign something
          * TODO: args and return value
          */
-        $sign(): Promise<unknown>
+        $sign(args: SigningDialog.Args): Promise<SigningDialog.Result>
     }
 }
 
@@ -128,7 +128,7 @@ export default boot(async ({ Vue }) => {
         $sign: {
             get(): Vue['$sign'] {
                 const vm = this as Vue
-                return () => {
+                return args => {
                     return new Promise((resolve, reject) => {
                         // close the previous signing dialog if one opened
                         if (signingDialog) {
@@ -137,7 +137,8 @@ export default boot(async ({ Vue }) => {
                         }
                         const obj = vm.$q.dialog({
                             component: SigningDialog,
-                            parent: vm
+                            parent: vm,
+                            args
                         })
                             .onOk(resolve)
                             .onCancel(() => reject(new Error('cancelled')))

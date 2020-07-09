@@ -32,7 +32,7 @@ import Vue from 'vue'
 
 export default Vue.extend({
     props: {
-
+        args: Object as () => SigningDialog.Args
     },
     methods: {
         // method is REQUIRED by $q.dialog

@@ -11,7 +11,8 @@ export default Vue.extend({
     },
     async mounted() {
         try {
-            await this.$sign()
+            // const result =
+            await this.$sign({})
         } finally {
             this.$router.back()
         }
