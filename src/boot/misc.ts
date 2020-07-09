@@ -7,13 +7,6 @@ import AsyncComputed from 'vue-async-computed'
 import ActionSheets from 'pages/ActionSheets.vue'
 import SigningDialog from 'pages/SigningDialog.vue'
 
-declare global {
-    type AuthenticateOptions = {
-        /** customized title text */
-        title?: string
-    }
-}
-
 declare module 'vue/types/vue' {
     interface Vue {
         $state: ReturnType<typeof State.build>
@@ -28,7 +21,7 @@ declare module 'vue/types/vue' {
          */
         $authenticate<T>(
             task: (password: string) => Promise<T>,
-            options?: AuthenticateOptions
+            args?: AuthenticationDialog.Args
         ): Promise<T>
 
         /**
@@ -83,14 +76,13 @@ export default boot(async ({ Vue }) => {
         $authenticate: {
             get(): Vue['$authenticate'] {
                 const vm = this as Vue
-                return (task, options) => {
+                return (task, args) => {
                     return new Promise((resolve, reject) => {
-                        options = options || {}
                         vm.$q.dialog({
                             component: AuthenticationDialog,
                             parent: vm,
                             task,
-                            title: options.title
+                            args: args || {}
                         })
                             .onOk(resolve)
                             .onCancel(() => reject(new Error('cancelled')))

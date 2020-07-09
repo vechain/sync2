@@ -12,7 +12,7 @@
         <q-card class="column items-center no-wrap">
             <q-toolbar>
                 <q-toolbar-title class="absolute-center">
-                    {{title || 'Authenticate'}}
+                    {{args.title || 'Authenticate'}}
                 </q-toolbar-title>
                 <q-btn
                     flat
@@ -48,8 +48,8 @@ import { Vault } from 'core/vault'
 
 export default Vue.extend({
     props: {
-        title: String,
-        task: { type: Function as unknown as () => (<T>(password: string) => Promise<T>) }
+        task: { type: Function as unknown as () => (<T>(password: string) => Promise<T>) },
+        args: Object as () => AuthenticationDialog.Args
     },
     data: () => {
         return {
