@@ -127,7 +127,7 @@ export function build() {
                     for (const net of nets) {
                         const resp = await fetch(`${tokenRegistryBaseUrl}/${net}.json`)
                         if (resp.status === 200) {
-                            newRegistry[net] = await resp.json()
+                            newRegistry[net] = (await resp.json() as Array<M.TokenSpec>).filter(spec => spec.symbol !== 'VTHO')
                         }
                     }
                     await config.set('tokenRegistry', JSON.stringify(newRegistry))
