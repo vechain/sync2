@@ -1,5 +1,8 @@
 <template>
-    <div class="fit overflow-auto q-pt-lg" v-scrollDivider>
+    <div
+        class="fit overflow-auto q-pt-lg"
+        v-scrollDivider
+    >
         <div class="q-px-xl">
             <div
                 class="q-mx-auto"
@@ -40,16 +43,37 @@
         >
             <q-tab-panels v-model="tab">
                 <q-tab-panel name="assets">
-                    <ConnexContinuous
+
+                    <TokensBalance
                         :connex="connex"
-                        :query="()=> query(connex)"
-                        v-slot="{data}"
+                        :list="list"
+                        :address="address"
+                        :tokens="tokens"
                     >
-                        <Tokens
-                            :list="list"
-                            :balances="data"
-                        />
-                    </ConnexContinuous>
+                        <template v-slot="{balances}">
+                            <q-list>
+                                <template v-for="(item, index) in list">
+                                    <TokenItem
+                                        :token="item"
+                                        :key="index"
+                                    >
+                                        <template v-slot>
+                                            <span v-if="balances && balances[item.symbol]">
+                                                {{ balances[item.symbol].balance | balance(balances[item.symbol].decimals) }}
+                                            </span>
+                                            <span v-else>--</span>
+                                        </template>
+                                    </TokenItem>
+                                    <q-separator
+                                        v-if="index !== list.length - 1"
+                                        :key="item.symbol"
+                                        inset="item"
+                                    />
+                                </template>
+                            </q-list>
+                        </template>
+                    </TokensBalance>
+
                 </q-tab-panel>
                 <q-tab-panel name="transfers">
                     Transfers
@@ -106,25 +130,6 @@ import Vue from 'vue'
 import { picasso } from '@vechain/picasso'
 import { copyToClipboard } from 'quasar'
 
-const Abi = {
-    constant: true,
-    inputs: [
-        {
-            name: '_owner',
-            type: 'address'
-        }
-    ],
-    name: 'balanceOf',
-    outputs: [
-        {
-            name: 'balance',
-            type: 'uint256'
-        }
-    ],
-    payable: false,
-    stateMutability: 'view',
-    type: 'function'
-}
 export default Vue.extend({
     data() {
         return {
@@ -140,22 +145,22 @@ export default Vue.extend({
         this.svg = `data:image/svg+xml;utf8,${picasso(this.address)}`
     },
     computed: {
-        wallet() {
+        wallet(): M.Wallet | undefined {
             return this.$state.wallet.list.find(i => {
                 return i.id === parseInt(this.wId, 10)
             })
         },
-        tokens() {
-            return this.$state.config.token.getList(this.$state.wallet.current!.gid)
+        tokens(): M.Token[] {
+            return this.$state.config.token.getList(this.wallet!.gid)
         },
         node(): M.Node {
             return this.$state.config.node.list.find(n => n.gid === this.wallet!.gid)!
         },
-        list() {
-            return [{ name: 'VeChain Token', symbol: 'VET' }, ...this.$state.config.token.getList(this.$state.wallet.current!.gid)]
+        list(): { name: string, symbol: string }[] {
+            return [{ name: 'VeChain Token', symbol: 'VET' }, ...this.$state.config.token.getList(this.wallet!.gid)]
         },
-        address() {
-            return this.$state.wallet.current!.meta.addresses[parseInt(this.i, 10)]
+        address(): string {
+            return this.wallet!.meta.addresses[parseInt(this.i, 10)]
         }
     },
     methods: {
@@ -165,66 +170,7 @@ export default Vue.extend({
         onReceiveClick() {
             (this.$refs.dialog as any).show()
         },
-        hide() { (this.$refs.dialog as any).hide() },
-        async query(connex: Connex) {
-            const account = await connex.thor.account(this.address).get()
-            const tokenMethods = this.tokens.filter(item => {
-                return item.symbol !== 'VTHO'
-            }).map(item => {
-                return {
-                    balanceOf: (addr: string) => {
-                        return connex.thor
-                            .account(item.address)
-                            .method(Abi)
-                            .cache([addr])
-                            .call(addr)
-                    },
-                    symbol: item.symbol,
-                    decimals: item.decimals,
-                    name: item.name
-                }
-            })
-            const getBalance = () => {
-                return {
-                    symbol: 'VET',
-                    balance: account.balance,
-                    decimals: 18,
-                    name: 'VeChain Token'
-                }
-            }
-            const getEnergy = () => {
-                return {
-                    symbol: 'VTHO',
-                    balance: account.energy,
-                    decimals: 18,
-                    name: 'VeChain Thor'
-                }
-            }
-
-            const getTokenBalance = async () => {
-                const result: M.TokenBaseInfo[] = []
-                for (const item of tokenMethods) {
-                    const temp = await item.balanceOf(this.address)
-                    result.push({
-                        symbol: item.symbol,
-                        name: item.name,
-                        balance: temp.decoded!.balance,
-                        decimals: item.decimals
-                    })
-                }
-
-                return result
-            }
-            const tokenBalances: M.TokenBaseInfo[] = await getTokenBalance()
-
-            const result: Record<string, M.TokenBaseInfo> = {}
-            const temp = [getBalance(), getEnergy(), ...tokenBalances]
-            temp.forEach(item => {
-                result[item.symbol] = item
-            })
-
-            return result
-        }
+        hide() { (this.$refs.dialog as any).hide() }
     }
 })
 </script>
