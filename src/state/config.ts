@@ -1,22 +1,27 @@
 import Vue from 'vue'
 import { Storage } from 'core/storage'
 
+const genesisIds = {
+    main: '0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a',
+    test: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'
+}
+
 const presetNodes: M.Node[] = [
     { // mainnet
-        gid: '0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a',
+        gid: genesisIds.main,
         url: 'http://localhost:8669'
     },
     { // testnet
-        gid: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127',
+        gid: genesisIds.test,
         url: 'http://localhost:8669'
     }
 ]
-const tokenApi = 'https://vechain.github.io/token-registry'
+const tokenRegistryBaseUrl = 'https://vechain.github.io/token-registry'
 
-type AllTokens = {
+type TokenRegistry = {
     updated: number
-    main: M.Token[]
-    test: M.Token[]
+    main: M.TokenSpec[]
+    test: M.TokenSpec[]
 }
 
 export function build() {
@@ -71,74 +76,61 @@ export function build() {
             // eslint-disable-next-line @typescript-eslint/no-this-alias
             const config = this
             return {
-                get all(): AllTokens | undefined {
-                    if (config.all.tokens) {
-                        return JSON.parse(config.all.tokens)
+                get registry(): TokenRegistry {
+                    if (!config.all.tokenRegistry) {
+                        return {
+                            updated: 0,
+                            main: [],
+                            test: []
+                        }
                     }
+                    return JSON.parse(config.all.tokenRegistry)
                 },
+                /** returns an array of token symbols */
                 get active() {
                     return config.all.activeTokens ? JSON.parse(config.all.activeTokens) as string[] : []
                 },
-                get distinctList() {
-                    if (this.all) {
-                        const { main, test } = { ...this.all }
-                        const result = new Map<string, {
-                            name: string,
-                            symbol: string
-                        }>()
+                get list(): Array<{ name: string, symbol: string }> {
+                    // map symbol to name
+                    const map = [...this.registry.main, ...this.registry.test]
+                        .reduce<Record<string, string>>((map, spec) => {
+                            map[spec.symbol] = spec.name
+                            return map
+                        }, {})
 
-                        main.concat(test).map(item => {
-                            result.set(item.symbol, {
-                                name: item.name,
-                                symbol: item.symbol
-                            })
-                        })
-
-                        return Array.from(result.values())
-                    } else {
-                        return []
-                    }
+                    return Object.entries(map).map(e => ({ symbol: e[0], name: e[1] }))
                 },
-                getList(gid: string) {
-                    const gids = presetNodes.map(item => { return item.gid })
-                    if (this.all && gids.includes(gid)) {
-                        const tempList = gid === '0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a' ? this.all.main : this.all.test
-                        return tempList.filter(item => {
-                            return config.token.active.includes(item.symbol)
-                        })
-                    } else {
-                        return []
+                specs(gid: string, activeOnly: boolean) {
+                    let specs: M.TokenSpec[] = []
+                    if (gid === genesisIds.main) {
+                        specs = this.registry.main
+                    } else if (gid === genesisIds.test) {
+                        specs = this.registry.test
                     }
+                    const active = this.active
+                    return activeOnly
+                        ? specs.filter(s => active.includes(s.symbol))
+                        : [...specs]
                 },
-                async fetch() {
-                    if (this.all) {
-                        const { updated } = { ...this.all }
+                async fetch(enforce?: boolean) {
+                    if (!enforce) {
+                        const updated = this.registry.updated
                         if (updated && updated > Date.now() - 6 * 60 * 60 * 1000) {
                             return
                         }
                     }
-                    const nets = ['main', 'test']
-                    const tokens: {
-                        [k: string]: M.Token[]
-                    } = {
-                        main: [],
-                        test: []
-                    }
+
+                    const newRegistry = { ...this.registry }
+
+                    const nets: Array<'main' | 'test'> = ['main', 'test']
+
                     for (const net of nets) {
-                        const resp = await fetch(`${tokenApi}/${net}.json`)
-                        if (resp.status !== 200) {
-                            tokens[net] = []
-                            return
+                        const resp = await fetch(`${tokenRegistryBaseUrl}/${net}.json`)
+                        if (resp.status === 200) {
+                            newRegistry[net] = await resp.json()
                         }
-                        const list = await resp.json()
-                        tokens[net] = list
                     }
-                    const allTokens: AllTokens = {
-                        updated: Date.now(),
-                        main: tokens.main,
-                        test: tokens.test
-                    }
-                    await config.set('tokens', JSON.stringify(allTokens))
+                    await config.set('tokenRegistry', JSON.stringify(newRegistry))
                 }
             }
         }
@@ -146,5 +138,5 @@ export function build() {
 }
 
 declare global {
-    type ConfigKey = 'nodes' | 'passwordShadow' | 'tokens' | 'activeTokens'
+    type ConfigKey = 'nodes' | 'passwordShadow' | 'tokenRegistry' | 'activeTokens'
 }
