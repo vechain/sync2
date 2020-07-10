@@ -20,7 +20,7 @@ declare namespace M {
         }
     }
 
-    interface Token {
+    interface TokenSpec {
         name: string
         symbol: string
         decimals: number
@@ -28,11 +28,5 @@ declare namespace M {
         desc: string
         icon: string
         totalSupply: string
-    }
-    type TokenBaseInfo = {
-        symbol: string,
-        balance: string,
-        decimals: number,
-        name: string
     }
 }
