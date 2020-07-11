@@ -1,5 +1,8 @@
 <template>
-    <div v-scrollDivider class="fit overflow-auto">
+    <div
+        v-scrollDivider
+        class="fit overflow-auto"
+    >
         <q-list>
             <template v-for="(item, index) in tokens">
                 <q-separator
@@ -41,16 +44,14 @@ export default Vue.extend({
     },
     created() {
         this.$state.config.token.fetch()
-        this.activeTokens = this.$state.config.token.active
+        this.activeTokens = Array.from(new Set<string>(this.$state.config.token.active))
     },
     async beforeDestroy() {
-        await this.$state.config.set('activeTokens', JSON.stringify(['VTHO'].concat(this.activeTokens)))
+        await this.$state.config.set('activeTokens', JSON.stringify(this.activeTokens))
     },
     computed: {
         tokens() {
-            return this.$state.config.token.distinctList.filter(item => {
-                return item.symbol !== 'VTHO'
-            })
+            return this.$state.config.token.list
         }
     }
 })
