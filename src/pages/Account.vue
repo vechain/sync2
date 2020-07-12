@@ -43,37 +43,29 @@
         >
             <q-tab-panels v-model="tab">
                 <q-tab-panel name="assets">
-
-                    <TokensBalance
-                        :connex="connex"
-                        :list="list"
-                        :address="address"
-                        :tokens="tokens"
+                    <connex-continuous
+                        :query="() => connex.thor.account(address).get()"
+                        v-slot="{data}"
                     >
-                        <template v-slot="{balances}">
-                            <q-list>
-                                <template v-for="(item, index) in list">
-                                    <TokenItem
-                                        :token="item"
-                                        :key="index"
-                                    >
-                                        <template v-slot>
-                                            <span v-if="balances && balances[item.symbol]">
-                                                {{ balances[item.symbol].balance | balance(balances[item.symbol].decimals) }}
-                                            </span>
-                                            <span v-else>--</span>
-                                        </template>
-                                    </TokenItem>
-                                    <q-separator
-                                        v-if="index !== list.length - 1"
-                                        :key="item.symbol"
-                                        inset="item"
-                                    />
-                                </template>
-                            </q-list>
-                        </template>
-                    </TokensBalance>
-
+                        <q-list>
+                            <TokenItem :token="{symbol: 'VET'}" />
+                            <q-separator inset="item" />
+                            <TokenItem :token="{symbol: 'VTHO'}" />
+                            <template v-for="(spec, index) in tokenSpecs">
+                                <q-separator
+                                    :key="`${index}-s`"
+                                    inset="item"
+                                />
+                                <connex-continuous
+                                    :key="index"
+                                    :query="() => tokenBalanceOf(connex, address, spec)"
+                                    v-slot="{data}"
+                                >
+                                    <TokenItem :token="spec" />
+                                </connex-continuous>
+                            </template>
+                        </q-list>
+                    </connex-continuous>
                 </q-tab-panel>
                 <q-tab-panel name="transfers">
                     Transfers
@@ -129,6 +121,7 @@
 import Vue from 'vue'
 import { picasso } from '@vechain/picasso'
 import { copyToClipboard } from 'quasar'
+import { tokenBalanceOf } from 'components/queries'
 
 export default Vue.extend({
     data() {
@@ -150,20 +143,21 @@ export default Vue.extend({
                 return i.id === parseInt(this.wId, 10)
             })
         },
-        tokens(): M.Token[] {
-            return this.$state.config.token.getList(this.wallet!.gid)
+        tokenSpecs(): M.TokenSpec[] {
+            return this.$state.config.token.specs(this.wallet!.gid, true)
         },
         node(): M.Node {
             return this.$state.config.node.list.find(n => n.gid === this.wallet!.gid)!
         },
         list(): { name: string, symbol: string }[] {
-            return [{ name: 'VeChain Token', symbol: 'VET' }, ...this.$state.config.token.getList(this.wallet!.gid)]
+            return [{ name: 'VeChain Token', symbol: 'VET' }, ...this.tokenSpecs]
         },
         address(): string {
             return this.wallet!.meta.addresses[parseInt(this.i, 10)]
         }
     },
     methods: {
+        tokenBalanceOf,
         onCopy() {
             copyToClipboard(Vue.filter('checksum')(this.address)).then().catch()
         },
