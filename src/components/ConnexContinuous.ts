@@ -13,7 +13,6 @@ import { continuous } from 'core/connex/continuous'
 
 export default Vue.extend({
     props: {
-        tag: { default: 'div' },
         connex: { type: Object as () => (Connex | null) },
         query: { type: Function as unknown as () => ((() => Promise<unknown>) | null) }
     },
@@ -59,6 +58,6 @@ export default Vue.extend({
             error: this.error
         }) : []) || []
 
-        return children.length > 1 ? h(this.tag, children) : children[0]
+        return children.length > 1 ? h('fragment', children) : children[0]
     }
 })
