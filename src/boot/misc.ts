@@ -6,6 +6,8 @@ import { QSpinnerIos, DialogChainObject } from 'quasar'
 import AsyncComputed from 'vue-async-computed'
 import ActionSheets from 'pages/ActionSheets.vue'
 import SigningDialog from 'pages/SigningDialog.vue'
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const Fragment = require('vue-fragment')
 
 declare module 'vue/types/vue' {
     interface Vue {
@@ -42,6 +44,9 @@ declare module 'vue/types/vue' {
 }
 
 export default boot(async ({ Vue }) => {
+    Vue.use(AsyncComputed)
+    Vue.use(Fragment.Plugin)
+
     const state = State.build()
     const storage = await Storage.init()
     let loadingCount = 0
@@ -154,6 +159,4 @@ export default boot(async ({ Vue }) => {
             }
         }
     })
-
-    Vue.use(AsyncComputed)
 })
