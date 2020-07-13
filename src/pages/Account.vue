@@ -44,24 +44,38 @@
             <q-tab-panels v-model="tab">
                 <q-tab-panel name="assets">
                     <connex-continuous
+                        :connex="connex"
                         :query="() => connex.thor.account(address).get()"
                         v-slot="{data}"
                     >
                         <q-list>
-                            <TokenItem :token="{symbol: 'VET'}" />
-                            <q-separator inset="item" />
-                            <TokenItem :token="{symbol: 'VTHO'}" />
+                            <template>
+                                <TokenBalanceItem
+                                    :balance="data && data.balance"
+                                    :token="{symbol: 'VET', name: 'VeChain', decimals: 18}"
+                                />
+                                <q-separator inset="item" />
+                                <TokenBalanceItem
+                                    :balance="data && data.energy"
+                                    :token="{symbol: 'VTHO', name: 'VeChain Thor', decimals: 18}"
+                                />
+                            </template>
+
                             <template v-for="(spec, index) in tokenSpecs">
                                 <q-separator
                                     :key="`${index}-s`"
                                     inset="item"
                                 />
                                 <connex-continuous
+                                    :connex="connex"
                                     :key="index"
                                     :query="() => tokenBalanceOf(connex, address, spec)"
                                     v-slot="{data}"
                                 >
-                                    <TokenItem :token="spec" />
+                                    <TokenBalanceItem
+                                        :token="spec"
+                                        :balance="data"
+                                    />
                                 </connex-continuous>
                             </template>
                         </q-list>
@@ -148,9 +162,6 @@ export default Vue.extend({
         },
         node(): M.Node {
             return this.$state.config.node.list.find(n => n.gid === this.wallet!.gid)!
-        },
-        list(): { name: string, symbol: string }[] {
-            return [{ name: 'VeChain Token', symbol: 'VET' }, ...this.tokenSpecs]
         },
         address(): string {
             return this.wallet!.meta.addresses[parseInt(this.i, 10)]

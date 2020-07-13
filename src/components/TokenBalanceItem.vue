@@ -18,7 +18,8 @@
             </q-item-label>
         </q-item-section>
         <q-item-section side>
-            <slot></slot>
+            <span v-if="balance">{{balance | balance(token.decimals)}}</span>
+            <span v-else> -- </span>
         </q-item-section>
     </q-item>
 </template>
@@ -26,7 +27,8 @@
 import Vue from 'vue'
 export default Vue.extend({
     props: {
-        token: Object as () => { symbol: string, name: string }
+        token: Object as () => { symbol: string, name: string, decimals: number },
+        balance: String as () => ''
     }
 })
 </script>

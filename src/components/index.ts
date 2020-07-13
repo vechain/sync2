@@ -1,6 +1,5 @@
 import StackedRouterView from './StackedRouterView.vue'
 import AddressCard from './AddressCard.vue'
-import TokensBalance from './TokensBalance.vue'
 import ConnexObject from './ConnexObject'
 import ConnexContinuous from './ConnexContinuous'
 import PinCode from './PinCode.vue'
@@ -11,12 +10,11 @@ import WalletItem from './WalletItem.vue'
 import Intersecting from './Intersecting.vue'
 import DigitKeypad from './DigitKeypad.vue'
 import QRCode from './QRCode.vue'
-import TokenItem from './TokenItem.vue'
+import TokenBalanceItem from './TokenBalanceItem.vue'
 
 const components: { [name: string]: Vue.VueConstructor } = {
     StackedRouterView,
     AddressCard,
-    TokensBalance,
     ConnexObject,
     ConnexContinuous,
     PinCode,
@@ -27,7 +25,7 @@ const components: { [name: string]: Vue.VueConstructor } = {
     Intersecting,
     DigitKeypad,
     QRCode,
-    TokenItem
+    TokenBalanceItem
 }
 
 export default components
