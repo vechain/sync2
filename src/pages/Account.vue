@@ -43,43 +43,41 @@
         >
             <q-tab-panels v-model="tab">
                 <q-tab-panel name="assets">
-                    <connex-continuous
-                        :connex="connex"
-                        :query="() => connex.thor.account(address).get()"
-                        v-slot="{data}"
-                    >
-                        <q-list>
-                            <template>
-                                <TokenBalanceItem
-                                    :balance="data && data.balance"
-                                    :token="{symbol: 'VET', name: 'VeChain', decimals: 18}"
-                                />
-                                <q-separator inset="item" />
-                                <TokenBalanceItem
-                                    :balance="data && data.energy"
-                                    :token="{symbol: 'VTHO', name: 'VeChain Thor', decimals: 18}"
-                                />
-                            </template>
+                    <q-list>
+                        <connex-continuous
+                            :connex="connex"
+                            :query="() => connex.thor.account(address).get()"
+                            v-slot="{data}"
+                        >
+                            <TokenBalanceItem
+                                :balance="data && data.balance"
+                                :token="{symbol: 'VET', name: 'VeChain', decimals: 18}"
+                            />
+                            <q-separator inset="item" />
+                            <TokenBalanceItem
+                                :balance="data && data.energy"
+                                :token="{symbol: 'VTHO', name: 'VeChain Thor', decimals: 18}"
+                            />
+                        </connex-continuous>
 
-                            <template v-for="(spec, index) in tokenSpecs">
-                                <q-separator
-                                    :key="`${index}-s`"
-                                    inset="item"
+                        <template v-for="(spec, index) in tokenSpecs">
+                            <q-separator
+                                :key="`${index}-s`"
+                                inset="item"
+                            />
+                            <connex-continuous
+                                :connex="connex"
+                                :key="index"
+                                :query="() => tokenBalanceOf(connex, address, spec)"
+                                v-slot="{data}"
+                            >
+                                <TokenBalanceItem
+                                    :token="spec"
+                                    :balance="data"
                                 />
-                                <connex-continuous
-                                    :connex="connex"
-                                    :key="index"
-                                    :query="() => tokenBalanceOf(connex, address, spec)"
-                                    v-slot="{data}"
-                                >
-                                    <TokenBalanceItem
-                                        :token="spec"
-                                        :balance="data"
-                                    />
-                                </connex-continuous>
-                            </template>
-                        </q-list>
-                    </connex-continuous>
+                            </connex-continuous>
+                        </template>
+                    </q-list>
                 </q-tab-panel>
                 <q-tab-panel name="transfers">
                     Transfers
