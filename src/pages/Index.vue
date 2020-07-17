@@ -103,13 +103,67 @@ export default Vue.extend({
                 }
             })
         },
+        onDelete() {
+            this.$q.dialog({
+                title: 'Remove Wallet',
+                message: 'Are you sure? this cannot be undone. Unless you have backed up your wallet beforehand',
+                ok: {
+                    label: 'Remove',
+                    flat: true
+                },
+                cancel: {
+                    label: 'Cancel'
+                }
+            }).onOk(async () => {
+                await this.$authenticate(() => {
+                    return Promise.resolve()
+                })
+                this.$storage.wallets.delete({ id: this.wallet.id })
+            })
+        },
+        onRename() {
+            this.$q.dialog({
+                title: 'Rename',
+                message: 'Customize the wallet name can help you easily identify the wallet',
+                prompt: {
+                    model: '',
+                    type: 'text'
+                },
+                cancel: true,
+                ok: true
+            }).onOk((data: string) => {
+                this.wallet.meta.name = data
+                this.$storage.wallets.update({ id: this.wallet.id }, {
+                    meta: JSON.stringify(this.wallet.meta)
+                }).then(() => {
+                    this.$q.notify('Wallet updated')
+                })
+            })
+        },
         onOpenMore() {
             const addressFull = this.addresses.length >= MAX_ADDRESS
             this.$actionSheets([
-                { label: 'New Account', onClick: addressFull ? undefined : () => this.onClickNewAccount(), classes: addressFull ? 'text-grey' : '' },
-                { label: 'Backup', onClick: () => this.$router.push({ name: 'backup' }) },
+                {
+                    label: 'New Account',
+                    onClick: addressFull ? undefined : () => this.onClickNewAccount(),
+                    classes: addressFull ? 'text-grey' : ''
+                },
+                {
+                    label: 'Backup',
+                    onClick: () => this.$router.push({ name: 'backup' })
+                },
+                {
+                    label: 'Rename',
+                    onClick: () => {
+                        this.onRename()
+                    }
+                },
                 { label: '-' }, // separator
-                { label: 'Delete', classes: 'text-negative', onClick: () => { alert('TODO: oops') } }
+                {
+                    label: 'Delete',
+                    classes: 'text-negative',
+                    onClick: () => { this.onDelete() }
+                }
             ])
         }
     },
