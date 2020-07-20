@@ -1,5 +1,6 @@
 import { boot } from 'quasar/wrappers'
 import * as State from 'src/state'
+import BalanceFetch from 'src/state/connexFetch'
 import AuthenticationDialog from 'pages/AuthenticationDialog.vue'
 import { Storage } from 'core/storage'
 import { QSpinnerIos, DialogChainObject } from 'quasar'
@@ -13,7 +14,8 @@ declare module 'vue/types/vue' {
     interface Vue {
         $state: ReturnType<typeof State.build>
 
-        $storage: Storage
+        $storage: Storage,
+        $balanceFetch: typeof BalanceFetch
 
         /**
          * pop up the authentication dialog to ask user entering password,
@@ -77,6 +79,11 @@ export default boot(async ({ Vue }) => {
         },
         $storage: {
             get() { return storage }
+        },
+        $balanceFetch: {
+            get() {
+                return BalanceFetch
+            }
         },
         $authenticate: {
             get(): Vue['$authenticate'] {
