@@ -168,7 +168,11 @@ export default Vue.extend({
     methods: {
         tokenBalanceOf,
         onCopy() {
-            copyToClipboard(Vue.filter('checksum')(this.address)).then().catch()
+            copyToClipboard(Vue.filter('checksum')(this.address)).then(
+                () => {
+                    this.$q.notify('copied')
+                }
+            ).catch(console.error)
         },
         onReceiveClick() {
             (this.$refs.dialog as any).show()
