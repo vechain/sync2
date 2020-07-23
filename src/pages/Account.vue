@@ -16,7 +16,10 @@
             >{{address | checksum}}</div>
         </div>
         <div class="row justify-center q-gutter-md">
-            <q-btn class="col-4">Send</q-btn>
+            <q-btn
+                @click="onSend"
+                class="col-4"
+            >Send</q-btn>
             <q-btn
                 @click="onReceiveClick"
                 class="col-4"
@@ -134,6 +137,7 @@ import Vue from 'vue'
 import { picasso } from '@vechain/picasso'
 import { copyToClipboard } from 'quasar'
 import { tokenBalanceOf } from 'components/queries'
+import SendDialog from './SendDialog.vue'
 
 export default Vue.extend({
     data() {
@@ -166,6 +170,13 @@ export default Vue.extend({
         }
     },
     methods: {
+        onSend() {
+            this.$q.dialog({
+                component: SendDialog,
+                parent: this,
+                from: this.address
+            })
+        },
         tokenBalanceOf,
         onCopy() {
             copyToClipboard(Vue.filter('checksum')(this.address)).then(
