@@ -29,4 +29,34 @@ declare namespace M {
         icon: string
         totalSupply: string
     }
+
+    interface TxRequest {
+        message: Connex.Vendor.TxMessage
+        options?: {
+            signer?: string
+            gas?: number
+            dependsOn?: string
+            link?: string
+            comment?: string
+            delegate?: string
+        }
+    }
+
+    interface TxResponse {
+        result?: Connex.Vendor.TxResponse
+        error?: Connex.ErrorType
+    }
+
+    interface CertRequest {
+        message: Connex.Vendor.CertMessage
+        options?: {
+            signer?: string
+            link?: string
+        }
+    }
+
+    interface CertResponse {
+        result?: Connex.Vendor.CertResponse
+        error?: Connex.ErrorType
+    }
 }
