@@ -2,10 +2,12 @@ import { boot } from 'quasar/wrappers'
 import * as State from 'src/state'
 import AuthenticationDialog from 'pages/AuthenticationDialog.vue'
 import { Storage } from 'core/storage'
-import { QSpinnerIos, DialogChainObject } from 'quasar'
+import { QSpinnerIos, DialogChainObject, QDialogOptions } from 'quasar'
 import AsyncComputed from 'vue-async-computed'
 import ActionSheets from 'pages/ActionSheets.vue'
-import SigningDialog from 'pages/SigningDialog.vue'
+import TxSigningDialog from 'pages/TxSigningDialog.vue'
+import CertSigningDialog from 'pages/CertSigningDialog.vue'
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Fragment = require('vue-fragment')
 
@@ -36,12 +38,41 @@ declare module 'vue/types/vue' {
         /** display an action sheets */
         $actionSheets(actions: Array<{ label: string, classes?: string | string[], onClick?: Function }>): void
 
-        /** to sign something
-         * TODO: args and return value
+        /**
+         * sign tx
+         * @param req
          */
-        $sign(args: SigningDialog.Args): Promise<SigningDialog.Result>
+        $signTx(req: M.TxRequest): Promise<M.TxResponse>
+        /**
+         * sign cert
+         * @param req
+         */
+        $signCert(req: M.CertRequest): Promise<M.CertResponse>
     }
 }
+
+const replaceDialog = (() => {
+    let prev: DialogChainObject | undefined
+    return <T>(vm: Vue, options: QDialogOptions) => {
+        return new Promise<T>((resolve, reject) => {
+            // close the previous dialog if one opened
+            if (prev) {
+                prev.hide()
+                prev = undefined
+            }
+            const cur = vm.$q.dialog(options)
+            cur.onOk(resolve)
+                .onCancel(() => reject(new Error('cancelled')))
+                .onDismiss(() => {
+                    if (prev === cur) {
+                        prev = undefined
+                    }
+                })
+
+            prev = cur
+        })
+    }
+})()
 
 export default boot(async ({ Vue }) => {
     Vue.use(AsyncComputed)
@@ -68,8 +99,6 @@ export default boot(async ({ Vue }) => {
             }, [spinner])
         }
     })
-
-    let signingDialog: DialogChainObject | undefined
 
     Object.defineProperties(Vue.prototype, {
         $state: {
@@ -130,30 +159,26 @@ export default boot(async ({ Vue }) => {
                 }
             }
         },
-        $sign: {
-            get(): Vue['$sign'] {
+        $signTx: {
+            get(): Vue['$signTx'] {
                 const vm = this as Vue
-                return args => {
-                    return new Promise((resolve, reject) => {
-                        // close the previous signing dialog if one opened
-                        if (signingDialog) {
-                            signingDialog.hide()
-                            signingDialog = undefined
-                        }
-                        const obj = vm.$q.dialog({
-                            component: SigningDialog,
-                            parent: vm,
-                            args
-                        })
-                            .onOk(resolve)
-                            .onCancel(() => reject(new Error('cancelled')))
-                            .onDismiss(() => {
-                                if (obj === signingDialog) {
-                                    signingDialog = undefined
-                                }
-                            })
-
-                        signingDialog = obj
+                return req => {
+                    return replaceDialog(vm, {
+                        component: TxSigningDialog,
+                        parent: vm,
+                        req
+                    })
+                }
+            }
+        },
+        $signCert: {
+            get(): Vue['$signCert'] {
+                const vm = this as Vue
+                return req => {
+                    return replaceDialog(vm, {
+                        component: CertSigningDialog,
+                        parent: vm,
+                        req
                     })
                 }
             }

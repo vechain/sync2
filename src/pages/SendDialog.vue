@@ -213,7 +213,7 @@ export default Vue.extend({
             this.symbol = symbol
         },
         onSend() {
-            this.$sign({})
+            this.$signTx({ message: [] })
         }
     }
 })

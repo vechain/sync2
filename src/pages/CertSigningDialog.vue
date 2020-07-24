@@ -32,14 +32,14 @@ import Vue from 'vue'
 
 export default Vue.extend({
     props: {
-        args: Object as () => SigningDialog.Args
+        req: Object as () => M.CertRequest
     },
     methods: {
         // method is REQUIRED by $q.dialog
         show() { (this.$refs.dialog as any).show() },
         // method is REQUIRED by $q.dialog
         hide() { (this.$refs.dialog as any).hide() },
-        ok(result: unknown) {
+        ok(result: M.CertResponse) {
             this.$emit('ok', result)
             this.hide()
         }
