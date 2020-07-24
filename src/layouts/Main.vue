@@ -180,29 +180,29 @@ export default Vue.extend({
         },
         onClickMore() {
             this.$root.$emit(`more-${this.$route.fullPath}`)
-        },
-        handleExternalSigningRequest() {
-            (async () => {
-                for (; ;) {
-                    try {
-                        // the incoming url looks like connex:sign?rid=xxx
-                        const url = new URL(await listen())
-                        if (url.pathname === 'sign') {
-                            const rid = url.searchParams.get('rid')
-                            this.$router.push({
-                                name: 'sign',
-                                query: { rid }
-                            })
-                        }
-                    } catch (err) {
-                        console.warn(err)
-                    }
-                }
-            })()
         }
     },
-    mounted() {
-        this.handleExternalSigningRequest()
+    async mounted() {
+        let destroyed = false
+        this.$once('hook:beforeDestroy', () => { destroyed = true })
+
+        // loop to listen external open url
+        // eslint-disable-next-line no-unmodified-loop-condition
+        while (!destroyed) {
+            try {
+                // the incoming url looks like connex:sign?rid=xxx
+                const url = new URL(await listen())
+                if (url.pathname === 'sign' && !destroyed) {
+                    const rid = url.searchParams.get('rid')
+                    this.$router.push({
+                        name: 'sign',
+                        query: { rid }
+                    })
+                }
+            } catch (err) {
+                console.warn(err)
+            }
+        }
     }
 })
 </script>
