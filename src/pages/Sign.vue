@@ -7,6 +7,7 @@
 import Vue from 'vue'
 export default Vue.extend({
     props: {
+        type: String as () => 'tx' | 'cert',
         rid: String // the request id
     },
     async mounted() {

@@ -190,13 +190,14 @@ export default Vue.extend({
         // eslint-disable-next-line no-unmodified-loop-condition
         while (!destroyed) {
             try {
-                // the incoming url looks like connex:sign?rid=xxx
+                // the incoming url looks like connex:sign?t=tx&rid=xxx
                 const url = new URL(await listen())
                 if (url.pathname === 'sign' && !destroyed) {
                     const rid = url.searchParams.get('rid')
+                    const type = url.searchParams.get('t')
                     this.$router.push({
                         name: 'sign',
-                        query: { rid }
+                        query: { type, rid }
                     })
                 }
             } catch (err) {
