@@ -16,8 +16,8 @@
     "sqlite3": "^4.1.1"
   },
   "devDependencies": {
-    "@quasar/app": "^1.7.4",
-    "@quasar/extras": "^1.0.0",
+    "@quasar/app": "^1.9.6",
+    "@quasar/extras": "^1.9.0",
     "@types/node": "^10.17.15",
     "@typescript-eslint/eslint-plugin": "^2.17.0",
     "@typescript-eslint/parser": "^2.17.0",
@@ -44,7 +44,7 @@
     "eslint-plugin-vue": "^6.1.2",
     "more-entropy": "0.0.7",
     "qrious": "^4.0.2",
-    "quasar": "^1.9.16",
+    "quasar": "^1.12.13",
     "sqlite": "^4.0.7",
     "thor-devkit": "^1.2.5",
     "vue-async-computed": "^3.8.2",
