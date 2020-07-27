@@ -1,6 +1,5 @@
 import { route } from 'quasar/wrappers'
 import VueRouter from 'vue-router'
-import { StoreInterface } from '../store'
 import routes from './routes'
 import VueRouterStack from 'vue-router-stack'
 
@@ -9,7 +8,7 @@ import VueRouterStack from 'vue-router-stack'
  * directly export the Router instantiation
  */
 
-export default route<StoreInterface>(function ({ Vue }) {
+export default route(function ({ Vue }) {
     Vue.use(VueRouter)
 
     const Router = new VueRouter({
