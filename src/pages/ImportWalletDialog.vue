@@ -36,6 +36,9 @@
                 >
                     <q-input
                         v-model.trim="name"
+                        no-error-icon
+                        autocomplete="off"
+                        clearable
                         :rules="[val => val.length > 0 || 'Give it a name!']"
                         label="Wallet Name"
                     />
@@ -51,7 +54,9 @@
 
                     <q-input
                         type="textarea"
+                        no-error-icon
                         v-model.trim="words"
+                        clearable
                         label="Mnemonic phrases"
                         hint="Input the mnemonic phrases and seperated by single space"
                         :rules="[
