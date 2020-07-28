@@ -127,6 +127,7 @@ export default Vue.extend({
                 message: 'Customize the wallet name can help you easily identify the wallet',
                 prompt: {
                     model: '',
+                    isValid: (val: string) => { return !!val && !!val.trim() },
                     type: 'text'
                 },
                 cancel: true,

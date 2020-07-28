@@ -18,65 +18,81 @@
                     Send Assets
                 </q-toolbar-title>
             </q-toolbar>
-            <q-form class="q-px-md">
-                <q-input
-                    v-model="to"
-                    label="To:"
-                />
-                <q-item
-                    class="q-my-md"
-                    clickable
-                    @click="showSelect"
+            <div
+                style="max-width: 500px"
+                class="q-mx-auto"
+            >
+                <q-form
+                    class="q-px-md"
+                    @submit="onSend"
                 >
-                    <q-item-section avatar>
-                        <q-avatar
-                            color="primary"
-                            text-color="white"
-                        >
-                            {{currentToken.symbol.slice(0,1)}}
-                        </q-avatar>
-                    </q-item-section>
-                    <q-item-section>
-                        <q-item-label lines="1">{{currentToken.symbol}}</q-item-label>
-                        <q-item-label
-                            caption
-                            lines="2"
-                        >
-                            {{currentToken.name}}
-                        </q-item-label>
-                    </q-item-section>
-                    <q-item-section side>
-                        <q-icon name="unfold_more" />
-                    </q-item-section>
-                </q-item>
-                <q-input
-                    v-model="total"
-                    type="number"
-                    inputmode="decimal"
-                    :label="symbol"
-                />
-                <ConnexObject
-                    v-slot="{connex}"
-                    :node="node"
-                >
-                    <connex-continuous
-                        :key="symbol"
-                        :connex="connex"
-                        :query="() => query(connex)"
-                        v-slot="{data}"
+                    <q-input
+                        no-error-icon
+                        autocomplete="off"
+                        clearable
+                        :rules="[val => isAddress(val) || 'Please type a valid address']"
+                        v-model="to"
+                        label="To:"
+                    />
+                    <q-item
+                        class="q-my-md"
+                        clickable
+                        @click="showSelect"
                     >
-                        <div class="text-center text-grey q-mt-sm">
-                            <span>balance: {{data | balance(currentToken.decimals)}}</span>
-                        </div>
-                    </connex-continuous>
-                </ConnexObject>
-                <q-btn
-                    class="full-width q-mt-xl"
-                    dark
-                    @click="onSend"
-                >Send</q-btn>
-            </q-form>
-
+                        <q-item-section avatar>
+                            <q-avatar
+                                color="primary"
+                                text-color="white"
+                            >
+                                {{currentToken.symbol.slice(0,1)}}
+                            </q-avatar>
+                        </q-item-section>
+                        <q-item-section>
+                            <q-item-label lines="1">{{currentToken.symbol}}</q-item-label>
+                            <q-item-label
+                                caption
+                                lines="2"
+                            >
+                                {{currentToken.name}}
+                            </q-item-label>
+                        </q-item-section>
+                        <q-item-section side>
+                            <q-icon name="unfold_more" />
+                        </q-item-section>
+                    </q-item>
+                    <q-input
+                        no-error-icon
+                        autocomplete="off"
+                        clearable
+                        v-model="total"
+                        step="any"
+                        type="text"
+                        :rules="[val => {return /^(([^0][0-9]|0)\.([0-9]{1,18}))$/.test(val) || 'Invalide balance' }]"
+                        inputmode="decimal"
+                        :label="symbol"
+                    />
+                    <ConnexObject
+                        v-slot="{connex}"
+                        :node="node"
+                    >
+                        <connex-continuous
+                            :key="symbol"
+                            :connex="connex"
+                            :query="() => query(connex)"
+                            v-slot="{data}"
+                        >
+                            <div class="text-center text-grey q-mt-sm">
+                                <span>balance: {{data | balance(currentToken.decimals)}}</span>
+                            </div>
+                        </connex-continuous>
+                    </ConnexObject>
+                    <q-btn
+                        type="submit"
+                        class="full-width q-mt-xl"
+                        dark
+                    >Send</q-btn>
+                </q-form>
+            </div>
         </q-card>
         <q-dialog ref="tokenList">
             <q-card class="q-dialog-plugin q-pa-md">
@@ -88,7 +104,7 @@
                     <q-list>
                         <connex-continuous
                             :connex="connex"
-                            :query="() => connex.thor.account(address).get()"
+                            :query="() => connex.thor.account(from).get()"
                             v-slot="{data}"
                         >
                             <TokenBalanceItem
@@ -113,7 +129,7 @@
                             <connex-continuous
                                 :connex="connex"
                                 :key="index"
-                                :query="() => tokenBalanceOf(connex, address, spec)"
+                                :query="() => tokenBalanceOf(connex, from, spec)"
                                 v-slot="{data}"
                             >
                                 <TokenBalanceItem
@@ -134,6 +150,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { tokenBalanceOf } from 'components/queries'
+import { isAddress } from 'thor-devkit/dist/cry/address'
 
 export default Vue.extend({
     props: {
@@ -146,9 +163,6 @@ export default Vue.extend({
             total: '',
             symbol: this.defaultSymbol || 'VET'
         }
-    },
-    created() {
-        console.log(this.from)
     },
     computed: {
         node(): M.Node {
@@ -196,6 +210,7 @@ export default Vue.extend({
         }
     },
     methods: {
+        isAddress,
         tokenBalanceOf,
         // method is REQUIRED by $q.dialog
         show() { (this.$refs.dialog as any).show() },
