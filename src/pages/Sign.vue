@@ -12,7 +12,7 @@ export default Vue.extend({
     async mounted() {
         try {
             // const result =
-            await this.$signTx({ message: [] })
+            await this.$signTx('', { message: [] })
         } finally {
             this.$router.back()
         }

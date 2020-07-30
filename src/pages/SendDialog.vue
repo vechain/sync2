@@ -230,7 +230,7 @@ export default Vue.extend({
             this.symbol = symbol
         },
         onSend() {
-            this.$signTx({ message: [] })
+            this.$signTx('', { message: [] })
         }
     }
 })

@@ -32,7 +32,8 @@ import Vue from 'vue'
 
 export default Vue.extend({
     props: {
-        req: Object as () => M.TxRequest
+        req: Object as () => M.TxRequest,
+        gid: String
     },
     methods: {
         // method is REQUIRED by $q.dialog

@@ -42,12 +42,12 @@ declare module 'vue/types/vue' {
          * sign tx
          * @param req
          */
-        $signTx(req: M.TxRequest): Promise<M.TxResponse>
+        $signTx(gid: string, req: M.TxRequest): Promise<M.TxResponse>
         /**
          * sign cert
          * @param req
          */
-        $signCert(req: M.CertRequest): Promise<M.CertResponse>
+        $signCert(gid: string, req: M.CertRequest): Promise<M.CertResponse>
     }
 }
 
@@ -162,10 +162,11 @@ export default boot(async ({ Vue }) => {
         $signTx: {
             get(): Vue['$signTx'] {
                 const vm = this as Vue
-                return req => {
+                return (gid, req) => {
                     return replaceDialog(vm, {
                         component: TxSigningDialog,
                         parent: vm,
+                        gid,
                         req
                     })
                 }
@@ -174,10 +175,11 @@ export default boot(async ({ Vue }) => {
         $signCert: {
             get(): Vue['$signCert'] {
                 const vm = this as Vue
-                return req => {
+                return (gid, req) => {
                     return replaceDialog(vm, {
                         component: CertSigningDialog,
                         parent: vm,
+                        gid,
                         req
                     })
                 }
