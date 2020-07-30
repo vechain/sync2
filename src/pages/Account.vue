@@ -100,6 +100,8 @@
                 <q-toolbar>
                     <q-btn
                         flat
+                        round
+                        dense
                         icon="close"
                         @click="hide"
                     />
