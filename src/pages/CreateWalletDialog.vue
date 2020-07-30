@@ -40,7 +40,7 @@
                     <q-radio
                         v-for="item in nodes"
                         :key="item.gid"
-                        v-model="network"
+                        v-model="gid"
                         class="text-capitalize"
                         :val="item.gid"
                         :label="item.gid | net"
@@ -69,7 +69,7 @@ export default Vue.extend({
     data: () => {
         return {
             name: '',
-            network: '',
+            gid: '',
             words: '',
             creating: false
         }
@@ -80,7 +80,7 @@ export default Vue.extend({
         }
     },
     created() {
-        this.network = this.nodes[0].gid
+        this.gid = this.nodes[0].gid
     },
     methods: {
         // method is REQUIRED by $q.dialog
@@ -104,7 +104,7 @@ export default Vue.extend({
                 }
 
                 await this.$storage.wallets.insert({
-                    gid: this.network,
+                    gid: this.gid,
                     vault: vault.encode(),
                     meta: JSON.stringify(meta)
                 })
