@@ -11,6 +11,8 @@
             <q-toolbar>
                 <q-btn
                     flat
+                    round
+                    dense
                     @click="hide"
                     icon="close"
                 />
@@ -67,7 +69,7 @@
                         v-model="total"
                         step="any"
                         type="text"
-                        :rules="[val => {return /^(([^0][0-9]|0)\.([0-9]{1,18}))$/.test(val) || 'Invalide balance' }]"
+                        :rules="[val => {return /^[1-9][0-9]*([.][0-9]{1,18})?$/.test(val) || 'Invalide balance' }]"
                         inputmode="decimal"
                         :label="symbol"
                     />
