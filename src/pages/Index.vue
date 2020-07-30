@@ -192,7 +192,6 @@ body.q-ios-padding .card-container {
     width: var(--card-width);
     height: calc(var(--card-width) * 0.67);
     scroll-snap-align: start;
-    scroll-snap-stop: always;
 }
 .card-shape {
     border-radius: calc(var(--card-width) * 0.07);
