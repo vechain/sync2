@@ -14,5 +14,6 @@
       "boot/*": ["src/boot/*"],
       "core/*": ["src/core/*"]
     }
-  }
+  },
+  "exclude": ["/dist", ".quasar", "node_modules", "src-cordova"]
 }
