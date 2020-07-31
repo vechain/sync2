@@ -15,5 +15,5 @@
       "core/*": ["src/core/*"]
     }
   },
-  "exclude": ["/dist", ".quasar", "node_modules", "src-cordova"]
+  "exclude": ["/dist", ".quasar", "node_modules", "src-cordova/www", "src-cordova/platforms"]
 }
