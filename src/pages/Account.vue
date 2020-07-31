@@ -176,7 +176,8 @@ export default Vue.extend({
             this.$q.dialog({
                 component: SendDialog,
                 parent: this,
-                from: this.address
+                from: this.address,
+                gid: this.wallet!.gid
             })
         },
         tokenBalanceOf,

@@ -153,10 +153,36 @@
 import Vue from 'vue'
 import { tokenBalanceOf } from 'components/queries'
 import { isAddress } from 'thor-devkit/dist/cry/address'
+import { abi } from 'thor-devkit/dist/abi'
+
+const TransferAbi = {
+    constant: false,
+    inputs: [
+        {
+            name: '_to',
+            type: 'address'
+        },
+        {
+            name: '_value',
+            type: 'uint256'
+        }
+    ],
+    name: 'transfer',
+    outputs: [
+        {
+            name: '',
+            type: 'bool'
+        }
+    ],
+    payable: false,
+    stateMutability: 'nonpayable',
+    type: 'function'
+}
 
 export default Vue.extend({
     props: {
         from: String,
+        gid: String,
         defaultSymbol: String
     },
     data() {
@@ -192,7 +218,8 @@ export default Vue.extend({
                     symbol: 'VTHO',
                     name: 'VeChain Thor',
                     decimals: 18,
-                    ...infos
+                    ...infos,
+                    address: '0x0000000000000000000000000000456e65726779'
                 }
             } else {
                 return this.tokenSpecs.find(item => this.symbol === item.symbol)
@@ -230,7 +257,28 @@ export default Vue.extend({
             this.symbol = symbol
         },
         onSend() {
-            this.$signTx('', { message: [] })
+            let msgItem!: Connex.Vendor.TxMessage[0]
+            if (this.symbol === 'VET') {
+                msgItem = {
+                    to: this.to,
+                    value: this.total
+                }
+            } else {
+                const func = new abi.Function(TransferAbi as abi.Function.Definition)
+                const data = func.encode(this.to,
+                    Vue.filter('toWei')(this.total, this.currentToken!.decimals))
+                msgItem = {
+                    to: this.currentToken!.address,
+                    value: data
+                }
+            }
+
+            this.$signTx(this.gid, {
+                message: [msgItem],
+                options: {
+                    signer: this.from
+                }
+            })
         }
     }
 })

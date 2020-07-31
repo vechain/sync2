@@ -34,6 +34,12 @@ const filters = {
         return new BigNumber(v)
             .div(new BigNumber('1' + '0'.repeat(decimal)))
             .toFormat(digits)
+    },
+    /** convert balance from common unit to unit WEI hax string */
+    toWei: (val: string, decimals = 18) => {
+        const x = new BigNumber(`1e+${decimals}`)
+        const temp = new BigNumber(val)
+        return '0x' + new BigNumber(temp.multipliedBy(x).toFixed(0, BigNumber.ROUND_DOWN)).toString(16)
     }
 }
 
