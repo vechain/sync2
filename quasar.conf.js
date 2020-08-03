@@ -107,6 +107,8 @@ module.exports = configure(function (/* ctx */) {
       // preloadChunks: false,
       // extractCSS: false,
 
+      modern: true,
+
       // https://quasar.dev/quasar-cli/cli-documentation/handling-webpack
       extendWebpack (cfg) {
         cfg.resolve.alias = {
