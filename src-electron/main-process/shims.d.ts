@@ -10,6 +10,6 @@ import 'electron'
 declare module 'electron' {
     interface App {
         openSQLite: () => Promise<SQLite.Database>
-        listenOpenUrl: () => Promise<string>
+        listenOpenUrl: (webContentId: number) => Promise<string>
     }
 }

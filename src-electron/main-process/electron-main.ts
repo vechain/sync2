@@ -1,4 +1,4 @@
-import { app, BrowserWindow, nativeTheme } from 'electron'
+import { app, BrowserWindow, nativeTheme, webContents } from 'electron'
 import * as SQLite from 'sqlite'
 import * as Path from 'path'
 
@@ -37,21 +37,21 @@ function createWindow() {
 function setupOpenUrlEmitter(): (url: string) => void {
     // works for cold/hot start up
     let pendingUrl = ''
-    let resolver: ((url: string) => void) | undefined
+    let resolver: [number, (url: string) => void] | undefined
 
-    app.listenOpenUrl = () => {
+    app.listenOpenUrl = webContentId => {
         return new Promise(resolve => {
             if (pendingUrl) {
                 resolve(pendingUrl)
                 pendingUrl = ''
             } else {
-                resolver = resolve
+                resolver = [webContentId, resolve]
             }
         })
     }
     return (url) => {
-        if (resolver) {
-            resolver(url)
+        if (resolver && webContents.fromId(resolver[0])) {
+            resolver[1](url)
             resolver = undefined
         } else {
             pendingUrl = url
@@ -66,9 +66,7 @@ function setupOpenUrlEmitter(): (url: string) => void {
             return
         }
 
-        if (!app.isDefaultProtocolClient('connex')) {
-            app.setAsDefaultProtocolClient('connex')
-        }
+        app.setAsDefaultProtocolClient('connex')
     }
 
     try {
