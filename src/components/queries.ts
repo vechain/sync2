@@ -1,23 +1,4 @@
-
-const vip180balanceOf = {
-    constant: true,
-    inputs: [
-        {
-            name: '_owner',
-            type: 'address'
-        }
-    ],
-    name: 'balanceOf',
-    outputs: [
-        {
-            name: 'balance',
-            type: 'uint256'
-        }
-    ],
-    payable: false,
-    stateMutability: 'view',
-    type: 'function'
-}
+import { abis } from '../consts'
 
 /**
  * fetch vip180 token balance for given address
@@ -30,7 +11,7 @@ export function tokenBalanceOf(connex: Connex, addr: string, spec: M.TokenSpec):
     return connex
         .thor
         .account(spec.address)
-        .method(vip180balanceOf)
+        .method(abis.balanceOf)
         .cache([addr])
         .call(addr)
         .then(output => output.decoded!.balance)
