@@ -42,10 +42,7 @@ declare namespace M {
         }
     }
 
-    interface TxResponse {
-        result?: Connex.Vendor.TxResponse
-        error?: Connex.ErrorType
-    }
+    type TxResponse = Connex.Vendor.TxResponse
 
     interface CertRequest {
         message: Connex.Vendor.CertMessage
@@ -55,8 +52,5 @@ declare namespace M {
         }
     }
 
-    interface CertResponse {
-        result?: Connex.Vendor.CertResponse
-        error?: Connex.ErrorType
-    }
+    type CertResponse = Connex.Vendor.CertResponse
 }
