@@ -11,6 +11,7 @@ import Intersecting from './Intersecting.vue'
 import DigitKeypad from './DigitKeypad.vue'
 import QRCode from './QRCode.vue'
 import TokenBalanceItem from './TokenBalanceItem.vue'
+import Async from './Async'
 
 const components: { [name: string]: Vue.VueConstructor } = {
     StackedRouterView,
@@ -25,7 +26,8 @@ const components: { [name: string]: Vue.VueConstructor } = {
     Intersecting,
     DigitKeypad,
     QRCode,
-    TokenBalanceItem
+    TokenBalanceItem,
+    Async
 }
 
 export default components
