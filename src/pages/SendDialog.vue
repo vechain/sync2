@@ -154,30 +154,7 @@ import Vue from 'vue'
 import { tokenBalanceOf } from 'components/queries'
 import { isAddress } from 'thor-devkit/dist/cry/address'
 import { abi } from 'thor-devkit/dist/abi'
-
-const TransferAbi = {
-    constant: false,
-    inputs: [
-        {
-            name: '_to',
-            type: 'address'
-        },
-        {
-            name: '_value',
-            type: 'uint256'
-        }
-    ],
-    name: 'transfer',
-    outputs: [
-        {
-            name: '',
-            type: 'bool'
-        }
-    ],
-    payable: false,
-    stateMutability: 'nonpayable',
-    type: 'function'
-}
+import { tokenSpecs, abis } from '../consts'
 
 export default Vue.extend({
     props: {
@@ -200,27 +177,10 @@ export default Vue.extend({
             return [...this.$state.config.token.specs(this.$state.wallet.current!.gid, true)]
         },
         currentToken(): M.TokenSpec | undefined {
-            const infos = {
-                address: '',
-                desc: '',
-                icon: '',
-                totalSupply: ''
-            }
             if (this.symbol === 'VET') {
-                return {
-                    symbol: 'VET',
-                    name: 'VeChain',
-                    decimals: 18,
-                    ...infos
-                }
+                return tokenSpecs.VET
             } else if (this.symbol === 'VTHO') {
-                return {
-                    symbol: 'VTHO',
-                    name: 'VeChain Thor',
-                    decimals: 18,
-                    ...infos,
-                    address: '0x0000000000000000000000000000456e65726779'
-                }
+                return tokenSpecs.VTHO
             } else {
                 return this.tokenSpecs.find(item => this.symbol === item.symbol)
             }
@@ -261,15 +221,18 @@ export default Vue.extend({
             if (this.symbol === 'VET') {
                 msgItem = {
                     to: this.to,
-                    value: this.total
+                    value: Vue.filter('toWei')(this.total),
+                    comment: `Transfering ${this.total} VET`
                 }
             } else {
-                const func = new abi.Function(TransferAbi as abi.Function.Definition)
+                const func = new abi.Function(abis.transfer)
                 const data = func.encode(this.to,
                     Vue.filter('toWei')(this.total, this.currentToken!.decimals))
                 msgItem = {
                     to: this.currentToken!.address,
-                    value: data
+                    value: 0,
+                    data: data,
+                    comment: `Transfering ${this.total} ${this.symbol}`
                 }
             }
 
