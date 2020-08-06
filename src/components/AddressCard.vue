@@ -11,11 +11,6 @@
             v-slot="{data}"
         >
             <q-card-section class="text-white column no-wrap full-height overflow-hidden">
-                <!-- logo -->
-                <div
-                    class="logo absolute-bottom-right"
-                    :style="{...logoSize}"
-                />
                 <!-- balances -->
                 <div class="text-right">
                     <span class="text-h6 text-weight-regular">{{data?data.balance:null | balance}}</span>
@@ -26,10 +21,13 @@
                 </div>
                 <q-space />
                 <!-- address -->
-                <div>
+                <div class="row items-baseline">
                     <!-- index -->
                     <span class="index">{{index+1}}</span>
                     <span class="monospace text-overline">{{address | checksum | abbrev(8,6)}}</span>
+                    <q-space />
+                    <!-- logo -->
+                    <div class="logo inline-block" />
                 </div>
             </q-card-section>
         </ConnexContinuous>
@@ -60,7 +58,7 @@ function rasterize(svg: string) {
             ctx.drawImage(img, 0, 0, size, size)
             ctx.globalCompositeOperation = 'soft-light'
             const grd = ctx.createLinearGradient(0, 0, size, size)
-            grd.addColorStop(0, 'grey')
+            grd.addColorStop(0, 'lightgray')
             grd.addColorStop(1, 'black')
             ctx.fillStyle = grd
             ctx.fillRect(0, 0, size, size)
@@ -83,47 +81,31 @@ export default Vue.extend({
     },
     data: () => {
         return {
-            height: 0,
-            backgroundImageUrl: ''
+            height: 0
         }
     },
     computed: {
         svg() {
             return picasso(this.address)
-        },
-        background(): object {
-            return {
-                background: this.backgroundImageUrl ? `url('${this.backgroundImageUrl}') 0% 0% / cover no-repeat` : 'none'
-            }
-        },
-        logoSize() {
-            const size = this.height * 0.8
-            return {
-                width: `${size}px`,
-                height: `${size}px`
-            }
         }
     },
-    watch: {
-        address: {
-            handler(addr: string) {
-                if (!addr) {
-                    this.backgroundImageUrl = ''
-                    return
+    asyncComputed: {
+        async background() {
+            const addr = this.address
+            if (!addr) {
+                return {
+                    background: 'none'
                 }
-                let img = imageCache.get(addr)
-                if (!img) {
-                    const svg = picasso(addr)
-                    img = rasterize(svg)
-                    imageCache.set(addr, img)
-                }
-                img.then(url => {
-                    if (addr === this.address) {
-                        this.backgroundImageUrl = url
-                    }
-                })
-            },
-            immediate: true
+            }
+            let img = imageCache.get(addr)
+            if (!img) {
+                const svg = picasso(addr)
+                img = rasterize(svg)
+                imageCache.set(addr, img)
+            }
+            return {
+                background: `url('${await img}') 0% 0% / cover no-repeat`
+            }
         }
     },
     methods: {
@@ -140,10 +122,10 @@ export default Vue.extend({
     transition: background 0.3s;
 }
 .logo {
-    opacity: 0.15;
-    margin-right: -3%;
-    margin-bottom: -9%;
+    opacity: 0.4;
     background: url(~assets/vechain-logo.svg);
+    height: 2rem;
+    width: 2rem;
 }
 .index {
     font-size: 4.5rem;
