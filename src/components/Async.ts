@@ -7,7 +7,7 @@ import Vue, { VNode } from 'vue'
 */
 export default Vue.extend({
     props: {
-        fn: Object as unknown as () => ((() => Promise<unknown>) | Promise<unknown>),
+        fn: { default: null as unknown as () => ((() => Promise<unknown>) | Promise<unknown>) },
         sticky: Boolean // set true to make slot data sticky when fn changed
     },
     data: () => {
