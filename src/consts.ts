@@ -1,4 +1,5 @@
-import { abi } from 'thor-devkit/dist/abi'
+import type { abi } from 'thor-devkit/dist/abi'
+
 const transferABI: abi.Function.Definition = {
     constant: false,
     inputs: [
@@ -68,4 +69,14 @@ export const abis = {
 
 export const tokenSpecs = {
     VTHO, VET
+}
+
+export const urls = {
+    get tos() { return 'https://tos.vecha.in:5678/' },
+    get tokenRegistry() { return 'https://vechain.github.io/token-registry/' }
+}
+
+export const gids = {
+    get main() { return '0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a' },
+    get test() { return '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127' }
 }

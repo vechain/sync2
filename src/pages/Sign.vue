@@ -36,8 +36,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import * as V from 'validator-ts'
-
-const TOS_BASE_URL = 'https://tos.vecha.in:5678/'
+import { urls } from 'src/consts'
 
 type Input = {
     type: 'tx' | 'cert'
@@ -71,7 +70,7 @@ export default Vue.extend({
     },
     methods: {
         async getInput() {
-            const resp = await this.$axios.get(TOS_BASE_URL + this.rid)
+            const resp = await this.$axios.get(urls.tos + this.rid)
             const input = V.validate<Input>(resp.data, Input.scheme)
             this.origin = resp.headers['x-data-origin']
             // TODO validate body
@@ -95,7 +94,7 @@ export default Vue.extend({
             }
         },
         async postOutput() {
-            await this.$axios.post(TOS_BASE_URL + this.rid + '-out', this.output)
+            await this.$axios.post(urls.tos + this.rid + '-out', this.output)
             return true
         }
     }
