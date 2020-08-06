@@ -1,22 +1,17 @@
 import Vue from 'vue'
 import { Storage } from 'core/storage'
-
-const genesisIds = {
-    main: '0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a',
-    test: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'
-}
+import { gids, urls } from 'src/consts'
 
 const presetNodes: M.Node[] = [
     { // mainnet
-        gid: genesisIds.main,
+        gid: gids.main,
         url: 'http://localhost:8669'
     },
     { // testnet
-        gid: genesisIds.test,
+        gid: gids.test,
         url: 'http://localhost:8669'
     }
 ]
-const tokenRegistryBaseUrl = 'https://vechain.github.io/token-registry'
 
 type TokenRegistry = {
     updated: number
@@ -90,21 +85,20 @@ export function build() {
                 get active() {
                     return config.all.activeTokens ? JSON.parse(config.all.activeTokens) as string[] : []
                 },
-                get list(): Array<{ name: string, symbol: string }> {
-                    // map symbol to name
-                    const map = [...this.registry.main, ...this.registry.test]
-                        .reduce<Record<string, string>>((map, spec) => {
-                            map[spec.symbol] = spec.name
-                            return map
-                        }, {})
-
-                    return Object.entries(map).map(e => ({ symbol: e[0], name: e[1] }))
+                get list() {
+                    const ret: Array<Pick<M.TokenSpec, 'name' | 'symbol' | 'icon'>> = [];
+                    [...this.registry.main, ...this.registry.test].forEach(spec => {
+                        if (!ret.find(i => i.symbol === spec.symbol)) {
+                            ret.push({ name: spec.name, symbol: spec.symbol, icon: spec.icon })
+                        }
+                    })
+                    return ret
                 },
                 specs(gid: string, activeOnly: boolean) {
                     let specs: M.TokenSpec[] = []
-                    if (gid === genesisIds.main) {
+                    if (gid === gids.main) {
                         specs = this.registry.main
-                    } else if (gid === genesisIds.test) {
+                    } else if (gid === gids.test) {
                         specs = this.registry.test
                     }
                     const active = this.active
@@ -125,7 +119,7 @@ export function build() {
                     const nets: Array<'main' | 'test'> = ['main', 'test']
 
                     for (const net of nets) {
-                        const resp = await fetch(`${tokenRegistryBaseUrl}/${net}.json`)
+                        const resp = await fetch(`${urls.tokenRegistry}${net}.json`)
                         if (resp.status === 200) {
                             newRegistry[net] = (await resp.json() as Array<M.TokenSpec>).filter(spec => spec.symbol !== 'VTHO')
                         }

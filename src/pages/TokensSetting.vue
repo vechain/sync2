@@ -13,9 +13,11 @@
                 <q-item :key="item.symbol">
                     <q-item-section avatar>
                         <q-avatar
-                            color="primary"
-                            text-color="black"
-                        />
+                            square
+                            size="md"
+                        >
+                            <q-img :src="item.icon" />
+                        </q-avatar>
                     </q-item-section>
                     <q-item-section>
                         <q-item-label lines="1">{{item.symbol}}</q-item-label>
@@ -34,8 +36,9 @@
     </div>
 </template>
 <script lang="ts">
-
 import Vue from 'vue'
+import { urls } from 'src/consts'
+
 export default Vue.extend({
     data() {
         return {
@@ -51,7 +54,10 @@ export default Vue.extend({
     },
     computed: {
         tokens() {
-            return this.$state.config.token.list
+            return this.$state.config.token.list.map(t => ({
+                ...t,
+                icon: `${urls.tokenRegistry}assets/${t.icon}`
+            }))
         }
     }
 })
