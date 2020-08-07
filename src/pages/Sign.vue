@@ -4,6 +4,13 @@
             :fn="getInput"
             v-slot="{data, error, pending, reload}"
         >
+            <q-avatar
+                square
+                size="lg"
+                v-show="data"
+            >
+                <q-img :src="favicon" />
+            </q-avatar>
             <div v-if="pending">
                 fetching input...
             </div>
@@ -67,6 +74,9 @@ export default Vue.extend({
             proceeding: false,
             output: null as Output | null
         }
+    },
+    computed: {
+        favicon(): string { return `${urls.tos}${this.rid}/icon?size=48..96..128` }
     },
     methods: {
         async getInput() {
