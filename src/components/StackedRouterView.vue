@@ -98,9 +98,9 @@ export default Vue.extend({
                 classes['stack-v1'] = true
             } else if (i === this.stack.length - 2) {
                 classes['stack-v2'] = true
-                classes.invisible = !this.panning && !this.transiting
+                classes.hidden = !this.panning && !this.transiting
             } else {
-                classes.invisible = true
+                classes.hidden = true
             }
             return classes
         },
