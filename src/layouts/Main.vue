@@ -30,7 +30,7 @@
                         round
                         icon="keyboard_arrow_left"
                         aria-label="Keyboard Arrow Left"
-                        @click="$router.back()"
+                        @click="$stack.canGoBack ? $router.back(): $router.replace({name: 'index'})"
                     ></q-btn>
                     <!-- title -->
                     <q-toolbar-title class="text-center">{{title}}</q-toolbar-title>
