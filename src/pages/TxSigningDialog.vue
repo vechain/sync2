@@ -21,7 +21,12 @@
                 />
             </q-toolbar>
             <q-card-section>
-                This is the signing dialog
+                <ClauseCard
+                    v-for="(msg, i) in req.message"
+                    :key="i"
+                    :tokens="tokens"
+                    :msg="msg"
+                />
             </q-card-section>
         </q-card>
     </q-dialog>
@@ -29,11 +34,17 @@
 <script lang="ts">
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Vue from 'vue'
+import { tokenSpecs } from '../consts'
 
 export default Vue.extend({
     props: {
         req: Object as () => M.TxRequest,
         gid: String
+    },
+    computed: {
+        tokens(): M.TokenSpec[] {
+            return [tokenSpecs.VTHO, ...this.$state.config.token.specs(this.gid, false)]
+        }
     },
     methods: {
         // method is REQUIRED by $q.dialog

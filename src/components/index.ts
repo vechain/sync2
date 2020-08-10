@@ -12,6 +12,7 @@ import DigitKeypad from './DigitKeypad.vue'
 import QRCode from './QRCode.vue'
 import TokenBalanceItem from './TokenBalanceItem.vue'
 import Async from './Async'
+import ClauseCard from './ClauseCard.vue'
 
 const components: { [name: string]: Vue.VueConstructor } = {
     StackedRouterView,
@@ -27,7 +28,8 @@ const components: { [name: string]: Vue.VueConstructor } = {
     DigitKeypad,
     QRCode,
     TokenBalanceItem,
-    Async
+    Async,
+    ClauseCard
 }
 
 export default components
