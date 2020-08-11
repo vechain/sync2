@@ -5,7 +5,7 @@
     >
         <async
             :fn="fetchTokenList"
-            v-slot="{pending, reload}"
+            v-slot="{pending, error, reload}"
         >
             <q-list v-if="tokens.length>0">
                 <template v-for="(item, index) in tokens">
@@ -43,7 +43,7 @@
                     showing
                 />
                 <div
-                    v-else
+                    v-else-if="!!error"
                     class="fit column flex-center"
                 >
                     <p>Something wrong</p>
