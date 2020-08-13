@@ -7,12 +7,17 @@
             <!-- to infos -->
             <div>
                 <template v-if="!isCreate">
-                    <span class="text-subtitle2 text-grey">To</span>
-                    <div
+                    <div class="row justify-between">
+                        <span class="col-2 text-subtitle2 text-grey">To</span>
+                        <span class="col-4 text-subtitle2 text-right text-grey">
+                            <slot />
+                        </span>
+                    </div>
+                    <AddressAvatar
                         class="q-mx-auto"
                         style="width: 100px; height: 100px; border-radius: 50px;"
-                        :style="{background: `url('${svg}')  0% 0% / cover no-repeat`}"
-                    ></div>
+                        :addr="toAddr"
+                    />
                     <div
                         class="q-px-lg q-pt-sm text-center"
                         style="word-break: break-all;"
@@ -86,20 +91,19 @@
                         </q-item>
                     </template>
                     <template v-else>
-                        <span>VET {{val | balance(18)}}</span>
+                        <span class="text-h4">VET {{val | balance(18)}}</span>
                     </template>
                 </div>
-                <div class="q-my-md text-body2 text-grey-7">{{msg.comment}}</div>
+                <div class="q-my-xs text-body2 text-grey-7">{{msg.comment}}</div>
             </div>
             <!-- data infos -->
             <div
                 v-if="msg.data"
-                class="q-mt-xs"
             >
                 <q-expansion-item
                     v-model="expanded"
                     :label=" expanded ? 'Hide Details' : 'Show Details'"
-                    header-class="text-light-blue-9 text-center"
+                    header-class="text-light-blue-9 text-center text-body2"
                 >
                     <span class="text-subtitle2 text-grey">Input Data</span>
                     <q-input
@@ -116,7 +120,6 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import { picasso } from '@vechain/picasso'
 import { BigNumber } from 'bignumber.js'
 import { abi } from 'thor-devkit/dist/abi'
 import { abis } from '../consts'
@@ -143,14 +146,14 @@ export default Vue.extend({
         val(): string {
             return new BigNumber(this.msg.value).isZero() ? '' : this.msg.value.toString()
         },
-        svg(): string {
+        toAddr(): string {
             let content = ''
             if (this.isVet) {
                 content = this.msg.to || ''
             } else if (this.isToken) {
                 content = this.decoded ? this.decoded.to : ''
             } else { }
-            return content ? `data:image/svg+xml;utf8,${picasso(content)}` : ''
+            return content
         },
         token(): M.TokenSpec | undefined {
             if (this.isToken) {

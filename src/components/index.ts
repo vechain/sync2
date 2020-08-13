@@ -13,6 +13,8 @@ import QRCode from './QRCode.vue'
 import TokenBalanceItem from './TokenBalanceItem.vue'
 import Async from './Async'
 import ClauseCard from './ClauseCard.vue'
+import SlideBtn from './SlideBtn.vue'
+import AddressAvatar from './AddressAvatar.vue'
 
 const components: { [name: string]: Vue.VueConstructor } = {
     StackedRouterView,
@@ -29,7 +31,9 @@ const components: { [name: string]: Vue.VueConstructor } = {
     QRCode,
     TokenBalanceItem,
     Async,
-    ClauseCard
+    ClauseCard,
+    SlideBtn,
+    AddressAvatar
 }
 
 export default components

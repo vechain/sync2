@@ -4,12 +4,11 @@
         v-scrollDivider
     >
         <div class="q-px-xl">
-            <div
+            <AddressAvatar
                 class="q-mx-auto"
                 style="height: 128px; width: 200px; border-radius: 15px;"
-                :style="{background: `url('${svg}')  0% 0% / cover no-repeat`}"
-            ></div>
-
+                :addr="address"
+            />
             <div
                 class="monospace q-my-lg text-center text-grey"
                 style="word-break: break-all;"
@@ -111,16 +110,17 @@
                 </q-toolbar>
                 <div class="text-center q-px-md q-pt-xl">
                     Share your account address to receive funds
-                    <div
+
+                    <AddressAvatar
                         class="q-mx-auto q-mt-xl q-mb-lg relative-position"
                         style="height: 190px; width: 280px; border-radius: 18px;"
-                        :style="{background: `url('${svg}')  0% 0% / cover no-repeat`}"
+                        :addr="address"
                     >
                         <QRCode
                             class="absolute-center overflow-hidden"
                             style="height: 150px;width: 150px; border-radius: 10px"
                         >{{address | checksum}}</QRCode>
-                    </div>
+                    </AddressAvatar>
                     <div
                         class="monospace q-my-md text-center text-grey q-px-lg"
                         style="word-break: break-all; border-radius: 15px;"
@@ -136,7 +136,6 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import { picasso } from '@vechain/picasso'
 import { copyToClipboard } from 'quasar'
 import { tokenBalanceOf } from 'components/queries'
 import SendDialog from './SendDialog.vue'
@@ -144,16 +143,12 @@ import SendDialog from './SendDialog.vue'
 export default Vue.extend({
     data() {
         return {
-            tab: 'assets',
-            svg: ''
+            tab: 'assets'
         }
     },
     props: {
         wId: String,
         i: String
-    },
-    created() {
-        this.svg = `data:image/svg+xml;utf8,${picasso(this.address)}`
     },
     computed: {
         wallet(): M.Wallet | undefined {
