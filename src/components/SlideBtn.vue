@@ -96,7 +96,7 @@ export default Vue.extend({
     }
 })
 </script>
-<style lang="stylus" scoped>
+<style scoped>
 .trs {
     transition: position opacity 0.6s ease-in-out;
 }
