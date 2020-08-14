@@ -136,7 +136,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import { copyToClipboard } from 'quasar'
+import { copyToClipboard, QDialog } from 'quasar'
 import { tokenBalanceOf } from 'components/queries'
 import SendDialog from './SendDialog.vue'
 
@@ -184,9 +184,11 @@ export default Vue.extend({
             ).catch(console.error)
         },
         onReceiveClick() {
-            (this.$refs.dialog as any).show()
+            (this.$refs.dialog as QDialog).show()
         },
-        hide() { (this.$refs.dialog as any).hide() }
+        hide() {
+            (this.$refs.dialog as QDialog).hide()
+        }
     }
 })
 </script>
