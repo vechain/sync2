@@ -170,7 +170,7 @@ export default Vue.extend({
         isVet(): boolean {
             return !!this.msg.to && !!this.msg.value
         },
-        decoded(): any {
+        decoded(): { to: string, value: string | number } | undefined {
             if (this.isToken && this.msg.data) {
                 return this.tokenDecode(this.msg.data)
             } else {

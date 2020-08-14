@@ -73,6 +73,7 @@ export default Vue.extend({
         }
     },
     methods: {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         moveFab(details: any) {
             if (this.disabled) {
                 return

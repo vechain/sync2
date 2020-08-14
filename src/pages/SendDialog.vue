@@ -151,6 +151,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { QDialog } from 'quasar'
 import { tokenBalanceOf } from 'components/queries'
 import { isAddress } from 'thor-devkit/dist/cry/address'
 import { abi } from 'thor-devkit/dist/abi'
@@ -202,18 +203,18 @@ export default Vue.extend({
         isAddress,
         tokenBalanceOf,
         // method is REQUIRED by $q.dialog
-        show() { (this.$refs.dialog as any).show() },
+        show() { (this.$refs.dialog as QDialog).show() },
         // method is REQUIRED by $q.dialog
-        hide() { (this.$refs.dialog as any).hide() },
+        hide() { (this.$refs.dialog as QDialog).hide() },
         ok(result: unknown) {
             this.$emit('ok', result)
             this.hide()
         },
         showSelect() {
-            (this.$refs.tokenList as any).show()
+            (this.$refs.tokenList as QDialog).show()
         },
         onSelect(symbol: string) {
-            (this.$refs.tokenList as any).hide()
+            (this.$refs.tokenList as QDialog).hide()
             this.symbol = symbol
         },
         onSend() {
