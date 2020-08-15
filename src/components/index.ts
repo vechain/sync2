@@ -18,6 +18,7 @@ import AddressAvatar from './AddressAvatar.vue'
 import AccountSelector from './AccountSelector.vue'
 import AccountSelectorDialog from './AccountSelectorDialog.vue'
 import Priority from './Priority.vue'
+import Delay from './Delay'
 
 const components: { [name: string]: Vue.VueConstructor } = {
     StackedRouterView,
@@ -39,7 +40,8 @@ const components: { [name: string]: Vue.VueConstructor } = {
     AddressAvatar,
     AccountSelector,
     AccountSelectorDialog,
-    Priority
+    Priority,
+    Delay
 }
 
 export default components
