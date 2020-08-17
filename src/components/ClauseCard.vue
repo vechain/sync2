@@ -19,7 +19,7 @@
                         :addr="toAddr"
                     />
                     <div
-                        class="q-px-lg q-pt-sm text-center"
+                        class="q-px-lg q-pt-sm monospace text-center"
                         style="word-break: break-all;"
                         @click="isShort = !isShort"
                     >
