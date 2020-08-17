@@ -15,6 +15,7 @@ import Async from './Async'
 import ClauseCard from './ClauseCard.vue'
 import SlideBtn from './SlideBtn.vue'
 import AddressAvatar from './AddressAvatar.vue'
+import AccountSelector from './AccountSelector.vue'
 
 const components: { [name: string]: Vue.VueConstructor } = {
     StackedRouterView,
@@ -33,7 +34,8 @@ const components: { [name: string]: Vue.VueConstructor } = {
     Async,
     ClauseCard,
     SlideBtn,
-    AddressAvatar
+    AddressAvatar,
+    AccountSelector
 }
 
 export default components
