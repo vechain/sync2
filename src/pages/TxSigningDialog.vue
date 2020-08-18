@@ -87,7 +87,8 @@ import { estimateGas, EstimateGasResult } from '../utils/tx'
 export default Vue.extend({
     props: {
         req: Object as () => M.TxRequest,
-        gid: String
+        gid: String,
+        after: Function as unknown as () => (((resp: M.TxResponse) => Promise<void>) | undefined)
     },
     data() {
         return {

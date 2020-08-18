@@ -40,14 +40,27 @@ declare module 'vue/types/vue' {
 
         /**
          * sign tx
-         * @param req
+         * @param gid desired genesis id of user wallet
+         * @param req request content
+         * @param after post response process
          */
-        $signTx(gid: string, req: M.TxRequest): Promise<M.TxResponse>
+        $signTx(
+            gid: string,
+            req: M.TxRequest,
+            after?: (resp: M.TxResponse) => Promise<void>
+        ): Promise<M.TxResponse>
+
         /**
          * sign cert
-         * @param req
+         * @param gid desired genesis id of user wallet
+         * @param req request content
+         * @param after post response process
          */
-        $signCert(gid: string, req: M.CertRequest): Promise<M.CertResponse>
+        $signCert(
+            gid: string,
+            req: M.CertRequest,
+            after?: (resp: M.CertResponse) => Promise<void>
+        ): Promise<M.CertResponse>
     }
 }
 
@@ -162,12 +175,13 @@ export default boot(async ({ Vue }) => {
         $signTx: {
             get(): Vue['$signTx'] {
                 const vm = this as Vue
-                return (gid, req) => {
+                return (gid, req, after) => {
                     return replaceDialog(vm, {
                         component: TxSigningDialog,
                         parent: vm,
                         gid,
-                        req
+                        req,
+                        after
                     })
                 }
             }
@@ -175,12 +189,13 @@ export default boot(async ({ Vue }) => {
         $signCert: {
             get(): Vue['$signCert'] {
                 const vm = this as Vue
-                return (gid, req) => {
+                return (gid, req, after) => {
                     return replaceDialog(vm, {
                         component: CertSigningDialog,
                         parent: vm,
                         gid,
-                        req
+                        req,
+                        after
                     })
                 }
             }

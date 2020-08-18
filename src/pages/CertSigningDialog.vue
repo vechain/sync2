@@ -33,7 +33,8 @@ import Vue from 'vue'
 export default Vue.extend({
     props: {
         req: Object as () => M.CertRequest,
-        gid: String
+        gid: String,
+        after: Function as unknown as () => (((resp: M.CertResponse) => Promise<void>) | undefined)
     },
     methods: {
         // method is REQUIRED by $q.dialog
