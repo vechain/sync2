@@ -81,7 +81,10 @@
                                         > {{data && data.balance | balance(18)}} VET</q-item-label>
                                     </q-item-section>
                                     <q-item-section side>
-                                        <q-icon name="keyboard_arrow_right" />
+                                        <q-icon
+                                            v-if="isSelectable"
+                                            name="keyboard_arrow_right"
+                                        />
                                     </q-item-section>
                                 </connex-continuous>
                             </q-item>
@@ -98,83 +101,12 @@
                 </q-card-actions>
             </div>
         </q-card>
-
-        <!-- select signer -->
-        <q-dialog
-            content-class="selector-dialog"
-            v-model="isSelecting"
-            position="bottom"
-        >
-            <q-card
-                style="padding-top: 50px"
-                class="overflow-hidden fit"
-            >
-                <q-toolbar class="absolute-top">
-                    <q-toolbar-title>Select</q-toolbar-title>
-                </q-toolbar>
-                <q-card-section
-                    v-scrollDivider
-                    class="fit overflow-auto q-pt-none"
-                >
-                    <ConnexObject
-                        v-slot="{connex}"
-                        :node="node"
-                    >
-                        <AccountSelector
-                            :wallets="wallets"
-                            v-model="signer"
-                            v-slot="{account}"
-                            @tabChange="AccountTabChange"
-                        >
-                            <q-list v-if="currentAccountTab === account">
-                                <connex-continuous
-                                    :connex="connex"
-                                    :query="() => connex.thor.account(account).get()"
-                                    v-slot="{data}"
-                                >
-                                    <TokenBalanceItem
-                                        dense
-                                        :balance="data && data.balance"
-                                        :token="{symbol: 'VET', name: 'VeChain', decimals: 18}"
-                                    />
-                                    <q-separator inset="item" />
-                                    <TokenBalanceItem
-                                        dense
-                                        :balance="data && data.energy"
-                                        :token="{symbol: 'VTHO', name: 'VeChain Thor', decimals: 18}"
-                                    />
-                                </connex-continuous>
-
-                                <template v-for="(token, index) in tokens">
-                                    <q-separator
-                                        :key="`${index}-s`"
-                                        inset="item"
-                                    />
-                                    <connex-continuous
-                                        :connex="connex"
-                                        :key="index"
-                                        :query="() => tokenBalanceOf(connex, account, token)"
-                                        v-slot="{data}"
-                                    >
-                                        <TokenBalanceItem
-                                            dense
-                                            :token="token"
-                                            :balance="data"
-                                        />
-                                    </connex-continuous>
-                                </template>
-                            </q-list>
-                        </AccountSelector>
-                    </ConnexObject>
-                </q-card-section>
-            </q-card>
-        </q-dialog>
     </q-dialog>
 </template>
 <script lang="ts">
 import { QDialog } from 'quasar'
-import { tokenBalanceOf } from 'components/queries'
 import Vue from 'vue'
+import AccountSelectorDialog from 'components/AccountSelectorDialog.vue'
 
 export default Vue.extend({
     props: {
@@ -184,9 +116,7 @@ export default Vue.extend({
     data() {
         return {
             signer: '',
-            isSelectable: false,
-            isSelecting: false,
-            currentAccountTab: ''
+            isSelectable: false
         }
     },
     computed: {
@@ -208,7 +138,6 @@ export default Vue.extend({
         this.initData()
     },
     methods: {
-        tokenBalanceOf,
         // method is REQUIRED by $q.dialog
         show() { (this.$refs.dialog as QDialog).show() },
         // method is REQUIRED by $q.dialog
@@ -239,19 +168,22 @@ export default Vue.extend({
             }
         },
         showAccounts() {
-            this.isSelecting = true
+            if (!this.isSelectable) {
+                return
+            }
+            this.$q.dialog({
+                component: AccountSelectorDialog,
+                node: this.node,
+                wallets: this.wallets,
+                tokens: this.tokens,
+                current: this.signer
+            }).onOk((account: string) => {
+                this.signer = account
+            })
         },
         onChecked() {
             console.log('checked')
-        },
-        AccountTabChange(account: string) {
-            this.currentAccountTab = account
         }
     }
 })
 </script>
-<style>
-.selector-dialog > .q-dialog__inner {
-    height: 70%;
-}
-</style>
