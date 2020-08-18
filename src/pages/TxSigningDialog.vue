@@ -30,7 +30,7 @@
                     <ClauseCard
                         v-for="(msg, i) in req.message"
                         :key="i"
-                        :tokens="tokens"
+                        :tokens="[ tokenSpecs.VTHO, ...tokens]"
                         :msg="msg"
                     >
                         {{ `Clause #${i+1}`}}
@@ -106,6 +106,7 @@
 <script lang="ts">
 import { QDialog } from 'quasar'
 import Vue from 'vue'
+import { tokenSpecs } from '../consts'
 import AccountSelectorDialog from 'components/AccountSelectorDialog.vue'
 
 export default Vue.extend({
@@ -116,7 +117,8 @@ export default Vue.extend({
     data() {
         return {
             signer: '',
-            isSelectable: false
+            isSelectable: false,
+            tokenSpecs
         }
     },
     computed: {
