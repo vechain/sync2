@@ -24,7 +24,7 @@
                         @click="isShort = !isShort"
                     >
                         <span v-if="isShort">
-                            {{isToken ? decoded.to : msg.to | checksum | abbrev(8)}}
+                            {{isToken ? decoded.to : msg.to | checksum | abbrev(8, 6)}}
                         </span>
                         <span v-else>
                             {{isToken ? decoded.to : msg.to | checksum}}
