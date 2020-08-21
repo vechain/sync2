@@ -42,6 +42,15 @@ const vip180balanceOf: abi.Function.Definition = {
     stateMutability: 'view',
     type: 'function'
 }
+const paramsGet: abi.Function.Definition = {
+    constant: true,
+    inputs: [{ name: '_key', type: 'bytes32' }],
+    name: 'get',
+    outputs: [{ name: '', type: 'uint256' }],
+    payable: false,
+    stateMutability: 'view',
+    type: 'function'
+}
 
 const VTHO: M.TokenSpec = {
     symbol: 'VTHO',
@@ -64,7 +73,8 @@ const VET: M.TokenSpec = {
 
 export const abis = {
     transfer: transferABI,
-    balanceOf: vip180balanceOf
+    balanceOf: vip180balanceOf,
+    paramsGet
 }
 
 export const tokenSpecs = {
