@@ -45,58 +45,66 @@
                         v-slot="{connex}"
                         :node="node"
                     >
-                        <q-list class="full-width">
-                            <!-- TODO -->
-                            <q-item dense>
-                                <q-item-section>
-                                    <q-item-label class="text-body2">
-                                        Est Fee 61.00 VTHO
-                                    </q-item-label>
-                                </q-item-section>
-                                <q-item-section side>
-                                    <q-btn size="xs">Speed</q-btn>
-                                </q-item-section>
-                            </q-item>
-                            <q-item
-                                :clickable="isSelectable"
-                                @click="showAccounts"
-                            >
-                                <connex-continuous
-                                    :connex="connex"
-                                    :query="() => connex.thor.account(signer).get()"
-                                    v-slot="{data}"
-                                >
-                                    <q-item-section avatar>
-                                        <AddressAvatar
-                                            class="q-mx-auto"
-                                            style="width: 65px; height: 35px; border-radius: 5px;"
-                                            :addr="signer"
-                                        />
-                                    </q-item-section>
-                                    <q-item-section>
-                                        <q-item-label class="monospace text-body2">{{ signer | checksum | abbrev(8) }}</q-item-label>
-                                        <q-item-label
-                                            caption
-                                            lines="1"
-                                        > {{data && data.balance | balance(18)}} VET</q-item-label>
-                                    </q-item-section>
-                                    <q-item-section side>
-                                        <q-icon
-                                            v-if="isSelectable"
-                                            name="keyboard_arrow_right"
-                                        />
-                                    </q-item-section>
-                                </connex-continuous>
-                            </q-item>
-                            <q-item>
-                                <SlideBtn
-                                    @checked="onChecked"
-                                    label="Slide to Sign"
-                                    style="width: 70%"
-                                    class="absolute-center"
+                        <Async
+                            :fn="getEstGas(connex)"
+                            v-slot="{data: estGas}"
+                        >
+                            <q-list class="full-width">
+                                <Priority
+                                    :gas="estGas && estGas.gas"
+                                    :bgp="estGas && estGas.baseGasPrice"
+                                    v-model="gasPriceCoef"
                                 />
-                            </q-item>
-                        </q-list>
+                                <q-item
+                                    :clickable="isSelectable"
+                                    @click="showAccounts"
+                                >
+                                    <connex-continuous
+                                        :connex="connex"
+                                        :query="() => connex.thor.account(signer).get()"
+                                        v-slot="{data}"
+                                    >
+                                        <q-item-section avatar>
+                                            <AddressAvatar
+                                                class="q-mx-auto"
+                                                style="width: 65px; height: 35px; border-radius: 5px;"
+                                                :addr="signer"
+                                            />
+                                        </q-item-section>
+                                        <q-item-section>
+                                            <q-item-label class="monospace text-body2">{{ signer | checksum | abbrev(8, 6) }}</q-item-label>
+                                            <q-item-label
+                                                caption
+                                                lines="1"
+                                            >
+                                                <template v-if="data">
+                                                    {{data.balance | balance(18)}}
+                                                </template>
+                                                <q-spinner-dots
+                                                    v-else
+                                                    color="blue"
+                                                />
+                                                VET
+                                            </q-item-label>
+                                        </q-item-section>
+                                        <q-item-section side>
+                                            <q-icon
+                                                v-if="isSelectable"
+                                                name="keyboard_arrow_right"
+                                            />
+                                        </q-item-section>
+                                    </connex-continuous>
+                                </q-item>
+                                <q-item>
+                                    <SlideBtn
+                                        @checked="onChecked"
+                                        label="Slide to Sign"
+                                        style="width: 70%"
+                                        class="absolute-center"
+                                    />
+                                </q-item>
+                            </q-list>
+                        </Async>
                     </ConnexObject>
                 </q-card-actions>
             </div>
@@ -108,6 +116,7 @@ import { QDialog } from 'quasar'
 import Vue from 'vue'
 import { tokenSpecs } from '../consts'
 import AccountSelectorDialog from 'components/AccountSelectorDialog.vue'
+import { estimateGas, EstimateGasResult } from '../utils/tx'
 
 export default Vue.extend({
     props: {
@@ -118,11 +127,24 @@ export default Vue.extend({
         return {
             signer: '',
             isSelectable: false,
-            tokenSpecs
+            tokenSpecs,
+            gasPriceCoef: 0
         }
     },
     computed: {
-        node() {
+        clauseList(): Connex.Thor.Clause[] {
+            return this.req.message.map((item: Connex.Vendor.TxMessage[0]) => {
+                return {
+                    to: item.to,
+                    data: item.data,
+                    value: item.value
+                }
+            })
+        },
+        suggettedGas(): number {
+            return this.req.options ? this.req.options.gas || 0 : 0
+        },
+        node(): M.Node | undefined {
             return this.$state.config.node.list.find(item => {
                 return item.gid === this.gid
             })
@@ -130,7 +152,7 @@ export default Vue.extend({
         tokens(): M.TokenSpec[] {
             return this.$state.config.token.specs(this.gid, true)
         },
-        wallets() {
+        wallets(): M.Wallet[] {
             return this.$state.wallet.list.filter(item => {
                 return item.gid === this.gid
             })
@@ -140,6 +162,13 @@ export default Vue.extend({
         this.initData()
     },
     methods: {
+        async getEstGas(connex: Connex): Promise<EstimateGasResult | null> {
+            if (this.signer && connex) {
+                return await estimateGas(connex, this.clauseList, this.suggettedGas, this.signer)
+            } else {
+                return null
+            }
+        },
         // method is REQUIRED by $q.dialog
         show() { (this.$refs.dialog as QDialog).show() },
         // method is REQUIRED by $q.dialog
