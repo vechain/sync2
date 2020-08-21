@@ -69,7 +69,7 @@
                         v-model="total"
                         step="any"
                         type="text"
-                        :rules="[val => {return /^[1-9][0-9]*([.][0-9]{1,18})?$/.test(val) || 'Invalide balance' }]"
+                        :rules="[balanceCheck]"
                         inputmode="decimal"
                         :label="symbol"
                     />
@@ -172,10 +172,10 @@ export default Vue.extend({
     },
     computed: {
         node(): M.Node {
-            return this.$state.config.node.list.find(n => n.gid === this.$state.wallet.current!.gid)!
+            return this.$state.config.node.list.find(n => n.gid === this.gid)!
         },
         tokenSpecs(): M.TokenSpec[] {
-            return [...this.$state.config.token.specs(this.$state.wallet.current!.gid, true)]
+            return [...this.$state.config.token.specs(this.gid, true)]
         },
         currentToken(): M.TokenSpec | undefined {
             if (this.symbol === 'VET') {
@@ -184,6 +184,12 @@ export default Vue.extend({
                 return tokenSpecs.VTHO
             } else {
                 return this.tokenSpecs.find(item => this.symbol === item.symbol)
+            }
+        },
+        balanceCheck(): (v: string) => boolean | string {
+            const regexp = new RegExp(`^(([1-9]{1}\\d*)|(0{1}))(\\.\\d{1,${this.currentToken!.decimals}})?$`)
+            return (val) => {
+                return regexp.test(val) || 'Invalide balance'
             }
         },
         query(): (connex: Connex) => Promise<string> {
