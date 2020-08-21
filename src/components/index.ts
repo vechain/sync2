@@ -16,6 +16,7 @@ import ClauseCard from './ClauseCard.vue'
 import SlideBtn from './SlideBtn.vue'
 import AddressAvatar from './AddressAvatar.vue'
 import AccountSelector from './AccountSelector.vue'
+import Priority from './Priority.vue'
 
 const components: { [name: string]: Vue.VueConstructor } = {
     StackedRouterView,
@@ -35,7 +36,8 @@ const components: { [name: string]: Vue.VueConstructor } = {
     ClauseCard,
     SlideBtn,
     AddressAvatar,
-    AccountSelector
+    AccountSelector,
+    Priority
 }
 
 export default components
