@@ -16,6 +16,7 @@ import ClauseCard from './ClauseCard.vue'
 import SlideBtn from './SlideBtn.vue'
 import AddressAvatar from './AddressAvatar.vue'
 import AccountSelector from './AccountSelector.vue'
+import AccountSelectorDialog from './AccountSelectorDialog.vue'
 import Priority from './Priority.vue'
 
 const components: { [name: string]: Vue.VueConstructor } = {
@@ -37,6 +38,7 @@ const components: { [name: string]: Vue.VueConstructor } = {
     SlideBtn,
     AddressAvatar,
     AccountSelector,
+    AccountSelectorDialog,
     Priority
 }
 
