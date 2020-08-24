@@ -55,46 +55,13 @@
                                     :bgp="estGas && estGas.baseGasPrice"
                                     v-model="gasPriceCoef"
                                 />
-                                <q-item
-                                    :clickable="isSelectable"
-                                    @click="showAccounts"
-                                >
-                                    <connex-continuous
-                                        :connex="connex"
-                                        :query="() => connex.thor.account(signer).get()"
-                                        v-slot="{data}"
-                                    >
-                                        <q-item-section avatar>
-                                            <AddressAvatar
-                                                class="q-mx-auto"
-                                                style="width: 65px; height: 35px; border-radius: 5px;"
-                                                :addr="signer"
-                                            />
-                                        </q-item-section>
-                                        <q-item-section>
-                                            <q-item-label class="monospace text-body2">{{ signer | checksum | abbrev(8, 6) }}</q-item-label>
-                                            <q-item-label
-                                                caption
-                                                lines="1"
-                                            >
-                                                <template v-if="data">
-                                                    {{data.balance | balance(18)}}
-                                                </template>
-                                                <q-spinner-dots
-                                                    v-else
-                                                    color="blue"
-                                                />
-                                                VET
-                                            </q-item-label>
-                                        </q-item-section>
-                                        <q-item-section side>
-                                            <q-icon
-                                                v-if="isSelectable"
-                                                name="keyboard_arrow_right"
-                                            />
-                                        </q-item-section>
-                                    </connex-continuous>
-                                </q-item>
+                                <AccountSelectorDialog
+                                    v-model="signer"
+                                    :tokens="tokens"
+                                    :wallets="wallets"
+                                    :connex="connex"
+                                    :isSelectable="isSelectable"
+                                />
                                 <q-item>
                                     <SlideBtn
                                         @checked="onChecked"
@@ -115,7 +82,6 @@
 import { QDialog } from 'quasar'
 import Vue from 'vue'
 import { tokenSpecs } from '../consts'
-import AccountSelectorDialog from 'components/AccountSelectorDialog.vue'
 import { estimateGas, EstimateGasResult } from '../utils/tx'
 
 export default Vue.extend({
@@ -197,20 +163,6 @@ export default Vue.extend({
             } else {
                 return true
             }
-        },
-        showAccounts() {
-            if (!this.isSelectable) {
-                return
-            }
-            this.$q.dialog({
-                component: AccountSelectorDialog,
-                node: this.node,
-                wallets: this.wallets,
-                tokens: this.tokens,
-                current: this.signer
-            }).onOk((account: string) => {
-                this.signer = account
-            })
         },
         onChecked() {
             console.log('checked')
