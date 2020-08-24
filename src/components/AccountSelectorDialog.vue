@@ -1,23 +1,59 @@
 <template>
-    <q-dialog
-        content-class="selector-dialog"
-        ref="dialog"
-        position="bottom"
+    <q-item
+        :clickable="isSelectable"
+        @click="show"
     >
-        <q-card
-            style="padding-top: 50px"
-            class="overflow-hidden fit"
+        <connex-continuous
+            :connex="connex"
+            :query="() => connex.thor.account(signer).get()"
+            v-slot="{data}"
         >
-            <q-toolbar class="absolute-top">
-                <q-toolbar-title>Select</q-toolbar-title>
-            </q-toolbar>
-            <q-card-section
-                v-scrollDivider
-                class="fit overflow-auto q-pt-none"
+            <q-item-section avatar>
+                <AddressAvatar
+                    class="q-mx-auto"
+                    style="width: 65px; height: 35px; border-radius: 5px;"
+                    :addr="signer"
+                />
+            </q-item-section>
+            <q-item-section>
+                <q-item-label class="monospace text-body2">{{ signer | checksum | abbrev(8, 6) }}</q-item-label>
+                <q-item-label
+                    caption
+                    lines="1"
+                >
+                    <template v-if="data">
+                        {{data.balance | balance(18)}}
+                    </template>
+                    <q-spinner-dots
+                        v-else
+                        color="blue"
+                    />
+                    VET
+                </q-item-label>
+            </q-item-section>
+            <q-item-section side>
+                <q-icon
+                    v-if="isSelectable"
+                    name="keyboard_arrow_right"
+                />
+            </q-item-section>
+        </connex-continuous>
+
+        <q-dialog
+            content-class="selector-dialog"
+            ref="dialog"
+            position="bottom"
+        >
+            <q-card
+                style="padding-top: 50px"
+                class="overflow-hidden fit"
             >
-                <ConnexObject
-                    v-slot="{connex}"
-                    :node="node"
+                <q-toolbar class="absolute-top">
+                    <q-toolbar-title>Select</q-toolbar-title>
+                </q-toolbar>
+                <q-card-section
+                    v-scrollDivider
+                    class="fit overflow-auto q-pt-none"
                 >
                     <AccountSelector
                         :wallets="wallets"
@@ -65,20 +101,25 @@
                             </template>
                         </q-list>
                     </AccountSelector>
-                </ConnexObject>
-            </q-card-section>
-        </q-card>
-    </q-dialog>
+                </q-card-section>
+            </q-card>
+        </q-dialog>
+    </q-item>
 </template>
 <script lang="ts">
 import { QDialog } from 'quasar'
 import Vue from 'vue'
 import { tokenBalanceOf } from 'components/queries'
 export default Vue.extend({
+    model: {
+        prop: 'current',
+        event: 'change'
+    },
     props: {
-        node: Object as () => M.Node,
+        connex: Object as () => Connex,
         tokens: Array as () => M.TokenSpec[],
         wallets: Array as () => M.Wallet[],
+        isSelectable: Boolean,
         current: String
     },
     data() {
@@ -97,7 +138,7 @@ export default Vue.extend({
             this.currentAccountTab = account
         },
         signerChange(account: string) {
-            this.$emit('ok', account)
+            this.$emit('change', account)
             this.hide()
         }
     }
