@@ -52,7 +52,7 @@
                 <div>
                     <template v-if="isToken">
                         <q-item
-                            v-if="val"
+                            v-if="!isZeroVet"
                             class="q-px-xs"
                         >
                             <q-item-section avatar>
@@ -64,7 +64,7 @@
                             <q-item-section>
                                 <q-item-label>
                                     <span class="text-h4">
-                                        {{val | balance(18)}}
+                                        {{vet | balance(18)}}
                                     </span>
                                 </q-item-label>
                             </q-item-section>
@@ -91,7 +91,7 @@
                         </q-item>
                     </template>
                     <template v-else>
-                        <span class="text-h4">VET {{val | balance(18)}}</span>
+                        <span class="text-h4">VET {{vet | balance(18)}}</span>
                     </template>
                 </div>
                 <div class="q-my-xs text-body2 text-grey-7">{{msg.comment}}</div>
@@ -143,8 +143,11 @@ export default Vue.extend({
                 })
             ]
         },
-        val(): string {
-            return new BigNumber(this.msg.value).isZero() ? '' : this.msg.value.toString()
+        isZeroVet(): boolean {
+            return new BigNumber(this.msg.value).isZero()
+        },
+        vet(): string {
+            return this.msg.value.toString()
         },
         toAddr(): string {
             let content = ''
