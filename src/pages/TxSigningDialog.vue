@@ -55,16 +55,24 @@
                                     :bgp="estGas && estGas.baseGasPrice"
                                     v-model="gasPriceCoef"
                                 />
-                                <AccountSelectorDialog
+                                <AccountSelector
                                     v-model="signer"
-                                    :tokens="tokens"
                                     :wallets="wallets"
                                     :connex="connex"
+                                    v-slot="{address}"
                                     :isSelectable="isSelectable"
-                                />
+                                >
+                                    <BalanceList
+                                        :connex="connex"
+                                        :address="address"
+                                        :tokens="tokens"
+                                    />
+                                </AccountSelector>
                                 <q-item>
                                     <SlideBtn
-                                        @checked="onChecked"
+                                        v-model="signed"
+                                        :disabled="!estGas"
+                                        @checked="onChecked(connex, estGas)"
                                         label="Slide to Sign"
                                         style="width: 70%"
                                         class="absolute-center"
@@ -81,8 +89,10 @@
 <script lang="ts">
 import { QDialog } from 'quasar'
 import Vue from 'vue'
+import { BigNumber } from 'bignumber.js'
 import { tokenSpecs } from '../consts'
-import { estimateGas, EstimateGasResult } from '../utils/tx'
+import { estimateGas, EstimateGasResult, buildTx } from '../utils/tx'
+import { Vault } from 'core/vault'
 
 export default Vue.extend({
     props: {
@@ -95,6 +105,7 @@ export default Vue.extend({
             signer: '',
             isSelectable: false,
             tokenSpecs,
+            signed: false,
             gasPriceCoef: 0
         }
     },
@@ -103,8 +114,8 @@ export default Vue.extend({
             return this.req.message.map((item: Connex.Vendor.TxMessage[0]) => {
                 return {
                     to: item.to,
-                    data: item.data,
-                    value: item.value
+                    value: item.value,
+                    data: item.data
                 }
             })
         },
@@ -123,6 +134,11 @@ export default Vue.extend({
             return this.$state.wallet.list.filter(item => {
                 return item.gid === this.gid
             })
+        },
+        wallet(): M.Wallet | null {
+            return this.wallets.find((item: M.Wallet) => {
+                return item.meta.addresses.includes(this.signer)
+            }) || null
         }
     },
     created() {
@@ -165,8 +181,39 @@ export default Vue.extend({
                 return true
             }
         },
-        onChecked() {
-            console.log('checked')
+        // build Tx
+        async onChecked(connex: Connex, estGas: EstimateGasResult) {
+            const clauses: Connex.Thor.Transaction['clauses'] = this.clauseList.map(item => {
+                return {
+                    to: item.to,
+                    value: '0x' + new BigNumber(item.value).toString(16),
+                    data: item.data || '0x'
+                }
+            })
+            const builtTx = buildTx(
+                connex,
+                clauses,
+                this.gasPriceCoef,
+                estGas.gas,
+                (this.req.options && this.req.options.dependsOn) || null
+            )
+            try {
+                const pin = await this.$authenticate(pin => Promise.resolve(pin))
+                if (this.wallet) {
+                    const vault = await Vault.decode(this.wallet.vault)
+                    const node = await vault.derive(this.wallet.meta.addresses.indexOf(this.signer))
+                    const pk = await node.unlock(pin)
+                    const st = builtTx.signTx(pk)
+                    // TODO recode
+                    console.log(st.id)
+                    this.$axios.post(`${this.node!.url}/transactions`, Buffer.from(JSON.stringify({ raw: '0x' + st.encode().toString('hex') })), {
+                        headers: { 'Content-Type': 'application/json' }
+                    }).then(console.log)
+                }
+            } catch (error) {
+                this.signed = false
+                console.log(error)
+            }
         }
     }
 })
