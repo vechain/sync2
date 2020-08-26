@@ -1,41 +1,75 @@
 <template>
-    <q-list>
-        <template v-for="wallet in wallets">
-            <q-item-label
-                class="text-grey"
-                :key="wallet.id"
-            >{{wallet.meta.name}}</q-item-label>
-            <q-expansion-item
-                group="somegroup"
-                v-for="account in wallet.meta.addresses"
-                :key="account"
-                expand-icon-toggle
-                @before-show="toggleContent(account)"
+    <q-item
+        :clickable="isSelectable"
+    >
+        <connex-continuous
+            :connex="connex"
+            :query="() => connex.thor.account(signer).get()"
+            v-slot="{data}"
+        >
+            <q-item-section avatar>
+                <AddressAvatar
+                    class="q-mx-auto"
+                    style="width: 65px; height: 35px; border-radius: 5px;"
+                    :addr="signer"
+                />
+            </q-item-section>
+            <q-item-section>
+                <q-item-label class="monospace text-body2">{{ signer | checksum | abbrev(8, 6) }}</q-item-label>
+                <q-item-label
+                    caption
+                    lines="1"
+                >
+                    <template v-if="data">
+                        {{data.balance | balance(18)}}
+                    </template>
+                    <q-spinner-dots
+                        v-else
+                        color="blue"
+                    />
+                    VET
+                </q-item-label>
+            </q-item-section>
+            <q-item-section side>
+                <q-icon
+                    v-if="isSelectable"
+                    name="keyboard_arrow_right"
+                />
+            </q-item-section>
+        </connex-continuous>
+        <q-popup-proxy
+            v-model="show"
+            :no-parent-event="!isSelectable"
+            content-class="selector-dialog"
+            position="bottom"
+        >
+            <q-card
+                style="padding-top: 50px"
+                class="overflow-hidden fit"
             >
-                <template v-slot:header>
-                    <q-item-section
-                        avatar
-                        class="q-mr-none"
-                        @click="$emit('change', account)"
+                <q-toolbar class="absolute-top">
+                    <q-toolbar-title>Select</q-toolbar-title>
+                </q-toolbar>
+                <q-card-section
+                    v-scrollDivider
+                    class="fit overflow-auto q-pt-none"
+                >
+                    <AccountList
+                        :wallets="wallets"
+                        v-model="signer"
+                        v-slot="{address}"
+                        @tabChange="AccountTabChange"
+                        @change="signerChange"
                     >
-                        <AddressAvatar
-                            class="q-mx-auto"
-                            style="width: 50px; height: 30px; border-radius: 5px;"
-                            :addr="account"
+                        <slot
+                            v-if="currentAccountTab === address"
+                            :address="address"
                         />
-                    </q-item-section>
-                    <q-item-section
-                        @click="$emit('change', account)"
-                        class="monospace"
-                        :class="{'text-primary': (current === account)}"
-                    >
-                        {{account | abbrev(8)}}
-                    </q-item-section>
-                </template>
-                <slot :account="account" />
-            </q-expansion-item>
-        </template>
-    </q-list>
+                    </AccountList>
+                </q-card-section>
+            </q-card>
+        </q-popup-proxy>
+    </q-item>
 </template>
 <script lang="ts">
 import Vue from 'vue'
@@ -45,13 +79,31 @@ export default Vue.extend({
         event: 'change'
     },
     props: {
+        connex: Object as () => Connex,
         wallets: Array as () => M.Wallet[],
+        isSelectable: Boolean,
         current: String
     },
+    data() {
+        return {
+            show: false,
+            signer: this.current || this.wallets[0].meta.addresses[0],
+            currentAccountTab: ''
+        }
+    },
     methods: {
-        toggleContent(account: string) {
-            this.$emit('tabChange', account)
+        AccountTabChange(account: string) {
+            this.currentAccountTab = account
+        },
+        signerChange(account: string) {
+            this.$emit('change', account)
+            this.show = false
         }
     }
 })
 </script>
+<style>
+.selector-dialog > .q-dialog__inner {
+    height: 70%;
+}
+</style>

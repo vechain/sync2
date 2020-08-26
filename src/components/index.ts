@@ -15,10 +15,12 @@ import Async from './Async'
 import ClauseCard from './ClauseCard.vue'
 import SlideBtn from './SlideBtn.vue'
 import AddressAvatar from './AddressAvatar.vue'
+import AccountList from './AccountList.vue'
 import AccountSelector from './AccountSelector.vue'
-import AccountSelectorDialog from './AccountSelectorDialog.vue'
+import BalanceList from './BalanceList.vue'
 import Priority from './Priority.vue'
 import Delay from './Delay'
+import TokenSelector from './TokenSelector.vue'
 
 const components: { [name: string]: Vue.VueConstructor } = {
     StackedRouterView,
@@ -38,10 +40,12 @@ const components: { [name: string]: Vue.VueConstructor } = {
     ClauseCard,
     SlideBtn,
     AddressAvatar,
+    AccountList,
     AccountSelector,
-    AccountSelectorDialog,
     Priority,
-    Delay
+    Delay,
+    BalanceList,
+    TokenSelector
 }
 
 export default components
