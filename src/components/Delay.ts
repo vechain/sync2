@@ -7,6 +7,7 @@ import Vue from 'vue'
 */
 export default Vue.extend({
     props: {
+        tag: String,
         t: Number
     },
     data: () => {
@@ -23,7 +24,7 @@ export default Vue.extend({
     render(h) {
         if (this.timeUp) {
             const slots = this.$slots.default || []
-            return slots.length > 1 ? h('fragment', slots) : slots[0]
+            return slots.length > 1 ? h(this.tag || 'fragment', slots) : slots[0]
         }
         return h()
     }

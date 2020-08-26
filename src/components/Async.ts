@@ -7,6 +7,7 @@ import Vue, { VNode } from 'vue'
 */
 export default Vue.extend({
     props: {
+        tag: String,
         fn: { default: null as unknown as () => ((() => Promise<unknown>) | Promise<unknown>) },
         sticky: Boolean // set true to make slot data sticky when fn changed
     },
@@ -72,6 +73,6 @@ export default Vue.extend({
             reload: () => this.reload()
         }) : []) || []
 
-        return children.length > 1 ? h('fragment', children) : children[0]
+        return children.length > 1 ? h(this.tag || 'fragment', children) : children[0]
     }
 })

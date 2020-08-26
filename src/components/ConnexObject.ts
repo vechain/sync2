@@ -12,6 +12,7 @@ const node = {gid:'0x...', url:'https://...'}
 
 export default Vue.extend({
     props: {
+        tag: String,
         node: { type: Object as () => (M.Node | null) }
     },
     data: () => {
@@ -79,6 +80,6 @@ export default Vue.extend({
             error: this.error
         }) : []) || []
 
-        return children.length > 1 ? h('fragment', children) : children[0]
+        return children.length > 1 ? h(this.tag || 'fragment', children) : children[0]
     }
 })
