@@ -36,47 +36,22 @@
                         v-model="to"
                         label="To:"
                     />
-                    <q-item
-                        class="q-my-md"
-                        clickable
-                        @click="showSelect"
-                    >
-                        <q-item-section avatar>
-                            <q-avatar
-                                color="primary"
-                                text-color="white"
-                            >
-                                {{currentToken.symbol.slice(0,1)}}
-                            </q-avatar>
-                        </q-item-section>
-                        <q-item-section>
-                            <q-item-label lines="1">{{currentToken.symbol}}</q-item-label>
-                            <q-item-label
-                                caption
-                                lines="2"
-                            >
-                                {{currentToken.name}}
-                            </q-item-label>
-                        </q-item-section>
-                        <q-item-section side>
-                            <q-icon name="unfold_more" />
-                        </q-item-section>
-                    </q-item>
-                    <q-input
-                        no-error-icon
-                        autocomplete="off"
-                        clearable
-                        v-model="total"
-                        step="any"
-                        type="text"
-                        :rules="[balanceCheck]"
-                        inputmode="decimal"
-                        :label="symbol"
-                    />
                     <ConnexObject
                         v-slot="{connex}"
                         :node="node"
                     >
+                        <TokenSelector v-model="symbol" :connex="connex" :address="from" :tokens="tokenSpecs"/>
+                        <q-input
+                            no-error-icon
+                            autocomplete="off"
+                            clearable
+                            v-model="total"
+                            type="text"
+                            :rules="[balanceCheck]"
+                            inputmode="decimal"
+                            :label="symbol"
+                        />
+
                         <connex-continuous
                             :key="symbol"
                             :connex="connex"
@@ -96,56 +71,6 @@
                 </q-form>
             </div>
         </q-card>
-        <q-dialog ref="tokenList">
-            <q-card class="q-dialog-plugin q-pa-md">
-                <ConnexObject
-                    v-slot="{connex}"
-                    :node="node"
-                >
-
-                    <q-list>
-                        <connex-continuous
-                            :connex="connex"
-                            :query="() => connex.thor.account(from).get()"
-                            v-slot="{data}"
-                        >
-                            <TokenBalanceItem
-                                @click="onSelect('VET')"
-                                clickable
-                                :balance="data && data.balance"
-                                :token="{symbol: 'VET', name: 'VeChain', decimals: 18}"
-                            />
-                            <q-separator inset="item" />
-                            <TokenBalanceItem
-                                @click="onSelect('VTHO')"
-                                clickable
-                                :balance="data && data.energy"
-                                :token="{symbol: 'VTHO', name: 'VeChain Thor', decimals: 18}"
-                            />
-                        </connex-continuous>
-                        <template v-for="(spec, index) in tokenSpecs">
-                            <q-separator
-                                :key="`${index}-s`"
-                                inset="item"
-                            />
-                            <connex-continuous
-                                :connex="connex"
-                                :key="index"
-                                :query="() => tokenBalanceOf(connex, from, spec)"
-                                v-slot="{data}"
-                            >
-                                <TokenBalanceItem
-                                    @click="onSelect(spec.symbol)"
-                                    clickable
-                                    :token="spec"
-                                    :balance="data"
-                                />
-                            </connex-continuous>
-                        </template>
-                    </q-list>
-                </ConnexObject>
-            </q-card>
-        </q-dialog>
     </q-dialog>
 </template>
 
@@ -216,20 +141,13 @@ export default Vue.extend({
             this.$emit('ok', result)
             this.hide()
         },
-        showSelect() {
-            (this.$refs.tokenList as QDialog).show()
-        },
-        onSelect(symbol: string) {
-            (this.$refs.tokenList as QDialog).hide()
-            this.symbol = symbol
-        },
         onSend() {
             let msgItem!: Connex.Vendor.TxMessage[0]
             if (this.symbol === 'VET') {
                 msgItem = {
                     to: this.to,
                     value: Vue.filter('toWei')(this.total),
-                    comment: `Transfering ${this.total} VET`
+                    comment: `Transferring ${this.total} VET`
                 }
             } else {
                 const func = new abi.Function(abis.transfer)
@@ -239,7 +157,7 @@ export default Vue.extend({
                     to: this.currentToken!.address,
                     value: 0,
                     data: data,
-                    comment: `Transfering ${this.total} ${this.symbol}`
+                    comment: `Transferring ${this.total} ${this.symbol}`
                 }
             }
 
