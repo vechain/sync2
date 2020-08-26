@@ -6,27 +6,29 @@
         :style="{height: cHeight, borderRadius: cHeight}"
     >
         <div
-            :class="rClass"
+            :class="[{'trs': isTrans}, rClass]"
             class="absolute row items-center justify-center full-width full-height"
         >
             <div
                 :class="textClass"
-                class="trs"
                 :style="{opacity: opacity}"
             >
                 {{label}}
             </div>
         </div>
         <div
-            :class="lClass"
-            class="trs full-width full-height absolute"
+            :class="[{'trs': isTrans}, lClass]"
+            @transitionend="isTrans = false"
+            class="full-width full-height absolute"
             :style="{right: right, borderRadius: cHeight}"></div>
         <q-btn
             ref="btn"
-            :color="btnClass"
+            :color="btnColor"
             unelevated
-            class="trs absolute"
+            class="absolute"
+            :class="{'trs': isTrans}"
             round
+            :disabled="isTrans || disabled"
             v-touch-pan.prevent.right.mouse="moveFab"
             :style="{left: left}"
             :icon="btnIcon"
@@ -36,20 +38,26 @@
 <script lang="ts">
 import Vue from 'vue'
 export default Vue.extend({
+    model: {
+        prop: 'checked',
+        event: 'checked'
+    },
     props: {
         label: String,
         btnIcon: { type: String, default: 'keyboard_arrow_right' },
         lClass: { type: String, default: 'bg-grey-2' },
         rClass: { type: String, default: 'bg-grey-3' },
-        btnClass: { type: String, default: 'primary' },
-        textClass: { type: String, default: 'text-grey-9' }
+        btnColor: { type: String, default: 'primary' },
+        textClass: { type: String, default: 'text-grey-9' },
+        disabled: Boolean,
+        checked: Boolean
     },
     data() {
         return {
             XOffset: 0,
             maxOffset: 0,
-            disabled: false,
-            height: 0
+            height: 0,
+            isTrans: false
         }
     },
     mounted() {
@@ -72,6 +80,13 @@ export default Vue.extend({
             return `${this.height}px`
         }
     },
+    watch: {
+        checked(val: boolean) {
+            if (!val) {
+                this.XOffset = 0
+            }
+        }
+    },
     methods: {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         moveFab(details: any) {
@@ -85,10 +100,10 @@ export default Vue.extend({
             }
 
             if (details.isFinal) {
-                if (this.XOffset > this.maxOffset * 0.75) {
+                this.isTrans = true
+                if (this.XOffset > this.maxOffset * 0.85) {
                     this.XOffset = this.maxOffset
-                    this.disabled = true
-                    this.$emit('checked')
+                    this.$emit('checked', true)
                 } else {
                     this.XOffset = 0
                 }
@@ -99,6 +114,6 @@ export default Vue.extend({
 </script>
 <style scoped>
 .trs {
-    transition: position opacity 0.6s ease-in-out;
+    transition: left 0.4s ease-out, right 0.4s ease-out, opacity 0.4s ease-out;
 }
 </style>
