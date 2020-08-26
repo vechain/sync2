@@ -18,7 +18,6 @@
                 color="primary"
                 outline
                 rounded
-                @click="show"
             >
                 <q-icon
                     left
@@ -30,47 +29,45 @@
                 <template v-slot:loading>
                     <q-spinner-facebook color="primary" />
                 </template>
+                <q-popup-proxy
+                    v-model="show"
+                    full-width
+                >
+                    <q-card>
+                        <q-toolbar>
+                            <q-toolbar-title>
+                                Adjust Priority
+                            </q-toolbar-title>
+                        </q-toolbar>
+                        <q-card-section>
+                            <q-list>
+                                <q-item
+                                    clickable
+                                    @click="onChange(i)"
+                                    v-for="(l, i) in levelList"
+                                    :key="i"
+                                    :class="{'text-primary': (coef === calcCoef(i))}"
+                                >
+                                    <q-item-section avatar>
+                                        <q-icon
+                                            :color=" (coef === calcCoef(i)) ? 'primary' : ''"
+                                            :name="l.icon"
+                                        />
+                                    </q-item-section>
+                                    <q-item-section>
+                                        {{l.label}}
+                                    </q-item-section>
+                                    <q-item-section side>{{getFee(gas, bgp, calcCoef(i))}} VTHO</q-item-section>
+                                </q-item>
+                            </q-list>
+                        </q-card-section>
+                    </q-card>
+                </q-popup-proxy>
             </q-btn>
-            <q-dialog
-                ref="dialog"
-                full-width
-            >
-                <q-card>
-                    <q-toolbar>
-                        <q-toolbar-title>
-                            Adjust Priority
-                        </q-toolbar-title>
-                    </q-toolbar>
-                    <q-card-section>
-                        <q-list>
-                            <q-item
-                                clickable
-                                @click="onChange(i)"
-                                v-for="(l, i) in levelList"
-                                :key="i"
-                                :class="{'text-primary': (coef === calcCoef(i))}"
-                            >
-                                <q-item-section avatar>
-                                    <q-icon
-                                        :color=" (coef === calcCoef(i)) ? 'primary' : ''"
-                                        :name="l.icon"
-                                    />
-                                </q-item-section>
-                                <q-item-section>
-                                    {{l.label}}
-                                </q-item-section>
-                                <q-item-section side>{{getFee(gas, bgp, calcCoef(i))}} VTHO</q-item-section>
-                            </q-item>
-                        </q-list>
-                    </q-card-section>
-                </q-card>
-            </q-dialog>
         </q-item-section>
-
     </q-item>
 </template>
 <script lang="ts">
-import { QDialog } from 'quasar'
 import BigNumber from 'bignumber.js'
 import Vue from 'vue'
 type Level = {
@@ -89,6 +86,7 @@ export default Vue.extend({
     },
     data() {
         return {
+            show: false,
             levelList: [
                 { icon: 'directions_walk', label: 'Regular' },
                 { icon: 'directions_bike', label: 'Low' },
@@ -109,13 +107,9 @@ export default Vue.extend({
         calcCoef(level: number) {
             return Math.round(255 * (level / this.maxLel))
         },
-        // method is REQUIRED by $q.dialog
-        show() { (this.$refs.dialog as QDialog).show() },
-        // method is REQUIRED by $q.dialog
-        hide() { (this.$refs.dialog as QDialog).hide() },
         onChange(level: number) {
             this.$emit('change', this.calcCoef(level))
-            this.hide()
+            this.show = false
         },
         getFee(gas: number, bgp: string, coef: number) {
             if (gas > 0) {
