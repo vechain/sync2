@@ -5,7 +5,7 @@ import { continuous } from 'core/connex/continuous'
 <connex-continuous
   :connex="connex"
   :query="()=> connex.thor.block().get()"
-  v-slot="{data, error}">
+  v-slot="{data, lastData, error}">
 
   <!-- here `data` and `error` are ready to be accessed -->
 </connex-continuous>
@@ -20,6 +20,7 @@ export default Vue.extend({
     data: () => {
         return {
             data: null as unknown,
+            lastData: null as unknown,
             error: null as Error | null,
             session: null as ReturnType<typeof continuous> | null
         }
@@ -31,6 +32,7 @@ export default Vue.extend({
         },
         start() {
             this.stop()
+            this.lastData = this.data
             this.data = null
             this.error = null
 
@@ -38,7 +40,10 @@ export default Vue.extend({
                 return
             }
             this.session = continuous(this.connex, this.query)
-                .next(data => { this.data = data })
+                .next(data => {
+                    this.lastData = this.data
+                    this.data = data
+                })
                 .error(err => { this.error = err })
         }
     },
@@ -56,6 +61,7 @@ export default Vue.extend({
         const defaultSlot = this.$scopedSlots.default
         const children = (defaultSlot ? defaultSlot({
             data: this.data,
+            lastData: this.lastData,
             error: this.error
         }) : []) || []
 
