@@ -8,6 +8,10 @@ const node = {gid:'0x...', url:'https://...'}
 <connex-object :node="node" v-slot="{connex, error}">
   <!-- here `connex` and `error` are ready to be accessed -->
 </connex-object>
+
+or
+
+<connex-object :node="node" @ready="connex=$event" @error="error=$event" />
 */
 
 export default Vue.extend({
@@ -46,11 +50,13 @@ export default Vue.extend({
                     } else {
                         this.connexRef = connexRef
                         this.error = null
+                        this.$emit('ready', connexRef.connex)
                     }
                     break
                 } catch (err) {
                     if (!stale()) {
                         this.error = err
+                        this.$emit('error', err)
                         // take a delay and retry
                         await new Promise(resolve => setTimeout(resolve, 10 * 1000))
                     }
