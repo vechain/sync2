@@ -1,30 +1,29 @@
 import Vue, { VNode } from 'vue'
 
 /*
-<async :fn="someAsyncMethod or Promise object" v-slot="{data, error, pending, reload}" @resolve="..." @reject="...">
+<async :fn="someAsyncMethod or Promise object" v-slot="{data, lastData, error, pending, reload}" @data="..." @error="...">
     <!-- go go go -->
 </async>
 */
 export default Vue.extend({
     props: {
         tag: String,
-        fn: { default: null as unknown as () => ((() => Promise<unknown>) | Promise<unknown>) },
-        sticky: Boolean // set true to make slot data sticky when fn changed
+        fn: { default: null as unknown as () => ((() => Promise<unknown>) | Promise<unknown>) }
     },
     data: () => {
         return {
             seq: 0,
             data: null as unknown,
+            lastData: null as unknown,
             error: null as Error | null,
             pending: false
         }
     },
     methods: {
         async reload() {
-            if (!this.sticky) {
-                this.data = null
-                this.error = null
-            }
+            this.lastData = this.data
+            this.data = null
+            this.error = null
 
             this.pending = false
             const seq = ++this.seq
@@ -41,12 +40,12 @@ export default Vue.extend({
                     }
                     if (seq === this.seq) {
                         this.data = data
-                        this.$emit('resolve', data)
+                        this.$emit('data', data)
                     }
                 } catch (err) {
                     if (seq === this.seq) {
                         this.error = err
-                        this.$emit('reject', err)
+                        this.$emit('error', err)
                     }
                 } finally {
                     if (seq === this.seq) {
@@ -68,6 +67,7 @@ export default Vue.extend({
         const defaultSlot = this.$scopedSlots.default
         const children = (defaultSlot ? defaultSlot({
             data: this.data,
+            lastData: this.lastData,
             error: this.error,
             pending: this.pending,
             reload: () => this.reload()
