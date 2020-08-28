@@ -6,6 +6,17 @@
     >
         <q-item-section avatar>
             <q-avatar
+                v-if="icon"
+                square
+                :size="dense ? 'md' : ''"
+            >
+                <q-img
+                    v-if="icon"
+                    :src="icon"
+                />
+            </q-avatar>
+            <q-avatar
+                v-else
                 :size="dense ? 'md' : ''"
                 color="primary"
                 text-color="white"
@@ -34,11 +45,21 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
+import { urls } from 'src/consts'
 export default Vue.extend({
     props: {
-        token: Object as () => { symbol: string, name: string, decimals: number },
+        token: Object as () => M.TokenSpec,
         balance: String as () => '',
         dense: Boolean
+    },
+    computed: {
+        icon(): string {
+            if (this.token && this.token.icon) {
+                return `${urls.tokenRegistry}assets/${this.token.icon}`
+            } else {
+                return ''
+            }
+        }
     }
 })
 </script>

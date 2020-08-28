@@ -57,8 +57,8 @@ const VTHO: M.TokenSpec = {
     name: 'VeChain Thor',
     address: '0x0000000000000000000000000000456e65726779',
     decimals: 18,
-    desc: '',
-    icon: '',
+    desc: 'Represents the underlying cost of using VeChainThor',
+    icon: '3ac553ea77911248ab4519bca020e0aa2891a6c6.png',
     totalSupply: ''
 }
 const VET: M.TokenSpec = {

@@ -5,6 +5,16 @@
     >
         <q-item-section avatar>
             <q-avatar
+                v-if="icon"
+                square
+            >
+                <q-img
+                    v-if="icon"
+                    :src="icon"
+                />
+            </q-avatar>
+            <q-avatar
+                v-else
                 color="primary"
                 text-color="white"
             >
@@ -23,9 +33,15 @@
         <q-item-section side>
             <q-icon name="unfold_more" />
         </q-item-section>
-        <q-popup-proxy v-model="showTokenList" full-width>
+        <q-popup-proxy
+            v-model="showTokenList"
+            full-width
+        >
             <q-card>
-                <q-card-section style="max-height: 70vh" class="scroll">
+                <q-card-section
+                    style="max-height: 70vh"
+                    class="scroll"
+                >
                     <BalanceList
                         @select="onSelect"
                         :tokens="tokens"
@@ -40,7 +56,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import { tokenSpecs } from '../consts'
+import { tokenSpecs, urls } from '../consts'
 export default Vue.extend({
     model: {
         prop: 'symbol',
@@ -68,6 +84,13 @@ export default Vue.extend({
                 temp = this.tokens.find(item => item.symbol === this.symbol)
             }
             return temp
+        },
+        icon(): string {
+            if (this.token && this.token.icon) {
+                return `${urls.tokenRegistry}assets/${this.token.icon}`
+            } else {
+                return ''
+            }
         }
     },
     methods: {
