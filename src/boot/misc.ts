@@ -42,24 +42,20 @@ declare module 'vue/types/vue' {
          * sign tx
          * @param gid desired genesis id of user wallet
          * @param req request content
-         * @param after post response process
          */
         $signTx(
             gid: string,
-            req: M.TxRequest,
-            after?: (resp: M.TxResponse) => Promise<void>
+            req: M.TxRequest
         ): Promise<M.TxResponse>
 
         /**
          * sign cert
          * @param gid desired genesis id of user wallet
          * @param req request content
-         * @param after post response process
          */
         $signCert(
             gid: string,
-            req: M.CertRequest,
-            after?: (resp: M.CertResponse) => Promise<void>
+            req: M.CertRequest
         ): Promise<M.CertResponse>
     }
 }
@@ -75,7 +71,7 @@ const replaceDialog = (() => {
             }
             const cur = vm.$q.dialog(options)
             cur.onOk(resolve)
-                .onCancel(() => reject(new Error('cancelled')))
+                .onCancel((e: Error) => reject(e || new Error('cancelled')))
                 .onDismiss(() => {
                     if (prev === cur) {
                         prev = undefined
@@ -175,13 +171,12 @@ export default boot(async ({ Vue }) => {
         $signTx: {
             get(): Vue['$signTx'] {
                 const vm = this as Vue
-                return (gid, req, after) => {
+                return (gid, req) => {
                     return replaceDialog(vm, {
                         component: TxSigningDialog,
                         parent: vm,
                         gid,
-                        req,
-                        after
+                        req
                     })
                 }
             }
@@ -189,13 +184,12 @@ export default boot(async ({ Vue }) => {
         $signCert: {
             get(): Vue['$signCert'] {
                 const vm = this as Vue
-                return (gid, req, after) => {
+                return (gid, req) => {
                     return replaceDialog(vm, {
                         component: CertSigningDialog,
                         parent: vm,
                         gid,
-                        req,
-                        after
+                        req
                     })
                 }
             }

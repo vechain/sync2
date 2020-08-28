@@ -45,7 +45,8 @@ declare namespace M {
     type TxResponse = Connex.Vendor.TxResponse
 
     interface CertRequest {
-        message: Connex.Vendor.CertMessage
+        message: Connex.Vendor.CertMessage,
+        domain: string,
         options?: {
             signer?: string
             link?: string
