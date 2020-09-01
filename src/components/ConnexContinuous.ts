@@ -5,7 +5,7 @@ import { continuous } from 'core/connex/continuous'
 <connex-continuous
   :connex="connex"
   :query="()=> connex.thor.block().get()"
-  v-slot="{data, lastData, error}">
+  v-slot="{data, lastData, error}" @data="..." @error="...">
 
   <!-- here `data` and `error` are ready to be accessed -->
 </connex-continuous>
@@ -43,8 +43,12 @@ export default Vue.extend({
                 .next(data => {
                     this.lastData = this.data
                     this.data = data
+                    this.$emit('data', data)
                 })
-                .error(err => { this.error = err })
+                .error(err => {
+                    this.error = err
+                    this.$emit('error', err)
+                })
         }
     },
     watch: {
