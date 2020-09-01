@@ -24,10 +24,10 @@
                         @click="isShort = !isShort"
                     >
                         <span v-if="isShort">
-                            {{isToken ? decoded.to : msg.to | checksum | abbrev(8, 6)}}
+                            {{toAddr | checksum | abbrev(8, 6)}}
                         </span>
                         <span v-else>
-                            {{isToken ? decoded.to : msg.to | checksum}}
+                            {{toAddr | checksum}}
                         </span>
                         <q-icon
                             class="text-grey"
@@ -51,55 +51,31 @@
                 <span class="text-subtitle2 text-grey">Amount</span>
                 <div>
                     <template v-if="isToken">
-                        <q-item
+                        <TokenBalanceItem
+                            class="q-px-xs"
                             v-if="!isZeroVet"
+                            :balance="vet"
+                            :token="tokenSpecs.VET"
+                        />
+                        <TokenBalanceItem
                             class="q-px-xs"
-                        >
-                            <q-item-section avatar>
-                                <q-avatar
-                                    color="primary"
-                                    text-color="black"
-                                > V </q-avatar>
-                            </q-item-section>
-                            <q-item-section>
-                                <q-item-label>
-                                    <span class="text-h4">
-                                        {{vet | balance(18)}}
-                                    </span>
-                                </q-item-label>
-                            </q-item-section>
-                        </q-item>
-                        <q-item
                             v-if="decoded"
-                            class="q-px-xs"
-                        >
-                            <q-item-section avatar>
-                                <q-avatar
-                                    color="primary"
-                                    text-color="black"
-                                >
-                                    {{token.symbol.slice(0,1)}}
-                                </q-avatar>
-                            </q-item-section>
-                            <q-item-section>
-                                <q-item-label>
-                                    <span class="text-h4">
-                                        {{ decoded.value | balance(token.decimals) }}
-                                    </span>
-                                </q-item-label>
-                            </q-item-section>
-                        </q-item>
+                            :balance="decoded.value"
+                            :token="token"
+                        />
                     </template>
                     <template v-else>
-                        <span class="text-h4">VET {{vet | balance(18)}}</span>
+                        <TokenBalanceItem
+                            class="q-px-xs"
+                            :balance="vet"
+                            :token="tokenSpecs.VET"
+                        />
                     </template>
                 </div>
                 <div class="q-my-xs text-body2 text-grey-7">{{msg.comment}}</div>
             </div>
             <!-- data infos -->
-            <div
-                v-if="msg.data"
-            >
+            <div v-if="msg.data">
                 <q-expansion-item
                     v-model="expanded"
                     :label=" expanded ? 'Hide Details' : 'Show Details'"
@@ -122,7 +98,7 @@
 import Vue from 'vue'
 import { BigNumber } from 'bignumber.js'
 import { abi } from 'thor-devkit/dist/abi'
-import { abis } from '../consts'
+import { abis, tokenSpecs } from '../consts'
 
 export default Vue.extend({
     props: {
@@ -132,7 +108,8 @@ export default Vue.extend({
     data() {
         return {
             expanded: false,
-            isShort: true
+            isShort: true,
+            tokenSpecs
         }
     },
     computed: {
