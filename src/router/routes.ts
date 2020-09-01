@@ -7,6 +7,7 @@ import Backup from 'pages/Backup.vue'
 import Account from 'pages/Account.vue'
 import Sign from 'pages/Sign.vue'
 import Activities from 'pages/Activities.vue'
+import ResetPin from 'pages/ResetPin.vue'
 
 const routes: RouteConfig[] = [
     {
@@ -48,6 +49,13 @@ const routes: RouteConfig[] = [
             name: 'activities',
             component: Activities,
             meta: { title: 'Activities' }
+        }, {
+            path: 'reset-pin-code',
+            name: 'reset-pin-code',
+            component: ResetPin,
+            meta: {
+                title: 'Change Master Code'
+            }
         }]
     }
 ]

@@ -1,8 +1,14 @@
 <template>
-    <div v-scrollDivider class="fit overflow-auto">
+    <div
+        v-scrollDivider
+        class="fit overflow-auto"
+    >
         <h5 class="q-ma-none q-pa-md">General</h5>
         <q-list>
-            <q-item>
+            <q-item
+                clickable
+                :to="{name: 'reset-pin-code'}"
+            >
                 <q-item-section avatar>
                     <q-avatar
                         color="primary"
