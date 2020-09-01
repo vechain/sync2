@@ -15,6 +15,12 @@ export interface Storage {
      * @param scope in which all operations will be executed exclusively
      */
     transaction(scope: () => Promise<void>): Promise<void>
+
+    /**
+     * wrap non-db async operation in transaction scope. it's important for index db.
+     * @param p
+     */
+    waitFor<T>(p: Promise<T>): Promise<T>
 }
 
 export namespace Storage {

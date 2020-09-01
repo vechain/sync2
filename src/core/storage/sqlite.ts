@@ -148,6 +148,7 @@ export async function wrap(runner: SQLRunner): Promise<Storage> {
                 await runner.exec('ROLLBACK')
                 throw err
             }
-        }
+        },
+        waitFor: p => p
     }
 }

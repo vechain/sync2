@@ -99,6 +99,7 @@ export async function open(): Promise<Storage> {
             return db.transaction('rw', db.tables, () => {
                 return scope()
             })
-        }
+        },
+        waitFor: p => Dexie.waitFor(p)
     }
 }
