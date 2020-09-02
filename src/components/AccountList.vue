@@ -10,6 +10,7 @@
                 v-for="address in wallet.meta.addresses"
                 :key="address"
                 expand-icon-toggle
+                v-scrollIntoView="current === address"
                 @before-show="toggleContent(address)"
             >
                 <template v-slot:header>
@@ -51,6 +52,15 @@ export default Vue.extend({
     methods: {
         toggleContent(address: string) {
             this.$emit('tabChange', address)
+        }
+    },
+    directives: {
+        scrollIntoView: {
+            inserted(el, binding) {
+                if (binding.value === true) {
+                    el.scrollIntoView()
+                }
+            }
         }
     }
 })
