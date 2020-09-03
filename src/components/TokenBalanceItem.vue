@@ -8,7 +8,7 @@
             <q-avatar
                 v-if="icon"
                 square
-                :size="dense ? 'md' : ''"
+                :size="dense ? 'sm' : 'md'"
             >
                 <q-img
                     v-if="icon"
@@ -17,7 +17,7 @@
             </q-avatar>
             <q-avatar
                 v-else
-                :size="dense ? 'md' : ''"
+                :size="dense ? 'sm' : 'md'"
                 color="primary"
                 text-color="white"
             >
