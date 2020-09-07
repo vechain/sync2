@@ -27,6 +27,17 @@
                     class="overflow-auto"
                     style="height: calc(100% - 202px)"
                 >
+                    <q-banner
+                        rounded
+                        v-if="estGasError"
+                        class="bg-red text-white q-mb-sm"
+                    >{{estGasError.message}}</q-banner>
+                    <q-banner
+                        rounded
+                        v-if="vmError"
+                        class="bg-orange text-white q-mb-sm"
+                    >{{vmError.message}}</q-banner>
+
                     <ClauseCard
                         v-for="(msg, i) in req.message"
                         :key="i"
@@ -45,8 +56,11 @@
                         v-slot="{connex}"
                         :node="node"
                     >
-                        <Async
-                            :fn="getEstGas(connex)"
+                        <ConnexContinuous
+                            :connex="connex"
+                            :query="estGas(connex)"
+                            @data="estimateHandler"
+                            @error="(e) => { estGasError = e }"
                             v-slot="{data: estGas}"
                         >
                             <q-list class="full-width">
@@ -79,7 +93,7 @@
                                     />
                                 </q-item>
                             </q-list>
-                        </Async>
+                        </ConnexContinuous>
                     </ConnexObject>
                 </q-card-actions>
             </div>
@@ -97,8 +111,7 @@ import { Vault } from 'core/vault'
 export default Vue.extend({
     props: {
         req: Object as () => M.TxRequest,
-        gid: String,
-        after: Function as unknown as () => (((resp: M.TxResponse) => Promise<void>) | undefined)
+        gid: String
     },
     data() {
         return {
@@ -106,7 +119,9 @@ export default Vue.extend({
             isSelectable: false,
             tokenSpecs,
             signed: false,
-            gasPriceCoef: 0
+            gasPriceCoef: 0,
+            estGasError: null as Error | null,
+            vmError: null as Error | null
         }
     },
     computed: {
@@ -145,11 +160,21 @@ export default Vue.extend({
         this.initData()
     },
     methods: {
-        async getEstGas(connex: Connex): Promise<EstimateGasResult | null> {
-            if (this.signer && connex) {
-                return await estimateGas(connex, this.clauseList, this.suggettedGas, this.signer)
+        estimateHandler(data: EstimateGasResult) {
+            this.estGasError = null
+            if (data.reverted) {
+                this.vmError = new Error(data.vmError)
             } else {
-                return null
+                this.vmError = null
+            }
+        },
+        estGas(connex: Connex) {
+            return async () => {
+                if (this.signer && connex) {
+                    return await estimateGas(connex, this.clauseList, this.suggettedGas, this.signer)
+                } else {
+                    return null
+                }
             }
         },
         // method is REQUIRED by $q.dialog
