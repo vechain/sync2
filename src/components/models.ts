@@ -54,4 +54,12 @@ declare namespace M {
     }
 
     type CertResponse = Connex.Vendor.CertResponse
+
+    type TransferLog = {
+        meta: Connex.Thor.LogMeta,
+        token: TokenSpec,
+        amount: string,
+        sender: string,
+        recipient: string
+    }
 }

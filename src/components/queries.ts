@@ -1,5 +1,5 @@
-import { abis } from '../consts'
-
+import { abis, tokenSpecs } from '../consts'
+import { abi } from 'thor-devkit/dist/abi'
 /**
  * fetch vip180 token balance for given address
  * @param connex the connex object
@@ -34,4 +34,65 @@ export async function getParams(connex: Connex, key: string): Promise<string> {
         paramsCache[k] = result.data
         return result.data
     }
+}
+
+export function createEventCriteria(connex: Connex, tokens: string[], address: string): Connex.Thor.Filter.Criteria<'event'>[] {
+    const from = tokens.map(item => {
+        return connex.thor.account(item).event(abis.transferEvent).asCriteria({
+            _from: address
+        })
+    })
+    const to = tokens.map(item => {
+        return connex.thor.account(item).event(abis.transferEvent).asCriteria({
+            _to: address
+        })
+    })
+    return [...from, ...to]
+}
+
+export async function vetTransfers(connex: Connex, address: string, to: number, offset: number, size: number): Promise<M.TransferLog[]> {
+    const transferCriteria = [{ sender: address }, { recipient: address }]
+    const filter = connex.thor.filter('transfer').criteria(transferCriteria)
+    const transfers = await filter.order('desc').range({
+        unit: 'block',
+        from: 0,
+        to
+    }).apply(offset, size)
+
+    return transfers.map(item => {
+        return {
+            token: tokenSpecs.VET,
+            meta: item.meta!,
+            amount: item.amount,
+            sender: item.sender,
+            recipient: item.recipient
+        }
+    })
+}
+
+export async function tokenTransfers(connex: Connex, tokenList: M.TokenSpec[], address: string, to: number, offset: number, size: number): Promise<M.TransferLog[]> {
+    const tokenMap: { [k: string]: M.TokenSpec } = {}
+    tokenList.forEach(item => {
+        tokenMap[item.address] = item
+    })
+    const tokenCriteria = createEventCriteria(connex, tokenList.map(item => item.address), address)
+    const filter = connex.thor.filter('event').criteria(tokenCriteria)
+
+    const event = await filter.order('desc').range({
+        unit: 'block',
+        from: 0,
+        to
+    }).apply(offset, size)
+
+    const ev = new abi.Event(abis.transferEvent)
+    return event.map(item => {
+        const decode = ev.decode(item.data, item.topics)
+        return {
+            token: tokenMap[item.address],
+            meta: item.meta!,
+            sender: decode._from,
+            amount: decode._value,
+            recipient: decode._to
+        }
+    })
 }
