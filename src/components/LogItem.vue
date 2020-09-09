@@ -4,7 +4,10 @@
         v-on="$listeners"
         v-bind="$attrs"
     >
-        <q-item-section class="q-pr-none" avatar>
+        <q-item-section
+            class="q-pr-none"
+            avatar
+        >
             <q-avatar
                 v-if="icon"
                 square
@@ -27,9 +30,11 @@
         <q-item-section>
             <q-item-label
                 lines="1"
-                :class="{'text-caption': dense}"
-                class="monospace"
-            > {{isReceive ? 'From: ' : 'To: '}} {{ (isReceive ? log.sender : log.recipient) | checksum | abbrev(8,6)}}</q-item-label>
+                class="text-body2 monospace"
+            >
+                <q-icon :class="isReceive ? 'text-green' : 'text-red'" :name="isReceive ? 'south_east' : 'north_west'" />
+                {{ (isReceive ? log.sender : log.recipient) | checksum | abbrev(8,6)}}
+            </q-item-label>
             <q-item-label
                 caption
                 lines="2"
