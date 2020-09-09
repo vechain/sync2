@@ -1,6 +1,7 @@
 import { boot } from 'quasar/wrappers'
 import { toChecksumAddress } from 'thor-devkit/dist/cry/address'
 import { BigNumber } from 'bignumber.js'
+import { format } from 'timeago.js'
 
 // define filters
 const filters = {
@@ -40,6 +41,9 @@ const filters = {
         const x = new BigNumber(`1e+${decimals}`)
         const temp = new BigNumber(val)
         return '0x' + new BigNumber(temp.multipliedBy(x).toFixed(0, BigNumber.ROUND_DOWN)).toString(16)
+    },
+    ago: (timestamp: number) => {
+        return format(timestamp * 1000)
     }
 }
 
