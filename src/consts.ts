@@ -42,6 +42,28 @@ const vip180balanceOf: abi.Function.Definition = {
     stateMutability: 'view',
     type: 'function'
 }
+const transferEvent: abi.Event.Definition = {
+    anonymous: false,
+    inputs: [
+        {
+            indexed: true,
+            name: '_from',
+            type: 'address'
+        },
+        {
+            indexed: true,
+            name: '_to',
+            type: 'address'
+        },
+        {
+            indexed: false,
+            name: '_value',
+            type: 'uint256'
+        }
+    ],
+    name: 'Transfer',
+    type: 'event'
+}
 const paramsGet: abi.Function.Definition = {
     constant: true,
     inputs: [{ name: '_key', type: 'bytes32' }],
@@ -74,7 +96,8 @@ const VET: M.TokenSpec = {
 export const abis = {
     transfer: transferABI,
     balanceOf: vip180balanceOf,
-    paramsGet
+    paramsGet,
+    transferEvent
 }
 
 export const tokenSpecs = {

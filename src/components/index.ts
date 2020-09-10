@@ -21,6 +21,8 @@ import BalanceList from './BalanceList.vue'
 import Priority from './Priority.vue'
 import Delay from './Delay'
 import TokenSelector from './TokenSelector.vue'
+import LogItem from './LogItem.vue'
+import Logs from './Logs.vue'
 
 const components: { [name: string]: Vue.VueConstructor } = {
     StackedRouterView,
@@ -45,7 +47,9 @@ const components: { [name: string]: Vue.VueConstructor } = {
     Priority,
     Delay,
     BalanceList,
-    TokenSelector
+    TokenSelector,
+    LogItem,
+    Logs
 }
 
 export default components
