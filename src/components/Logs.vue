@@ -14,6 +14,12 @@
                 :log="item"
             />
         </div>
+        <div
+            v-if="noMore"
+            class="text-center q-my-md text-grey"
+        >
+            No More Transfers.
+        </div>
         <template v-slot:loading>
             <div class="text-center q-my-sm">
                 <q-spinner-dots
@@ -42,17 +48,19 @@ export default Vue.extend({
         return {
             pageNum: 1,
             logs: [] as M.TransferLog[],
-            offset: 0
+            offset: 0,
+            noMore: false
         }
     },
     methods: {
         vetTransfers,
         tokenTransfers,
-        async onLoad(index: number, done: () => void) {
+        async onLoad(index: number, done: (stop: boolean) => void) {
             const logs = await this.query((this.pageNum - 1) * this.pageSize)
             this.pageNum++
             this.logs = [...this.logs, ...logs]
-            done()
+            this.noMore = logs.length < 10
+            done(logs.length < 10)
         },
         async query(offset: number) {
             const to = this.connex.thor.status.head.number
