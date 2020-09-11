@@ -1,8 +1,5 @@
 <template>
-    <div
-        class="fit overflow-auto q-pt-lg"
-        v-scrollDivider
-    >
+    <div class="fit column no-wrap q-pt-lg">
         <div class="q-px-xl">
             <AddressAvatar
                 class="q-mx-auto"
@@ -27,7 +24,6 @@
         <q-tabs
             class="q-mt-lg"
             dense
-            align="left"
             v-model="tab"
         >
             <q-tab
@@ -36,19 +32,50 @@
             />
             <q-tab
                 name="transfers"
-                label="Transfers"
-            />
+                @click="typeChange"
+            >
+                <div>
+                    <span>{{transferTab}}</span>
+                    <q-icon :name="showType ? 'arrow_drop_up' : 'arrow_drop_down'" />
+                </div>
+            </q-tab>
         </q-tabs>
         <ConnexObject
             v-slot="{connex}"
             :node="node"
         >
-            <q-tab-panels v-model="tab">
-                <q-tab-panel name="assets">
-                    <BalanceList :connex="connex" :address="address" :tokens="tokenSpecs"/>
+            <!-- v-calcHeight -->
+            <q-tab-panels
+                keep-alive
+                v-model="tab"
+            >
+                <q-tab-panel
+                    name="assets"
+                    class="q-px-sm"
+                >
+                    <BalanceList
+                        :connex="connex"
+                        :address="address"
+                        :tokens="tokenList"
+                    />
                 </q-tab-panel>
-                <q-tab-panel name="transfers">
-                    Transfers
+                <q-tab-panel
+                    name="transfers"
+                    class="q-px-sm column"
+                >
+                    <Logs
+                        v-show="transfer === 'Tokens'"
+                        :connex="connex"
+                        :address="address"
+                        :tokens="[tokenSpecs.VTHO, ...tokenList]"
+                        :pageSize="10"
+                    />
+                    <Logs
+                        v-show="transfer === 'VET'"
+                        :connex="connex"
+                        :address="address"
+                        :pageSize="10"
+                    />
                 </q-tab-panel>
             </q-tab-panels>
         </ConnexObject>
@@ -61,7 +88,6 @@
             transition-hide="slide-down"
         >
             <q-card>
-                <!-- toolbar -->
                 <q-toolbar>
                     <q-btn
                         flat
@@ -104,12 +130,16 @@
 import Vue from 'vue'
 import { copyToClipboard, QDialog } from 'quasar'
 import { tokenBalanceOf } from 'components/queries'
+import { tokenSpecs } from '../consts'
 import SendDialog from './SendDialog.vue'
 
 export default Vue.extend({
     data() {
         return {
-            tab: 'assets'
+            tab: 'assets',
+            transfer: 'VET',
+            tokenSpecs,
+            showType: false
         }
     },
     props: {
@@ -117,12 +147,15 @@ export default Vue.extend({
         i: String
     },
     computed: {
+        transferTab(): string {
+            return `${this.transfer} Transfers`
+        },
         wallet(): M.Wallet | undefined {
             return this.$state.wallet.list.find(i => {
                 return i.id === parseInt(this.wId, 10)
             })
         },
-        tokenSpecs(): M.TokenSpec[] {
+        tokenList(): M.TokenSpec[] {
             return this.$state.config.token.specs(this.wallet!.gid, true)
         },
         node(): M.Node {
@@ -133,6 +166,28 @@ export default Vue.extend({
         }
     },
     methods: {
+        typeChange() {
+            if (this.tab === 'assets') {
+                return
+            }
+            this.showType = true
+            this.$actionSheets([
+                {
+                    label: 'VET',
+                    onClick: () => {
+                        this.transfer = 'VET'
+                    }
+                },
+                {
+                    label: 'Tokens',
+                    onClick: () => {
+                        this.transfer = 'Tokens'
+                    }
+                }
+            ]).then(() => {
+                this.showType = false
+            })
+        },
         onSend() {
             this.$q.dialog({
                 component: SendDialog,
