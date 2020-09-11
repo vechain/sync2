@@ -36,7 +36,7 @@ declare module 'vue/types/vue' {
         $loading<T>(task: () => Promise<T>): Promise<T>
 
         /** display an action sheets */
-        $actionSheets(actions: Array<{ label: string, classes?: string | string[], onClick?: Function }>): void
+        $actionSheets(actions: Array<{ label: string, classes?: string | string[], onClick?: Function }>): Promise<boolean>
 
         /**
          * sign tx
@@ -160,10 +160,18 @@ export default boot(async ({ Vue }) => {
             get(): Vue['$actionSheets'] {
                 const vm = this as Vue
                 return actions => {
-                    vm.$q.dialog({
-                        component: ActionSheets,
-                        parent: vm,
-                        actions
+                    return new Promise((resolve) => {
+                        vm.$q.dialog({
+                            component: ActionSheets,
+                            parent: vm,
+                            actions
+                        }).onCancel(() => {
+                            resolve(false)
+                        }).onDismiss(() => {
+                            resolve(false)
+                        }).onOk(() => {
+                            resolve(true)
+                        })
                     })
                 }
             }
