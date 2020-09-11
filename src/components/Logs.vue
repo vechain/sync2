@@ -59,8 +59,8 @@ export default Vue.extend({
             const logs = await this.query((this.pageNum - 1) * this.pageSize)
             this.pageNum++
             this.logs = [...this.logs, ...logs]
-            this.noMore = logs.length < 10
-            done(logs.length < 10)
+            this.noMore = logs.length < this.pageSize
+            done(logs.length < this.pageSize)
         },
         async query(offset: number) {
             const to = this.connex.thor.status.head.number
