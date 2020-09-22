@@ -23,6 +23,7 @@ import Delay from './Delay'
 import TokenSelector from './TokenSelector.vue'
 import LogItem from './LogItem.vue'
 import Logs from './Logs.vue'
+import ReceiveDialog from './ReceiveDialog.vue'
 
 const components: { [name: string]: Vue.VueConstructor } = {
     StackedRouterView,
@@ -49,7 +50,8 @@ const components: { [name: string]: Vue.VueConstructor } = {
     BalanceList,
     TokenSelector,
     LogItem,
-    Logs
+    Logs,
+    ReceiveDialog
 }
 
 export default components
