@@ -42,6 +42,17 @@ const filters = {
         const temp = new BigNumber(val)
         return '0x' + new BigNumber(temp.multipliedBy(x).toFixed(0, BigNumber.ROUND_DOWN)).toString(16)
     },
+    dateTime: (timestamp: number) => {
+        return new Date(timestamp).toLocaleString(undefined, {
+            year: '2-digit',
+            day: '2-digit',
+            month: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        })
+    },
     ago: (timestamp: number) => {
         return format(timestamp * 1000)
     }
