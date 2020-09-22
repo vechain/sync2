@@ -4,35 +4,21 @@
         v-on="$listeners"
         v-bind="$attrs"
     >
-        <q-item-section
-            class="q-pr-none"
-            avatar
-        >
-            <q-avatar
-                v-if="icon"
+        <q-item-section avatar>
+            <q-chip
                 square
-                :size="dense ? 'sm' : 'md'"
+                dense
+                :class="isReceive ? 'bg-green q-px-md' : 'bg-red q-px-sm'"
+                class="text-white truncate-chip-labels"
             >
-                <q-img
-                    v-if="icon"
-                    :src="icon"
-                />
-            </q-avatar>
-            <q-avatar
-                v-else
-                :size="dense ? 'sm' : 'md'"
-                color="primary"
-                text-color="white"
-            >
-                {{token.symbol.slice(0,1)}}
-            </q-avatar>
+                {{isReceive ? 'IN' : 'OUT'}}
+            </q-chip>
         </q-item-section>
         <q-item-section>
             <q-item-label
                 lines="1"
                 class="text-body2 monospace"
             >
-                <q-icon :class="isReceive ? 'text-green' : 'text-red'" :name="isReceive ? 'south_east' : 'north_west'" />
                 {{ (isReceive ? log.sender : log.recipient) | checksum | abbrev(8,6)}}
             </q-item-label>
             <q-item-label
@@ -40,7 +26,7 @@
                 lines="2"
                 v-if="!dense"
             >
-                {{log.meta.blockTimestamp | ago}}
+                {{log.meta.blockTimestamp * 1000 | dateTime}}
             </q-item-label>
         </q-item-section>
         <q-item-section side>
@@ -53,7 +39,6 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import { urls } from 'src/consts'
 export default Vue.extend({
     props: {
         log: Object as () => M.TransferLog,
@@ -69,13 +54,6 @@ export default Vue.extend({
         },
         isReceive(): boolean {
             return this.address === this.log.recipient
-        },
-        icon(): string {
-            if (this.log && this.log.token.icon) {
-                return `${urls.tokenRegistry}assets/${this.log.token.icon}`
-            } else {
-                return ''
-            }
         }
     }
 })
