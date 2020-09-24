@@ -1,4 +1,4 @@
-import { RouteConfig } from 'vue-router'
+import { RouteConfig, Route, NavigationGuardNext } from 'vue-router'
 import Main from 'layouts/Main.vue'
 import Index from 'pages/Index.vue'
 import Settings from 'pages/Settings.vue'
@@ -8,6 +8,7 @@ import Account from 'pages/Account.vue'
 import Sign from 'pages/Sign.vue'
 import Activities from 'pages/Activities.vue'
 import ResetPin from 'pages/ResetPin.vue'
+import AccountTransferLogs from 'pages/AccountTransferLogs.vue'
 
 const routes: RouteConfig[] = [
     {
@@ -55,6 +56,17 @@ const routes: RouteConfig[] = [
             component: ResetPin,
             meta: {
                 title: 'Change Master Code'
+            }
+        }, {
+            path: 'account-transfer-logs',
+            name: 'account-transfer-logs',
+            component: AccountTransferLogs,
+            beforeEnter(to: Route, from: Route, next: NavigationGuardNext<Vue>) {
+                to.meta.title = to.query.symbol
+                next()
+            },
+            meta: {
+                title: ''
             }
         }]
     }
