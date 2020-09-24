@@ -18,7 +18,8 @@
             v-if="noMore"
             class="text-center q-my-md text-grey"
         >
-            No More Transfers.
+            <span v-if="logs.length === 0"> No Transfer Found. </span>
+            <span v-else> No More Transfers. </span>
         </div>
         <template v-slot:loading>
             <div class="text-center q-my-sm">
@@ -56,11 +57,17 @@ export default Vue.extend({
         vetTransfers,
         tokenTransfers,
         async onLoad(index: number, done: (stop: boolean) => void) {
-            const logs = await this.query((this.pageNum - 1) * this.pageSize)
-            this.pageNum++
-            this.logs = [...this.logs, ...logs]
-            this.noMore = logs.length < this.pageSize
-            done(logs.length < this.pageSize)
+            try {
+                const logs = await this.query((this.pageNum - 1) * this.pageSize)
+                this.pageNum++
+                this.logs = [...this.logs, ...logs]
+                this.noMore = logs.length < this.pageSize
+                done(logs.length < this.pageSize)
+            } catch (error) {
+                // TODO error
+                console.log(error)
+                done(true)
+            }
         },
         async query(offset: number) {
             const to = this.connex.thor.status.head.number
