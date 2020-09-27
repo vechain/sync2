@@ -2,7 +2,7 @@
     <q-list>
         <template v-for="wallet in wallets">
             <q-item-label
-                class="text-grey"
+                class="text-grey ellipsis"
                 :key="wallet.id"
             >{{wallet.meta.name}}</q-item-label>
             <q-expansion-item
