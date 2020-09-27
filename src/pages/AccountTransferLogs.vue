@@ -1,9 +1,12 @@
 <template>
     <div class="fit column no-wrap">
         <div class="q-mx-lg">
-            <AddressInfo :address="address"> {{wallet.meta.name + ' #' + addressIndex}} </AddressInfo>
+            <AddressInfo :address="address"> {{wallet.meta.name + ' #' + (addressIndex + 1)}} </AddressInfo>
         </div>
-        <div class="scroll" v-scrollDivider>
+        <div
+            class="scroll"
+            v-scrollDivider
+        >
             <ConnexObject
                 v-slot="{connex}"
                 :node="node"
@@ -21,6 +24,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
+import { tokenSpecs } from '../consts'
 export default Vue.extend({
     props: {
         wId: String,
@@ -37,7 +41,7 @@ export default Vue.extend({
             return this.$state.config.node.list.find(n => n.gid === this.wallet!.gid)!
         },
         tokens(): M.TokenSpec[] | null {
-            const token = this.$state.config.token.specs(this.wallet!.gid, true).find((item: M.TokenSpec) => {
+            const token = [...this.$state.config.token.specs(this.wallet!.gid, true), tokenSpecs.VTHO].find((item: M.TokenSpec) => {
                 return item.symbol === this.symbol
             })
 

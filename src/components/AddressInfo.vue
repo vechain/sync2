@@ -11,7 +11,7 @@
             />
         </q-item-section>
         <q-item-section>
-            <q-item-label class="text-body1">
+            <q-item-label class="text-body1 reline ellipsis-2-lines">
                 <slot />
             </q-item-label>
             <q-item-label
