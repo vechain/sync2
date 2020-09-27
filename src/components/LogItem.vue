@@ -8,10 +8,10 @@
             <q-chip
                 square
                 dense
-                :class="isReceive ? 'bg-green q-px-md' : 'bg-red q-px-sm'"
+                :class=" 'bg-' + logStyle.color"
                 class="text-white truncate-chip-labels"
             >
-                {{isReceive ? 'IN' : 'OUT'}}
+                <q-icon :name="logStyle.icon" />
             </q-chip>
         </q-item-section>
         <q-item-section>
@@ -19,7 +19,7 @@
                 lines="1"
                 class="text-body2 monospace"
             >
-                {{ (isReceive ? log.sender : log.recipient) | checksum | abbrev(8,6)}}
+                {{ (address === log.recipient ? log.sender : log.recipient) | checksum | abbrev(8,6)}}
             </q-item-label>
             <q-item-label
                 caption
@@ -30,8 +30,8 @@
             </q-item-label>
         </q-item-section>
         <q-item-section side>
-            <span :class="isReceive ? 'text-green' : 'text-red'">
-                <span v-if="amount">{{isReceive ? '+' : '-'}} {{amount | balance(token.decimals)}}</span>
+            <span :class="'text-' + logStyle.color">
+                <span v-if="amount">{{logStyle.mark}} {{amount | balance(token.decimals)}}</span>
                 <span v-else> -- </span>
             </span>
         </q-item-section>
@@ -52,8 +52,26 @@ export default Vue.extend({
         amount(): string | number {
             return this.log.amount
         },
-        isReceive(): boolean {
-            return this.address === this.log.recipient
+        logStyle(): { icon: string, color: string, mark: string } {
+            if (this.log.recipient === this.log.sender) {
+                return {
+                    icon: 'swap_horiz',
+                    color: 'grey-9',
+                    mark: ''
+                }
+            } else if (this.address === this.log.recipient) {
+                return {
+                    icon: 'north_west',
+                    color: 'green',
+                    mark: '+'
+                }
+            } else {
+                return {
+                    icon: 'south_east',
+                    color: 'red',
+                    mark: '-'
+                }
+            }
         }
     }
 })
