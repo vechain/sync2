@@ -50,13 +50,13 @@ export function createEventCriteria(connex: Connex, tokens: string[], address: s
     return [...from, ...to]
 }
 
-export async function vetTransfers(connex: Connex, address: string, to: number, offset: number, size: number): Promise<M.TransferLog[]> {
+export async function vetTransfers(connex: Connex, address: string, fromBlock: number, toBlock: number, offset: number, size: number): Promise<M.TransferLog[]> {
     const transferCriteria = [{ sender: address }, { recipient: address }]
     const filter = connex.thor.filter('transfer').criteria(transferCriteria)
     const transfers = await filter.order('desc').range({
         unit: 'block',
-        from: 0,
-        to
+        from: fromBlock,
+        to: toBlock
     }).apply(offset, size)
 
     return transfers.map(item => {
@@ -70,7 +70,7 @@ export async function vetTransfers(connex: Connex, address: string, to: number, 
     })
 }
 
-export async function tokenTransfers(connex: Connex, tokenList: M.TokenSpec[], address: string, to: number, offset: number, size: number): Promise<M.TransferLog[]> {
+export async function tokenTransfers(connex: Connex, tokenList: M.TokenSpec[], address: string, fromBlock: number, toBlock: number, offset: number, size: number): Promise<M.TransferLog[]> {
     const tokenMap: { [k: string]: M.TokenSpec } = {}
     tokenList.forEach(item => {
         tokenMap[item.address] = item
@@ -80,8 +80,8 @@ export async function tokenTransfers(connex: Connex, tokenList: M.TokenSpec[], a
 
     const event = await filter.order('desc').range({
         unit: 'block',
-        from: 0,
-        to
+        from: fromBlock,
+        to: toBlock
     }).apply(offset, size)
 
     const ev = new abi.Event(abis.transferEvent)

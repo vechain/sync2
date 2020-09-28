@@ -3,6 +3,11 @@
         @load="onLoad"
         :offset="0"
     >
+        <ConnexContinuous
+            @data="onNewLogs"
+            :connex="connex"
+            :query="() => fetchRecent()"
+        />
         <div
             v-for="(item, index) in logs"
             :key="index"
@@ -50,15 +55,36 @@ export default Vue.extend({
             pageNum: 1,
             logs: [] as M.TransferLog[],
             offset: 0,
-            noMore: false
+            noMore: false,
+            splitBlock: null as unknown as number
         }
+    },
+    created() {
+        this.splitBlock = this.connex.thor.status.head.number
     },
     methods: {
         vetTransfers,
         tokenTransfers,
+        onNewLogs(data: M.TransferLog[]) {
+            if (data.length) {
+                this.logs = [...data, ...this.logs]
+            }
+        },
+        async fetchRecent() {
+            let on = true
+            let list: M.TransferLog[] = []
+            const from = (this.logs.length ? this.logs[0].meta.blockNumber : this.splitBlock) + 1
+            const to = this.connex.thor.status.head.number
+            while (on) {
+                const r = await this.query(from, to, list.length)
+                on = r.length === this.pageSize
+                list = [...list, ...r]
+            }
+            return list
+        },
         async onLoad(index: number, done: (stop: boolean) => void) {
             try {
-                const logs = await this.query((this.pageNum - 1) * this.pageSize)
+                const logs = await this.query(0, this.splitBlock, (this.pageNum - 1) * this.pageSize)
                 this.pageNum++
                 this.logs = [...this.logs, ...logs]
                 this.noMore = logs.length < this.pageSize
@@ -69,12 +95,11 @@ export default Vue.extend({
                 done(true)
             }
         },
-        async query(offset: number) {
-            const to = this.connex.thor.status.head.number
+        async query(fb: number, tb: number, offset: number) {
             if (this.tokens) {
-                return await this.tokenTransfers(this.connex, this.tokens, this.address, to, offset, this.pageSize)
+                return await this.tokenTransfers(this.connex, this.tokens, this.address, fb, tb, offset, this.pageSize)
             } else {
-                return await this.vetTransfers(this.connex, this.address, to, offset, this.pageSize)
+                return await this.vetTransfers(this.connex, this.address, fb, tb, offset, this.pageSize)
             }
         }
     }
