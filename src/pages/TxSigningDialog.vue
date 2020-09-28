@@ -181,6 +181,7 @@ export default Vue.extend({
         show() { (this.$refs.dialog as QDialog).show() },
         // method is REQUIRED by $q.dialog
         hide() { (this.$refs.dialog as QDialog).hide() },
+
         ok(result: M.TxResponse) {
             this.$emit('ok', result)
             this.hide()
@@ -229,11 +230,17 @@ export default Vue.extend({
                     const node = await vault.derive(this.wallet.meta.addresses.indexOf(this.signer))
                     const pk = await node.unlock(pin)
                     const st = builtTx.signTx(pk)
-                    // TODO recode
-                    console.log(st.id)
+                    // TODO activities
                     this.$axios.post(`${this.node!.url}/transactions`, Buffer.from(JSON.stringify({ raw: '0x' + st.encode().toString('hex') })), {
                         headers: { 'Content-Type': 'application/json' }
-                    }).then(console.log)
+                    }).then((r) => {
+                        this.ok({
+                            txid: r.data.id,
+                            signer: this.signer
+                        })
+                    }).catch(() => {
+                        this.hide()
+                    })
                 }
             } catch (error) {
                 this.signed = false

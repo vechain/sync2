@@ -9,6 +9,7 @@ import Sign from 'pages/Sign.vue'
 import Activities from 'pages/Activities.vue'
 import ResetPin from 'pages/ResetPin.vue'
 import AccountTransferLogs from 'pages/AccountTransferLogs.vue'
+import Send from 'pages/Send.vue'
 
 const routes: RouteConfig[] = [
     {
@@ -67,6 +68,13 @@ const routes: RouteConfig[] = [
             },
             meta: {
                 title: ''
+            }
+        }, {
+            path: 'send',
+            name: 'send',
+            component: Send,
+            meta: {
+                title: 'Send Assets'
             }
         }]
     }

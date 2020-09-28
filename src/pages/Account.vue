@@ -1,14 +1,19 @@
 <template>
     <div class="fit column no-wrap">
-        <div class="q-mx-lg">
-            <AddressInfo :address="address"> {{wallet.meta.name + ' #' + addressIndex}} </AddressInfo>
+        <div class="q-mx-lg column">
+            <AddressInfo :address="address"> {{wallet.meta.name + ' #' + (addressIndex + 1)}} </AddressInfo>
         </div>
         <div class="q-px-lg row items-center justify-between">
             <span class="text-subtitle1"> Assets </span>
-            <q-btn label="Manage" :to="{name: 'tokens-setting'}" flat rounded />
+            <q-btn
+                label="Manage"
+                :to="{name: 'tokens-setting'}"
+                flat
+                rounded
+            />
         </div>
         <div
-            class="q-px-xs scroll"
+            class="q-px-xs column scroll"
             v-scrollDivider.both
         >
             <ConnexObject
@@ -24,14 +29,14 @@
                 />
             </ConnexObject>
         </div>
-        <div class="row justify-center q-gutter-md q-py-lg q-mt-auto">
+        <div class="row align-center justify-center q-gutter-md q-pb-lg q-pt-md q-mt-auto">
             <q-btn
-                class="col-4"
+                class="col-4 justify-center"
                 @click="onSend"
                 label="Send"
             />
             <ReceiveDialog
-                class="col-4"
+                class="col-4 justify-center"
                 :address="address"
             />
         </div>
@@ -40,7 +45,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { tokenBalanceOf } from 'components/queries'
-import SendDialog from './SendDialog.vue'
+// import SendDialog from './SendDialog.vue'
 
 export default Vue.extend({
     data() {
@@ -83,11 +88,13 @@ export default Vue.extend({
             })
         },
         onSend() {
-            this.$q.dialog({
-                component: SendDialog,
-                parent: this,
-                from: this.address,
-                gid: this.wallet!.gid
+            this.$router.push({
+                name: 'send',
+                query: {
+                    wId: this.wId,
+                    i: this.i,
+                    defaultSymbol: ''
+                }
             })
         },
         tokenBalanceOf
