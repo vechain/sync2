@@ -1,42 +1,46 @@
 <template>
     <div class="fit column flex-center">
+        <!-- resolve request -->
         <async
-            :fn="getInput"
+            :fn="resolveRelayedRequest"
             v-slot="{data, error, pending, reload}"
         >
             <q-avatar
                 square
                 size="lg"
-                v-show="data"
+                v-show="!!data"
             >
                 <q-img :src="favicon" />
             </q-avatar>
             <div v-if="pending">
-                fetching input...
+                resolving input...
             </div>
-            <template v-if="error">
+            <template v-if="!!error">
                 <div>
                     error: {{error}}
                 </div>
                 <q-btn @click="reload">Reload</q-btn>
             </template>
-            <template v-if="data">
+            <template v-if="!!data">
                 <div> origin: {{origin}}</div>
                 <div> type: {{data.type}}</div>
                 <q-btn
-                    v-if="!proceeding&&!output"
-                    @click="proceed(data)"
+                    v-if="!relayedResponse"
+                    @click="signRelayedRequest(data)"
                 >Proceed</q-btn>
             </template>
         </async>
+        <!-- submit response -->
         <async
-            v-if="output"
-            :fn="postOutput"
-            v-slot="{error, pending}"
+            v-if="!!relayedResponse"
+            :fn="handleRelayedResponse"
+            v-slot="{pending}"
         >
-            <q-btn @click="$router.back()">done</q-btn>
-            <div v-if="pending">posting output...</div>
-            <div v-if="error">error: {{error}} </div>
+            <div v-if="pending">submitting response...</div>
+            <q-btn
+                v-else
+                @click="finish"
+            >Done</q-btn>
         </async>
     </div>
 </template>
@@ -44,24 +48,34 @@
 import Vue from 'vue'
 import * as V from 'validator-ts'
 import { urls } from 'src/consts'
+import { blake2b256 } from 'thor-devkit/dist/cry/blake2b'
 
-type Input = {
+/** request relayed by TOS */
+type RelayedRequest = {
     type: 'tx' | 'cert'
     gid?: string // genesis id which to specify network. defaults to mainnet
-    body: object
+    payload: {
+        message: object
+        options: object
+    }
+    /* nonce: string */
 }
 
-namespace Input {
-    export const scheme: V.Scheme<Input> = {
+namespace RelayedRequest {
+    export const scheme: V.Scheme<RelayedRequest> = {
         type: v => (v === 'tx' || v === 'cert') ? '' : `unsupported type '${v}'`,
         gid: v => (!v || /^0x[0-9a-f]{64}$/i.test(v)) ? '' : `invalid gid '${v}'`,
-        body: v => v instanceof Object ? '' : 'body requires object type'
+        payload: {
+            message: v => v instanceof Object ? '' : 'message requires object type',
+            options: v => v instanceof Object ? '' : 'options requires object type'
+        }
     }
 }
 
-type Output = {
-    error?: Error
-    body?: object
+/** response relayed by TOS */
+type RelayedResponse = {
+    error?: string
+    payload?: object
 }
 
 export default Vue.extend({
@@ -71,41 +85,67 @@ export default Vue.extend({
     data: () => {
         return {
             origin: '',
-            proceeding: false,
-            output: null as Output | null
+            relayedResponse: null as RelayedResponse | null
         }
     },
     computed: {
-        favicon(): string { return `${urls.tos}${this.rid}/icon?size=48..96..128` }
+        favicon(): string { return `${urls.tos}${this.rid}/icon?size=48..96..128` },
+        domain(): string {
+            try {
+                return new URL(this.origin).host
+            } catch {
+                return ''
+            }
+        }
     },
     methods: {
-        async getInput() {
-            const resp = await this.$axios.get(urls.tos + this.rid)
-            const input = V.validate<Input>(resp.data, Input.scheme)
+        async resolveRelayedRequest() {
+            const resp = await this.$axios.get(
+                urls.tos + this.rid,
+                { transformResponse: data => data } // raw data is needed to verify hash
+            )
+            const computedRid = blake2b256(resp.data).toString('hex')
+            if (computedRid !== this.rid) {
+                throw new Error('id and content mismatch')
+            }
+            const request = V.validate<RelayedRequest>(JSON.parse(resp.data), RelayedRequest.scheme)
             this.origin = resp.headers['x-data-origin']
             // TODO validate body
-            return input
+            return request
         },
-        async proceed(input: Input) {
-            const { type, gid, body } = input
-            const output: Output = {}
+        async signRelayedRequest(request: RelayedRequest) {
+            const { type, gid, payload } = request
+            const relayedResponse: RelayedResponse = {}
             try {
-                this.proceeding = true
                 if (type === 'tx') {
-                    output.body = await this.$signTx(gid || '', body as M.TxRequest)
+                    relayedResponse.payload = await this.$signTx(gid || '', payload as M.TxRequest)
                 } else if (type === 'cert') {
-                    output.body = await this.$signCert(gid || '', body as M.CertRequest)
+                    relayedResponse.payload = await this.$signCert(gid || '', {
+                        ...(payload as M.CertRequest),
+                        domain: this.domain
+                    })
                 }
             } catch (err) {
-                output.error = err
-            } finally {
-                this.proceeding = false
-                this.output = output
+                relayedResponse.error = err
+            }
+            this.relayedResponse = relayedResponse
+        },
+        async handleRelayedResponse() {
+            for (let i = 0; i < 3; i++) {
+                try {
+                    await this.$axios.post(urls.tos + this.rid + '-out', this.relayedResponse)
+                    return
+                } catch (err) {
+                    console.warn(err)
+                }
             }
         },
-        async postOutput() {
-            await this.$axios.post(urls.tos + this.rid + '-out', this.output)
-            return true
+        finish() {
+            if (this.$stack.canGoBack) {
+                this.$router.back()
+            } else {
+                this.$router.replace({ name: 'index' })
+            }
         }
     }
 })
