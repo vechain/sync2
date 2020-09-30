@@ -133,7 +133,7 @@ export default Vue.extend({
         async handleRelayedResponse() {
             for (let i = 0; i < 3; i++) {
                 try {
-                    await this.$axios.post(urls.tos + this.rid + '-out', this.relayedResponse)
+                    await this.$axios.post(urls.tos + this.rid + '-resp', this.relayedResponse)
                     return
                 } catch (err) {
                     console.warn(err)
