@@ -22,7 +22,8 @@ module.exports = configure(function (/* ctx */) {
       'register-components',
       'misc',
       'filters',
-      'directives'
+      'directives',
+      'txer'
     ],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
