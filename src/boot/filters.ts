@@ -55,6 +55,13 @@ const filters = {
     },
     ago: (timestamp: number) => {
         return format(timestamp * 1000)
+    },
+    urlHost: (url: string) => {
+        let result = ''
+        try {
+            result = url ? new URL(url).host : ''
+        } catch (e) { console.log(e) }
+        return result
     }
 }
 
