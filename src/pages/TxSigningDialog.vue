@@ -7,8 +7,8 @@
         transition-show="slide-up"
         transition-hide="slide-down"
     >
-        <q-card>
-            <div class="fit">
+        <q-card class="fit column no-wrap">
+            <div class="column">
                 <q-toolbar>
                     <q-toolbar-title class="absolute-center">
                         Sign
@@ -21,82 +21,100 @@
                         @click="hide"
                     />
                 </q-toolbar>
-                <!-- clause list -->
-                <q-card-section
-                    v-scrollDivider
-                    class="overflow-auto"
-                    style="height: calc(100% - 202px)"
-                >
-                    <q-banner
-                        rounded
-                        v-if="estGasError"
-                        class="bg-red text-white q-mb-sm"
-                    >{{estGasError.message}}</q-banner>
-                    <q-banner
-                        rounded
-                        v-if="vmError"
-                        class="bg-orange text-white q-mb-sm"
-                    >{{vmError.message}}</q-banner>
-
-                    <ClauseCard
-                        v-for="(msg, i) in req.message"
-                        :key="i"
-                        :tokens="[ tokenSpecs.VTHO, ...tokens]"
-                        :msg="msg"
-                    >
-                        {{ `Clause #${i+1}`}}
-                    </ClauseCard>
-                </q-card-section>
-                <!-- signer infos -->
-                <q-card-actions
-                    class="absolute-bottom bg-grey-2 shadow-up-1"
-                    style="z-index: 2"
-                >
-                    <ConnexObject
-                        v-slot="{connex}"
-                        :node="node"
-                    >
-                        <ConnexContinuous
-                            :connex="connex"
-                            :query="estGas(connex)"
-                            @data="estimateHandler"
-                            @error="(e) => { estGasError = e }"
-                            v-slot="{data: estGas}"
-                        >
-                            <q-list class="full-width">
-                                <Priority
-                                    :gas="estGas && estGas.gas"
-                                    :bgp="estGas && estGas.baseGasPrice"
-                                    v-model="gasPriceCoef"
-                                />
-                                <AccountSelector
-                                    v-model="signer"
-                                    :wallets="wallets"
-                                    :connex="connex"
-                                    v-slot="{address}"
-                                    :isSelectable="isSelectable"
-                                >
-                                    <BalanceList
-                                        :connex="connex"
-                                        :address="address"
-                                        :tokens="tokens"
-                                    />
-                                </AccountSelector>
-                                <q-item>
-                                    <SlideBtn
-                                        v-model="signed"
-                                        :disabled="!estGas"
-                                        @checked="onChecked(connex, estGas)"
-                                        label="Slide to Sign"
-                                        style="width: 70%"
-                                        class="absolute-center"
-                                    />
-                                </q-item>
-                            </q-list>
-                        </ConnexContinuous>
-                    </ConnexObject>
-                </q-card-actions>
             </div>
+            <!-- clause list -->
+            <q-card-section
+                v-scrollDivider.both
+                class="overflow-auto column no-wrap"
+            >
+                <q-banner
+                    rounded
+                    v-if="estGasError"
+                    class="bg-red text-white q-mb-sm"
+                >{{estGasError.message}}</q-banner>
+                <q-banner
+                    rounded
+                    v-if="vmError"
+                    class="bg-orange text-white q-mb-sm"
+                >{{vmError.message}}</q-banner>
+
+                <ClauseCard
+                    class="column q-mb-md"
+                    v-for="(msg, i) in req.message"
+                    :key="i"
+                    :tokens="[ tokenSpecs.VTHO, ...tokens]"
+                    :msg="msg"
+                >
+                    {{ `Clause #${i+1}`}}
+                </ClauseCard>
+            </q-card-section>
+            <!-- signer infos -->
+            <q-card-actions
+                class="column bg-grey-2 shadow-up-1 q-mt-auto"
+                style="z-index: 2"
+            >
+                <div
+                    v-if="isEnforced && !hasTheSigner"
+                    class="column items-center q-mx-auto q-gutter-y-md"
+                >
+                    <q-icon
+                        name="error_outline"
+                        class="text-red"
+                        size="xl"
+                    />
+                    <span class="text-body1">Account doesn't exist</span>
+                    <q-btn
+                        label="Close"
+                        class="q-px-lg"
+                        color="primary"
+                        @click="hide"
+                    />
+                </div>
+                <ConnexObject
+                    v-else
+                    v-slot="{connex}"
+                    :node="node"
+                >
+                    <ConnexContinuous
+                        :connex="connex"
+                        :query="estGas(connex)"
+                        @data="estimateHandler"
+                        @error="(e) => { estGasError = e }"
+                        v-slot="{data: estGas}"
+                    >
+                        <q-list class="full-width">
+                            <Priority
+                                :gas="estGas && estGas.gas"
+                                :bgp="estGas && estGas.baseGasPrice"
+                                v-model="gasPriceCoef"
+                            />
+                            <AccountSelector
+                                v-model="signer"
+                                :wallets="wallets"
+                                :connex="connex"
+                                v-slot="{address}"
+                                :isSelectable="isSelectable"
+                            >
+                                <BalanceList
+                                    :connex="connex"
+                                    :address="address"
+                                    :tokens="tokens"
+                                />
+                            </AccountSelector>
+                            <q-item>
+                                <SlideBtn
+                                    v-model="signed"
+                                    :disabled="!estGas"
+                                    @checked="onChecked(connex, estGas)"
+                                    label="Slide to Sign"
+                                    style="width: 70%"
+                                    class="absolute-center"
+                                />
+                            </q-item>
+                        </q-list>
+                    </ConnexContinuous>
+                </ConnexObject>
+            </q-card-actions>
         </q-card>
     </q-dialog>
 </template>
@@ -111,7 +129,8 @@ import { Vault } from 'core/vault'
 export default Vue.extend({
     props: {
         req: Object as () => M.TxRequest,
-        gid: String
+        gid: String,
+        referer: Object as () => M.Referer
     },
     data() {
         return {
@@ -145,6 +164,19 @@ export default Vue.extend({
         tokens(): M.TokenSpec[] {
             return this.$state.config.token.specs(this.gid, true)
         },
+        isEnforced(): boolean {
+            return !!(this.req.options && this.req.options.signer)
+        },
+        hasTheSigner(): boolean {
+            return this.isEnforced && this.addresses.includes(this.req.options!.signer!)
+        },
+        addresses(): string[] {
+            let addrList: string[] = []
+            this.wallets.forEach(wallet => {
+                addrList = [...addrList, ...wallet.meta.addresses]
+            })
+            return addrList
+        },
         wallets(): M.Wallet[] {
             return this.$state.wallet.list.filter(item => {
                 return item.gid === this.gid
@@ -156,7 +188,7 @@ export default Vue.extend({
             }) || null
         }
     },
-    created() {
+    mounted() {
         this.initData()
     },
     methods: {
@@ -187,25 +219,21 @@ export default Vue.extend({
             this.hide()
         },
         initData() {
-            if (!this.hasTheSigner()) {
-                // TODO return
-            }
-            this.signer = (this.req.options && this.req.options.signer)
-                ? this.req.options.signer
-                : this.wallets[0].meta.addresses[0]
-            this.isSelectable = !(this.req.options && this.req.options.signer)
-        },
-        hasTheSigner(): boolean {
-            if (this.req.options && this.req.options.signer) {
-                let addrList: string[] = []
-                this.wallets.forEach(wallet => {
-                    addrList = [...addrList, ...wallet.meta.addresses]
-                })
-
-                return addrList.includes(this.req.options.signer)
+            if (this.isEnforced) {
+                this.signer = this.hasTheSigner
+                    ? this.req.options!.signer!
+                    : ''
             } else {
-                return true
+                this.signer = this.wallets[0].meta.addresses[0]
             }
+            this.isSelectable = !this.isEnforced
+        },
+        getFee(gas: number, bgp: string, coef: number): string {
+            if (gas > 0) {
+                const gp = new BigNumber(bgp).times(coef).idiv(255).plus(bgp)
+                return gp.times(gas).toString(10)
+            }
+            return new BigNumber(NaN).toString(10)
         },
         // build Tx
         async onChecked(connex: Connex, estGas: EstimateGasResult) {
@@ -230,21 +258,42 @@ export default Vue.extend({
                     const node = await vault.derive(this.wallet.meta.addresses.indexOf(this.signer))
                     const pk = await node.unlock(pin)
                     const st = builtTx.signTx(pk)
-                    // TODO activities
-                    this.$axios.post(`${this.node!.url}/transactions`, Buffer.from(JSON.stringify({ raw: '0x' + st.encode().toString('hex') })), {
-                        headers: { 'Content-Type': 'application/json' }
-                    }).then((r) => {
-                        this.ok({
-                            txid: r.data.id,
-                            signer: this.signer
-                        })
-                    }).catch(() => {
-                        this.hide()
+                    const raw = '0x' + st.encode().toString('hex')
+                    this.$txer.request(
+                        st.id!,
+                        `${this.node!.url}/transactions`,
+                        raw
+                    )
+
+                    const glob: M.Activity.Tx = {
+                        id: st.id!,
+                        type: 'tx',
+                        closed: false,
+                        message: this.req.message,
+                        signer: this.signer,
+                        timestamp: connex.thor.status.head.timestamp,
+                        estimatedFee: this.getFee(estGas.gas, estGas.baseGasPrice, this.gasPriceCoef),
+                        referer: this.referer || {},
+                        raw: raw,
+                        receipt: null
+                    }
+
+                    this.$storage.activities.insert({
+                        gid: this.gid,
+                        walletId: this.wallet.id,
+                        createdTime: Date.now(),
+                        glob: JSON.stringify(glob)
+                    })
+
+                    this.ok({
+                        txid: st.id!,
+                        signer: this.signer
                     })
                 }
             } catch (error) {
                 this.signed = false
                 console.log(error)
+                this.hide()
             }
         }
     }

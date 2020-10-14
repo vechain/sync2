@@ -7,8 +7,8 @@
         transition-show="slide-up"
         transition-hide="slide-down"
     >
-        <q-card>
-            <div class="fit">
+        <q-card class="fit column no-wrap">
+            <div class="column">
                 <q-toolbar>
                     <q-toolbar-title class="absolute-center">
                         Sign
@@ -21,57 +21,74 @@
                         @click="hide"
                     />
                 </q-toolbar>
-                <q-card-section
-                    v-scrollDivider
-                    class="overflow-auto"
-                    style="height: calc(100% - 165px)"
-                >
-                    <q-card
-                        bordered
-                        flat
-                    >
-                        <q-card-section>
-                            <div class="text-h6 text-capitalize">{{req.message.purpose}}</div>
-                            <div class="text-grey text-body2">
-                                {{req.message.payload.content}}
-                            </div>
-                        </q-card-section>
-                    </q-card>
-                </q-card-section>
-                <q-card-actions
-                    class="absolute-bottom bg-grey-2 shadow-up-1"
-                    style="z-index: 2"
-                >
-                    <ConnexObject
-                        v-slot="{connex}"
-                        :node="node"
-                    >
-                        <q-list class="full-width">
-                            <AccountSelector
-                                v-model="signer"
-                                :wallets="wallets"
-                                :connex="connex"
-                                v-slot="{address}"
-                                :isSelectable="true"
-                            >
-                                <BalanceList
-                                    :connex="connex"
-                                    :address="address"
-                                />
-                            </AccountSelector>
-                            <q-item>
-                                <SlideBtn
-                                    v-model="signed"
-                                    @checked="sign(connex)"
-                                    label="Slide to Sign"
-                                    style="width: 70%"
-                                    class="absolute-center"
-                                />
-                            </q-item>
-                        </q-list>
-                    </ConnexObject>
-                </q-card-actions>
             </div>
+            <q-card-section
+                v-scrollDivider.both
+                class="overflow-auto column no-wrap"
+            >
+                <q-card
+                    bordered
+                    flat
+                >
+                    <q-card-section>
+                        <div class="text-h6 text-capitalize">{{req.message.purpose}}</div>
+                        <div class="text-grey text-body2">
+                            {{req.message.payload.content}}
+                        </div>
+                    </q-card-section>
+                </q-card>
+            </q-card-section>
+            <q-card-actions
+                class="column bg-grey-2 shadow-up-1 q-mt-auto"
+                style="z-index: 2"
+            >
+                <div
+                    v-if="isEnforced && !hasTheSigner"
+                    class="column items-center q-mx-auto q-gutter-y-md"
+                >
+                    <q-icon
+                        name="error_outline"
+                        class="text-red"
+                        size="xl"
+                    />
+                    <span class="text-body1">Account doesn't exist</span>
+                    <q-btn
+                        label="Close"
+                        class="q-px-lg"
+                        color="primary"
+                        @click="hide"
+                    />
+                </div>
+                <ConnexObject
+                    v-else
+                    v-slot="{connex}"
+                    :node="node"
+                >
+                    <q-list class="full-width">
+                        <AccountSelector
+                            v-model="signer"
+                            :wallets="wallets"
+                            :connex="connex"
+                            v-slot="{address}"
+                            :isSelectable="true"
+                        >
+                            <BalanceList
+                                :connex="connex"
+                                :address="address"
+                            />
+                        </AccountSelector>
+                        <q-item>
+                            <SlideBtn
+                                v-model="signed"
+                                @checked="sign(connex)"
+                                label="Slide to Sign"
+                                style="width: 70%"
+                                class="absolute-center"
+                            />
+                        </q-item>
+                    </q-list>
+                </ConnexObject>
+            </q-card-actions>
         </q-card>
     </q-dialog>
 </template>
@@ -86,7 +103,8 @@ import { secp256k1, blake2b256 } from 'thor-devkit/dist/cry'
 export default Vue.extend({
     props: {
         req: Object as () => M.CertRequest,
-        gid: String
+        gid: String,
+        referer: Object as () => M.Referer
     },
     data() {
         return {
@@ -106,36 +124,38 @@ export default Vue.extend({
                 return w.gid === this.gid
             })
         },
+        isEnforced(): boolean {
+            return !!(this.req.options && this.req.options.signer)
+        },
+        hasTheSigner(): boolean {
+            return this.isEnforced && this.addresses.includes(this.req.options!.signer!)
+        },
+        addresses(): string[] {
+            let addrList: string[] = []
+            this.wallets.forEach(wallet => {
+                addrList = [...addrList, ...wallet.meta.addresses]
+            })
+            return addrList
+        },
         wallet(): M.Wallet | null {
             return this.wallets.find((w: M.Wallet) => {
                 return w.meta.addresses.includes(this.signer)
             }) || null
         }
     },
-    created() {
+    mounted() {
         this.initData()
     },
     methods: {
         initData() {
-            if (!this.hasTheSigner()) {
-                // TODO return
-            }
-            this.signer = (this.req.options && this.req.options.signer)
-                ? this.req.options.signer
-                : this.wallets[0].meta.addresses[0]
-            this.isSelectable = !(this.req.options && this.req.options.signer)
-        },
-        hasTheSigner(): boolean {
-            if (this.req.options && this.req.options.signer) {
-                let addrList: string[] = []
-                this.wallets.forEach(wallet => {
-                    addrList = [...addrList, ...wallet.meta.addresses]
-                })
-
-                return addrList.includes(this.req.options.signer)
+            if (this.isEnforced) {
+                this.signer = this.hasTheSigner
+                    ? this.req.options!.signer!
+                    : ''
             } else {
-                return true
+                this.signer = this.wallets[0].meta.addresses[0]
             }
+            this.isSelectable = !this.isEnforced
         },
         // method is REQUIRED by $q.dialog
         show() { (this.$refs.dialog as QDialog).show() },
@@ -146,7 +166,6 @@ export default Vue.extend({
             this.hide()
         },
         async sign(connex: Connex) {
-            // TODO recode, next step
             try {
                 const pin = await this.$authenticate(pin => Promise.resolve(pin))
                 if (this.wallet) {
@@ -163,14 +182,37 @@ export default Vue.extend({
                         ...annex
                     })
                     const signature = '0x' + secp256k1.sign(blake2b256(unsigned), privateKey).toString('hex')
-                    console.log(annex, signature)
+                    const id = '0x' + blake2b256(Certificate.encode({
+                        ...this.req.message,
+                        ...annex,
+                        signature: signature
+                    })).toString('hex')
+
+                    const cert: M.Activity.Cert = {
+                        id: id,
+                        message: this.req.message,
+                        closed: true,
+                        signer: this.signer,
+                        type: 'cert',
+                        referer: this.referer || {},
+                        timestamp: connex.thor.status.head.timestamp,
+                        signature: signature
+                    }
+                    this.$storage.activities.insert({
+                        gid: this.gid,
+                        walletId: this.wallet.id,
+                        createdTime: Date.now(),
+                        glob: JSON.stringify(cert)
+                    })
                     this.ok({
                         annex,
                         signature
                     })
                 }
             } catch (error) {
+                this.signed = false
                 console.log(error)
+                this.hide()
             }
         }
     }
