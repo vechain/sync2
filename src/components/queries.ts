@@ -96,3 +96,8 @@ export async function tokenTransfers(connex: Connex, tokenList: M.TokenSpec[], a
         }
     })
 }
+
+export async function txReceipt(connex: Connex, txid: string) {
+    const tx = connex.thor.transaction(txid)
+    return tx.getReceipt()
+}
