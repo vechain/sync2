@@ -222,7 +222,8 @@ export default Vue.extend({
             this.$signTx(this.gid, {
                 message: [msgItem],
                 options: {
-                    signer: this.from
+                    signer: this.from,
+                    comment: comment
                 }
             }).then((r) => {
                 this.txInfo = {
