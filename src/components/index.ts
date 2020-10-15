@@ -25,6 +25,7 @@ import LogItem from './LogItem.vue'
 import Logs from './Logs.vue'
 import ReceiveDialog from './ReceiveDialog.vue'
 import AddressInfo from './AddressInfo.vue'
+import TxActivityUpdate from './TxActivityUpdate/index.vue'
 
 const components: { [name: string]: Vue.VueConstructor } = {
     StackedRouterView,
@@ -53,7 +54,8 @@ const components: { [name: string]: Vue.VueConstructor } = {
     LogItem,
     Logs,
     ReceiveDialog,
-    AddressInfo
+    AddressInfo,
+    TxActivityUpdate
 }
 
 export default components
