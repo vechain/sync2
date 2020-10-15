@@ -29,7 +29,7 @@ const filters = {
     },
     /** convert balance from unit WEI to common unit */
     balance: (v: string | number, decimal = 18, digits = 2) => {
-        if (typeof v !== 'string' && typeof typeof v !== 'number') {
+        if (typeof v !== 'string' && typeof v !== 'number') {
             return new BigNumber(0).toFormat(digits).replace(/0/g, '-')
         }
         return new BigNumber(v)

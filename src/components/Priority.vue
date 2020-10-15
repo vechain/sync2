@@ -57,7 +57,7 @@
                                     <q-item-section>
                                         {{l.label}}
                                     </q-item-section>
-                                    <q-item-section side>{{getFee(gas, bgp, calcCoef(i)) | balance}} VTHO</q-item-section>
+                                    <q-item-section side>{{ getFee(gas, bgp, calcCoef(i)) }} VTHO</q-item-section>
                                 </q-item>
                             </q-list>
                         </q-card-section>
@@ -114,9 +114,9 @@ export default Vue.extend({
         getFee(gas: number, bgp: string, coef: number) {
             if (gas > 0) {
                 const gp = new BigNumber(bgp).times(coef).idiv(255).plus(bgp)
-                return gp.times(gas).toString(10)
+                return Vue.filter('balance')(gp.times(gas).toString(10))
             }
-            return new BigNumber(NaN).toString(10)
+            return Vue.filter('balance')()
         }
     }
 })
