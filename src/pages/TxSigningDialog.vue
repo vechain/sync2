@@ -269,6 +269,7 @@ export default Vue.extend({
                         id: st.id!,
                         type: 'tx',
                         closed: false,
+                        comment: (this.req.options && this.req.options.comment) || '',
                         message: this.req.message,
                         signer: this.signer,
                         timestamp: connex.thor.status.head.timestamp,

@@ -80,6 +80,7 @@ declare namespace M {
             closed: boolean
             type: 'tx'
             message: Connex.Vendor.TxMessage
+            comment: string
             timestamp: number
             signer: string
             estimatedFee: string
