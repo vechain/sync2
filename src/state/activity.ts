@@ -13,7 +13,7 @@ export function build() {
         const ob = s.activities.observe()
         for (; ;) {
             try {
-                state.entities = await s.activities.all().query()
+                state.entities = await s.activities.all().reverse().query()
                 state.ready = true
             } catch (err) {
                 console.warn(err)

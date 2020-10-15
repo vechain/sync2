@@ -110,6 +110,9 @@
                         round
                         :to="{name: 'activities', query: {'no-transition-in': '1'}}"
                     />
+
+                    <TxActivityUpdate />
+
                 </q-toolbar>
             </div>
         </drawer>
