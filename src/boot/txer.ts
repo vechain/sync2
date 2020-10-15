@@ -7,6 +7,7 @@ class Request {
 
     private sent = false
     private requesting = false
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private timer?: any
 
     constructor(

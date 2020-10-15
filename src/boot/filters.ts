@@ -44,7 +44,7 @@ const filters = {
     },
     dateTime: (timestamp: number) => {
         return new Date(timestamp).toLocaleString(undefined, {
-            year: '2-digit',
+            year: 'numeric',
             day: '2-digit',
             month: '2-digit',
             hour: '2-digit',
