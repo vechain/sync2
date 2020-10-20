@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import { RouteConfig, Route, NavigationGuardNext } from 'vue-router'
 import Main from 'layouts/Main.vue'
 import Index from 'pages/Index.vue'
@@ -5,7 +6,6 @@ import Settings from 'pages/Settings.vue'
 import TokensSetting from 'pages/TokensSetting.vue'
 import Backup from 'pages/Backup.vue'
 import Account from 'pages/Account.vue'
-import Sign from 'pages/Sign.vue'
 import Activities from 'pages/Activities.vue'
 import ResetPin from 'pages/ResetPin.vue'
 import AccountTransferLogs from 'pages/AccountTransferLogs.vue'
@@ -41,11 +41,24 @@ const routes: RouteConfig[] = [
             component: Account,
             meta: { title: 'Account' }
         }, {
-            // this page is for handling external signing request in SPA mode only
+            // this entry is to handle external signing request in SPA mode only
             path: 'sign',
-            name: 'sign',
-            component: Sign,
-            meta: { title: 'Sign', noTransitionIn: true, noTransitionOut: true }
+            beforeEnter: (to, from, next) => {
+                const rid = to.query.rid
+                if (typeof rid === 'string') {
+                    void (async () => {
+                        for (; ;) {
+                            await new Promise(resolve => setTimeout(resolve, 0))
+                            if (to.matched[0].instances.default) {
+                                await Vue.nextTick()
+                                to.matched[0].instances.default.$root.$emit('sign', rid)
+                                return
+                            }
+                        }
+                    })()
+                }
+                next(from.name ? false : { name: 'index', replace: true })
+            }
         }, {
             path: 'activities',
             name: 'activities',

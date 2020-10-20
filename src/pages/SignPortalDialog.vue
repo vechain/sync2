@@ -1,54 +1,64 @@
 <template>
-    <div class="fit column flex-center">
-        <!-- resolve request -->
-        <async
-            :fn="resolveRelayedRequest"
-            v-slot="{data, error, pending, reload}"
-        >
-            <q-avatar
-                square
-                size="lg"
-                v-show="!!data"
+    <q-dialog
+        ref="dialog"
+        @hide="$emit('hide')"
+        maximized
+        persistent
+        transition-hide=""
+        transition-show=""
+    >
+        <q-card class="fit column flex-center">
+            <!-- resolve request -->
+            <async
+                :fn="resolveRelayedRequest"
+                v-slot="{data, error, pending, reload}"
             >
-                <q-img :src="favicon" />
-            </q-avatar>
-            <div v-if="pending">
-                resolving input...
-            </div>
-            <template v-if="!!error">
-                <div>
-                    error: {{error}}
+                <q-avatar
+                    square
+                    size="lg"
+                    v-show="!!data"
+                >
+                    <q-img :src="favicon" />
+                </q-avatar>
+                <div v-if="pending">
+                    resolving input...
                 </div>
-                <q-btn @click="reload">Reload</q-btn>
-            </template>
-            <template v-if="!!data">
-                <div> origin: {{origin}}</div>
-                <div> type: {{data.type}}</div>
+                <template v-if="!!error">
+                    <div>
+                        error: {{error}}
+                    </div>
+                    <q-btn @click="reload">Reload</q-btn>
+                </template>
+                <template v-if="!!data">
+                    <div> origin: {{origin}}</div>
+                    <div> type: {{data.type}}</div>
+                    <q-btn
+                        v-if="!relayedResponse"
+                        @click="signRelayedRequest(data)"
+                    >Proceed</q-btn>
+                </template>
+            </async>
+            <!-- submit response -->
+            <async
+                v-if="!!relayedResponse"
+                :fn="handleRelayedResponse"
+                v-slot="{pending}"
+            >
+                <div v-if="pending">submitting response...</div>
                 <q-btn
-                    v-if="!relayedResponse"
-                    @click="signRelayedRequest(data)"
-                >Proceed</q-btn>
-            </template>
-        </async>
-        <!-- submit response -->
-        <async
-            v-if="!!relayedResponse"
-            :fn="handleRelayedResponse"
-            v-slot="{pending}"
-        >
-            <div v-if="pending">submitting response...</div>
-            <q-btn
-                v-else
-                @click="finish"
-            >Done</q-btn>
-        </async>
-    </div>
+                    v-else
+                    @click="hide()"
+                >Done</q-btn>
+            </async>
+        </q-card>
+    </q-dialog>
 </template>
 <script lang="ts">
 import Vue from 'vue'
 import * as V from 'validator-ts'
 import { urls } from 'src/consts'
 import { blake2b256 } from 'thor-devkit/dist/cry/blake2b'
+import { QDialog } from 'quasar'
 
 /** request relayed by TOS */
 type RelayedRequest = {
@@ -99,6 +109,11 @@ export default Vue.extend({
         }
     },
     methods: {
+        // method is REQUIRED by $q.dialog
+        show() { (this.$refs.dialog as QDialog).show() },
+        // method is REQUIRED by $q.dialog
+        hide() { (this.$refs.dialog as QDialog).hide() },
+
         async resolveRelayedRequest() {
             const resp = await this.$axios.get(
                 urls.tos + this.rid,
@@ -138,13 +153,6 @@ export default Vue.extend({
                 } catch (err) {
                     console.warn(err)
                 }
-            }
-        },
-        finish() {
-            if (this.$stack.canGoBack) {
-                this.$router.back()
-            } else {
-                this.$router.replace({ name: 'index' })
             }
         }
     }

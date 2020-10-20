@@ -133,6 +133,7 @@ import { listen } from 'core/connex/external-url'
 import CreateWalletDialog from 'pages/CreateWalletDialog.vue'
 import ImportWalletDialog from 'pages/ImportWalletDialog.vue'
 import Wizard from 'pages/Wizard.vue'
+import SignPortalDialog from 'pages/SignPortalDialog.vue'
 
 export default Vue.extend({
     components: {
@@ -183,29 +184,41 @@ export default Vue.extend({
         },
         onClickMore() {
             this.$root.$emit(`more-${this.$route.fullPath}`)
+        },
+        handleExternalSign(rid: string) {
+            // TODO how if multi requests come
+            this.$q.dialog({
+                component: SignPortalDialog,
+                rid
+            })
         }
     },
-    async mounted() {
-        let destroyed = false
-        this.$once('hook:beforeDestroy', () => { destroyed = true })
+    mounted() {
+        const cb = (rid: string) => this.handleExternalSign(rid)
+        this.$root.$on('sign', cb)
 
-        // loop to listen external open url
-        // eslint-disable-next-line no-unmodified-loop-condition
-        while (!destroyed) {
-            try {
-                // the incoming url looks like connex:sign?rid=xxx
-                const url = new URL(await listen())
-                if (url.pathname === 'sign' && !destroyed) {
-                    const rid = url.searchParams.get('rid')
-                    this.$router.push({
-                        name: 'sign',
-                        query: { rid }
-                    })
+        let destroyed = false
+        this.$once('hook:beforeDestroy', () => {
+            destroyed = true
+            this.$root.$off('sign', cb)
+        })
+
+        void (async () => {
+            // loop to listen external open url
+            // eslint-disable-next-line no-unmodified-loop-condition
+            while (!destroyed) {
+                try {
+                    // the incoming url looks like connex:sign?rid=xxx
+                    const url = new URL(await listen())
+                    if (url.pathname === 'sign' && !destroyed) {
+                        const rid = url.searchParams.get('rid')
+                        this.handleExternalSign(rid!)
+                    }
+                } catch (err) {
+                    console.warn(err)
                 }
-            } catch (err) {
-                console.warn(err)
             }
-        }
+        })()
     }
 })
 </script>
