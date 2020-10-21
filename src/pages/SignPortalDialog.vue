@@ -10,7 +10,7 @@
         <q-card class="fit column flex-center">
             <!-- resolve request -->
             <async
-                :fn="resolveRelayedRequest"
+                :fn="resolveRequest"
                 v-slot="{data, error, pending, reload}"
             >
                 <q-avatar
@@ -32,23 +32,8 @@
                 <template v-if="!!data">
                     <div> origin: {{origin}}</div>
                     <div> type: {{data.type}}</div>
-                    <q-btn
-                        v-if="!relayedResponse"
-                        @click="signRelayedRequest(data)"
-                    >Proceed</q-btn>
+                    <q-btn @click="signRequest(data)">Proceed</q-btn>
                 </template>
-            </async>
-            <!-- submit response -->
-            <async
-                v-if="!!relayedResponse"
-                :fn="handleRelayedResponse"
-                v-slot="{pending}"
-            >
-                <div v-if="pending">submitting response...</div>
-                <q-btn
-                    v-else
-                    @click="hide()"
-                >Done</q-btn>
             </async>
         </q-card>
     </q-dialog>
@@ -94,8 +79,7 @@ export default Vue.extend({
     },
     data: () => {
         return {
-            origin: '',
-            relayedResponse: null as RelayedResponse | null
+            origin: ''
         }
     },
     computed: {
@@ -114,7 +98,7 @@ export default Vue.extend({
         // method is REQUIRED by $q.dialog
         hide() { (this.$refs.dialog as QDialog).hide() },
 
-        async resolveRelayedRequest() {
+        async resolveRequest() {
             const resp = await this.$axios.get(
                 urls.tos + this.rid,
                 { transformResponse: data => data } // raw data is needed to verify hash
@@ -125,33 +109,36 @@ export default Vue.extend({
             }
             const request = V.validate<RelayedRequest>(JSON.parse(resp.data), RelayedRequest.scheme)
             this.origin = resp.headers['x-data-origin']
+            this.postResult('-accepted', {})
             // TODO validate body
             return request
         },
-        async signRelayedRequest(request: RelayedRequest) {
+        async signRequest(request: RelayedRequest) {
             const { type, gid, payload } = request
-            const relayedResponse: RelayedResponse = {}
+            const resp: RelayedResponse = {}
             try {
                 if (type === 'tx') {
-                    relayedResponse.payload = await this.$signTx(gid || '', payload as M.TxRequest)
+                    resp.payload = await this.$signTx(gid || '', payload as M.TxRequest)
                 } else if (type === 'cert') {
-                    relayedResponse.payload = await this.$signCert(gid || '', {
+                    resp.payload = await this.$signCert(gid || '', {
                         ...(payload as M.CertRequest),
                         domain: this.domain
                     })
                 }
             } catch (err) {
-                relayedResponse.error = err.message
+                resp.error = err.message
             }
-            this.relayedResponse = relayedResponse
+            this.postResult('-resp', resp)
+            this.hide()
         },
-        async handleRelayedResponse() {
+        async postResult(suffix: string, result: object) {
             for (let i = 0; i < 3; i++) {
                 try {
-                    await this.$axios.post(urls.tos + this.rid + '-resp', this.relayedResponse)
+                    this.$axios.post(`${urls.tos}${this.rid}${suffix}`, result)
                     return
                 } catch (err) {
                     console.warn(err)
+                    await new Promise(resolve => setTimeout(resolve, 2 * 1000))
                 }
             }
         }
