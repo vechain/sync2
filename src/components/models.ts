@@ -56,7 +56,7 @@ declare namespace M {
     type CertResponse = Connex.Vendor.CertResponse
 
     type TransferLog = {
-        meta: Connex.Thor.LogMeta,
+        meta: Connex.Thor.Filter.WithMeta['meta'],
         token: TokenSpec,
         amount: string,
         sender: string,
@@ -86,7 +86,7 @@ declare namespace M {
             estimatedFee: string
             referer: Referer
             raw: string
-            receipt: Connex.Thor.Receipt | null
+            receipt: Connex.Thor.Transaction.Receipt | null
         }
         type Cert = {
             id: string

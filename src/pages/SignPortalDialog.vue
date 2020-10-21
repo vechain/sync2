@@ -141,7 +141,7 @@ export default Vue.extend({
                     })
                 }
             } catch (err) {
-                relayedResponse.error = err
+                relayedResponse.error = err.message
             }
             this.relayedResponse = relayedResponse
         },

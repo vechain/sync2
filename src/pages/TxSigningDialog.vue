@@ -144,7 +144,7 @@ export default Vue.extend({
         }
     },
     computed: {
-        clauseList(): Connex.Thor.Clause[] {
+        clauseList(): Connex.VM.Clause[] {
             return this.req.message.map((item: Connex.Vendor.TxMessage[0]) => {
                 return {
                     to: item.to,

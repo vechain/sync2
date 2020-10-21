@@ -14,7 +14,7 @@ export function tokenBalanceOf(connex: Connex, addr: string, spec: M.TokenSpec):
         .method(abis.balanceOf)
         .cache([addr])
         .call(addr)
-        .then(output => output.decoded!.balance)
+        .then(output => output.decoded.balance)
 }
 
 const paramsCache: Record<string, string> = {}
@@ -52,7 +52,7 @@ export function createEventCriteria(connex: Connex, tokens: string[], address: s
 
 export async function vetTransfers(connex: Connex, address: string, fromBlock: number, toBlock: number, offset: number, size: number): Promise<M.TransferLog[]> {
     const transferCriteria = [{ sender: address }, { recipient: address }]
-    const filter = connex.thor.filter('transfer').criteria(transferCriteria)
+    const filter = connex.thor.filter('transfer', transferCriteria)
     const transfers = await filter.order('desc').range({
         unit: 'block',
         from: fromBlock,
@@ -62,7 +62,7 @@ export async function vetTransfers(connex: Connex, address: string, fromBlock: n
     return transfers.map(item => {
         return {
             token: tokenSpecs.VET,
-            meta: item.meta!,
+            meta: item.meta,
             amount: item.amount,
             sender: item.sender,
             recipient: item.recipient
@@ -76,7 +76,7 @@ export async function tokenTransfers(connex: Connex, tokenList: M.TokenSpec[], a
         tokenMap[item.address] = item
     })
     const tokenCriteria = createEventCriteria(connex, tokenList.map(item => item.address), address)
-    const filter = connex.thor.filter('event').criteria(tokenCriteria)
+    const filter = connex.thor.filter('event', tokenCriteria)
 
     const event = await filter.order('desc').range({
         unit: 'block',
@@ -89,7 +89,7 @@ export async function tokenTransfers(connex: Connex, tokenList: M.TokenSpec[], a
         const decode = ev.decode(item.data, item.topics)
         return {
             token: tokenMap[item.address],
-            meta: item.meta!,
+            meta: item.meta,
             sender: decode._from,
             amount: decode._value,
             recipient: decode._to

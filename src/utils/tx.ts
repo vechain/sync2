@@ -18,13 +18,13 @@ export type EstimateGasResult = {
 
 export async function estimateGas(
     connex: Connex,
-    clauses: Connex.Thor.Clause[],
+    clauses: Connex.VM.Clause[],
     suggestedGas: number | undefined,
     caller: string): Promise<EstimateGasResult> {
-    const outputs = await connex.thor.explain()
+    const outputs = await connex.thor.explain(clauses)
         .caller(caller)
         .gas(suggestedGas || 2000 * 10000)
-        .execute(clauses)
+        .execute()
 
     if (!suggestedGas) {
         const execGas = outputs.reduce((sum, out) => sum + out.gasUsed, 0)
@@ -42,7 +42,7 @@ export async function estimateGas(
     return {
         gas: suggestedGas,
         reverted: lastOutput ? lastOutput.reverted : false,
-        revertReason: (lastOutput && lastOutput.decoded) ? (lastOutput.decoded.revertReason || '') : '',
+        revertReason: lastOutput ? (lastOutput.revertReason || '') : '',
         vmError: lastOutput ? lastOutput.vmError : '',
         baseGasPrice: bgp
     }
