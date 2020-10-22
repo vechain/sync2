@@ -11,13 +11,13 @@
         <div
             v-for="(item, index) in logs"
             :key="index"
-            class="caption"
         >
             <LogItem
+                class="q-my-sm"
                 :address="address"
-                :key="index"
                 :log="item"
             />
+            <q-separator />
         </div>
         <div
             v-if="noMore"

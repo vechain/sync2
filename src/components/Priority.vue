@@ -27,7 +27,7 @@
                     {{levelList[level].label}}
                 </div>
                 <template v-slot:loading>
-                    <q-spinner-facebook color="primary" />
+                    <q-spinner-dots color="primary" />
                 </template>
                 <q-popup-proxy
                     v-model="show"

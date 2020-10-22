@@ -1,15 +1,17 @@
 <template>
     <div class="fit column no-wrap">
-        <div class="q-mx-lg column">
-            <AddressInfo :address="address"> {{wallet.meta.name + ' #' + (addressIndex + 1)}} </AddressInfo>
+        <div class="q-mx-sm column">
+            <AddressInfo :address="address" :network="networkBadgeText"> {{wallet.meta.name + ' #' + (addressIndex + 1)}} </AddressInfo>
         </div>
-        <div class="q-px-lg row items-center justify-between">
-            <span class="text-subtitle1"> Assets </span>
+        <div class="q-px-md row items-center justify-between">
+            <span class="text-h6 q-py-sm"> Assets </span>
             <q-btn
-                label="Manage"
                 :to="{name: 'tokens-setting'}"
                 flat
-                rounded
+                dense
+                icon="mdi-plus-circle-outline"
+                aria-label="manage"
+                size="md"
             />
         </div>
         <div
@@ -62,6 +64,13 @@ export default Vue.extend({
             return this.$state.wallet.list.find(i => {
                 return i.id === parseInt(this.wId, 10)
             })
+        },
+        networkBadgeText(): string {
+            const net = Vue.filter('net')(this.wallet!.gid)
+            if (net === 'main') {
+                return ''
+            }
+            return (net || 'private')
         },
         tokenList(): M.TokenSpec[] {
             return this.$state.config.token.specs(this.wallet!.gid, true)
