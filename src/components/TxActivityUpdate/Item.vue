@@ -32,7 +32,7 @@ export default Vue.extend({
     },
     methods: {
         txReceipt,
-        async onReceipt(connex: Connex, receipt: Connex.Thor.Receipt) {
+        async onReceipt(connex: Connex, receipt: Connex.Thor.Transaction.Receipt) {
             if (!this.tx.finished) {
                 const head = connex.thor.status.head
                 const confirmed = receipt ? head.number - receipt.meta.blockNumber >= 12 : false
