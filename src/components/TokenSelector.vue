@@ -22,13 +22,7 @@
             </q-avatar>
         </q-item-section>
         <q-item-section>
-            <q-item-label lines="1">{{token.symbol}}</q-item-label>
-            <q-item-label
-                caption
-                lines="2"
-            >
-                {{token.name}}
-            </q-item-label>
+            <q-item-label>{{token.symbol}}</q-item-label>
         </q-item-section>
         <q-item-section side>
             <q-icon name="unfold_more" />
@@ -89,7 +83,7 @@ export default Vue.extend({
             if (this.token && this.token.icon) {
                 return `${urls.tokenRegistry}assets/${this.token.icon}`
             } else {
-                return ''
+                return require('../assets/vet.png')
             }
         }
     },

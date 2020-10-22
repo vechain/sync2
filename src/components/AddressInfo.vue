@@ -5,10 +5,20 @@
     >
         <q-item-section avatar>
             <AddressAvatar
-                class="q-mx-auto"
-                style="width: 80px; height: 80px; border-radius: 40px;"
+                class="q-mx-auto relative-position"
+                style="width: 60px; height: 60px; border-radius: 40px;"
                 :addr="address"
-            />
+            >
+                <div class="absolute-bottom flex">
+                    <q-badge
+                        style="opacity: 0.9"
+                        v-if="network"
+                        class="text-capitalize q-mx-auto"
+                        color="orange"
+                        :label="network"
+                    />
+                </div>
+            </AddressAvatar>
         </q-item-section>
         <q-item-section>
             <q-item-label class="text-body1 reline ellipsis-2-lines">
@@ -25,7 +35,8 @@
 import Vue from 'vue'
 export default Vue.extend({
     props: {
-        address: String
+        address: String,
+        network: String
     }
 })
 </script>

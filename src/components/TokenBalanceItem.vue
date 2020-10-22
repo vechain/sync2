@@ -25,19 +25,12 @@
             </q-avatar>
         </q-item-section>
         <q-item-section>
-            <q-item-label
-                lines="1"
-                :class="{'text-body2': dense}"
-            >{{token.symbol}}</q-item-label>
-            <q-item-label
-                caption
-                lines="2"
-                v-if="!dense"
-            >
-                {{token.name}}
-            </q-item-label>
+            <q-item-label :class="{'text-body2': dense}">{{token.symbol}}</q-item-label>
         </q-item-section>
-        <q-item-section side>
+        <q-item-section
+            side
+            class="text-dark"
+        >
             <span v-if="balance">{{balance | balance(token.decimals)}}</span>
             <span v-else> -- </span>
         </q-item-section>
@@ -50,14 +43,14 @@ export default Vue.extend({
     props: {
         token: Object as () => M.TokenSpec,
         balance: String as () => '',
-        dense: Boolean
+        dense: { type: Boolean, default: false }
     },
     computed: {
         icon(): string {
             if (this.token && this.token.icon) {
                 return `${urls.tokenRegistry}assets/${this.token.icon}`
             } else {
-                return ''
+                return require('../assets/vet.png')
             }
         }
     }

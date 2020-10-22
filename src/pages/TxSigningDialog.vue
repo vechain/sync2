@@ -8,6 +8,7 @@
         transition-hide="slide-down"
     >
         <q-card class="fit column no-wrap">
+
             <div class="column">
                 <q-toolbar>
                     <q-toolbar-title class="absolute-center">
@@ -53,67 +54,77 @@
                 class="column bg-grey-2 shadow-up-1 q-mt-auto"
                 style="z-index: 2"
             >
-                <div
-                    v-if="isEnforced && !hasTheSigner"
-                    class="column items-center q-mx-auto q-gutter-y-md"
-                >
-                    <q-icon
-                        name="error_outline"
-                        class="text-red"
-                        size="xl"
-                    />
-                    <span class="text-body1">Account doesn't exist</span>
-                    <q-btn
-                        label="Close"
-                        class="q-px-lg"
-                        color="primary"
-                        @click="hide"
-                    />
-                </div>
-                <ConnexObject
-                    v-else
-                    v-slot="{connex}"
-                    :node="node"
-                >
-                    <ConnexContinuous
-                        :connex="connex"
-                        :query="estGas(connex)"
-                        @data="estimateHandler"
-                        @error="(e) => { estGasError = e }"
-                        v-slot="{data: estGas}"
+                <template v-if="!signing">
+                    <div
+                        v-if="isEnforced && !hasTheSigner"
+                        class="column items-center q-mx-auto q-gutter-y-md"
                     >
-                        <q-list class="full-width">
-                            <Priority
-                                :gas="estGas && estGas.gas"
-                                :bgp="estGas && estGas.baseGasPrice"
-                                v-model="gasPriceCoef"
-                            />
-                            <AccountSelector
-                                v-model="signer"
-                                :wallets="wallets"
-                                :connex="connex"
-                                v-slot="{address}"
-                                :isSelectable="isSelectable"
-                            >
-                                <BalanceList
+                        <q-icon
+                            name="error_outline"
+                            class="text-red"
+                            size="xl"
+                        />
+                        <span class="text-body1">Account doesn't exist</span>
+                        <q-btn
+                            label="Close"
+                            class="q-px-lg"
+                            color="primary"
+                            @click="hide"
+                        />
+                    </div>
+                    <ConnexObject
+                        v-else
+                        v-slot="{connex}"
+                        :node="node"
+                    >
+                        <ConnexContinuous
+                            :connex="connex"
+                            :query="estGas(connex)"
+                            @data="estimateHandler"
+                            @error="(e) => { estGasError = e }"
+                            v-slot="{data: estGas}"
+                        >
+                            <q-list class="full-width">
+                                <Priority
+                                    :gas="estGas && estGas.gas"
+                                    :bgp="estGas && estGas.baseGasPrice"
+                                    v-model="gasPriceCoef"
+                                />
+                                <AccountSelector
+                                    v-model="signer"
+                                    :wallets="wallets"
                                     :connex="connex"
-                                    :address="address"
-                                    :tokens="tokens"
-                                />
-                            </AccountSelector>
-                            <q-item>
-                                <SlideBtn
-                                    v-model="signed"
-                                    :disabled="!estGas"
-                                    @checked="onChecked(connex, estGas)"
-                                    label="Slide to Sign"
-                                    style="width: 70%"
-                                    class="absolute-center"
-                                />
-                            </q-item>
-                        </q-list>
-                    </ConnexContinuous>
-                </ConnexObject>
+                                    v-slot="{address}"
+                                    :isSelectable="isSelectable"
+                                >
+                                    <BalanceList
+                                        :connex="connex"
+                                        :address="address"
+                                        :tokens="tokens"
+                                    />
+                                </AccountSelector>
+                                <q-item>
+                                    <SlideBtn
+                                        v-model="signed"
+                                        :disabled="!estGas"
+                                        @checked="onChecked(connex, estGas)"
+                                        label="Slide to Sign"
+                                        style="width: 70%"
+                                        class="absolute-center"
+                                    />
+                                </q-item>
+                            </q-list>
+                        </ConnexContinuous>
+                    </ConnexObject>
+                </template>
+                <template v-else>
+                    <div class="text-center q-px-xl">
+                        <div class="q-my-xl">
+                            <q-spinner-oval size="3.5em" />
+                            <div class="text-body1 q-mt-sm">Signing approved content, one sec</div>
+                        </div>
+                    </div>
+                </template>
             </q-card-actions>
         </q-card>
     </q-dialog>
@@ -140,7 +151,8 @@ export default Vue.extend({
             signed: false,
             gasPriceCoef: 0,
             estGasError: null as Error | null,
-            vmError: null as Error | null
+            vmError: null as Error | null,
+            signing: false
         }
     },
     computed: {
@@ -252,6 +264,7 @@ export default Vue.extend({
                 (this.req.options && this.req.options.dependsOn) || null
             )
             try {
+                this.signing = true
                 const pin = await this.$authenticate(pin => Promise.resolve(pin))
                 if (this.wallet) {
                     const vault = await Vault.decode(this.wallet.vault)
@@ -268,7 +281,7 @@ export default Vue.extend({
                     const glob: M.Activity.Tx = {
                         id: st.id!,
                         type: 'tx',
-                        closed: false,
+                        finished: false,
                         comment: (this.req.options && this.req.options.comment) || '',
                         message: this.req.message,
                         signer: this.signer,
@@ -294,6 +307,8 @@ export default Vue.extend({
             } catch (error) {
                 this.signed = false
                 console.log(error)
+            } finally {
+                this.signing = false
                 this.hide()
             }
         }

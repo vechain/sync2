@@ -42,52 +42,62 @@
                 class="column bg-grey-2 shadow-up-1 q-mt-auto"
                 style="z-index: 2"
             >
-                <div
-                    v-if="isEnforced && !hasTheSigner"
-                    class="column items-center q-mx-auto q-gutter-y-md"
-                >
-                    <q-icon
-                        name="error_outline"
-                        class="text-red"
-                        size="xl"
-                    />
-                    <span class="text-body1">Account doesn't exist</span>
-                    <q-btn
-                        label="Close"
-                        class="q-px-lg"
-                        color="primary"
-                        @click="hide"
-                    />
-                </div>
-                <ConnexObject
-                    v-else
-                    v-slot="{connex}"
-                    :node="node"
-                >
-                    <q-list class="full-width">
-                        <AccountSelector
-                            v-model="signer"
-                            :wallets="wallets"
-                            :connex="connex"
-                            v-slot="{address}"
-                            :isSelectable="true"
-                        >
-                            <BalanceList
+                <template v-if="!signing">
+                    <div
+                        v-if="isEnforced && !hasTheSigner"
+                        class="column items-center q-mx-auto q-gutter-y-md"
+                    >
+                        <q-icon
+                            name="error_outline"
+                            class="text-red"
+                            size="xl"
+                        />
+                        <span class="text-body1">Account doesn't exist</span>
+                        <q-btn
+                            label="Close"
+                            class="q-px-lg"
+                            color="primary"
+                            @click="hide"
+                        />
+                    </div>
+                    <ConnexObject
+                        v-else
+                        v-slot="{connex}"
+                        :node="node"
+                    >
+                        <q-list class="full-width">
+                            <AccountSelector
+                                v-model="signer"
+                                :wallets="wallets"
                                 :connex="connex"
-                                :address="address"
-                            />
-                        </AccountSelector>
-                        <q-item>
-                            <SlideBtn
-                                v-model="signed"
-                                @checked="sign(connex)"
-                                label="Slide to Sign"
-                                style="width: 70%"
-                                class="absolute-center"
-                            />
-                        </q-item>
-                    </q-list>
-                </ConnexObject>
+                                v-slot="{address}"
+                                :isSelectable="true"
+                            >
+                                <BalanceList
+                                    :connex="connex"
+                                    :address="address"
+                                />
+                            </AccountSelector>
+                            <q-item>
+                                <SlideBtn
+                                    v-model="signed"
+                                    @checked="sign(connex)"
+                                    label="Slide to Sign"
+                                    style="width: 70%"
+                                    class="absolute-center"
+                                />
+                            </q-item>
+                        </q-list>
+                    </ConnexObject>
+                </template>
+                <template v-else>
+                    <div class="text-center q-px-xl">
+                        <div class="q-my-xl">
+                            <q-spinner-oval size="3.5em" />
+                            <div class="text-body1 q-mt-sm">Signing approved content, one sec</div>
+                        </div>
+                    </div>
+                </template>
             </q-card-actions>
         </q-card>
     </q-dialog>
@@ -110,7 +120,8 @@ export default Vue.extend({
         return {
             signer: '',
             isSelectable: false,
-            signed: false
+            signed: false,
+            signing: false
         }
     },
     computed: {
@@ -167,6 +178,7 @@ export default Vue.extend({
         },
         async sign(connex: Connex) {
             try {
+                this.signing = true
                 const pin = await this.$authenticate(pin => Promise.resolve(pin))
                 if (this.wallet) {
                     const vault = await Vault.decode(this.wallet.vault)
@@ -191,7 +203,7 @@ export default Vue.extend({
                     const cert: M.Activity.Cert = {
                         id: id,
                         message: this.req.message,
-                        closed: true,
+                        finished: true,
                         signer: this.signer,
                         type: 'cert',
                         referer: this.referer || {},
@@ -212,6 +224,8 @@ export default Vue.extend({
             } catch (error) {
                 this.signed = false
                 console.log(error)
+            } finally {
+                this.signing = false
                 this.hide()
             }
         }
