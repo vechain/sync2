@@ -9,11 +9,11 @@
             @click="onClickBackdrop"
         />
         <!-- the opener -->
-        <div
+        <!-- <div
             v-show="!opened&&!transiting&&!disable"
             class="drawer-opener fixed-left"
             v-touch-pan.right.mouse.prevent="handleTouchPan"
-        />
+        /> -->
         <!-- content wrapper-->
         <aside
             class="drawer fixed-left q-drawer__content"
@@ -111,6 +111,12 @@ export default Vue.extend({
             }
             this.transitionMul = 1
             this.transiting = false
+        },
+        handleTouchPanExternal(ev: Record<string, unknown>) {
+            if (this.opened || this.transiting || this.disable) {
+                return
+            }
+            this.handleTouchPan(ev)
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         handleTouchPan(ev: Record<string, any>) {

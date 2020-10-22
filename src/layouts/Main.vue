@@ -50,6 +50,7 @@
         <drawer
             :disable="!isIndexPage"
             v-model="drawerOpen"
+            ref="drawer"
         >
             <div
                 class="column full-height"
@@ -117,7 +118,7 @@
             </div>
         </drawer>
 
-        <q-page-container>
+        <q-page-container v-touch-pan.right.mouse.prevent="handleDrawerPan">
             <StackedRouterView />
         </q-page-container>
     </q-layout>
@@ -191,6 +192,10 @@ export default Vue.extend({
                 component: SignPortalDialog,
                 rid
             })
+        },
+        handleDrawerPan(ev: Record<string, unknown>) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (this.$refs.drawer as any).handleTouchPanExternal(ev)
         }
     },
     mounted() {

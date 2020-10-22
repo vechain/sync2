@@ -105,8 +105,9 @@ export default Vue.extend({
             return classes
         },
         testTouchPan(ev: TouchEvent & MouseEvent) {
-            const x = (ev.targetTouches ? ev.targetTouches[0].clientX : ev.clientX) - this.$el.getBoundingClientRect().x
-            this.shouldHandlePan = x >= 0 && x < 64 && this.stack.length > 1
+            const rect = this.$el.getBoundingClientRect()
+            const x = (ev.targetTouches ? ev.targetTouches[0].clientX : ev.clientX) - rect.x
+            this.shouldHandlePan = x >= 0 && x < rect.width / 2 && this.stack.length > 1
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         handleTouchPan(ev: any) {
