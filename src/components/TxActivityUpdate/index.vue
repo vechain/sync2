@@ -14,7 +14,7 @@ export default Vue.extend({
     computed: {
         activities() {
             return this.$state.activity.list.filter(item => {
-                return !item.glob.closed && item.glob.type === 'tx'
+                return !item.glob.finished && item.glob.type === 'tx'
             })
         }
     }

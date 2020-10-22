@@ -32,8 +32,8 @@ export default Vue.extend({
     },
     methods: {
         txReceipt,
-        async onReceipt(connex: Connex, receipt: Connex.Thor.Transaction.Receipt) {
-            if (!this.tx.closed) {
+        async onReceipt(connex: Connex, receipt: Connex.Thor.Receipt) {
+            if (!this.tx.finished) {
                 const head = connex.thor.status.head
                 const confirmed = receipt ? head.number - receipt.meta.blockNumber >= 12 : false
                 const expired = !receipt && (head.timestamp - this.tx.timestamp > 18 * 10 + 10)
@@ -42,7 +42,7 @@ export default Vue.extend({
                 }, {
                     glob: JSON.stringify({
                         ...this.item.glob,
-                        closed: (confirmed || expired),
+                        finished: (confirmed || expired),
                         receipt: receipt
                     })
                 })

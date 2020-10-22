@@ -77,7 +77,7 @@ declare namespace M {
     namespace Activity {
         type Tx = {
             id: string
-            closed: boolean
+            finished: boolean
             type: 'tx'
             message: Connex.Vendor.TxMessage
             comment: string
@@ -90,7 +90,7 @@ declare namespace M {
         }
         type Cert = {
             id: string
-            closed: boolean
+            finished: boolean
             type: 'cert'
             message: Connex.Vendor.CertMessage
             signer: string
