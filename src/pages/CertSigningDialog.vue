@@ -44,7 +44,7 @@
             >
                 <template v-if="!signing">
                     <div
-                        v-if="isEnforced && !hasTheSigner"
+                        v-if="(isEnforced && !hasTheSigner) || !wallets.length"
                         class="column items-center q-mx-auto q-gutter-y-md"
                     >
                         <q-icon
@@ -71,7 +71,7 @@
                                 :wallets="wallets"
                                 :connex="connex"
                                 v-slot="{address}"
-                                :isSelectable="true"
+                                :isSelectable="!isEnforced"
                             >
                                 <BalanceList
                                     :connex="connex"
@@ -119,7 +119,6 @@ export default Vue.extend({
     data() {
         return {
             signer: '',
-            isSelectable: false,
             signed: false,
             signing: false
         }
@@ -166,7 +165,6 @@ export default Vue.extend({
             } else {
                 this.signer = this.wallets[0].meta.addresses[0]
             }
-            this.isSelectable = !this.isEnforced
         },
         // method is REQUIRED by $q.dialog
         show() { (this.$refs.dialog as QDialog).show() },
