@@ -56,7 +56,7 @@
             >
                 <template v-if="!signing">
                     <div
-                        v-if="isEnforced && !hasTheSigner"
+                        v-if="(isEnforced && !hasTheSigner) || !wallets.length"
                         class="column items-center q-mx-auto q-gutter-y-md"
                     >
                         <q-icon
@@ -95,7 +95,7 @@
                                     :wallets="wallets"
                                     :connex="connex"
                                     v-slot="{address}"
-                                    :isSelectable="isSelectable"
+                                    :isSelectable="!isEnforced"
                                 >
                                     <BalanceList
                                         :connex="connex"
@@ -146,7 +146,6 @@ export default Vue.extend({
     data() {
         return {
             signer: '',
-            isSelectable: false,
             tokenSpecs,
             signed: false,
             gasPriceCoef: 0,
@@ -238,7 +237,6 @@ export default Vue.extend({
             } else {
                 this.signer = this.wallets[0].meta.addresses[0]
             }
-            this.isSelectable = !this.isEnforced
         },
         getFee(gas: number, bgp: string, coef: number): string {
             if (gas > 0) {
