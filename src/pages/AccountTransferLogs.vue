@@ -1,7 +1,7 @@
 <template>
     <div class="fit column no-wrap">
         <div class="q-mx-sm">
-            <AddressInfo :address="address"> {{wallet.meta.name + ' #' + (addressIndex + 1)}} </AddressInfo>
+            <AddressInfo :address="address" :network="networkBadgeText"> {{wallet.meta.name + ' #' + (addressIndex + 1)}} </AddressInfo>
         </div>
         <span class="text-h6 q-py-sm q-px-md">Transfers </span>
         <div
@@ -37,6 +37,13 @@ export default Vue.extend({
             return this.$state.wallet.list.find(i => {
                 return i.id === parseInt(this.wId, 10)
             })
+        },
+        networkBadgeText(): string {
+            const net = Vue.filter('net')(this.wallet!.gid)
+            if (net === 'main') {
+                return ''
+            }
+            return net
         },
         node(): M.Node {
             return this.$state.config.node.list.find(n => n.gid === this.wallet!.gid)!

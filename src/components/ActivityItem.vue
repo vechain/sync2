@@ -127,7 +127,7 @@ export default Vue.extend({
             if (net === 'main') {
                 return ''
             }
-            return (net || 'private')
+            return net
         },
         txDetailUrl(): string {
             if (this.item.gid === gids.main) {
