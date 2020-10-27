@@ -6,7 +6,6 @@
         persistent
         transition-show="slide-up"
         transition-hide="slide-down"
-        @keydown.capture="handleKeyDown"
         tabindex="0"
     >
         <q-card class="column items-center no-wrap">
@@ -22,21 +21,17 @@
                     @click="hide"
                 />
             </q-toolbar>
-            <q-space />
-            <p>Input the pin code</p>
-            <pin-code
-                v-model="pin"
-                @fulfilled="runTask($event)"
-            />
-            <p :class="{invisible: !wrong}">Incorrect Pin Code</p>
-            <q-btn
-                v-if="bioPassSaved"
-                :icon="bioAuthTypeIcon"
-                @click="recallBioPass"
-                flat
-            />
-            <q-space />
-            <digit-keypad :class="{'full-width': $q.screen.xs}" />
+            <p class="q-mt-md">Input your PIN to unlock</p>
+            <q-form @submit="runTask(pin)" class="text-center q-mt-xl column">
+                <q-input :error="wrong" error-message="Incorrect Pin Code" v-model="pin" outlined autocomplete="off" type="password"></q-input>
+                <q-btn
+                    type="submit"
+                    label="Unlock"
+                    class="q-mt-xl"
+                    color="primary"
+                />
+                <q-btn v-if="bioPassSaved" flat text-color="primary" class="q-mt-lg" label="Unlock with FaceId" />
+            </q-form>
         </q-card>
     </q-dialog>
 </template>
@@ -102,14 +97,6 @@ export default Vue.extend({
                     console.log('run task error:', err)
                 }
             })
-        },
-        handleKeyDown(ev: KeyboardEvent) {
-            const { key } = ev
-            if (key === 'Del' || key === 'Delete' || key === 'Backspace') {
-                this.pin = this.pin.slice(0, -1)
-            } else if (key.length === 1) {
-                this.pin += key
-            }
         }
     },
     async created() {

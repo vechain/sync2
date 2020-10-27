@@ -1,9 +1,23 @@
 <template>
-    <ConfirmedPinCodeInput
+    <div
         v-if="show"
-        class="full-height"
-        @fulfilled="handlePin($event)"
-    />
+        class="q-pt-xl"
+    >
+        <div class="q-px-lg">
+            If you forget your passcode you will be unable to access the application unless you delete the application.
+        </div>
+        <q-form @submit="onSubmit">
+            <InputPinCode v-model="code" />
+            <div class="text-center q-mt-lg">
+                <q-btn
+                    type="submit"
+                    label="Confirm"
+                    class="q-mt-md q-mx-auto"
+                    color="teal"
+                ></q-btn>
+            </div>
+        </q-form>
+    </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
@@ -12,6 +26,7 @@ export default Vue.extend({
     data() {
         return {
             show: false,
+            code: '',
             oldPin: ''
         }
     },
@@ -26,11 +41,11 @@ export default Vue.extend({
         }
     },
     methods: {
-        async handlePin(pin: string) {
+        async onSubmit() {
             await this.$loading(
                 async () => {
                     try {
-                        await this.updateDB(pin)
+                        await this.updateDB(this.code)
                         this.$q.notify({
                             type: 'positive',
                             message: 'Master code changed.',

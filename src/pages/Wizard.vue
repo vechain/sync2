@@ -7,43 +7,81 @@
         animated
     >
         <q-carousel-slide
+            name="welcome"
+            class="q-pa-none"
+        >
+            <div class="column fit q-pa-lg">
+                <h4 class="column">Welcome</h4>
+                <div class="column">
+                    Sync designed to provide the superior user experiences for VeChain Apps,
+                    and serves as the dApp enviroment to provide unlimited potential for developers and users.
+                </div>
+                <q-btn
+                    class="q-mt-auto column"
+                    color="primary"
+                    label="Create New Wallet"
+                    @click="slide = 'setPin'"
+                />
+            </div>
+        </q-carousel-slide>
+        <q-carousel-slide
             name="setPin"
             class="q-pa-none"
         >
-            <confirmed-pin-code-input
-                class="full-height"
-                @fulfilled="handlePin($event)"
-            />
-        </q-carousel-slide>
-        <q-carousel-slide
-            name="createWallet"
-            class="column flex-center q-pa-none"
-        >
-            Creating wallet...
-        </q-carousel-slide>
-        <q-carousel-slide
-            name="done"
-            class="column flex-center q-pa-none"
-        >
-            Congrats!
-            <q-btn @click="ok({})">OK</q-btn>
+            <div class="q-pt-xl">
+                <h6 class="text-center q-mt-none">Enter Your PIN</h6>
+                <div class="q-px-lg">
+                    This passcode is used to access your application and wallets. You can change the passcode in setting in future.
+                </div>
+                <q-form @submit="onSubmit">
+                    <InputPinCode v-model="code" />
+                    <div class="text-center q-mt-lg">
+                        <q-btn
+                            type="submit"
+                            label="Next"
+                            class="q-mt-md q-mx-auto"
+                            color="teal"
+                        ></q-btn>
+                    </div>
+                </q-form>
+            </div>
         </q-carousel-slide>
     </q-carousel>
 </template>
 <script lang="ts">
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Vue from 'vue'
-import { Vault } from 'core/vault'
-
+import { Vault } from '../core/vault'
 export default Vue.extend({
     data: () => {
         return {
-            slide: 'setPin'
+            slide: 'welcome',
+            code: ''
         }
     },
     methods: {
-        async handlePin(pin: string) {
-            this.slide = 'createWallet'
+        async onSubmit() {
+            await this.$loading(
+                async () => {
+                    try {
+                        await this.initDB(this.code)
+                        this.$q.notify({
+                            type: 'positive',
+                            message: 'Master code changed.',
+                            timeout: 1500
+                        })
+                    } catch (error) {
+                        console.log(error)
+                        this.$q.notify({
+                            type: 'warning',
+                            message: 'Something wrong!',
+                            timeout: 1500
+                        })
+                    }
+                }
+            )
+        },
+        async initDB(pin: string) {
             try {
                 const words = await Vault.generateMnemonic()
                 const vault = await Vault.createHD(words, pin)
@@ -65,7 +103,6 @@ export default Vue.extend({
                         meta: JSON.stringify(meta)
                     })
                 })
-                this.slide = 'done'
             } catch (err) {
                 console.warn(err)
                 alert('something wrong')
