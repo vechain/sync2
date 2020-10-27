@@ -70,7 +70,7 @@ export default Vue.extend({
             if (net === 'main') {
                 return ''
             }
-            return (net || 'private')
+            return net
         },
         tokenList(): M.TokenSpec[] {
             return this.$state.config.token.specs(this.wallet!.gid, true)
