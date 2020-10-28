@@ -1,5 +1,6 @@
 <template>
     <q-btn
+    v-bind="$attrs"
         label="Receive"
     >
         <q-popup-proxy
@@ -40,8 +41,9 @@
                         style="word-break: break-all; border-radius: 15px;"
                     >{{address | checksum}}</div>
                     <q-btn
-                        class="q-mt-xl"
+                        class="q-mt-xl full-width"
                         @click="onCopy"
+                        color="blue-9"
                     >Copy</q-btn>
                 </div>
             </q-card>

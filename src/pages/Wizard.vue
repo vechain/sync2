@@ -28,9 +28,9 @@
             name="setPin"
             class="q-pa-none"
         >
-            <div class="q-pt-xl">
+            <div class="q-pt-xl q-px-md">
                 <h6 class="text-center q-mt-none">Enter Your PIN</h6>
-                <div class="q-px-lg">
+                <div>
                     This passcode is used to access your application and wallets. You can change the passcode in setting in future.
                 </div>
                 <q-form @submit="onSubmit">

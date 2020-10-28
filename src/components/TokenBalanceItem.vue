@@ -7,13 +7,9 @@
         <q-item-section avatar>
             <q-avatar
                 v-if="icon"
-                square
-                :size="dense ? 'sm' : 'md'"
+                :size="dense ? 'md' : 'lg'"
+                :icon="'img:' + icon"
             >
-                <q-img
-                    v-if="icon"
-                    :src="icon"
-                />
             </q-avatar>
             <q-avatar
                 v-else

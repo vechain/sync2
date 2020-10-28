@@ -69,7 +69,7 @@ const routes: RouteConfig[] = [
             name: 'reset-pin-code',
             component: ResetPin,
             meta: {
-                title: 'Change PIN Code'
+                title: 'PIN Code'
             }
         }, {
             path: 'account-transfer-logs',

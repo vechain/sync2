@@ -103,7 +103,7 @@
                                         :tokens="tokens"
                                     />
                                 </AccountSelector>
-                                <q-item>
+                                <q-item class="q-my-lg">
                                     <SlideBtn
                                         v-model="signed"
                                         :disabled="!estGas"

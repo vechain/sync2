@@ -62,7 +62,7 @@
                 <q-btn
                     type="submit"
                     class="full-width q-mt-xl"
-                    dark
+                    color="blue-9"
                 >Send</q-btn>
             </q-form>
         </div>
@@ -114,7 +114,7 @@
 
             <q-btn
                 class="q-mx-auto q-mt-auto q-mb-xl q-px-xl"
-                color="primary"
+                color="blue-9"
                 @click="$router.go(-1)"
                 label="Done"
             />
