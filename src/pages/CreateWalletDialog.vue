@@ -45,12 +45,11 @@
                         :val="item.gid"
                         :label="item.gid | net"
                     />
-                    <div class="text-center q-pt-md">
+                    <div class="text-center q-pt-xl">
                         <q-btn
                             unelevated
-                            size="sm"
-                            class="text-capitalize"
-                            color="black"
+                            class="text-capitalize full-width"
+                            color="blue-9"
                             type="submit"
                             label="Create"
                         ></q-btn>

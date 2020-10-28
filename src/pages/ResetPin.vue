@@ -1,9 +1,9 @@
 <template>
     <div
         v-if="show"
-        class="q-pt-xl"
+        class="q-pt-md q-px-md"
     >
-        <div class="q-px-lg">
+        <div>
             If you forget your passcode you will be unable to access the application unless you delete the application.
         </div>
         <q-form @submit="onSubmit">
@@ -12,8 +12,8 @@
                 <q-btn
                     type="submit"
                     label="Confirm"
-                    class="q-mt-md q-mx-auto"
-                    color="teal"
+                    class="q-mt-md full-width q-mx-auto"
+                    color="blue-9"
                 ></q-btn>
             </div>
         </q-form>

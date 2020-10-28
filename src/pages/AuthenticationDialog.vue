@@ -22,15 +22,15 @@
                 />
             </q-toolbar>
             <p class="q-mt-md">Input your PIN to unlock</p>
-            <q-form @submit="runTask(pin)" class="text-center q-mt-xl column">
-                <q-input :error="wrong" error-message="Incorrect Pin Code" v-model="pin" outlined autocomplete="off" type="password"></q-input>
+            <q-form @submit="runTask(pin)" class="full-width q-mt-xl q-px-xl column">
+                <q-input input-class="text-center" autofocus dense :error="wrong" error-message="Incorrect Pin Code" v-model="pin" outlined autocomplete="off" type="password"></q-input>
                 <q-btn
                     type="submit"
                     label="Unlock"
                     class="q-mt-xl"
-                    color="primary"
+                    color="blue-9"
                 />
-                <q-btn v-if="bioPassSaved" flat text-color="primary" class="q-mt-lg" label="Unlock with FaceId" />
+                <q-btn v-if="bioPassSaved" flat text-color="primary" class="q-mt-lg" label="Unlock with FaceID" />
             </q-form>
         </q-card>
     </q-dialog>

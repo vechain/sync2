@@ -53,68 +53,70 @@
             ref="drawer"
         >
             <div
-                class="column full-height"
-                style="width:300px"
+                class="fit column no-wrap"
+                style="width: 300px !important"
             >
                 <!-- drawer content header -->
-                <q-toolbar>
-                    <q-avatar
-                        color="primary"
-                        text-color="white"
-                    >S</q-avatar>
-                    <q-toolbar-title>
-                        Sync
-                    </q-toolbar-title>
-                </q-toolbar>
-                <q-toolbar>
-                    <q-toolbar-title class="text-grey text-subtitle2">
-                        Wallets
-                    </q-toolbar-title>
-                    <q-btn
-                        flat
-                        round
-                        dense
-                        icon="add"
-                        @click="onClickAddWallet"
-                    />
-                </q-toolbar>
+                <div class="column">
+                    <q-toolbar>
+                        <q-avatar
+                            color="primary"
+                            text-color="white"
+                        >S</q-avatar>
+                        <q-toolbar-title>
+                            Sync
+                        </q-toolbar-title>
+                    </q-toolbar>
+                </div>
+                <div class="column">
+                    <q-toolbar>
+                        <q-toolbar-title class="text-grey text-subtitle2">
+                            Wallets
+                        </q-toolbar-title>
+                        <q-btn
+                            flat
+                            round
+                            dense
+                            icon="add"
+                            @click="onClickAddWallet"
+                        />
+                    </q-toolbar>
+                </div>
                 <!-- the grouped wallet list -->
-                <q-list
-                    class="col fit overflow-auto"
-                    v-scrollDivider.both
-                >
-                    <wallet-item
-                        v-for="wallet in $state.wallet.list"
-                        :key="wallet.id"
-                        :name="wallet.meta.name"
-                        @click="onClickWallet(wallet.id)"
-                        clickable
-                        :active="wallet.id === $state.wallet.current.id"
-                        :net="wallet.gid | net"
-                        active-class="bg-blue-1"
-                    />
-                </q-list>
+                <div class="column overflow-auto" v-scrollDivider.both>
+                    <q-list>
+                        <wallet-item
+                            v-for="wallet in $state.wallet.list"
+                            :key="wallet.id"
+                            :name="wallet.meta.name"
+                            @click="onClickWallet(wallet.id)"
+                            clickable
+                            :active="wallet.id === $state.wallet.current.id"
+                            :net="wallet.gid | net"
+                            active-class="bg-blue-1"
+                        />
+                    </q-list>
+                </div>
                 <!-- drawer content footer -->
-                <q-toolbar>
+                <div class="column q-mt-auto q-pl-md q-pb-md items-start q-gutter-y-sm">
                     <q-btn
                         icon="settings"
                         flat
                         dense
+                        label="Settings"
                         round
                         :to="{name: 'settings', query: {'no-transition-in': '1'}}"
                     />
-                    <q-space />
                     <q-btn
                         icon="history"
                         flat
+                        label="Activities"
                         dense
                         round
                         :to="{name: 'activities', query: {'no-transition-in': '1'}}"
                     />
-
                     <TxActivityUpdate />
-
-                </q-toolbar>
+                </div>
             </div>
         </drawer>
 

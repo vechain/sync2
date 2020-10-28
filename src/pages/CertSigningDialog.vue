@@ -78,7 +78,7 @@
                                     :address="address"
                                 />
                             </AccountSelector>
-                            <q-item>
+                            <q-item class="q-my-lg">
                                 <SlideBtn
                                     v-model="signed"
                                     @checked="sign(connex)"

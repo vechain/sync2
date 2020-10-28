@@ -16,7 +16,7 @@
                     />
                 </q-item-section>
                 <q-item-section>
-                    <q-item-label>Change Master Code</q-item-label>
+                    <q-item-label>Change PIN Code</q-item-label>
                 </q-item-section>
                 <q-item-section side>
                     <q-icon name="keyboard_arrow_right"></q-icon>
@@ -43,26 +43,6 @@
                 </q-item-section>
             </q-item>
             <q-separator inset="item" />
-            <q-item>
-                <q-item-section avatar>
-                    <q-avatar
-                        color="primary"
-                        text-color="black"
-                    />
-                </q-item-section>
-                <q-item-section>
-                    <q-item-label lines="1">Appearence</q-item-label>
-                </q-item-section>
-                <q-item-section side>
-                    <q-icon name="keyboard_arrow_right"></q-icon>
-                </q-item-section>
-            </q-item>
-            <q-item>
-                <q-item-section>
-                    <q-item-label> Tokens </q-item-label>
-                    <q-item-label caption> Selected token will be showing the balance of account balance </q-item-label>
-                </q-item-section>
-            </q-item>
             <q-item :to="{name: 'tokens-setting'}">
                 <q-item-section avatar>
                     <q-avatar
@@ -92,6 +72,7 @@ export default Vue.extend({
         }
     },
     methods: {
+        // TODO faceID
         async toggleBioPass(newVal: boolean) {
             const bioPass = await BioPass.open()
             if (!bioPass) {

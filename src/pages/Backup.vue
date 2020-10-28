@@ -97,21 +97,21 @@
                     </div>
                 </div>
             </template>
-            <div class="justify-center q-mt-lg">
+            <div class="justify-center q-mt-lg q-mx-md">
                 <div class="col-8 text-center">
                     <q-btn
                         v-if="step === 1"
-                        class="text-capitalize"
+                        class="text-capitalize full-width"
                         label="I've written it down"
                         @click="onNext"
-                        color="black"
+                        color="blue-9"
                     />
                     <q-btn
                         v-if="step === 3"
-                        class="text-capitalize"
+                        class="text-capitalize full-width"
                         label="Done"
                         @click="$router.back()"
-                        color="black"
+                        color="blue-9"
                     />
                 </div>
             </div>
