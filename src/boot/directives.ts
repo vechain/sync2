@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { boot } from 'quasar/wrappers'
+import { debounce } from 'quasar'
 
 const directives: Record<string, Vue.DirectiveOptions> = {
     scrollDivider: {
@@ -16,15 +17,22 @@ const directives: Record<string, Vue.DirectiveOptions> = {
                     el.style.borderBottom = `1px solid rgba(0,0,0,${opacity})`
                 }
             }
-            (el as any)._scrollHandler = handler
+            const onResize = debounce(handler, 300);
+
+            (el as any)._scrollHandler = handler;
+            (window as any)._onResize = onResize
+
             el.addEventListener('scroll', handler)
+            window.addEventListener('resize', onResize)
+
             // get correct initial state
             handler()
-            // TODO: reactive to element resize
         },
         unbind: el => {
             el.removeEventListener('scroll', (el as any)._scrollHandler)
+            window.removeEventListener('resize', (el as any)._onResize)
             delete (el as any)._scrollHandler
+            delete (window as any)._onResize
         }
     }
 }

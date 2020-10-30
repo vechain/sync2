@@ -1,7 +1,10 @@
 <template>
     <div class="fit column no-wrap">
-        <div class="q-mx-sm column">
-            <AddressInfo :address="address" :network="networkBadgeText"> {{wallet.meta.name + ' #' + (addressIndex + 1)}} </AddressInfo>
+        <div class="q-mx-sm">
+            <AddressInfo
+                :address="address"
+                :network="networkBadgeText"
+            > {{wallet.meta.name + ' #' + (addressIndex + 1)}} </AddressInfo>
         </div>
         <div class="q-px-md row items-center justify-between">
             <span class="text-h6 q-py-sm"> Assets </span>
@@ -15,7 +18,7 @@
             />
         </div>
         <div
-            class="q-px-xs column scroll"
+            class="q-px-xs col scroll"
             v-scrollDivider.both
         >
             <ConnexObject
@@ -31,7 +34,7 @@
                 />
             </ConnexObject>
         </div>
-        <div class="row align-center justify-center q-gutter-x-xl q-py-lg">
+        <div class="row q-mt-auto align-center justify-center q-gutter-x-xl q-py-lg">
             <q-btn
                 class="col-4 justify-center"
                 @click="onSend"

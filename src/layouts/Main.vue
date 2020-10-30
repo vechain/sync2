@@ -68,22 +68,25 @@
                         </q-toolbar-title>
                     </q-toolbar>
                 </div>
-                <div class="column">
-                    <q-toolbar>
-                        <q-toolbar-title class="text-grey text-subtitle2">
-                            Wallets
-                        </q-toolbar-title>
-                        <q-btn
-                            flat
-                            round
-                            dense
-                            icon="add"
-                            @click="onClickAddWallet"
-                        />
-                    </q-toolbar>
-                </div>
+
+                <q-toolbar>
+                    <q-toolbar-title class="text-grey text-subtitle2">
+                        Wallets
+                    </q-toolbar-title>
+                    <q-btn
+                        flat
+                        round
+                        dense
+                        icon="add"
+                        @click="onClickAddWallet"
+                    />
+                </q-toolbar>
+
                 <!-- the grouped wallet list -->
-                <div class="column overflow-auto" v-scrollDivider.both>
+                <div
+                    class="col overflow-auto"
+                    v-scrollDivider.both
+                >
                     <q-list>
                         <wallet-item
                             v-for="wallet in $state.wallet.list"
@@ -98,23 +101,38 @@
                     </q-list>
                 </div>
                 <!-- drawer content footer -->
-                <div class="column q-mt-auto q-pl-md q-pb-md items-start q-gutter-y-sm">
-                    <q-btn
-                        icon="settings"
-                        flat
+                <div class="no-wrap q-mt-auto q-pb-md items-start q-gutter-y-sm">
+                    <q-item
+                        class="full-width"
                         dense
-                        label="Settings"
-                        round
                         :to="{name: 'settings', query: {'no-transition-in': '1'}}"
-                    />
-                    <q-btn
-                        icon="history"
-                        flat
-                        label="Activities"
+                    >
+                        <q-item-section
+                            avatar
+                            side
+                        >
+                            <q-icon
+                                size="sm"
+                                name="settings"
+                            />
+                        </q-item-section>
+                        <q-item-section>Settings</q-item-section>
+                    </q-item>
+                    <q-item
                         dense
-                        round
                         :to="{name: 'activities', query: {'no-transition-in': '1'}}"
-                    />
+                    >
+                        <q-item-section
+                            avatar
+                            side
+                        >
+                            <q-icon
+                                size="sm"
+                                name="history"
+                            />
+                        </q-item-section>
+                        <q-item-section>Activities</q-item-section>
+                    </q-item>
                     <TxActivityUpdate />
                 </div>
             </div>
