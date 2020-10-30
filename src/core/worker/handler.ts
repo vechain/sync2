@@ -136,12 +136,12 @@ async function handleCommand(cmd: string, arg: any): Promise<any> {
 
 const ctx: Worker = self as never
 ctx.onmessage = async (ev) => {
-    const [cmd, arg] = ev.data
+    const [seq, cmd, arg] = ev.data
     try {
         const result = await handleCommand(cmd, arg)
-        ctx.postMessage([result])
+        ctx.postMessage([seq, result])
     } catch (err) {
         // TODO error translation
-        ctx.postMessage([undefined, { message: err.message }])
+        ctx.postMessage([seq, undefined, { message: err.message }])
     }
 }
