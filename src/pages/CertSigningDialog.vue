@@ -107,8 +107,7 @@
 import { QDialog } from 'quasar'
 import Vue from 'vue'
 import { Vault } from 'core/vault'
-import { Certificate } from 'thor-devkit/dist/certificate'
-import { secp256k1, blake2b256 } from 'thor-devkit/dist/cry'
+import { Certificate, secp256k1, blake2b256 } from 'thor-devkit'
 
 export default Vue.extend({
     props: {

@@ -3,9 +3,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const m = require('more-entropy')
-import { HDNode } from 'thor-devkit/dist/cry/hdnode'
-import { blake2b256 } from 'thor-devkit/dist/cry/blake2b'
-import { mnemonic } from 'thor-devkit/dist/cry/mnemonic'
+import { HDNode, blake2b256, mnemonic } from 'thor-devkit'
 import {
     pbkdf2Sync,
     createHmac,

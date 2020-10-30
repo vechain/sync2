@@ -1,7 +1,7 @@
 import type { Entity } from './vault'
 import type { Vault } from './index'
 import { hdDeriveXPub, hdDeriveMnemonic, decrypt } from 'core/worker'
-import { publicKeyToAddress } from 'thor-devkit/dist/cry/address'
+import { address } from 'thor-devkit'
 
 export async function deriveNode(salt: Buffer, entity: Entity, index: number): Promise<Vault.Node> {
     if (entity.type === 'static') {
@@ -9,7 +9,7 @@ export async function deriveNode(salt: Buffer, entity: Entity, index: number): P
             // static type vault only support 0-index node
             throw new Error('invalid node index')
         }
-        const addr = '0x' + publicKeyToAddress(Buffer.from(entity.pub, 'hex')).toString('hex')
+        const addr = address.fromPublicKey(Buffer.from(entity.pub, 'hex'))
 
         return {
             get address() { return addr },

@@ -42,7 +42,7 @@
 import Vue from 'vue'
 import * as V from 'validator-ts'
 import { urls } from 'src/consts'
-import { blake2b256 } from 'thor-devkit/dist/cry/blake2b'
+import { blake2b256 } from 'thor-devkit'
 import { QDialog } from 'quasar'
 
 /** request relayed by TOS */

@@ -83,7 +83,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Vue from 'vue'
 import { Vault } from 'core/vault'
-import { mnemonic } from 'thor-devkit/dist/cry/mnemonic'
+import { mnemonic } from 'thor-devkit'
 
 export default Vue.extend({
     data: () => {

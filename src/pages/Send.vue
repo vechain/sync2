@@ -125,8 +125,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { tokenBalanceOf } from 'components/queries'
-import { isAddress } from 'thor-devkit/dist/cry/address'
-import { abi } from 'thor-devkit/dist/abi'
+import { address, abi } from 'thor-devkit'
 import { tokenSpecs, abis } from '../consts'
 import { copyToClipboard } from 'quasar'
 
@@ -195,7 +194,7 @@ export default Vue.extend({
         }
     },
     methods: {
-        isAddress,
+        isAddress: address.test,
         tokenBalanceOf,
         onSend() {
             let msgItem!: Connex.Vendor.TxMessage[0]

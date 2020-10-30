@@ -1,4 +1,4 @@
-import type { abi } from 'thor-devkit/dist/abi'
+import type { abi } from 'thor-devkit'
 
 const transferABI: abi.Function.Definition = {
     constant: false,

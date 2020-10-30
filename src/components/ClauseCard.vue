@@ -97,7 +97,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { BigNumber } from 'bignumber.js'
-import { abi } from 'thor-devkit/dist/abi'
+import { abi } from 'thor-devkit'
 import { abis, tokenSpecs } from '../consts'
 
 export default Vue.extend({

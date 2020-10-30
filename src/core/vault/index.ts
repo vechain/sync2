@@ -1,4 +1,4 @@
-import { secp256k1 } from 'thor-devkit/dist/cry/secp256k1'
+import { secp256k1 } from 'thor-devkit'
 import { init as initSalt } from './salt'
 import { newVault } from './vault'
 import { hdGenerateMnemonic, hdDeriveMnemonic, encrypt, decrypt } from 'core/worker'

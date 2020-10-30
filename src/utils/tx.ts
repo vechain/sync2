@@ -1,7 +1,6 @@
-import { Transaction } from 'thor-devkit/dist/transaction'
+import { Transaction, blake2b256, secp256k1 } from 'thor-devkit'
 import { getParams } from 'components/queries'
 import { randomBytes } from 'crypto'
-import { cry } from 'thor-devkit'
 
 async function getBaseGasPrice(connex: Connex) {
     const baseGasPrice = '0x000000000000000000000000000000000000626173652d6761732d7072696365'
@@ -83,11 +82,11 @@ export function buildTx(
             let tx
             if (delegatorSig) {
                 tx = new Transaction({ ...txBody, reserved: { features: 1 } })
-                const originSig = cry.secp256k1.sign(cry.blake2b256(tx.encode()), privateKey)
+                const originSig = secp256k1.sign(blake2b256(tx.encode()), privateKey)
                 tx.signature = Buffer.concat([originSig, Buffer.from(delegatorSig.slice(2), 'hex')])
             } else {
                 tx = new Transaction(txBody)
-                tx.signature = cry.secp256k1.sign(cry.blake2b256(tx.encode()), privateKey)
+                tx.signature = secp256k1.sign(blake2b256(tx.encode()), privateKey)
             }
             return tx
         }

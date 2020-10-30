@@ -1,5 +1,5 @@
 import { boot } from 'quasar/wrappers'
-import { toChecksumAddress } from 'thor-devkit/dist/cry/address'
+import { address } from 'thor-devkit'
 import { BigNumber } from 'bignumber.js'
 import { format } from 'timeago.js'
 
@@ -25,7 +25,7 @@ const filters = {
     },
     /** convert the address into checksum format */
     checksum: (addr: string) => {
-        return toChecksumAddress(addr)
+        return address.toChecksumed(addr)
     },
     /** convert balance from unit WEI to common unit */
     balance: (v: string | number, decimal = 18, digits = 2) => {
