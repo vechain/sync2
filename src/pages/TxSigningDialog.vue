@@ -8,25 +8,22 @@
         transition-hide="slide-down"
     >
         <q-card class="fit column no-wrap">
-
-            <div class="column">
-                <q-toolbar>
-                    <q-toolbar-title class="absolute-center">
-                        Sign
-                    </q-toolbar-title>
-                    <q-btn
-                        flat
-                        round
-                        dense
-                        icon="close"
-                        @click="hide"
-                    />
-                </q-toolbar>
-            </div>
+            <q-toolbar>
+                <q-toolbar-title class="absolute-center">
+                    Sign
+                </q-toolbar-title>
+                <q-btn
+                    flat
+                    round
+                    dense
+                    icon="close"
+                    @click="hide"
+                />
+            </q-toolbar>
             <!-- clause list -->
             <q-card-section
                 v-scrollDivider.both
-                class="overflow-auto column no-wrap"
+                class="overflow-auto col no-wrap"
             >
                 <q-banner
                     rounded
@@ -51,7 +48,7 @@
             </q-card-section>
             <!-- signer infos -->
             <q-card-actions
-                class="column bg-grey-2 shadow-up-1 q-mt-auto"
+                class="bg-grey-2 shadow-up-1 q-mt-auto"
                 style="z-index: 2"
             >
                 <template v-if="!signing">
@@ -262,8 +259,8 @@ export default Vue.extend({
                 (this.req.options && this.req.options.dependsOn) || null
             )
             try {
-                this.signing = true
                 const pin = await this.$authenticate(pin => Promise.resolve(pin))
+                this.signing = true
                 if (this.wallet) {
                     const vault = await Vault.decode(this.wallet.vault)
                     const node = await vault.derive(this.wallet.meta.addresses.indexOf(this.signer))
@@ -307,7 +304,6 @@ export default Vue.extend({
                 console.log(error)
             } finally {
                 this.signing = false
-                this.hide()
             }
         }
     }
