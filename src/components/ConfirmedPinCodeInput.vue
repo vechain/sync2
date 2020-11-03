@@ -15,7 +15,7 @@
                 name="a"
                 class="column flex-center"
             >
-                <p>Input new pin code</p>
+                <p>Enter new password</p>
                 <pin-code
                     v-model="code.a"
                     @fulfilled="handlePinA"
@@ -26,7 +26,7 @@
                 name="b"
                 class="column flex-center"
             >
-                <p>Confirm the new pin code</p>
+                <p>Confirm the new password</p>
                 <pin-code
                     v-model="code.b"
                     @fulfilled="handlePinB"

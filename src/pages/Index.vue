@@ -105,10 +105,10 @@ export default Vue.extend({
         },
         onDelete() {
             this.$q.dialog({
-                title: 'Remove Wallet',
+                title: 'Delete Wallet',
                 message: 'Are you sure? this cannot be undone. Unless you have backed up your wallet beforehand',
                 ok: {
-                    label: 'Remove',
+                    label: 'Delete',
                     flat: true
                 },
                 cancel: {
@@ -124,7 +124,7 @@ export default Vue.extend({
         onRename() {
             this.$q.dialog({
                 title: 'Rename',
-                message: 'Customize the wallet name can help you easily identify the wallet',
+                message: 'Wallet name helps you quickly identify the wallet.',
                 prompt: {
                     model: '',
                     isValid: (val: string) => { return !!val && !!val.trim() },

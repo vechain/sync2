@@ -13,9 +13,9 @@
                     no-error-icon
                     autocomplete="off"
                     clearable
-                    :rules="[val => isAddress(val) || 'Please type a valid address']"
+                    :rules="[val => isAddress(val) || 'Please enter a valid address']"
                     v-model.lazy="to"
-                    label="To:"
+                    label="To"
                 >
                     <template
                         v-if="isAddress(to)"
@@ -78,7 +78,7 @@
                 />
             </div>
             <div class=" text-center text-h6 q-mt-md">You've signed the Transaction</div>
-            <div class=" text-center text-body2 text-grey q-my-md">It may take a while to see the transaction on the blockchain. You can always check the detail via activity</div>
+            <div class=" text-center text-body2 text-grey q-my-md">It may take a while to see the transaction on the network. You can always check the detail via activities.</div>
             <q-list
                 bordered
                 class="rounded-borders"
@@ -103,7 +103,7 @@
                 </q-item>
                 <q-item>
                     <q-item-section avatar>
-                        <q-item-label class="text-grey">Detail</q-item-label>
+                        <q-item-label class="text-grey">Summary</q-item-label>
                     </q-item-section>
 
                     <q-item-section class="text-caption">

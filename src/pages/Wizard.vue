@@ -13,13 +13,12 @@
             <div class="column fit q-pa-lg">
                 <h4 class="column">Welcome</h4>
                 <div class="column">
-                    Sync designed to provide the superior user experiences for VeChain Apps,
-                    and serves as the dApp enviroment to provide unlimited potential for developers and users.
+                    Sync 2 is the brand new designed cross-platform wallet which allows users better managing all VIP-180 tokens, interacting with all dApps acrossing all platforms.
                 </div>
                 <q-btn
                     class="q-mt-auto column"
                     color="primary"
-                    label="Create New Wallet"
+                    label="Get Started"
                     @click="slide = 'setPin'"
                 />
             </div>
@@ -29,9 +28,9 @@
             class="q-pa-none"
         >
             <div class="q-pt-xl q-px-md">
-                <h6 class="text-center q-mt-none">Enter Your PIN</h6>
-                <div>
-                    This passcode is used to access your application and wallets. You can change the passcode in setting in future.
+                <h6 class="text-center q-mt-none">Enter Your Password</h6>
+                <div class="text-subtitle2">
+                    Password allows you to access Sync2 and unlock your wallet. If you forget the password, you will NOT be able to access Sync2. You will need to delete the app and restore with mnemonic words.
                 </div>
                 <q-form @submit="onSubmit">
                     <InputPinCode v-model="code" />
@@ -67,7 +66,7 @@ export default Vue.extend({
                         await this.initDB(this.code)
                         this.$q.notify({
                             type: 'positive',
-                            message: 'Master code changed.',
+                            message: 'Wallet successfully created ',
                             timeout: 1500
                         })
                     } catch (error) {

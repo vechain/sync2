@@ -57,11 +57,11 @@
                         no-error-icon
                         v-model.trim="words"
                         clearable
-                        label="Mnemonic phrases"
-                        hint="Input the mnemonic phrases and seperated by single space"
+                        label="Mnemonic Words"
+                        hint="Enter the mnemonic words and seperated by single space"
                         :rules="[
-                            val => val && val.length > 0 || 'Please type your mnemonic phrases',
-                            val => checkMnemonic(val) || 'Invalid mnemonic'
+                            val => val && val.length > 0 || 'Please enter mnemonic words',
+                            val => checkMnemonic(val) || 'Invalid mnemonic words'
                         ]"
                     />
 
