@@ -203,7 +203,7 @@ export default Vue.extend({
 </style>
 <style scoped>
 .card-container {
-    scroll-snap-type: y mandatory;
+    /* scroll-snap-type: y mandatory; */
 }
 body.q-ios-padding .card-container {
     padding-bottom: env(safe-area-inset-bottom) !important;
@@ -211,7 +211,7 @@ body.q-ios-padding .card-container {
 .card-wrap {
     width: var(--card-width);
     height: calc(var(--card-width) * 0.67);
-    scroll-snap-align: start;
+    /* scroll-snap-align: start; */
 }
 .card-shape {
     border-radius: calc(var(--card-width) * 0.07);
