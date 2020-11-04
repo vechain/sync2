@@ -7,7 +7,7 @@
         <!-- address cart list -->
         <div class="column fit">
             <q-banner
-                v-if="wallet.meta.backedUp"
+                v-if="!wallet.meta.backedUp"
                 inline-actions
                 rounded
                 class="text-white bg-orange q-mx-sm self-center q-my-sm"
