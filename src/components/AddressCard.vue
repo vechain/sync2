@@ -104,7 +104,7 @@ export default Vue.extend({
                 imageCache.set(addr, img)
             }
             return {
-                background: `url('${await img}') 0% 0% / cover no-repeat`
+                background: `url('${await img}') center / cover no-repeat`
             }
         }
     },
@@ -119,7 +119,7 @@ export default Vue.extend({
 </script>
 <style scoped>
 .bg-transition {
-    transition: background 0.3s;
+    transition: background-image 0.3s;
 }
 .logo {
     opacity: 0.4;
