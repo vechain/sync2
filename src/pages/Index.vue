@@ -5,35 +5,55 @@
         v-slot="{connex}"
     >
         <!-- address cart list -->
-        <div
-            id="list"
-            ref="list"
-            v-scrollDivider
-            class="fit row justify-center content-start overflow-auto card-container"
-        >
-            <q-badge
-                v-show="networkBadgeText"
-                color="orange"
-                floating
-                transparent
-                class="q-ma-md z-top text-subtitle2 text-capitalize"
-            >{{networkBadgeText}}</q-badge>
-            <Intersecting
-                v-for="(address, i) in addresses"
-                :key="i"
-                root="list"
-                class="card-wrap q-px-md q-py-md"
-                v-slot="{intersecting}"
+        <div class="column fit">
+            <q-banner
+                v-if="wallet.meta.backedUp"
+                inline-actions
+                rounded
+                class="text-white bg-orange q-mx-sm self-center q-my-sm"
             >
-                <AddressCard
-                    class="fit card-shape"
-                    flat
-                    :address="address"
-                    :connex="intersecting?connex:undefined"
-                    :index="i"
-                    @click="onClickCard(i)"
-                />
-            </Intersecting>
+                Backup allows you to regain wallet access if you lose this device.
+                <template v-slot:action>
+                    <q-btn
+                        flat
+                        :to="{name: 'backup'}"
+                        color="white"
+                        label="BACK UP"
+                    />
+                </template>
+            </q-banner>
+            <div class="col relative-position">
+                <q-badge
+                    v-show="networkBadgeText"
+                    color="orange"
+                    floating
+                    transparent
+                    class="z-top q-mt-md text-subtitle2 text-capitalize q-mr-lg"
+                >{{networkBadgeText}}</q-badge>
+                <div
+                    id="list"
+                    ref="list"
+                    v-scrollDivider
+                    class="fit row justify-center overflow-auto content-start card-container"
+                >
+                    <Intersecting
+                        v-for="(address, i) in addresses"
+                        :key="i"
+                        root="list"
+                        class="card-wrap q-px-md q-py-md"
+                        v-slot="{intersecting}"
+                    >
+                        <AddressCard
+                            class="fit card-shape"
+                            flat
+                            :address="address"
+                            :connex="intersecting?connex:undefined"
+                            :index="i"
+                            @click="onClickCard(i)"
+                        />
+                    </Intersecting>
+                </div>
+            </div>
         </div>
     </ConnexObject>
 </template>
