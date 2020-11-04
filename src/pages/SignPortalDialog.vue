@@ -83,7 +83,8 @@ export default Vue.extend({
         }
     },
     computed: {
-        favicon(): string { return `${urls.tos}${this.rid}/icon?size=48..96..128` },
+        baseUrl(): string { return `${urls.tos}${encodeURIComponent(this.rid)}` },
+        favicon(): string { return `${this.baseUrl}/icon?size=48..96..128` },
         domain(): string {
             try {
                 return new URL(this.origin).host
@@ -99,10 +100,23 @@ export default Vue.extend({
         hide() { (this.$refs.dialog as QDialog).hide() },
 
         async resolveRequest() {
-            const resp = await this.$axios.get(
-                urls.tos + this.rid,
-                { transformResponse: data => data } // raw data is needed to verify hash
-            )
+            const resp = await (async () => {
+                for (let i = 0; i < 3; i++) {
+                    try {
+                        const resp = await this.$axios.get(
+                            `${this.baseUrl}?wait=1`,
+                            { transformResponse: data => data } // raw data is needed to verify hash
+                        )
+                        if (resp.data) {
+                            return resp
+                        }
+                    } catch {
+                        await new Promise(resolve => setTimeout(resolve, 2000))
+                    }
+                }
+                throw new Error('can not resolve request')
+            })()
+
             const computedRid = blake2b256(resp.data).toString('hex')
             if (computedRid !== this.rid) {
                 throw new Error('id and content mismatch')
@@ -134,7 +148,7 @@ export default Vue.extend({
         async postResult(suffix: string, result: object) {
             for (let i = 0; i < 3; i++) {
                 try {
-                    this.$axios.post(`${urls.tos}${this.rid}${suffix}`, result)
+                    this.$axios.post(`${this.baseUrl}${suffix}`, result)
                     return
                 } catch (err) {
                     console.warn(err)
