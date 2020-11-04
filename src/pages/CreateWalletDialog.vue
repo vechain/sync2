@@ -99,7 +99,8 @@ export default Vue.extend({
                 const node0 = await vault.derive(0)
                 const meta: M.Wallet.Meta = {
                     name: this.name,
-                    addresses: [node0.address]
+                    addresses: [node0.address],
+                    backedUp: false
                 }
 
                 await this.$storage.wallets.insert({

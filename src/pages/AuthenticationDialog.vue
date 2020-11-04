@@ -6,6 +6,7 @@
         persistent
         transition-show="slide-up"
         transition-hide="slide-down"
+        v-nofocusout="true"
         tabindex="0"
     >
         <q-card class="column items-center no-wrap">

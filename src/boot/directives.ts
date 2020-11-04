@@ -34,8 +34,40 @@ const directives: Record<string, Vue.DirectiveOptions> = {
             delete (el as any)._scrollHandler
             delete (window as any)._onResize
         }
+    },
+    nofocusout: {
+        bind(el: HTMLElement) {
+            const _el = (el as any)
+            _el.tabIndex = -1
+            const callback = (event: any) => {
+                if (!_el._needFocusout) {
+                    return
+                }
+                if (!el.contains(event.relatedTarget)) {
+                    el.focus()
+                }
+            }
+            _el.addEventListener('focusout', callback)
+            _el._needFocusout = true
+            _el._focusout = {
+                callback
+            }
+        },
+        update(el: HTMLElement, binding: any) {
+            const _el = (el as any)
+            _el._needFocusout = binding.value
+        },
+        unbind(el: HTMLElement) {
+            const _el = (el as any)
+            if (_el._focusout) {
+                _el.removeEventListener('focusout', _el._focusout!.callback)
+                delete _el._focusout
+                delete _el._needFocusout
+            }
+        }
     }
 }
+
 export default boot(({ Vue }) => {
     Object.entries(directives).forEach(([name, definition]) => {
         Vue.directive(name, definition)
