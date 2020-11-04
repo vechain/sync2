@@ -8,9 +8,8 @@
         >
             <template v-if="step === 1">
                 <div class="q-px-lg">
-                    <span class="text-subtitle2 q-py-sm">Backup mnemonic</span>
-                    <div class="text-body2 text-grey q-py-sm">
-                        {{`These ${words.length} words are used to recover your wallet. Please write down in order and keep it in a secure place.`}}
+                    <div class="text-subtitle2 q-py-sm">
+                        {{`These ${words.length} words will be used to recover your wallet. Please write them down in the given order and keep it safe in a secure place.`}}
                     </div>
                 </div>
                 <div class="row justify-around q-pt-lg ">
@@ -26,9 +25,8 @@
             </template>
             <template v-if="step === 2">
                 <div class="q-px-md">
-                    <span class="text-subtitle2 q-py-sm">Confirm your mnemonic words</span>
-                    <div class="text-body2 text-grey q-py-sm">
-                        Please choose mnemonic words in order and make sure your written mnemonic was correct written.
+                    <div class="text-subtitle2 q-py-sm">
+                        Please select the words in order.
                     </div>
                 </div>
                 <div class="q-px-lg">
@@ -90,10 +88,10 @@
                     </div>
                     <span class="text-h4">Your wallet is now backed up</span>
                     <div class="text-body2 text-grey q-py-md">
-                        The mnemonic words stores all the information that is needed at any point in time to recover your wallet.
+                        The mnemonic words store all the information needed at any point in time to recover your wallet.
                     </div>
                     <div class="text-body2 text-grey q-py-sm">
-                        The mnemonic words should be <strong class="text-black">stored in a secure place</strong>. It ensures you have had a backup in a scenario where your device breaks down or becomes unusable due to any reason.
+                        The mnemonic words must be stored in a <strong class="text-black">secure place</strong>. It allows you to regain wallet access in a scenario where your device is lost, stolen, or unusable due to any reason.
                     </div>
                 </div>
             </template>

@@ -20,11 +20,11 @@
                         @click="show = false"
                     />
                     <q-toolbar-title class="absolute-center text-capitalize">
-                        Receive Assets
+                        Receive
                     </q-toolbar-title>
                 </q-toolbar>
                 <div class="text-center q-px-md q-pt-xl">
-                    Share your account address to receive funds
+                    Share your account address to receive assets
 
                     <AddressAvatar
                         class="q-mx-auto q-mt-xl q-mb-lg relative-position"

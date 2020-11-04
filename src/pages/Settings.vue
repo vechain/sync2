@@ -16,7 +16,7 @@
                     />
                 </q-item-section>
                 <q-item-section>
-                    <q-item-label>Change PIN Code</q-item-label>
+                    <q-item-label>Change Password</q-item-label>
                 </q-item-section>
                 <q-item-section side>
                     <q-icon name="keyboard_arrow_right"></q-icon>

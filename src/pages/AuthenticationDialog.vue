@@ -21,9 +21,9 @@
                     @click="hide"
                 />
             </q-toolbar>
-            <p class="q-mt-md">Input your PIN to unlock</p>
+            <p class="q-mt-md">Enter password to unlock</p>
             <q-form @submit="runTask(pin)" class="full-width q-mt-xl q-px-xl column">
-                <q-input input-class="text-center" autofocus dense :error="wrong" error-message="Incorrect Pin Code" v-model="pin" outlined autocomplete="off" type="password"></q-input>
+                <q-input input-class="text-center" autofocus dense :error="wrong" error-message="Incorrect Password" v-model="pin" outlined autocomplete="off" type="password"></q-input>
                 <q-btn
                     type="submit"
                     label="Unlock"

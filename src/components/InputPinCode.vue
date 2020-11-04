@@ -1,18 +1,18 @@
 <template>
     <div>
         <q-input
-            label="PIN Code"
+            label="New Password"
             type="password"
             debounce="500"
             autocomplete="off"
             v-model="firstOne"
             :rules="[
-                val => !!val || 'Please input the new PIN code',
+                val => !!val || 'Please enter the new password',
                 val => val.length > 5 || 'Require at least 6 characters'
             ]"
         />
         <q-input
-            label="Re-enter your PIN code"
+            label="Confirm Password"
             type="password"
             debounce="500"
             autocomplete="off"
@@ -21,7 +21,7 @@
             :rules="[codeMatch]"
         />
         <div>
-            <div class="q-mb-sm text-caption">PIN code requirements:</div>
+            <div class="q-mb-sm text-caption">Password requirements:</div>
             <div
                 :class="firstOne.length > 5 ? 'text-blue-7' : 'text-grey-7'"
                 class="row items-center q-gutter-sm"
@@ -53,7 +53,7 @@ export default Vue.extend({
     },
     methods: {
         codeMatch(val: string): boolean | string {
-            return val === this.firstOne || 'PIN code mismatch'
+            return val === this.firstOne || 'Password mismatch'
         }
     }
 })
