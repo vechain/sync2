@@ -1,5 +1,7 @@
 <template>
-    <div v-scrollDivider class="fit overflow-auto"
+    <div
+        v-scrollDivider
+        class="fit overflow-auto"
         v-if="words && words.length"
     >
         <div
@@ -33,7 +35,7 @@
                     <div
                         v-for="row of verifyRowNum"
                         :key="row"
-                        class="row q-px-lg q-py-sm q-col-gutter-sm rounded-borders bg-grey-2"
+                        class="row q-mt-sm q-px-lg q-py-sm q-col-gutter-sm rounded-borders bg-grey-2"
                     >
                         <div
                             class="col-4 text-center"
@@ -46,7 +48,7 @@
                     </div>
                     <div
                         v-if="verifyRowNum < words.length / groupSize"
-                        class="row q-mt-sm q-px-lg q-py-sm q-col-gutter-sm rounded-borders "
+                        class="row q-mt-sm q-px-lg q-py-sm q-col-gutter-sm rounded-borders"
                         :class="isError ? 'bg-deep-orange-2' : 'bg-grey-2'"
                     >
                         <div
@@ -72,6 +74,8 @@
                         <q-btn
                             @click="onCheck(item)"
                             size="md"
+                            outline
+                            color="blue-9"
                             class="text-lowercase serif rounded-borders"
                             style="width: 100%"
                         >{{words[item]}}</q-btn>
@@ -108,7 +112,7 @@
                         v-if="step === 3"
                         class="text-capitalize full-width"
                         label="Done"
-                        @click="$router.back()"
+                        @click="onDone"
                         color="blue-9"
                     />
                 </div>
@@ -171,6 +175,21 @@ export default Vue.extend({
         },
         onBack() {
             this.step--
+        },
+        onDone() {
+            const meta: M.Wallet.Meta = {
+                ...this.wallet!.meta,
+                backedUp: true
+            }
+            this.$loading(
+                async () => {
+                    await this.$storage.wallets.update({ id: this.wallet!.id }, {
+                        meta: JSON.stringify(meta)
+                    })
+                }
+            )
+
+            this.$router.back()
         },
         onCheck(index: number) {
             if (!this.verifyingItems || this.verifyingItems.length === 3) {
