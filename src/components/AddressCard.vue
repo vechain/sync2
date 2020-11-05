@@ -14,7 +14,8 @@
                 <!-- balances -->
                 <div class="text-right">
                     <span class="text-h6 text-weight-regular">{{data?data.balance:null | balance}}</span>
-                    <span class="monospace text-caption"> VET&nbsp;</span></div>
+                    <span class="monospace text-caption"> VET&nbsp;</span>
+                </div>
                 <div class="text-right">
                     <span class="text-h6 text-weight-regular">{{data?data.energy:null | balance}}</span>
                     <span class="monospace text-caption"> VTHO</span>
@@ -81,7 +82,8 @@ export default Vue.extend({
     },
     data: () => {
         return {
-            height: 0
+            height: 0,
+            background: undefined as unknown as object // type hack for async-computed
         }
     },
     computed: {
