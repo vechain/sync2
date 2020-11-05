@@ -5,11 +5,11 @@ import { gids, urls } from 'src/consts'
 const presetNodes: M.Node[] = [
     { // mainnet
         gid: gids.main,
-        url: 'http://localhost:8669'
+        url: 'https://mainnet.veblocks.net'
     },
     { // testnet
         gid: gids.test,
-        url: 'http://localhost:8669'
+        url: 'https://testnet.veblocks.net'
     }
 ]
 
