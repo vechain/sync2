@@ -47,6 +47,7 @@ export namespace Storage {
         gid: string // the genesis id bound to
         walletId: number // related wallet id
         createdTime: number
+        status: '' | 'completed'
         glob: string // the JSON encoded glob contains activity detail
     }
 
@@ -57,7 +58,7 @@ export namespace Storage {
          * @param row the row
          * @param replace use upsert
          */
-        insert(row: Partial<T>, replace?: boolean): Promise<void>
+        insert(row: Omit<T, keyof Entity>, replace?: boolean): Promise<void>
 
         /**
          * update rows that match the given condition

@@ -15,21 +15,19 @@ const schemas = [
         vault TEXT,
         meta TEXT  
     )`,
-    `CREATE INDEX IF NOT EXISTS wallets_i0 ON wallets(
-        gid
-    )`,
+    'CREATE INDEX IF NOT EXISTS wallets_i0 ON wallets(gid)',
     `CREATE TABLE IF NOT EXISTS activities (
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         gid TEXT NOT NULL, 
         walletId INTEGER NOT NULL,
         createdTime INTEGER NOT NULL,
+        status TEXT NOT NULL,
         glob TEXT
     )`,
-    `CREATE INDEX IF NOT EXISTS activities_i0 ON activities(
-        gid,
-        walletId,
-        createdTime
-    )`
+    'CREATE INDEX IF NOT EXISTS activities_i0 ON activities(gid)',
+    'CREATE INDEX IF NOT EXISTS activities_i1 ON activities(walletId)',
+    'CREATE INDEX IF NOT EXISTS activities_i2 ON activities(createdTime)',
+    'CREATE INDEX IF NOT EXISTS activities_i3 ON activities(status)'
 ]
 
 export interface SQLRunner {
@@ -42,10 +40,10 @@ function wrapTable<T extends Storage.Entity>(runner: SQLRunner, tableName: strin
     return {
         insert: (row, replace) => {
             const keys = []
-            const values = []
+            const values = [] as never[]
             for (const key in row) {
                 keys.push(key)
-                values.push(row[key])
+                values.push((row as never)[key])
             }
             return runner.exec(`${replace ? 'REPLACE' : 'INSERT'} INTO ${tableName} (${keys.join(',')}) VALUES(${keys.map(() => '?').join(',')})`,
                 ...values)
