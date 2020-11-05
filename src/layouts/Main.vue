@@ -44,6 +44,26 @@
                         @click="onClickMore"
                     />
                 </q-toolbar>
+                <q-banner
+                    v-if="$state.app.updated"
+                    dark
+                    dense
+                    inline-actions
+                    class="bg-positive"
+                >
+                    <template v-slot:avatar>
+                        <q-icon name="upgrade" />
+                    </template>
+                    New version is ready :)
+                    <template v-slot:action>
+                        <q-btn
+                            @click="reloadApp"
+                            size="sm"
+                            flat
+                            label="Upgrade Now"
+                        />
+                    </template>
+                </q-banner>
             </q-header>
         </transition>
 
@@ -216,6 +236,9 @@ export default Vue.extend({
         handleDrawerPan(ev: Record<string, unknown>) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (this.$refs.drawer as any).handleTouchPanExternal(ev)
+        },
+        reloadApp() {
+            window.location.reload()
         }
     },
     mounted() {
