@@ -209,6 +209,7 @@ export default Vue.extend({
                         gid: this.gid,
                         walletId: this.wallet.id,
                         createdTime: Date.now(),
+                        status: '',
                         glob: JSON.stringify(cert)
                     })
                     this.ok({
