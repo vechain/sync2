@@ -28,7 +28,7 @@ export default Vue.extend({
         net: String
     },
     computed: {
-        badgeText() {
+        badgeText(): string {
             if (this.net === 'main') {
                 return ''
             }
