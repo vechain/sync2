@@ -1,14 +1,20 @@
 <template>
     <div
         v-scrollDivider
-        class="fit overflow-auto"
+        class="fit"
         v-if="words && words.length"
     >
-        <div
+        <transition-group
             style="max-width: 500px"
-            class="q-mx-auto"
+            class="q-mx-auto fit relative-position"
+            name="q-transition--jump-up"
+            tag="div"
         >
-            <template v-if="step === 1">
+            <div
+                class="bg-white"
+                key="1"
+                v-if="step === 1"
+            >
                 <div class="q-px-lg">
                     <div class="text-subtitle2 q-py-sm">
                         {{`These ${words.length} words will be used to recover your wallet. Please write them down in the given order and keep it safe in a secure place.`}}
@@ -24,18 +30,32 @@
                         <span class="text-weight-medium">{{item}}</span>
                     </div>
                 </div>
-            </template>
-            <template v-if="step === 2">
+                <div class="justify-center q-mt-lg q-mx-md">
+                    <div class="col-8 text-center">
+                        <q-btn
+                            class="text-capitalize full-width"
+                            label="I've written it down"
+                            @click="onNext"
+                            color="blue-9"
+                        />
+                    </div>
+                </div>
+            </div>
+            <div
+                class="bg-white fit column"
+                key="2"
+                v-if="step === 2"
+            >
                 <div class="q-px-md">
                     <div class="text-subtitle2 q-py-sm">
                         Please select the words in order.
                     </div>
                 </div>
-                <div class="q-px-lg">
+                <div class="col q-px-lg q-pt-sm">
                     <div
                         v-for="row of verifyRowNum"
                         :key="row"
-                        class="row q-mt-sm q-px-lg q-py-sm q-col-gutter-sm rounded-borders bg-grey-2"
+                        class="row q-px-lg q-py-sm q-col-gutter-sm rounded-borders"
                     >
                         <div
                             class="col-4 text-center"
@@ -63,7 +83,7 @@
                 </div>
                 <div
                     v-if="verifyRowNum < words.length / groupSize"
-                    class="absolute row justify-center q-pa-md q-col-gutter-md"
+                    class="q-mt-auto row justify-center q-pa-md q-col-gutter-md"
                     style="bottom: 0"
                 >
                     <div
@@ -81,8 +101,12 @@
                         >{{words[item]}}</q-btn>
                     </div>
                 </div>
-            </template>
-            <template v-if="step === 3">
+            </div>
+            <div
+                class="bg-white"
+                key="3"
+                v-if="step === 3"
+            >
                 <div class="q-pa-lg">
                     <div class="q-pl-sm q-pb-md">
                         <q-icon
@@ -98,26 +122,18 @@
                         The mnemonic words must be stored in a <strong class="text-black">secure place</strong>. It allows you to regain wallet access in a scenario where your device is lost, stolen, or unusable due to any reason.
                     </div>
                 </div>
-            </template>
-            <div class="justify-center q-mt-lg q-mx-md">
-                <div class="col-8 text-center">
-                    <q-btn
-                        v-if="step === 1"
-                        class="text-capitalize full-width"
-                        label="I've written it down"
-                        @click="onNext"
-                        color="blue-9"
-                    />
-                    <q-btn
-                        v-if="step === 3"
-                        class="text-capitalize full-width"
-                        label="Done"
-                        @click="onDone"
-                        color="blue-9"
-                    />
+                <div class="justify-center q-mt-lg q-mx-md">
+                    <div class="col-8 text-center">
+                        <q-btn
+                            class="text-capitalize full-width"
+                            label="Done"
+                            @click="onDone"
+                            color="blue-9"
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
+        </transition-group>
     </div>
 </template>
 <script lang="ts">
