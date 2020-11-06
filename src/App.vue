@@ -13,6 +13,9 @@ export default Vue.extend({
             return this.$state.wallet.ready &&
                 this.$state.config.ready
         }
+    },
+    created() {
+        console.log('[Sync2]', `v${process.env.APP_VERSION} (${process.env.APP_BUILD})`)
     }
 })
 </script>
