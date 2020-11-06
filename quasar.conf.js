@@ -10,6 +10,12 @@
 
 const { configure } = require('quasar/wrappers')
 const path = require('path')
+const {execSync} = require('child_process')
+
+const appVersion = require('./package.json').version
+const appBuild = execSync('git --no-pager log -n 1 --date=short --pretty="%ad.%h"')
+  .toString('utf8')
+  .trim()
 
 module.exports = configure(function (/* ctx */) {
   return {
@@ -97,6 +103,10 @@ module.exports = configure(function (/* ctx */) {
 
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
     build: {
+      env: {
+          APP_VERSION: JSON.stringify(appVersion),
+          APP_BUILD: JSON.stringify(appBuild)
+      },
       vueRouterMode: 'hash', // available values: 'hash', 'history'
 
       // rtl: false, // https://quasar.dev/options/rtl-support
