@@ -4,7 +4,7 @@
         class="q-pt-md q-px-md"
     >
         <div class="text-subtitle2">
-            Password allows you to access Sync2 and unlock your wallet. If you forget the password, you will NOT be able to access Sync2. You will need to delete the app and restore the wallet with mnemonic words.
+            Password allows you to access Sync2 and unlock your wallet. If you forget the password, you will NOT be able to access Sync2.
         </div>
         <q-form @submit="onSubmit">
             <InputPinCode v-model="code" />
