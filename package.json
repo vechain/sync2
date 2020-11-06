@@ -1,8 +1,8 @@
 {
   "name": "org.vechain.sync2",
   "version": "0.0.1",
-  "description": "VeChain Sync",
-  "productName": "Sync",
+  "description": "VeChain Sync2",
+  "productName": "Sync2",
   "cordovaId": "org.vechain.sync2",
   "capacitorId": "",
   "author": "qianbin <cola.tin.com@gmail.com>",

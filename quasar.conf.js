@@ -165,10 +165,10 @@ module.exports = configure(function (/* ctx */) {
         clientsClaim: true
       }, // only for GenerateSW
       manifest: {
-        name: 'Sync',
+        name: 'Sync2',
         // eslint-disable-next-line @typescript-eslint/camelcase
-        short_name: 'Sync',
-        description: 'VeChain Sync',
+        short_name: 'Sync2',
+        description: 'VeChain Sync2',
         display: 'standalone',
         orientation: 'portrait',
         // eslint-disable-next-line @typescript-eslint/camelcase
