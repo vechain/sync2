@@ -42,7 +42,8 @@
       "cordova-plugin-keychain-touch-id": {
         "FACEID_USAGE_DESCRIPTION": "For saving vault pin code"
       },
-      "cordova-plugin-ionic-keyboard": {}
+      "cordova-plugin-ionic-keyboard": {},
+      "cordova-plugin-splashscreen": {}
     },
     "platforms": [
       "ios",
