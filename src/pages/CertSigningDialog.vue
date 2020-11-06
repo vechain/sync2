@@ -89,7 +89,7 @@
                     </ConnexObject>
                 </template>
                 <template v-else>
-                    <div class="text-center q-px-xl">
+                    <div class="text-center q-px-xl q-mx-auto">
                         <div class="q-my-xl">
                             <q-spinner-oval size="3.5em" />
                             <div class="text-body1 q-mt-sm">Signing approved content, one sec</div>
