@@ -88,17 +88,17 @@
                 >
                     <div
                         class="col-4 text-center"
-                        v-for="(item, index) in nextGroupIndex"
+                        v-for="(wordIndex, index) in nextGroupIndex"
                         :key="index"
                     >
                         <q-btn
-                            @click="onCheck(item)"
+                            @click="onCheck(wordIndex)"
                             size="md"
                             outline
                             color="blue-9"
                             class="text-lowercase serif rounded-borders"
                             style="width: 100%"
-                        >{{words[item]}}</q-btn>
+                        >{{words[wordIndex]}}</q-btn>
                     </div>
                 </div>
             </div>
@@ -142,7 +142,7 @@ import { Vault } from '../core/vault'
 export default Vue.extend({
     data: () => {
         return {
-            words: null as string[] | null,
+            words: [] as string[],
             step: 1,
             verifyRowNum: 0,
             verifyingItems: null as number[] | null,
@@ -154,21 +154,25 @@ export default Vue.extend({
         wallet() {
             return this.$state.wallet.current
         },
-        nextGroupIndex() {
+        nextGroupIndex(): number[] {
             const start = this.verifyRowNum * this.groupSize
-            const result = []
+            const indexs = [...this.words.keys()]
+            indexs.splice(start, this.groupSize)
+
+            const randomIndex = []
             for (let i = 0; i < this.groupSize; i++) {
-                result.push(Math.floor(Math.random() * this.words!.length))
+                randomIndex.push(indexs[Math.floor(Math.random() * (this.words.length - this.groupSize))])
             }
-            return [...this.words!.map(
-                (item, index) => { return index }
-            ).slice(start, start + this.groupSize), ...result].map(item => {
+
+            return [...this.words.map(
+                (word, index) => { return index }
+            ).slice(start, start + this.groupSize), ...randomIndex].map(wordIndex => {
                 return {
-                    v: item,
+                    wordIndex,
                     order: Math.random()
                 }
             }).sort((item, nItem) => { return item.order - nItem.order }).map(item => {
-                return item.v
+                return item.wordIndex
             })
         }
     },
@@ -215,9 +219,9 @@ export default Vue.extend({
             this.verifyingItems.push(index)
 
             if (this.verifyingItems.length === 3) {
-                const items = this.verifyingItems.map(item => this.words![item]).join('')
+                const items = this.verifyingItems.map(item => this.words[item]).join('')
                 const startIndex = this.groupSize * this.verifyRowNum
-                const words = this.words!.slice(startIndex, this.groupSize + startIndex).join('')
+                const words = this.words.slice(startIndex, this.groupSize + startIndex).join('')
                 if (items === words) {
                     this.verifyRowNum++
                     this.verifyingItems = []
