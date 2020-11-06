@@ -15,7 +15,7 @@ export default Vue.extend({
         }
     },
     created() {
-        console.log('[Sync2]', `v${process.env.APP_VERSION} (${process.env.APP_BUILD})`)
+        console.log(`[Sync2] v${process.env.APP_VERSION} (${process.env.APP_BUILD})`)
     }
 })
 </script>
