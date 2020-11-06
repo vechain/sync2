@@ -155,6 +155,7 @@
                     </q-item>
                     <TxActivityUpdate />
                 </div>
+                <span class="full-width text-center text-grey text-caption">{{version}}</span>
             </div>
         </drawer>
 
@@ -193,6 +194,9 @@ export default Vue.extend({
                 return wallet ? wallet.meta.name : ''
             }
             return this.$route.meta.title
+        },
+        version() {
+            return `v${process.env.APP_VERSION} (${process.env.APP_BUILD})`
         }
     },
     watch: {
