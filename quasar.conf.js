@@ -240,7 +240,7 @@ module.exports = configure(function (/* ctx */) {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: 'sync2'
+        appId: 'org.vechain.sync2'
       },
 
        // Requires: @quasar/app v1.4.2+
