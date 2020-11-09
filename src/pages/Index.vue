@@ -129,10 +129,11 @@ export default Vue.extend({
                 message: 'Are you sure? this cannot be undone. Unless you have backed up your wallet beforehand',
                 ok: {
                     label: 'Delete',
-                    flat: true
+                    color: 'negative'
                 },
                 cancel: {
-                    label: 'Cancel'
+                    label: 'Cancel',
+                    flat: true
                 }
             }).onOk(async () => {
                 await this.$authenticate(() => {
@@ -151,7 +152,9 @@ export default Vue.extend({
                     type: 'text'
                 },
                 cancel: true,
-                ok: true
+                ok: {
+                    label: 'Save'
+                }
             }).onOk((data: string) => {
                 this.wallet.meta.name = data
                 this.$storage.wallets.update({ id: this.wallet.id }, {
