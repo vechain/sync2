@@ -8,7 +8,9 @@
                     v-else
                     color="blue"
                 />
-                VTHO
+                <span class="text-caption">
+                    VTHO
+                </span>
             </q-item-label>
         </q-item-section>
         <q-item-section side>
@@ -31,9 +33,10 @@
                 </template>
                 <q-popup-proxy
                     v-model="show"
-                    full-width
+                    breakpoint="2000"
+                    :context-menu="false"
                 >
-                    <q-card>
+                    <q-card class="full-width">
                         <q-toolbar>
                             <q-toolbar-title>
                                 Adjust Priority
@@ -57,7 +60,12 @@
                                     <q-item-section>
                                         {{l.label}}
                                     </q-item-section>
-                                    <q-item-section side>{{ getFee(gas, bgp, calcCoef(i)) }} VTHO</q-item-section>
+                                    <q-item-section side>
+                                        <div>
+                                            <span class="monospace">{{ getFee(gas, bgp, calcCoef(i)) }}</span>
+                                            <span class="text-caption monospace"> VTHO</span>
+                                        </div>
+                                    </q-item-section>
                                 </q-item>
                             </q-list>
                         </q-card-section>

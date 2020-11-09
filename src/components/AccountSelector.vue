@@ -40,19 +40,19 @@
         <q-popup-proxy
             v-model="show"
             :no-parent-event="!isSelectable"
-            content-class="selector-dialog"
             position="bottom"
+            breakpoint="2000"
+            :context-menu="false"
         >
             <q-card
-                style="padding-top: 50px"
-                class="overflow-hidden fit"
+                class="column full-width no-wrap"
             >
-                <q-toolbar class="absolute-top">
+                <q-toolbar>
                     <q-toolbar-title>Select</q-toolbar-title>
                 </q-toolbar>
                 <q-card-section
                     v-scrollDivider
-                    class="fit overflow-auto q-pt-none"
+                    class="col overflow-auto q-pt-none"
                 >
                     <AccountList
                         :wallets="wallets"
@@ -102,8 +102,3 @@ export default Vue.extend({
     }
 })
 </script>
-<style>
-.selector-dialog > .q-dialog__inner {
-    height: 70%;
-}
-</style>

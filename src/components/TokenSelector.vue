@@ -29,12 +29,16 @@
         </q-item-section>
         <q-popup-proxy
             v-model="showTokenList"
-            full-width
+            breakpoint="2000"
+            :context-menu="false"
         >
-            <q-card>
+            <q-card class="column full-width no-wrap" >
+                <q-toolbar>
+                    <q-toolbar-title>Select Token</q-toolbar-title>
+                </q-toolbar>
                 <q-card-section
-                    style="max-height: 70vh"
-                    class="scroll"
+                    v-scrollDivider
+                    class="col overflow-auto q-pt-none"
                 >
                     <BalanceList
                         @select="onSelect"
