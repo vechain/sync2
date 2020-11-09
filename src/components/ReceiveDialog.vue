@@ -1,16 +1,14 @@
 <template>
     <q-btn
-    v-bind="$attrs"
+        v-bind="$attrs"
         label="Receive"
     >
         <q-popup-proxy
             v-model="show"
-            maximized
-            persistent
-            transition-show="slide-up"
-            transition-hide="slide-down"
+            breakpoint="2000"
+            :context-menu="false"
         >
-            <q-card>
+            <q-card class="q-pb-lg">
                 <q-toolbar>
                     <q-btn
                         flat

@@ -14,8 +14,8 @@
         <template v-else>
             <div class="text-center q-px-xl column fit justify-center">
                 <div class="col-5">
-                    <h6 class="text-h6 q-my-sm text-grey-8">No activity found</h6>
-                    <div class="text-body1 text-grey-6">Recent activity that you’ve interacted with recently will appear here</div>
+                    <h6 class="text-h6 q-my-sm text-grey-8">No Activities Found</h6>
+                    <div class="text-body1 text-grey-6">Activities that you’ve interacted with recently will appear here</div>
                 </div>
             </div>
         </template>

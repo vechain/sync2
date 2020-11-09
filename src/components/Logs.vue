@@ -17,7 +17,7 @@
                 :address="address"
                 :log="item"
             />
-            <q-separator inset />
+            <q-separator inset="item" />
         </div>
         <div
             v-if="noMore"

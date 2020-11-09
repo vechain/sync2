@@ -1,14 +1,20 @@
 <template>
     <div
         v-scrollDivider
-        class="fit overflow-auto"
+        class="fit"
         v-if="words && words.length"
     >
-        <div
+        <transition-group
             style="max-width: 500px"
-            class="q-mx-auto"
+            class="q-mx-auto fit relative-position"
+            name="q-transition--jump-up"
+            tag="div"
         >
-            <template v-if="step === 1">
+            <div
+                class="bg-white"
+                key="1"
+                v-if="step === 1"
+            >
                 <div class="q-px-lg">
                     <div class="text-subtitle2 q-py-sm">
                         {{`These ${words.length} words will be used to recover your wallet. Please write them down in the given order and keep it safe in a secure place.`}}
@@ -24,18 +30,32 @@
                         <span class="text-weight-medium">{{item}}</span>
                     </div>
                 </div>
-            </template>
-            <template v-if="step === 2">
+                <div class="justify-center q-mt-lg q-mx-md">
+                    <div class="col-8 text-center">
+                        <q-btn
+                            class="text-capitalize full-width"
+                            label="I've written it down"
+                            @click="onNext"
+                            color="blue-9"
+                        />
+                    </div>
+                </div>
+            </div>
+            <div
+                class="bg-white fit column"
+                key="2"
+                v-if="step === 2"
+            >
                 <div class="q-px-md">
                     <div class="text-subtitle2 q-py-sm">
                         Please select the words in order.
                     </div>
                 </div>
-                <div class="q-px-lg">
+                <div class="col q-px-lg q-pt-sm">
                     <div
                         v-for="row of verifyRowNum"
                         :key="row"
-                        class="row q-mt-sm q-px-lg q-py-sm q-col-gutter-sm rounded-borders bg-grey-2"
+                        class="row q-px-lg q-py-sm q-col-gutter-sm rounded-borders"
                     >
                         <div
                             class="col-4 text-center"
@@ -63,26 +83,30 @@
                 </div>
                 <div
                     v-if="verifyRowNum < words.length / groupSize"
-                    class="absolute row justify-center q-pa-md q-col-gutter-md"
+                    class="q-mt-auto row justify-center q-pa-md q-col-gutter-md"
                     style="bottom: 0"
                 >
                     <div
                         class="col-4 text-center"
-                        v-for="(item, index) in nextGroupIndex"
+                        v-for="(wordIndex, index) in nextGroupIndex"
                         :key="index"
                     >
                         <q-btn
-                            @click="onCheck(item)"
+                            @click="onCheck(wordIndex)"
                             size="md"
                             outline
                             color="blue-9"
                             class="text-lowercase serif rounded-borders"
                             style="width: 100%"
-                        >{{words[item]}}</q-btn>
+                        >{{words[wordIndex]}}</q-btn>
                     </div>
                 </div>
-            </template>
-            <template v-if="step === 3">
+            </div>
+            <div
+                class="bg-white"
+                key="3"
+                v-if="step === 3"
+            >
                 <div class="q-pa-lg">
                     <div class="q-pl-sm q-pb-md">
                         <q-icon
@@ -98,26 +122,18 @@
                         The mnemonic words must be stored in a <strong class="text-black">secure place</strong>. It allows you to regain wallet access in a scenario where your device is lost, stolen, or unusable due to any reason.
                     </div>
                 </div>
-            </template>
-            <div class="justify-center q-mt-lg q-mx-md">
-                <div class="col-8 text-center">
-                    <q-btn
-                        v-if="step === 1"
-                        class="text-capitalize full-width"
-                        label="I've written it down"
-                        @click="onNext"
-                        color="blue-9"
-                    />
-                    <q-btn
-                        v-if="step === 3"
-                        class="text-capitalize full-width"
-                        label="Done"
-                        @click="onDone"
-                        color="blue-9"
-                    />
+                <div class="justify-center q-mt-lg q-mx-md">
+                    <div class="col-8 text-center">
+                        <q-btn
+                            class="text-capitalize full-width"
+                            label="Done"
+                            @click="onDone"
+                            color="blue-9"
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
+        </transition-group>
     </div>
 </template>
 <script lang="ts">
@@ -126,7 +142,7 @@ import { Vault } from '../core/vault'
 export default Vue.extend({
     data: () => {
         return {
-            words: null as string[] | null,
+            words: [] as string[],
             step: 1,
             verifyRowNum: 0,
             verifyingItems: null as number[] | null,
@@ -138,21 +154,25 @@ export default Vue.extend({
         wallet() {
             return this.$state.wallet.current
         },
-        nextGroupIndex() {
+        nextGroupIndex(): number[] {
             const start = this.verifyRowNum * this.groupSize
-            const result = []
+            const indexs = [...this.words.keys()]
+            indexs.splice(start, this.groupSize)
+
+            const randomIndex = []
             for (let i = 0; i < this.groupSize; i++) {
-                result.push(Math.floor(Math.random() * this.words!.length))
+                randomIndex.push(indexs[Math.floor(Math.random() * (this.words.length - this.groupSize))])
             }
-            return [...this.words!.map(
-                (item, index) => { return index }
-            ).slice(start, start + this.groupSize), ...result].map(item => {
+
+            return [...this.words.map(
+                (word, index) => { return index }
+            ).slice(start, start + this.groupSize), ...randomIndex].map(wordIndex => {
                 return {
-                    v: item,
+                    wordIndex,
                     order: Math.random()
                 }
             }).sort((item, nItem) => { return item.order - nItem.order }).map(item => {
-                return item.v
+                return item.wordIndex
             })
         }
     },
@@ -199,9 +219,9 @@ export default Vue.extend({
             this.verifyingItems.push(index)
 
             if (this.verifyingItems.length === 3) {
-                const items = this.verifyingItems.map(item => this.words![item]).join('')
+                const items = this.verifyingItems.map(item => this.words[item]).join('')
                 const startIndex = this.groupSize * this.verifyRowNum
-                const words = this.words!.slice(startIndex, this.groupSize + startIndex).join('')
+                const words = this.words.slice(startIndex, this.groupSize + startIndex).join('')
                 if (items === words) {
                     this.verifyRowNum++
                     this.verifyingItems = []

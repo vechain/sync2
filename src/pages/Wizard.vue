@@ -30,7 +30,7 @@
             <div class="q-pt-xl q-px-md">
                 <h6 class="text-center q-mt-none">Enter Your Password</h6>
                 <div class="text-subtitle2">
-                    Password allows you to access Sync2 and unlock your wallet. If you forget the password, you will NOT be able to access Sync2. You will need to delete the app and restore with mnemonic words.
+                    Password allows you to access Sync2 and unlock your wallet. If you forget the password, you will NOT be able to access Sync2. You will need to delete the app and restore the wallet with mnemonic words.
                 </div>
                 <q-form @submit="onSubmit">
                     <InputPinCode v-model="code" />
@@ -38,8 +38,8 @@
                         <q-btn
                             type="submit"
                             label="Next"
-                            class="q-mt-md q-mx-auto"
-                            color="teal"
+                            class="q-mt-md q-mx-auto full-width"
+                            color="blue-9"
                         ></q-btn>
                     </div>
                 </q-form>
