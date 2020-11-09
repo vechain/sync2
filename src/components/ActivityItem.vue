@@ -174,7 +174,6 @@ export default Vue.extend({
             return this.type === 'tx' ? !!(!this.tx!.finished && this.tx!.receipt) : false
         },
         status(): string {
-            // cret
             if (this.type === 'cert') {
                 return 'completed'
             }
