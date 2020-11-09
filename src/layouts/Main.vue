@@ -242,7 +242,7 @@ export default Vue.extend({
             (this.$refs.drawer as any).handleTouchPanExternal(ev)
         },
         reloadApp() {
-            window.location.reload()
+            window.location.reload(true)
         }
     },
     mounted() {
