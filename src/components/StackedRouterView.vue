@@ -172,15 +172,12 @@ export default Vue.extend({
             (this.$el as HTMLElement).style.setProperty('--stack-transition-mul', `${newVal}`)
         },
         '$stack.scoped'(newVal: ScopedEntry[], oldVal: ScopedEntry[]) {
-            if (Date.now() - this.lastPanActiveTime < 500) {
-                this.pipeline.run(() => {
-                    this.stack = newVal
-                    return Promise.resolve()
-                })
-                return
-            }
             // TODO more accurate transition judgement
             this.pipeline.run(async () => {
+                if (Date.now() - this.lastPanActiveTime < 100) {
+                    this.stack = newVal
+                    return
+                }
                 if (newVal.length > oldVal.length && newVal.length > 1) {
                     // push in
                     this.stack = newVal
