@@ -43,7 +43,7 @@ export default Vue.extend({
             velometer: newVelometer(),
             pipeline: newPipeline(),
             touchPanInitOffset: 0,
-            lastPanFinalTime: 0
+            lastPanActiveTime: 0
         }
     },
     computed: {
@@ -121,9 +121,9 @@ export default Vue.extend({
             const offset = Math.max(0, ev.offset.x - this.touchPanInitOffset)
             const width = Math.max(1, this.width)
 
+            this.lastPanActiveTime = Date.now()
             if (ev.isFinal) {
                 this.panning = false
-                this.lastPanFinalTime = Date.now()
                 const v = this.velometer.velocity
                 const triggered = (offset > width / 2 && v >= 0) || v > 0.3
                 if (triggered) {
@@ -172,7 +172,7 @@ export default Vue.extend({
             (this.$el as HTMLElement).style.setProperty('--stack-transition-mul', `${newVal}`)
         },
         '$stack.scoped'(newVal: ScopedEntry[], oldVal: ScopedEntry[]) {
-            if (Date.now() - this.lastPanFinalTime < 500) {
+            if (Date.now() - this.lastPanActiveTime < 500) {
                 this.pipeline.run(() => {
                     this.stack = newVal
                     return Promise.resolve()
