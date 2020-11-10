@@ -42,8 +42,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { picasso } from '@vechain/picasso'
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Color = require('color')
+import Color from 'color'
 
 export default Vue.extend({
     props: {
@@ -62,7 +61,7 @@ export default Vue.extend({
         },
         background(): object {
             let str = this.svg
-            let color: any
+            let color!: Color
             for (let i = 0; i < 2; i++) {
                 const m = /rgb\((\d+),\s*(\d+),\s*(\d+)\)/.exec(str)
                 if (m) {
@@ -72,7 +71,6 @@ export default Vue.extend({
                     break
                 }
             }
-
             return {
                 background: `linear-gradient(to bottom, ${color.darken(0.6).rgb().string()}, ${color.rgb().string()})`
             }
