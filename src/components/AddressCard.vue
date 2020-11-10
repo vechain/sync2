@@ -11,8 +11,12 @@
             v-slot="{data}"
         >
             <q-card-section class="text-white column no-wrap full-height overflow-hidden">
+                <div
+                    :style="{...iconStyles}"
+                    class="absolute"
+                ></div>
                 <!-- balances -->
-                <div class="text-right">
+                <div class="text-right float-right">
                     <span class="text-h6 text-weight-regular">{{data?data.balance:null | balance}}</span>
                     <span class="monospace text-caption"> VET&nbsp;</span>
                 </div>
@@ -38,41 +42,8 @@
 <script lang="ts">
 import Vue from 'vue'
 import { picasso } from '@vechain/picasso'
-
-/**
- * it rasterize svg into bitmap compressed in png format
- * @param svg the svg string
- * @returns url of bitmap
- */
-function rasterize(svg: string) {
-    const size = 400
-    return new Promise<string>((resolve, reject) => {
-        const img = new Image()
-        img.onload = () => {
-            const canvas = document.createElement('canvas')
-            canvas.setAttribute('width', size.toString())
-            canvas.setAttribute('height', size.toString())
-            const ctx = canvas.getContext('2d')
-            if (!ctx) {
-                return reject(new Error('failed to get 2d context'))
-            }
-            ctx.drawImage(img, 0, 0, size, size)
-            ctx.globalCompositeOperation = 'soft-light'
-            const grd = ctx.createLinearGradient(0, 0, size, size)
-            grd.addColorStop(0, 'lightgray')
-            grd.addColorStop(1, 'black')
-            ctx.fillStyle = grd
-            ctx.fillRect(0, 0, size, size)
-            canvas.toBlob(r => {
-                resolve(URL.createObjectURL(r))
-            })
-        }
-        img.onerror = err => reject(err)
-        img.src = `data:image/svg+xml;utf8,${svg}`
-    })
-}
-
-const imageCache = new Map<string, Promise<string>>() // mapping address => imageurl
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const Color = require('color')
 
 export default Vue.extend({
     props: {
@@ -82,31 +53,36 @@ export default Vue.extend({
     },
     data: () => {
         return {
-            height: 0,
-            background: undefined as unknown as object // type hack for async-computed
+            height: 0
         }
     },
     computed: {
-        svg() {
+        svg(): string {
             return picasso(this.address)
-        }
-    },
-    asyncComputed: {
-        async background() {
-            const addr = this.address
-            if (!addr) {
-                return {
-                    background: 'none'
+        },
+        background(): object {
+            let str = this.svg
+            let color: any
+            for (let i = 0; i < 2; i++) {
+                const m = /rgb\((\d+),\s*(\d+),\s*(\d+)\)/.exec(str)
+                if (m) {
+                    color = color ? color.mix(Color(m[0]), 0.25) : Color(m[0])
+                    str = str.slice(m.index + m[0].length)
+                } else {
+                    break
                 }
             }
-            let img = imageCache.get(addr)
-            if (!img) {
-                const svg = picasso(addr)
-                img = rasterize(svg)
-                imageCache.set(addr, img)
-            }
+
             return {
-                background: `url('${await img}') center / cover no-repeat`
+                background: `linear-gradient(to bottom, ${color.darken(0.6).rgb().string()}, ${color.rgb().string()})`
+            }
+        },
+        iconStyles(): object {
+            return {
+                background: `url('data:image/svg+xml;utf8,${this.svg}') center / cover no-repeat`,
+                width: '4rem',
+                height: '4rem',
+                borderRadius: '50%'
             }
         }
     },
@@ -130,7 +106,7 @@ export default Vue.extend({
     width: 2rem;
 }
 .index {
-    font-size: 4.5rem;
+    font-size: 4rem;
     font-weight: 100;
     line-height: 100%;
 }
