@@ -13,17 +13,31 @@
                 <q-btn
                     flat
                     @click="hide"
-                    :disable="importing"
+                    :disable="!!steps.length"
                 >Cancel</q-btn>
                 <q-toolbar-title class="absolute-center text-capitalize">
                     Import Wallet
                 </q-toolbar-title>
             </q-toolbar>
             <div
-                class="absolute-center"
-                v-if="importing"
+                class="absolute fit q-pt-lg"
+                v-if="steps.length"
             >
-                Importing...
+                <ProcessingTransition
+                    :appear="true"
+                    style="max-width: 500px"
+                    class="q-mx-auto q-px-lg relative-position"
+                    name="q-transition--jump-down"
+                    :sentences="steps"
+                >
+                    <q-btn
+                        class="item-center q-px-md"
+                        label="Done"
+                        v-if="imported"
+                        @click="ok({})"
+                        color="blue-9"
+                    />
+                </ProcessingTransition>
             </div>
             <div
                 v-else
@@ -36,9 +50,9 @@
                 >
                     <q-input
                         v-model.trim="name"
+                        autofocus
                         no-error-icon
                         autocomplete="off"
-                        clearable
                         :rules="[val => val.length > 0 || 'Give it a name!']"
                         label="Wallet Name"
                     />
@@ -56,7 +70,6 @@
                         type="textarea"
                         no-error-icon
                         v-model.trim="words"
-                        clearable
                         label="Mnemonic Words"
                         hint="Enter the mnemonic words and seperated by single space"
                         :rules="[
@@ -85,13 +98,21 @@ import Vue from 'vue'
 import { Vault } from 'core/vault'
 import { mnemonic } from 'thor-devkit'
 
+const importSteps = [
+    'Importing your VeChain wallet',
+    'Encrypting your wallet using your password',
+    'Saving your encrypted keys to a local secure vault on this device',
+    'Completed'
+]
+
 export default Vue.extend({
     data: () => {
         return {
             name: '',
             gid: '',
             words: '',
-            importing: false
+            steps: [] as string[],
+            imported: false
         }
     },
     computed: {
@@ -117,7 +138,7 @@ export default Vue.extend({
         async onImport() {
             try {
                 const pin = await this.$authenticate(pin => Promise.resolve(pin))
-                this.importing = true
+                this.steps = importSteps
                 const words = this.words.split(' ')
                 const vault = await Vault.createHD(words, pin)
                 const node0 = await vault.derive(0)
@@ -132,12 +153,10 @@ export default Vue.extend({
                     vault: vault.encode(),
                     meta: JSON.stringify(meta)
                 })
-                this.ok({})
-                this.$q.notify(`Wallet ${this.name} was imported`)
             } catch (e) {
                 console.warn(e)
             } finally {
-                this.importing = false
+                this.imported = true
             }
         }
     }
