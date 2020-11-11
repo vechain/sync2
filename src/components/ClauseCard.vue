@@ -116,7 +116,7 @@ export default Vue.extend({
         tokenAddressList(): string[] {
             return [
                 ...this.tokens.map((t: M.TokenSpec) => {
-                    return t.address
+                    return t.address.toLowerCase()
                 })
             ]
         },
@@ -138,14 +138,14 @@ export default Vue.extend({
         token(): M.TokenSpec | undefined {
             if (this.isToken) {
                 return this.tokens.find(item => {
-                    return item.address === this.msg.to
+                    return item.address.toLowerCase() === this.msg.to?.toLowerCase()
                 })
             } else {
                 return undefined
             }
         },
         isToken(): boolean {
-            return this.tokenAddressList.includes(this.msg.to || '')
+            return this.tokenAddressList.includes(this.msg.to?.toLowerCase() || '')
         },
         isVet(): boolean {
             return !!this.msg.to && !!this.msg.value

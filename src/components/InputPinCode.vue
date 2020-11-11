@@ -4,6 +4,7 @@
             label="New Password"
             type="password"
             debounce="500"
+            no-error-icon
             autocomplete="off"
             v-model="firstOne"
             placeholder="Passsword at least 6 characters"
@@ -16,6 +17,7 @@
         <q-input
             label="Confirm Password"
             type="password"
+            no-error-icon
             ref="secondOne"
             lazy-rules="ondemand"
             autocomplete="off"

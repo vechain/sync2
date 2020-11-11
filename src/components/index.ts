@@ -28,6 +28,7 @@ import AddressInfo from './AddressInfo.vue'
 import TxActivityUpdate from './TxActivityUpdate/index.vue'
 import ActivityItem from './ActivityItem.vue'
 import InputPinCode from './InputPinCode.vue'
+import ProcessingTransition from './ProcessingTransition.vue'
 
 const components: { [name: string]: Vue.VueConstructor } = {
     StackedRouterView,
@@ -59,7 +60,8 @@ const components: { [name: string]: Vue.VueConstructor } = {
     AddressInfo,
     TxActivityUpdate,
     ActivityItem,
-    InputPinCode
+    InputPinCode,
+    ProcessingTransition
 }
 
 export default components
