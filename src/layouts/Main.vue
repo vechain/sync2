@@ -1,7 +1,7 @@
 <template>
     <q-layout
         view="lHh Lpr lFf"
-        v-if="$state.config.all.passwordShadow"
+        v-if="isSetPasswordShadow"
     >
         <transition name="q-transition--fade">
             <q-header
@@ -165,6 +165,7 @@
     </q-layout>
     <wizard
         v-else
+        @done="isSetPasswordShadow = true"
         class="fullscreen"
     />
 </template>
@@ -174,7 +175,7 @@ import Vue from 'vue'
 import { listen } from 'core/connex/external-url'
 import CreateWalletDialog from 'pages/CreateWalletDialog.vue'
 import ImportWalletDialog from 'pages/ImportWalletDialog.vue'
-import Wizard from 'pages/Wizard.vue'
+import Wizard from 'pages/Wizard'
 import SignPortalDialog from 'pages/SignPortalDialog'
 
 export default Vue.extend({
@@ -183,7 +184,8 @@ export default Vue.extend({
     },
     data() {
         return {
-            drawerOpen: false
+            drawerOpen: false,
+            isSetPasswordShadow: !!this.$state.config.all.passwordShadow
         }
     },
     computed: {
