@@ -43,20 +43,18 @@ const routes: RouteConfig[] = [
         }, {
             // this entry is to handle external signing request in SPA mode only
             path: 'sign',
-            beforeEnter: (to, from, next) => {
-                const rid = to.query.rid
-                if (typeof rid === 'string') {
-                    void (async () => {
-                        for (; ;) {
-                            await new Promise(resolve => setTimeout(resolve, 0))
-                            if (to.matched[0].instances.default) {
-                                await Vue.nextTick()
-                                to.matched[0].instances.default.$root.$emit('sign', rid)
-                                return
-                            }
-                        }
-                    })()
-                }
+            beforeEnter: async (to, from, next) => {
+                await Vue.nextTick() // window.APP will be available then
+                await new Promise(resolve => {
+                    const rid = to.query.rid
+                    if (typeof rid === 'string') {
+                        window.APP.$emit('sign', rid, () => {
+                            resolve()
+                        })
+                    } else {
+                        resolve()
+                    }
+                })
                 next(from.name ? false : { name: 'index', replace: true })
             }
         }, {

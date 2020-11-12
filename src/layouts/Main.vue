@@ -172,11 +172,9 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { listen } from 'core/connex/external-url'
 import CreateWalletDialog from 'pages/CreateWalletDialog.vue'
 import ImportWalletDialog from 'pages/ImportWalletDialog.vue'
 import Wizard from 'pages/Wizard'
-import SignPortalDialog from 'pages/SignPortalDialog'
 
 export default Vue.extend({
     components: {
@@ -232,13 +230,6 @@ export default Vue.extend({
         onClickMore() {
             this.$root.$emit(`more-${this.$route.fullPath}`)
         },
-        handleExternalSign(rid: string) {
-            // TODO how if multi requests come
-            this.$q.dialog({
-                component: SignPortalDialog,
-                rid
-            })
-        },
         handleDrawerPan(ev: Record<string, unknown>) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (this.$refs.drawer as any).handleTouchPanExternal(ev)
@@ -246,33 +237,6 @@ export default Vue.extend({
         reloadApp() {
             window.location.reload(true)
         }
-    },
-    mounted() {
-        const cb = (rid: string) => this.handleExternalSign(rid)
-        this.$root.$on('sign', cb)
-
-        let destroyed = false
-        this.$once('hook:beforeDestroy', () => {
-            destroyed = true
-            this.$root.$off('sign', cb)
-        })
-
-        void (async () => {
-            // loop to listen external open url
-            // eslint-disable-next-line no-unmodified-loop-condition
-            while (!destroyed) {
-                try {
-                    // the incoming url looks like connex:sign?rid=xxx
-                    const url = new URL(await listen())
-                    if (url.pathname === 'sign' && !destroyed) {
-                        const rid = url.searchParams.get('rid')
-                        this.handleExternalSign(rid!)
-                    }
-                } catch (err) {
-                    console.warn(err)
-                }
-            }
-        })()
     }
 })
 </script>
