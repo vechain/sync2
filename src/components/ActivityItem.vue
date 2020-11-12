@@ -66,7 +66,10 @@
                 </q-item-label>
             </q-item-section>
         </q-item>
-        <div class="q-px-lg text-body1 text-grey-7 q-pt-xs" :class="{'text-capitalize': type === 'cert'}">
+        <div
+            class="q-px-lg text-body1 text-grey-7 q-pt-xs"
+            :class="{'text-capitalize': type === 'cert'}"
+        >
             {{infos.comment}}
         </div>
         <div
@@ -151,8 +154,7 @@ export default Vue.extend({
             refererText: string,
             status: string, type: 'tx' | 'cert',
             message?: Connex.Vendor.CertMessage,
-            txId?: string
-            } {
+            txId?: string } {
             const link = (this.item.glob.referer && this.item.glob.referer.url) || ''
             return {
                 comment: this.comment,
@@ -196,31 +198,31 @@ export default Vue.extend({
         icon(): { name: string, color: string } {
             const result: { name: string, color: string } = { name: '', color: '' }
             switch (this.status) {
-            case 'completed': {
-                result.name = 'mdi-check-circle-outline'
-                result.color = 'positive'
-                break
-            }
-            case 'error': {
-                result.name = 'mdi-alert-circle-outline'
-                result.color = 'negative'
-                break
-            }
-            case 'checking': {
-                result.name = 'mdi-progress-check'
-                result.color = 'info'
-                break
-            }
-            case 'sending': {
-                result.name = 'mdi-progress-upload'
-                result.color = 'info'
-                break
-            }
-            case 'retry': {
-                result.name = 'mdi-restart'
-                result.color = 'info'
-                break
-            }
+                case 'completed': {
+                    result.name = 'mdi-check-circle-outline'
+                    result.color = 'positive'
+                    break
+                }
+                case 'error': {
+                    result.name = 'mdi-alert-circle-outline'
+                    result.color = 'negative'
+                    break
+                }
+                case 'checking': {
+                    result.name = 'mdi-progress-check'
+                    result.color = 'info'
+                    break
+                }
+                case 'sending': {
+                    result.name = 'mdi-progress-upload'
+                    result.color = 'info'
+                    break
+                }
+                case 'retry': {
+                    result.name = 'mdi-restart'
+                    result.color = 'info'
+                    break
+                }
             }
             return result
         }
