@@ -1,0 +1,57 @@
+<template>
+    <q-card-section>
+        <div class="text-center">
+            <p>
+                <q-img
+                    width="64px"
+                    height="64px"
+                    :src="faviconUrl"
+                    placeholder-src="statics/app-logo-128x128.png"
+                />
+            </p>
+            <p class="text-subtitle1">Your signature is being requested</p>
+        </div>
+
+        <div class="text-caption text-grey">From DApp</div>
+        <p>{{origin}}</p>
+        <div class="text-caption text-grey">Type</div>
+        <p>{{type}}</p>
+        <div class="text-caption text-grey">Summary</div>
+        <p>{{summary}}</p>
+    </q-card-section>
+</template>
+<script lang="ts">
+import Vue from 'vue'
+import { RelayedRequest } from './model'
+
+export default Vue.extend({
+    props: {
+        faviconUrl: String,
+        origin: String,
+        request: Object as () => RelayedRequest
+    },
+    computed: {
+        type(): string {
+            switch (this.request.type) {
+                case 'tx': return 'Transaction'
+                case 'cert': return 'Certificate'
+                default: return 'Unknown'
+            }
+        },
+        summary(): string {
+            const req = this.request
+            if (req.type === 'tx') {
+                return (req.payload as M.TxRequest).options?.comment || ''
+            } else if (req.type === 'cert') {
+                const msg = (req.payload as M.CertRequest).message
+                switch (msg.purpose) {
+                    case 'identification': return 'Identification purpose'
+                    case 'agreement': return 'Agreement purpose'
+                    default: return 'Unknown purpose'
+                }
+            }
+            return ''
+        }
+    }
+})
+</script>

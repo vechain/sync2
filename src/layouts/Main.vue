@@ -175,7 +175,7 @@ import { listen } from 'core/connex/external-url'
 import CreateWalletDialog from 'pages/CreateWalletDialog.vue'
 import ImportWalletDialog from 'pages/ImportWalletDialog.vue'
 import Wizard from 'pages/Wizard.vue'
-import SignPortalDialog from 'pages/SignPortalDialog.vue'
+import SignPortalDialog from 'pages/SignPortalDialog'
 
 export default Vue.extend({
     components: {

@@ -7,73 +7,109 @@
         transition-hide=""
         transition-show=""
     >
-        <q-card class="fit column flex-center">
-            <!-- resolve request -->
-            <async
-                :fn="resolveRequest"
-                v-slot="{data, error, pending, reload}"
+        <!-- load request -->
+        <async
+            :fn="loadRequest"
+            v-slot="{data, error, pending}"
+            tag="q-card"
+            class="column"
+        >
+            <!-- toolbar -->
+            <q-toolbar>
+                <q-btn
+                    flat
+                    round
+                    dense
+                    icon="close"
+                    @click="hide"
+                />
+                <q-toolbar-title class="absolute-center">
+                    Sign
+                </q-toolbar-title>
+            </q-toolbar>
+
+            <!-- loading -->
+            <delay
+                :t="200"
+                v-if="pending"
+                tag="q-card-section"
+                class="col column flex-center"
             >
-                <q-avatar
-                    square
-                    size="lg"
-                    v-show="!!data"
+                <p>
+                    <q-spinner-dots size="3rem" />
+                </p>
+                <p>Loading signing content ...</p>
+            </delay>
+
+            <!-- error loading -->
+            <div
+                v-else-if="!!error"
+                class="col column no-wrap justify-center"
+            >
+                <q-card-section class="text-center">
+                    <p>
+                        <q-icon
+                            name="error"
+                            class="text-red text-h2"
+                        />
+                    </p>
+                    <p>Error occurred</p>
+                </q-card-section>
+                <q-card-actions class="row justify-center">
+                    <q-btn
+                        unelevated
+                        color="primary"
+                        class="col-6 col-sm-auto q-px-lg"
+                        @click="hide()"
+                    >Close</q-btn>
+                </q-card-actions>
+            </div>
+            <!-- content -->
+            <div
+                v-else
+                class="col column no-wrap"
+            >
+                <div
+                    v-scrollDivider.both
+                    class="row overflow-auto justify-center"
                 >
-                    <q-img :src="favicon" />
-                </q-avatar>
-                <div v-if="pending">
-                    resolving input...
+                    <Content
+                        class="col-sm-8 col-12"
+                        :faviconUrl="favicon"
+                        :origin="origin"
+                        :request="data"
+                    />
                 </div>
-                <template v-if="!!error">
-                    <div>
-                        error: {{error}}
-                    </div>
-                    <q-btn @click="reload">Reload</q-btn>
-                </template>
-                <template v-if="!!data">
-                    <div> origin: {{origin}}</div>
-                    <div> type: {{data.type}}</div>
-                    <q-btn @click="signRequest(data)">Proceed</q-btn>
-                </template>
-            </async>
-        </q-card>
+                <q-card-actions class="row justify-evenly">
+                    <q-btn
+                        unelevated
+                        color="grey"
+                        class="col-5 col-sm-auto q-px-lg"
+                        @click="hide()"
+                    >Decline</q-btn>
+                    <q-btn
+                        unelevated
+                        color="positive"
+                        class="col-5 col-sm-auto q-px-lg"
+                        @click="signRequest(data)"
+                    >Continue</q-btn>
+                </q-card-actions>
+            </div>
+        </async>
     </q-dialog>
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import * as V from 'validator-ts'
 import { urls } from 'src/consts'
 import { blake2b256 } from 'thor-devkit'
 import { QDialog } from 'quasar'
-
-/** request relayed by TOS */
-type RelayedRequest = {
-    type: 'tx' | 'cert'
-    gid?: string // genesis id which to specify network. defaults to mainnet
-    payload: {
-        message: object
-        options: object
-    }
-    /* nonce: string */
-}
-
-namespace RelayedRequest {
-    export const scheme: V.Scheme<RelayedRequest> = {
-        type: v => (v === 'tx' || v === 'cert') ? '' : `unsupported type '${v}'`,
-        gid: v => (!v || /^0x[0-9a-f]{64}$/i.test(v)) ? '' : `invalid gid '${v}'`,
-        payload: {
-            message: v => v instanceof Object ? '' : 'message requires object type',
-            options: v => v instanceof Object ? '' : 'options requires object type'
-        }
-    }
-}
-
-/** response relayed by TOS */
-type RelayedResponse = {
-    error?: string
-    payload?: object
-}
+import Content from './Content.vue'
+import { RelayedRequest, RelayedResponse } from './model'
 
 export default Vue.extend({
+    components: {
+        Content
+    },
     props: {
         rid: String // the request id
     },
@@ -99,7 +135,7 @@ export default Vue.extend({
         // method is REQUIRED by $q.dialog
         hide() { (this.$refs.dialog as QDialog).hide() },
 
-        async resolveRequest() {
+        async loadRequest() {
             const resp = await (async () => {
                 for (let i = 0; i < 3; i++) {
                     try {
@@ -114,20 +150,21 @@ export default Vue.extend({
                         await new Promise(resolve => setTimeout(resolve, 2000))
                     }
                 }
-                throw new Error('can not resolve request')
+                throw new Error('can not load request')
             })()
 
             const computedRid = blake2b256(resp.data).toString('hex')
             if (computedRid !== this.rid) {
                 throw new Error('id and content mismatch')
             }
-            const request = V.validate<RelayedRequest>(JSON.parse(resp.data), RelayedRequest.scheme)
+            const request = RelayedRequest.validate(JSON.parse(resp.data))
             this.origin = resp.headers['x-data-origin']
             this.postResult('-accepted', {})
             // TODO validate body
             return request
         },
         async signRequest(request: RelayedRequest) {
+            this.hide()
             const { type, gid, payload } = request
             const resp: RelayedResponse = {}
             try {
@@ -143,7 +180,6 @@ export default Vue.extend({
                 resp.error = err.message
             }
             this.postResult('-resp', resp)
-            this.hide()
         },
         async postResult(suffix: string, result: object) {
             for (let i = 0; i < 3; i++) {
