@@ -75,7 +75,6 @@
                 >
                     <Content
                         class="col-sm-8 col-12"
-                        :faviconUrl="favicon"
                         :origin="origin"
                         :request="data"
                     />
@@ -120,7 +119,6 @@ export default Vue.extend({
     },
     computed: {
         baseUrl(): string { return `${urls.tos}${encodeURIComponent(this.rid)}` },
-        favicon(): string { return `${this.baseUrl}/icon?size=48..96..128` },
         domain(): string {
             try {
                 return new URL(this.origin).host

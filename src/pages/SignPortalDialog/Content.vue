@@ -26,11 +26,13 @@ import { RelayedRequest } from './model'
 
 export default Vue.extend({
     props: {
-        faviconUrl: String,
         origin: String,
         request: Object as () => RelayedRequest
     },
     computed: {
+        faviconUrl(): string {
+            return `https://api.faviconkit.com/${this.origin}/128`
+        },
         type(): string {
             switch (this.request.type) {
                 case 'tx': return 'Transaction'
@@ -50,7 +52,7 @@ export default Vue.extend({
                     default: return 'Unknown purpose'
                 }
             }
-            return ''
+            return 'None'
         }
     }
 })
