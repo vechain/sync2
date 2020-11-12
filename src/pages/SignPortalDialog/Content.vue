@@ -1,23 +1,36 @@
 <template>
     <q-card-section>
         <div class="text-center">
-            <div class="favicon-frame q-mx-auto">
-                <div
-                    v-show="!iconLoaded"
-                    class="fit text-h4 bg-grey-4 column justify-center"
-                >{{host[0]|| '?'}}</div>
-                <img
-                    class="fit"
-                    v-if="faviconUrl"
-                    v-show="iconLoaded"
-                    :src="faviconUrl"
-                    @load="iconLoaded=true"
+            <!-- img loader -->
+            <img
+                v-if="!!faviconUrl"
+                v-show="false"
+                :src="faviconUrl"
+                @load="iconLoaded=true"
+            >
+
+            <!-- favicon -->
+            <div class="relative-position favicon-frame q-mx-auto">
+                <transition
+                    mode="out-in"
+                    name="q-transition--fade"
                 >
+                    <img
+                        v-if="iconLoaded"
+                        class="fit absolute-full"
+                        :src="faviconUrl"
+                    >
+                    <div
+                        v-else
+                        class="fit text-h4 bg-grey-4 column justify-center"
+                    >{{(host[0]|| '?').toUpperCase()}}</div>
+                </transition>
             </div>
             <p />
             <p class="text-subtitle1">Your signature is being requested</p>
         </div>
 
+        <!-- descriptions -->
         <div class="text-caption text-grey">From DApp</div>
         <p>{{origin}}</p>
         <div class="text-caption text-grey">Type</div>
