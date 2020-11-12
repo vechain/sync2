@@ -119,8 +119,8 @@ export default Vue.extend({
                 }
             }
 
-            const c1 = color.saturationl(30).lightness(30)
-            const c2 = color.saturationl(30).lightness(45)
+            const c1 = color.saturationl(50).lightness(45)
+            const c2 = color.saturationl(50).lightness(65)
             return {
                 background: `linear-gradient(to bottom, ${c1.rgb().string()}, ${c2.rgb().string()})`
             }
