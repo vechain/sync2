@@ -1,14 +1,20 @@
 <template>
     <q-card-section>
         <div class="text-center">
-            <p>
-                <q-img
-                    width="64px"
-                    height="64px"
+            <div class="favicon-frame q-mx-auto">
+                <div
+                    v-show="!iconLoaded"
+                    class="fit text-h4 bg-grey-4 column justify-center"
+                >{{host[0]|| '?'}}</div>
+                <img
+                    class="fit"
+                    v-if="faviconUrl"
+                    v-show="iconLoaded"
                     :src="faviconUrl"
-                    placeholder-src="statics/app-logo-128x128.png"
-                />
-            </p>
+                    @load="iconLoaded=true"
+                >
+            </div>
+            <p />
             <p class="text-subtitle1">Your signature is being requested</p>
         </div>
 
@@ -25,6 +31,11 @@ import Vue from 'vue'
 import { RelayedRequest } from './model'
 
 export default Vue.extend({
+    data: () => {
+        return {
+            iconLoaded: false
+        }
+    },
     props: {
         origin: String,
         request: Object as () => RelayedRequest
@@ -39,7 +50,7 @@ export default Vue.extend({
         },
         faviconUrl(): string {
             return this.host
-                ? `https://api.faviconkit.com/${this.host}/128`
+                ? `https://api.faviconkit.com/${encodeURIComponent(this.host)}/128`
                 : ''
         },
         type(): string {
@@ -66,3 +77,9 @@ export default Vue.extend({
     }
 })
 </script>
+<style scoped>
+.favicon-frame {
+    width: 64px;
+    height: 64px;
+}
+</style>
