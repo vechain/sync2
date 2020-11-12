@@ -30,8 +30,17 @@ export default Vue.extend({
         request: Object as () => RelayedRequest
     },
     computed: {
+        host(): string {
+            try {
+                return new URL(this.origin).host
+            } catch {
+                return ''
+            }
+        },
         faviconUrl(): string {
-            return `https://api.faviconkit.com/${this.origin}/128`
+            return this.host
+                ? `https://api.faviconkit.com/${this.host}/128`
+                : ''
         },
         type(): string {
             switch (this.request.type) {

@@ -119,7 +119,7 @@ export default Vue.extend({
     },
     computed: {
         baseUrl(): string { return `${urls.tos}${encodeURIComponent(this.rid)}` },
-        domain(): string {
+        host(): string {
             try {
                 return new URL(this.origin).host
             } catch {
@@ -171,7 +171,7 @@ export default Vue.extend({
                 } else if (type === 'cert') {
                     resp.payload = await this.$signCert(gid || '', {
                         ...(payload as M.CertRequest),
-                        domain: this.domain
+                        domain: this.host
                     })
                 }
             } catch (err) {
