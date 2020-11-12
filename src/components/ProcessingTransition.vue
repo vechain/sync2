@@ -7,7 +7,7 @@
             v-for="(str, i) in steps"
             class="text-h5 q-mb-lg"
             :class="steps.length === i+1 ? 'text-dark' : 'text-grey'"
-            :key="i"
+            :key="`${i}`"
         >
             {{str}}
         </div>
