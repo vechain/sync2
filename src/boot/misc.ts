@@ -57,6 +57,9 @@ declare module 'vue/types/vue' {
             gid: string,
             req: M.CertRequest
         ): Promise<M.CertResponse>
+
+        /** it wraps window.addEventListener binding to vue component's life-cycle */
+        $onWindowEvent(event: keyof WindowEventMap, listener: EventListenerOrEventListenerObject): void
     }
 }
 
@@ -199,6 +202,17 @@ export default boot(async ({ Vue }) => {
                         gid,
                         req
                     })
+                }
+            }
+        },
+        $onWindowEvent: {
+            get(): Vue['$onWindowEvent'] {
+                const vm = this as Vue
+                return (event, listener) => {
+                    vm.$once('hook:beforeDestroy', () => {
+                        window.removeEventListener(event, listener)
+                    })
+                    window.addEventListener(event, listener)
                 }
             }
         }
