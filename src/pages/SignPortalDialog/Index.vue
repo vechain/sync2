@@ -21,7 +21,7 @@
                     round
                     dense
                     icon="close"
-                    @click="hide"
+                    @click="decline"
                 />
                 <q-toolbar-title class="absolute-center">
                     Sign
@@ -84,7 +84,7 @@
                         unelevated
                         color="grey"
                         class="col-5 col-sm-auto q-px-lg"
-                        @click="hide()"
+                        @click="decline"
                     >Decline</q-btn>
                     <q-btn
                         unelevated
@@ -133,6 +133,12 @@ export default Vue.extend({
         // method is REQUIRED by $q.dialog
         hide() { (this.$refs.dialog as QDialog).hide() },
 
+        decline() {
+            this.postResult('-resp', {
+                error: 'user decline'
+            })
+            this.hide()
+        },
         async loadRequest() {
             const resp = await (async () => {
                 for (let i = 0; i < 3; i++) {
@@ -182,7 +188,7 @@ export default Vue.extend({
         async postResult(suffix: string, result: object) {
             for (let i = 0; i < 3; i++) {
                 try {
-                    this.$axios.post(`${this.baseUrl}${suffix}`, result)
+                    await this.$axios.post(`${this.baseUrl}${suffix}`, result)
                     return
                 } catch (err) {
                     console.warn(err)
