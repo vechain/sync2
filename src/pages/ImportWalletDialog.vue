@@ -13,34 +13,13 @@
                 <q-btn
                     flat
                     @click="hide"
-                    :disable="!!steps.length"
+                    :disable="importing"
                 >Cancel</q-btn>
                 <q-toolbar-title class="absolute-center text-capitalize">
                     Import Wallet
                 </q-toolbar-title>
             </q-toolbar>
             <div
-                class="absolute fit q-pt-lg"
-                v-if="steps.length"
-            >
-                <ProcessingTransition
-                    :appear="true"
-                    style="max-width: 500px"
-                    class="q-mx-auto q-px-lg relative-position"
-                    name="q-transition--jump-down"
-                    :sentences="steps"
-                >
-                    <q-btn
-                        class="item-center q-px-md"
-                        label="Done"
-                        v-if="imported"
-                        @click="ok({})"
-                        color="blue-9"
-                    />
-                </ProcessingTransition>
-            </div>
-            <div
-                v-else
                 style="max-width: 500px"
                 class="q-mx-auto"
             >
@@ -81,6 +60,7 @@
                     <div class="text-center q-pt-xl">
                         <q-btn
                             unelevated
+                            :disable="importing"
                             class="text-capitalize full-width"
                             color="blue-9"
                             type="submit"
@@ -98,21 +78,13 @@ import Vue from 'vue'
 import { Vault } from 'core/vault'
 import { mnemonic } from 'thor-devkit'
 
-const importSteps = [
-    'Importing your VeChain wallet',
-    'Encrypting your wallet using your password',
-    'Saving your encrypted keys to a local secure vault on this device',
-    'Completed'
-]
-
 export default Vue.extend({
     data: () => {
         return {
             name: '',
             gid: '',
             words: '',
-            steps: [] as string[],
-            imported: false
+            importing: false
         }
     },
     computed: {
@@ -136,28 +108,40 @@ export default Vue.extend({
             return mnemonic.validate(words.split(' '))
         },
         async onImport() {
-            try {
-                const pin = await this.$authenticate(pin => Promise.resolve(pin))
-                this.steps = importSteps
-                const words = this.words.split(' ')
-                const vault = await Vault.createHD(words, pin)
-                const node0 = await vault.derive(0)
-                const meta: M.Wallet.Meta = {
-                    name: this.name,
-                    addresses: [node0.address],
-                    backedUp: true
-                }
+            const pin = await this.$authenticate(pin => Promise.resolve(pin))
+            this.$loading(async () => {
+                this.importing = true
+                try {
+                    const words = this.words.split(' ')
+                    const vault = await Vault.createHD(words, pin)
+                    const node0 = await vault.derive(0)
+                    const meta: M.Wallet.Meta = {
+                        name: this.name,
+                        addresses: [node0.address],
+                        backedUp: true
+                    }
 
-                await this.$storage.wallets.insert({
-                    gid: this.gid,
-                    vault: vault.encode(),
-                    meta: JSON.stringify(meta)
-                })
-            } catch (e) {
-                console.warn(e)
-            } finally {
-                this.imported = true
-            }
+                    await this.$storage.wallets.insert({
+                        gid: this.gid,
+                        vault: vault.encode(),
+                        meta: JSON.stringify(meta)
+                    })
+                    this.$q.notify({
+                        type: 'positive',
+                        message: 'Wallet successfully imported ',
+                        timeout: 1500
+                    })
+                    this.hide()
+                } catch (e) {
+                    this.$q.notify({
+                        type: 'warning',
+                        message: 'Something wrong!',
+                        timeout: 1500
+                    })
+                } finally {
+                    this.importing = false
+                }
+            })
         }
     }
 })
