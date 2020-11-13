@@ -44,6 +44,7 @@ const routes: RouteConfig[] = [
             // this entry is to handle external signing request in SPA mode only
             path: 'sign',
             beforeEnter: async (to, from, next) => {
+                next(false)
                 await Vue.nextTick() // window.APP will be available then
                 await new Promise(resolve => {
                     const rid = to.query.rid
@@ -55,7 +56,6 @@ const routes: RouteConfig[] = [
                         resolve()
                     }
                 })
-                next(from.name ? false : { name: 'index', replace: true })
             }
         }, {
             path: 'activities',

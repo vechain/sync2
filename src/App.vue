@@ -39,6 +39,10 @@ export default Vue.extend({
                     }).onDismiss(() => {
                         if (newDlg === current) {
                             current = null
+                            // dialog normally closed, go to index page if not loaded
+                            if (!this.$route.name) {
+                                this.$router.replace({ name: 'index' })
+                            }
                         }
                         resolve()
                     })

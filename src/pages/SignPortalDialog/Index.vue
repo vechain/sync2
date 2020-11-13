@@ -21,7 +21,7 @@
                     round
                     dense
                     icon="close"
-                    @click="decline"
+                    @click="hide()"
                 />
                 <q-toolbar-title class="absolute-center">
                     Sign
@@ -31,7 +31,7 @@
             <!-- loading -->
             <delay
                 :t="200"
-                v-if="pending"
+                v-if="pending || !ready"
                 tag="q-card-section"
                 class="col column flex-center"
             >
@@ -84,7 +84,7 @@
                         unelevated
                         color="grey"
                         class="col-5 col-sm-auto q-px-lg"
-                        @click="decline"
+                        @click="hide()"
                     >Decline</q-btn>
                     <q-btn
                         unelevated
@@ -114,10 +114,12 @@ export default Vue.extend({
     },
     data: () => {
         return {
-            origin: ''
+            origin: '',
+            responded: false
         }
     },
     computed: {
+        ready() { return this.$state.wallet.ready && this.$state.config.ready },
         baseUrl(): string { return `${urls.tos}${encodeURIComponent(this.rid)}` },
         host(): string {
             try {
@@ -131,13 +133,14 @@ export default Vue.extend({
         // method is REQUIRED by $q.dialog
         show() { (this.$refs.dialog as QDialog).show() },
         // method is REQUIRED by $q.dialog
-        hide() { (this.$refs.dialog as QDialog).hide() },
-
-        decline() {
-            this.postResult('-resp', {
-                error: 'user decline'
-            })
-            this.hide()
+        hide(resp?: RelayedResponse) {
+            if (!this.responded) {
+                this.responded = true
+                this.postStatus('-resp', resp || {
+                    error: 'user decline'
+                })
+            }
+            (this.$refs.dialog as QDialog).hide()
         },
         async loadRequest() {
             const resp = await (async () => {
@@ -163,7 +166,7 @@ export default Vue.extend({
             }
             const request = RelayedRequest.validate(JSON.parse(resp.data))
             this.origin = resp.headers['x-data-origin']
-            this.postResult('-accepted', {})
+            this.postStatus('-accepted', {})
             // TODO validate body
             return request
         },
@@ -182,10 +185,9 @@ export default Vue.extend({
             } catch (err) {
                 resp.error = err.message
             }
-            this.postResult('-resp', resp)
-            this.hide()
+            this.hide(resp)
         },
-        async postResult(suffix: string, result: object) {
+        async postStatus(suffix: string, result: object) {
             for (let i = 0; i < 3; i++) {
                 try {
                     await this.$axios.post(`${this.baseUrl}${suffix}`, result)
