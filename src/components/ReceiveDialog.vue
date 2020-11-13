@@ -38,11 +38,14 @@
                         class="monospace q-my-md text-center text-grey q-px-lg"
                         style="word-break: break-all; border-radius: 15px;"
                     >{{address | checksum}}</div>
-                    <q-btn
-                        class="q-mt-xl full-width"
-                        @click="onCopy"
-                        color="blue-9"
-                    >Copy</q-btn>
+                    <div class="row q-mt-xl justify-center">
+                        <q-btn
+                            unelevated
+                            class="col-6 col-sm-auto"
+                            @click="onCopy"
+                            color="blue-9"
+                        >Copy</q-btn>
+                    </div>
                 </div>
             </q-card>
         </q-popup-proxy>

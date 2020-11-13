@@ -23,15 +23,40 @@
                 />
             </q-toolbar>
             <p class="q-mt-md">Enter password to unlock</p>
-            <q-form @submit="runTask(pin)" class="full-width q-mt-xl q-px-xl column">
-                <q-input no-error-icon ref="pwd" input-class="text-center" autofocus dense :error="wrong" error-message="Incorrect Password" v-model="pin" outlined autocomplete="off" type="password"></q-input>
+            <q-form
+                @submit="runTask(pin)"
+                class="full-width q-mt-xl q-px-xl column"
+            >
+                <q-input
+                    no-error-icon
+                    ref="pwd"
+                    input-class="text-center"
+                    autofocus
+                    dense
+                    :error="wrong"
+                    error-message="Incorrect Password"
+                    v-model="pin"
+                    outlined
+                    autocomplete="off"
+                    type="password"
+                ></q-input>
+                <div class="row justify-center q-mt-xl">
+                    <q-btn
+                        type="submit"
+                        label="Unlock"
+                        unelevated
+                        class="col-6 col-sm-auto"
+                        color="blue-9"
+                    />
+                </div>
+
                 <q-btn
-                    type="submit"
-                    label="Unlock"
-                    class="q-mt-xl"
-                    color="blue-9"
+                    v-if="bioPassSaved"
+                    flat
+                    text-color="primary"
+                    class="q-mt-lg"
+                    label="Unlock with FaceID"
                 />
-                <q-btn v-if="bioPassSaved" flat text-color="primary" class="q-mt-lg" label="Unlock with FaceID" />
             </q-form>
         </q-card>
     </q-dialog>

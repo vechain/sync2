@@ -59,11 +59,15 @@
                         </div>
                     </connex-continuous>
                 </ConnexObject>
-                <q-btn
-                    type="submit"
-                    class="full-width q-mt-xl"
-                    color="blue-9"
-                >Send</q-btn>
+                <div class="row justify-center q-mt-xl">
+                    <q-btn
+                        type="submit"
+                        unelevated
+                        class="col-6 col-sm-auto"
+                        color="blue-9"
+                        label="Send"
+                    />
+                </div>
             </q-form>
         </div>
         <div
