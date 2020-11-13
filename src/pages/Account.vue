@@ -34,17 +34,19 @@
                 />
             </ConnexObject>
         </div>
-        <div class="row q-mt-auto align-center justify-center q-gutter-x-xl q-py-lg">
+        <div class="row q-mt-auto justify-evenly q-py-lg">
             <q-btn
-                class="col-4 justify-center"
+                class="col-5 col-sm-auto"
                 @click="onSend"
+                unelevated
                 color="blue-9"
                 label="Send"
             />
             <ReceiveDialog
                 outline
                 color="blue-9"
-                class="col-4 justify-center"
+                unelevated
+                class="col-5 col-sm-auto"
                 :address="address"
             />
         </div>

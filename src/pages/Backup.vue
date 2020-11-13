@@ -30,15 +30,14 @@
                         <span class="text-weight-medium">{{item}}</span>
                     </div>
                 </div>
-                <div class="justify-center q-mt-lg q-mx-md">
-                    <div class="col-8 text-center">
-                        <q-btn
-                            class="text-capitalize full-width"
-                            label="I've written it down"
-                            @click="onNext"
-                            color="blue-9"
-                        />
-                    </div>
+                <div class="row justify-center q-mt-lg">
+                    <q-btn
+                        class="text-capitalize col-6"
+                        label="I've written it down"
+                        unelevated
+                        @click="onNext"
+                        color="blue-9"
+                    />
                 </div>
             </div>
             <div
@@ -122,15 +121,14 @@
                         The mnemonic words must be stored in a <strong class="text-black">secure place</strong>. It allows you to regain wallet access in a scenario where your device is lost, stolen, or unusable due to any reason.
                     </div>
                 </div>
-                <div class="justify-center q-mt-lg q-mx-md">
-                    <div class="col-8 text-center">
-                        <q-btn
-                            class="text-capitalize full-width"
-                            label="Done"
-                            @click="onDone"
-                            color="blue-9"
-                        />
-                    </div>
+                <div class="justify-center row q-mt-lg">
+                    <q-btn
+                        class="text-capitalize col-6"
+                        label="Done"
+                        unelevated
+                        @click="onDone"
+                        color="blue-9"
+                    />
                 </div>
             </div>
         </transition-group>
