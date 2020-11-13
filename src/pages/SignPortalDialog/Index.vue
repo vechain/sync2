@@ -162,7 +162,6 @@ export default Vue.extend({
             return request
         },
         async signRequest(request: RelayedRequest) {
-            this.hide()
             const { type, gid, payload } = request
             const resp: RelayedResponse = {}
             try {
@@ -178,6 +177,7 @@ export default Vue.extend({
                 resp.error = err.message
             }
             this.postResult('-resp', resp)
+            this.hide()
         },
         async postResult(suffix: string, result: object) {
             for (let i = 0; i < 3; i++) {
@@ -190,6 +190,19 @@ export default Vue.extend({
                 }
             }
         }
+    },
+    created() {
+        // the code block below is to post reject response on app closed
+        const url = `${this.baseUrl}-resp`
+        const rejectBeforeUnload = () => {
+            const resp: RelayedResponse = { error: 'wallet closed' }
+            window.navigator.sendBeacon(url, JSON.stringify(resp))
+        }
+
+        window.addEventListener('beforeunload', rejectBeforeUnload)
+        this.$once('hook:beforeDestroy', () => {
+            window.removeEventListener('beforeunload', rejectBeforeUnload)
+        })
     }
 })
 </script>
