@@ -202,14 +202,10 @@ export default Vue.extend({
     created() {
         // the code block below is to post reject response on app closed
         const url = `${this.baseUrl}-resp`
-        const rejectBeforeUnload = () => {
+        this.$onWindowEvent('pagehide', () => {
             const resp: RelayedResponse = { error: 'wallet closed' }
             window.navigator.sendBeacon(url, JSON.stringify(resp))
-        }
-
-        window.addEventListener('beforeunload', rejectBeforeUnload)
-        this.$once('hook:beforeDestroy', () => {
-            window.removeEventListener('beforeunload', rejectBeforeUnload)
+            void (this.$refs.dialog as QDialog).hide()
         })
     }
 })
