@@ -174,7 +174,7 @@ export default Vue.extend({
         '$stack.scoped'(newVal: ScopedEntry[], oldVal: ScopedEntry[]) {
             // TODO more accurate transition judgement
             this.pipeline.run(async () => {
-                if (Date.now() - this.lastPanActiveTime < 500) {
+                if (Date.now() - this.lastPanActiveTime < 50) {
                     this.stack = newVal
                     return
                 }
