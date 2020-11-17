@@ -92,7 +92,7 @@ export default Vue.extend({
             this.$loading(async () => {
                 this.creating = true
                 try {
-                    const words = await Vault.generateMnemonic()
+                    const words = await Vault.generateMnemonic(16)
                     const vault = await Vault.createHD(words, pin)
                     const node0 = await vault.derive(0)
                     const meta: M.Wallet.Meta = {

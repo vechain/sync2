@@ -113,7 +113,7 @@ export default Vue.extend({
             }
         },
         async initDB(pin: string) {
-            const words = await Vault.generateMnemonic()
+            const words = await Vault.generateMnemonic(16)
             const vault = await Vault.createHD(words, pin)
 
             const node0 = await vault.derive(0)

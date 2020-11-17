@@ -114,7 +114,7 @@ export default Vue.extend({
                 if (items === words) {
                     this.verifyRowNum++
                     this.verifyingItems = []
-                    this.verifyRowNum === 8 && this.$emit('checked')
+                    this.verifyRowNum === (this.words.length / this.groupSize) && this.$emit('checked')
                 } else {
                     this.isError = true
                 }
