@@ -15,7 +15,7 @@
                     </div>
                     <AddressAvatar
                         class="q-mx-auto"
-                        style="width: 100px; height: 100px; border-radius: 50px;"
+                        style="width: 80px; height: 80px; border-radius: 40px;"
                         :addr="toAddr"
                     />
                     <div

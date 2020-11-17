@@ -12,7 +12,7 @@
                 :to="{name: 'tokens-setting'}"
                 flat
                 dense
-                icon="mdi-plus-circle-outline"
+                icon="add"
                 aria-label="manage"
                 size="md"
             />

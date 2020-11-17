@@ -80,17 +80,20 @@
                 <div class="column">
                     <q-toolbar>
                         <q-avatar
+                            rounded
                             color="primary"
                             text-color="white"
-                        >S</q-avatar>
+                        >
+                            <img src="../assets/logoSync.svg">
+                        </q-avatar>
                         <q-toolbar-title>
-                            Sync
+                            Sync2
                         </q-toolbar-title>
                     </q-toolbar>
                 </div>
 
                 <q-toolbar>
-                    <q-toolbar-title class="text-grey text-subtitle2">
+                    <q-toolbar-title class="text-h6">
                         Wallets
                     </q-toolbar-title>
                     <q-btn

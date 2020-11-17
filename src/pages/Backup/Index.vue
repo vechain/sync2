@@ -3,6 +3,7 @@
         class="fit"
         animated
         v-model="panel"
+        v-if="words.length"
         transition-next="jump-up"
     >
         <q-tab-panel name="words">
