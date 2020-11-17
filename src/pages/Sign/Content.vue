@@ -41,7 +41,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import { RelayedRequest } from './model'
+import { RelayedRequest } from './models'
 
 export default Vue.extend({
     data: () => {

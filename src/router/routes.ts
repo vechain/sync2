@@ -10,6 +10,7 @@ import Activities from 'pages/Activities.vue'
 import ResetPin from 'pages/ResetPin.vue'
 import AccountTransferLogs from 'pages/AccountTransferLogs.vue'
 import Send from 'pages/Send.vue'
+import Sign from 'pages/Sign'
 
 const routes: RouteConfig[] = [
     {
@@ -43,20 +44,9 @@ const routes: RouteConfig[] = [
         }, {
             // this entry is to handle external signing request in SPA mode only
             path: 'sign',
-            beforeEnter: async (to, from, next) => {
-                next(false)
-                await Vue.nextTick() // window.APP will be available then
-                await new Promise(resolve => {
-                    const rid = to.query.rid
-                    if (typeof rid === 'string') {
-                        window.APP.$emit('sign', rid, () => {
-                            resolve()
-                        })
-                    } else {
-                        resolve()
-                    }
-                })
-            }
+            name: 'sign',
+            component: Sign,
+            meta: { title: 'Sign' }
         }, {
             path: 'activities',
             name: 'activities',

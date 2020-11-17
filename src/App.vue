@@ -10,8 +10,6 @@
 <script lang="ts">
 import Vue from 'vue'
 import { listen } from 'core/connex/external-url'
-import SignPortalDialog from 'pages/SignPortalDialog'
-import { DialogChainObject } from 'quasar'
 
 export default Vue.extend({
     computed: {
@@ -23,35 +21,8 @@ export default Vue.extend({
     methods: {
         async externalSignHandlerLoop() {
             let destroyed = false
-            let current = null as DialogChainObject | null
             this.$once('hook:beforeDestroy', () => {
                 destroyed = true
-            })
-
-            const excludedOpen = (rid: string) => {
-                return new Promise(resolve => {
-                    if (current) {
-                        current.hide()
-                    }
-                    const newDlg = this.$q.dialog({
-                        component: SignPortalDialog,
-                        rid
-                    }).onDismiss(() => {
-                        if (newDlg === current) {
-                            current = null
-                            // dialog normally closed, go to index page if not loaded
-                            if (!this.$route.name) {
-                                this.$router.replace({ name: 'index' })
-                            }
-                        }
-                        resolve()
-                    })
-                    current = newDlg
-                })
-            }
-
-            this.$on('sign', (rid: string, cb: () => void) => {
-                excludedOpen(rid).then(cb)
             })
 
             // eslint-disable-next-line no-unmodified-loop-condition
@@ -60,8 +31,12 @@ export default Vue.extend({
                     // the incoming url looks like connex:sign?rid=xxx
                     const url = new URL(await listen())
                     if (url.pathname === 'sign' && !destroyed) {
-                        const rid = url.searchParams.get('rid')
-                        excludedOpen(rid!)
+                        const rurl = url.searchParams.get('rurl')
+                        if (this.$route.name === 'sign') {
+                            this.$router.replace({ name: 'sign', query: { rurl } })
+                        } else {
+                            this.$router.push({ name: 'sign', query: { rurl } })
+                        }
                     }
                 } catch (err) {
                     console.warn(err)
@@ -71,11 +46,6 @@ export default Vue.extend({
     },
     created() {
         console.log(`[Sync2] v${process.env.APP_VERSION} (${process.env.APP_BUILD})`)
-
-        Object.defineProperty(window, 'APP', {
-            get: () => { return this }
-        })
-
         this.externalSignHandlerLoop()
     }
 })

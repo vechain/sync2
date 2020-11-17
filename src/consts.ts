@@ -105,7 +105,6 @@ export const tokenSpecs = {
 }
 
 export const urls = {
-    get tos() { return 'https://tos.vecha.in:5678/' },
     get tokenRegistry() { return 'https://vechain.github.io/token-registry/' },
     get explorerMain() {
         return 'http://explore.vechain.org/'
