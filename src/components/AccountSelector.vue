@@ -10,7 +10,7 @@
             <q-item-section avatar>
                 <AddressAvatar
                     class="q-mx-auto"
-                    style="width: 65px; height: 35px; border-radius: 5px;"
+                    style="width: 40px; height: 40px; border-radius: 20px;"
                     :addr="signer"
                 />
             </q-item-section>

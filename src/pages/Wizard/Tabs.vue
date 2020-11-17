@@ -10,10 +10,10 @@
                 :name="tab.name"
                 v-for="tab in tabs"
                 :key="tab.name"
-                class="column justify-center"
+                class="column justify-start"
             >
                 <div>
-                    <div style="height: 200px"><img :src="tab.img" /></div>
+                    <div class="column justify-center" style="height: 200px"><img :src="tab.img"/></div>
                     <div class="text-h6 col">{{tab.title}}</div>
                     <div class="q-mt-md text-body2">{{tab.content}}</div>
                 </div>
@@ -45,17 +45,17 @@ export default Vue.extend({
                 img: require('../../assets/logoSync.svg'),
                 title: 'VeChain Sync2',
                 name: 'sync',
-                content: 'Brand new design VeChain Sync, The User-contric design, and cross-platform wallet.'
+                content: 'The brand new Sync enhanced design focuses on your experience'
             }, {
                 img: require('../../assets/walletCards.svg'),
                 title: 'Wallet Management',
                 name: 'wallet',
-                content: 'Secure and easy to manage all the assets. Transfer in or out anytime, anywhere.'
+                content: 'Manage assets with ease, anytime, anywhere.'
             }, {
                 img: require('../../assets/signing.svg'),
                 title: 'Signing Services',
                 name: 'signing',
-                content: 'Seamlessly user experience to sign transactions or certificates requested by the dapp.'
+                content: 'Seamless user experience to sign transactions or certificates requested by the dapp.'
             }]
         }
     }

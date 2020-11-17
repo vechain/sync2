@@ -35,7 +35,7 @@
                         >{{address | checksum}}</QRCode>
                     </AddressAvatar>
                     <div
-                        class="monospace q-my-md text-center text-grey q-px-lg"
+                        class="monospace q-my-md text-center q-px-lg"
                         style="word-break: break-all; border-radius: 15px;"
                     >{{address | checksum}}</div>
                     <div class="row q-mt-xl justify-center">

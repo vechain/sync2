@@ -6,7 +6,7 @@
         <q-item-section avatar>
             <AddressAvatar
                 class="q-mx-auto relative-position"
-                style="width: 60px; height: 60px; border-radius: 40px;"
+                style="width: 60px; height: 60px; border-radius: 30px;"
                 :addr="address"
             >
                 <div class="absolute-bottom flex">
@@ -25,7 +25,7 @@
                 <slot />
             </q-item-label>
             <q-item-label
-                class="text-grey reline text-body2"
+                class="text-grey reline text-body2 monospace"
                 lines="2"
             >{{address | checksum}}</q-item-label>
         </q-item-section>

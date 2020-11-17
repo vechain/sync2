@@ -33,7 +33,7 @@
                     <q-icon
                         v-if="icon.name"
                         class="q-pa-sm"
-                        size="sm"
+                        size="xs"
                         :name="icon.name"
                         :color="icon.color"
                     />
@@ -67,7 +67,7 @@
             </q-item-section>
         </q-item>
         <div
-            class="q-px-lg text-body1 text-grey-7 q-pt-xs"
+            class="q-px-md text-body2 q-pt-xs"
             :class="{'text-capitalize': type === 'cert'}"
         >
             {{infos.comment}}
@@ -82,7 +82,7 @@
             />
             {{infos.refererText}}
         </div>
-        <div class="q-px-lg text-grey q-pt-xs text-caption row justify-between items-center">
+        <div class="q-px-md text-grey q-pt-xs text-caption row justify-between items-center">
             <span>
                 {{infos.type === 'tx' ? 'Tx' : 'Cert'}} · {{item.createdTime | dateTime}}
             </span>

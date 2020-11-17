@@ -7,14 +7,16 @@
         <q-item-section avatar>
             <q-avatar
                 v-if="icon"
-                :size="dense ? 'md' : 'lg'"
-                :icon="'img:' + icon"
+                square
+                :size="dense ? 'sm' : 'md'"
             >
+                <img :src="icon" />
             </q-avatar>
             <q-avatar
                 v-else
                 :size="dense ? 'sm' : 'md'"
                 color="primary"
+                square
                 text-color="white"
             >
                 {{token.symbol.slice(0,1)}}
