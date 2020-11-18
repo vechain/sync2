@@ -33,15 +33,29 @@
                         :rules="[val => val.length > 0 || 'Give it a name!']"
                         label="Wallet Name"
                     />
-                    <div class="q-mt-lg">Network</div>
-                    <q-radio
-                        v-for="item in nodes"
-                        :key="item.gid"
-                        v-model="gid"
-                        class="text-capitalize"
-                        :val="item.gid"
-                        :label="item.gid | net"
-                    />
+                    <div
+                        v-if="!advance"
+                        class="justify-end row"
+                    >
+                        <q-btn
+                            label="Advance"
+                            size="sm"
+                            color="blue-9"
+                            flat
+                            @click="advance = true"
+                        />
+                    </div>
+                    <template v-else>
+                        <div class="q-mt-lg">Network</div>
+                        <q-radio
+                            v-for="item in nodes"
+                            :key="item.gid"
+                            v-model="gid"
+                            class="text-capitalize"
+                            :val="item.gid"
+                            :label="item.gid | net"
+                        />
+                    </template>
                     <div class="justify-center row q-pt-xl">
                         <q-btn
                             unelevated
@@ -67,7 +81,8 @@ export default Vue.extend({
             name: '',
             gid: '',
             words: '',
-            creating: false
+            creating: false,
+            advance: false
         }
     },
     computed: {
@@ -88,11 +103,16 @@ export default Vue.extend({
             this.hide()
         },
         async onNew() {
-            const pin = await this.$authenticate(pin => Promise.resolve(pin))
+            let pin = ''
+            try {
+                pin = await this.$authenticate(pin => Promise.resolve(pin))
+            } catch (e) {
+                return
+            }
             this.$loading(async () => {
                 this.creating = true
                 try {
-                    const words = await Vault.generateMnemonic()
+                    const words = await Vault.generateMnemonic(16)
                     const vault = await Vault.createHD(words, pin)
                     const node0 = await vault.derive(0)
                     const meta: M.Wallet.Meta = {

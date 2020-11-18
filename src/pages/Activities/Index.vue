@@ -4,9 +4,10 @@
         class="fit overflow-auto"
     >
         <template v-if="activities.length">
-            <ActivityItem
+            <component
                 v-for="a in activities"
-                :item="a"
+                :is="a.glob.type"
+                :activity="a"
                 :walletNames="walletNames"
                 :key="a.id"
             />
@@ -23,7 +24,13 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
+import Cert from './Cert.vue'
+import Tx from './Tx.vue'
 export default Vue.extend({
+    components: {
+        cert: Cert,
+        tx: Tx
+    },
     computed: {
         activities(): M.Activity<'tx' | 'cert'>[] {
             return this.$state.activity.list
