@@ -24,7 +24,10 @@ export default Vue.extend({
     render(h) {
         if (this.timeUp) {
             const slots = this.$slots.default || []
-            return slots.length > 1 ? h(this.tag || 'fragment', slots) : slots[0]
+            if (this.tag) {
+                return h(this.tag, slots)
+            }
+            return slots.length > 1 ? h('fragment', slots) : slots[0]
         }
         return h()
     }

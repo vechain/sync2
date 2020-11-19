@@ -73,6 +73,9 @@ export default Vue.extend({
             reload: () => this.reload()
         }) : []) || []
 
-        return children.length > 1 ? h(this.tag || 'fragment', children) : children[0]
+        if (this.tag) {
+            return h(this.tag, children)
+        }
+        return children.length > 1 ? h('fragment', children) : children[0]
     }
 })
