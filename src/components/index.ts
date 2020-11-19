@@ -26,7 +26,6 @@ import Logs from './Logs.vue'
 import ReceiveDialog from './ReceiveDialog.vue'
 import AddressInfo from './AddressInfo.vue'
 import TxActivityUpdate from './TxActivityUpdate'
-import ActivityItem from './ActivityItem.vue'
 import InputPinCode from './InputPinCode.vue'
 import ProcessingTransition from './ProcessingTransition.vue'
 
@@ -59,7 +58,6 @@ const components: { [name: string]: Vue.VueConstructor } = {
     ReceiveDialog,
     AddressInfo,
     TxActivityUpdate,
-    ActivityItem,
     InputPinCode,
     ProcessingTransition
 }
