@@ -11,6 +11,7 @@ import ResetPin from 'pages/ResetPin.vue'
 import AccountTransferLogs from 'pages/AccountTransferLogs.vue'
 import Send from 'pages/Send.vue'
 import Sign from 'pages/Sign'
+import SignSuccess from 'pages/SignSuccess.vue'
 
 const routes: RouteConfig[] = [
     {
@@ -77,6 +78,11 @@ const routes: RouteConfig[] = [
             meta: {
                 title: 'Send'
             }
+        }, {
+            path: 'sign-success',
+            name: 'sign-success',
+            component: SignSuccess,
+            meta: { title: 'Success' }
         }]
     }
 ]
