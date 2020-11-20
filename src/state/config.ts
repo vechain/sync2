@@ -128,10 +128,18 @@ export function build() {
                     await config.set('tokenRegistry', JSON.stringify(newRegistry))
                 }
             }
+        },
+        get recent() {
+            const all = this.all
+            return {
+                get addresses(): string[] {
+                    return all.recentContact ? JSON.parse(all.recentContact) : []
+                }
+            }
         }
     }
 }
 
 declare global {
-    type ConfigKey = 'nodes' | 'passwordShadow' | 'tokenRegistry' | 'activeTokens'
+    type ConfigKey = 'nodes' | 'passwordShadow' | 'tokenRegistry' | 'activeTokens' | 'recentContact'
 }

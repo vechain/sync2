@@ -27,6 +27,17 @@
                             :addr="to"
                         />
                     </template>
+                    <template v-slot:append>
+                        <AddressSelector
+                            rounded
+                            dense
+                            flat
+                            icon="add"
+                            :addresses="recentList"
+                            :wallets="wallets"
+                            @change="(e) => to = e"
+                        />
+                    </template>
                 </q-input>
                 <ConnexObject
                     v-slot="{connex}"
@@ -154,6 +165,14 @@ export default Vue.extend({
                 return i.id === parseInt(this.wId, 10)
             })
         },
+        wallets(): M.Wallet[] {
+            return this.$state.wallet.list.filter(i => {
+                return i.gid === this.wallet?.gid
+            })
+        },
+        recentList(): string[] {
+            return this.$state.config.recent.addresses
+        },
         addressIndex(): number {
             return parseInt(this.i, 10)
         },
@@ -233,6 +252,12 @@ export default Vue.extend({
                     id: r.txid,
                     comment: comment
                 }
+                const temp = [this.to, ...this.recentList].reduce((result: string[], cv: string) => {
+                    !result.includes(cv.toLowerCase()) && result.push(cv.toLowerCase())
+                    return result
+                }, []).slice(0, 10)
+
+                this.$state.config.set('recentContact', JSON.stringify(temp))
             })
         },
         onCopy() {
