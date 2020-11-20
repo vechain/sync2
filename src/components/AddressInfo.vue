@@ -6,7 +6,7 @@
         <q-item-section avatar>
             <AddressAvatar
                 class="q-mx-auto relative-position"
-                style="width: 60px; height: 60px; border-radius: 30px;"
+                :style="isNormal ? 'width: 60px; height: 60px; border-radius: 30px;' : 'width: 40px; height: 40px; border-radius: 20px;'"
                 :addr="address"
             >
                 <div class="absolute-bottom flex">
@@ -21,11 +21,15 @@
             </AddressAvatar>
         </q-item-section>
         <q-item-section>
-            <q-item-label class="text-body1 reline ellipsis-2-lines">
+            <q-item-label
+                v-if="isNormal"
+                class="text-body1 reline ellipsis-2-lines"
+            >
                 <slot />
             </q-item-label>
             <q-item-label
-                class="text-grey reline text-body2 monospace"
+                :class="isNormal ? 'text-grey' : ''"
+                class="reline monospace text-body2"
                 lines="2"
             >{{address | checksum}}</q-item-label>
         </q-item-section>
@@ -37,6 +41,11 @@ export default Vue.extend({
     props: {
         address: String,
         network: String
+    },
+    computed: {
+        isNormal(): boolean {
+            return !!this.$slots.default
+        }
     }
 })
 </script>
