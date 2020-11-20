@@ -4,73 +4,69 @@
         :fn="loadRequest"
         v-slot="{data, error, pending}"
         tag="div"
-        class="column fit"
+        class="column fit q-pa-md no-wrap"
     >
         <!-- loading -->
         <delay
-            :t="200"
             v-if="pending"
-            tag="q-card-section"
-            class="col column flex-center"
+            :t="200"
+            tag="div"
+            class="q-my-auto text-center"
         >
             <p>
-                <q-spinner-dots size="3rem" />
+                <q-spinner-dots class="text-h2" />
             </p>
             <p>Loading signing content ...</p>
         </delay>
-
-        <!-- error loading -->
+        <!-- error to load -->
         <div
-            v-else-if="!!error"
-            class="col column no-wrap justify-center"
+            v-else-if="error"
+            class="q-my-auto text-center"
         >
-            <q-card-section class="text-center">
-                <p>
-                    <q-icon
-                        name="error"
-                        class="text-red text-h2"
-                    />
-                </p>
-                <p>Error occurred</p>
-            </q-card-section>
-            <q-card-actions class="row justify-center">
+            <p>
+                <q-icon
+                    name="error"
+                    class="text-red text-h2"
+                />
+            </p>
+            <p>Failed to load content</p>
+        </div>
+        <!-- summary -->
+        <div
+            v-else
+            v-scrollDivider.both
+            class="row self-stretch q-mb-auto justify-center overflow-auto"
+        >
+            <Summary
+                class="col-sm-8 col-12"
+                :origin="origin"
+                :request="data"
+            />
+        </div>
+        <!-- actions -->
+        <div class="row justify-evenly self-stretch q-mt-md q-gutter-sm">
+            <q-btn
+                v-if="error"
+                unelevated
+                color="primary"
+                class="col-6 col-sm-3"
+                @click="close()"
+            >Close</q-btn>
+            <template v-else-if="data">
                 <q-btn
                     unelevated
                     color="primary"
-                    class="col-6 col-sm-auto q-px-lg"
-                    @click="close()"
-                >Close</q-btn>
-            </q-card-actions>
-        </div>
-        <!-- content -->
-        <div
-            v-else
-            class="col column no-wrap"
-        >
-            <div
-                v-scrollDivider.both
-                class="row overflow-auto justify-center"
-            >
-                <Content
-                    class="col-sm-8 col-12"
-                    :origin="origin"
-                    :request="data"
-                />
-            </div>
-            <q-card-actions class="row justify-evenly">
-                <q-btn
-                    unelevated
-                    color="grey"
-                    class="col-5 col-sm-auto q-px-lg"
-                    @click="close()"
-                >Decline</q-btn>
-                <q-btn
-                    unelevated
-                    color="positive"
-                    class="col-5 col-sm-auto q-px-lg"
+                    class="col-6 col-sm-3"
                     @click="signRequest(data)"
                 >Continue</q-btn>
-            </q-card-actions>
+                <div class="col-12" />
+                <q-btn
+                    flat
+                    color="negative"
+                    class="col-6 col-sm-3"
+                    @click="close()"
+                >Decline</q-btn>
+            </template>
         </div>
     </async>
 </template>
@@ -78,10 +74,10 @@
 import Vue from 'vue'
 import { RelayedRequest, RelayedResponse } from './models'
 import { blake2b256 } from 'thor-devkit'
-import Content from './Content.vue'
+import Summary from './Summary.vue'
 
 export default Vue.extend({
-    components: { Content },
+    components: { Summary },
     props: {
         rurl: String // the url to fetch request object
     },
@@ -92,7 +88,6 @@ export default Vue.extend({
         }
     },
     computed: {
-        baseUrl(): string { return this.rurl },
         host(): string {
             try {
                 return new URL(this.origin).host
@@ -103,11 +98,21 @@ export default Vue.extend({
     },
     methods: {
         async loadRequest() {
+            const urlObject = new URL(this.rurl)
+            if (!['http:', 'https:'].includes(urlObject.protocol)) {
+                throw new Error('invalid request')
+            }
+
+            const rid = urlObject.pathname.split('/').pop() || ''
+            if (!/^[0-9a-f]{64}$/i.test(rid)) {
+                throw new Error('invalid request')
+            }
+
             const resp = await (async () => {
                 for (let i = 0; i < 3; i++) {
                     try {
                         const resp = await this.$axios.get(
-                            `${this.baseUrl}?wait=1`,
+                            `${this.rurl}?wait=1`,
                             { transformResponse: data => data } // raw data is needed to verify hash
                         )
                         if (resp.data) {
@@ -120,10 +125,9 @@ export default Vue.extend({
                 throw new Error('can not load request')
             })()
 
-            const computedRid = blake2b256(resp.data).toString('hex')
-            const rid = new URL(this.rurl).pathname.split('/').pop()
-            if (computedRid !== rid) {
-                throw new Error('id and content mismatch')
+            const dataHash = blake2b256(resp.data).toString('hex')
+            if (dataHash !== rid) {
+                throw new Error('incorrect content hash')
             }
             const request = RelayedRequest.validate(JSON.parse(resp.data))
             this.origin = resp.headers['x-data-origin']
@@ -132,26 +136,27 @@ export default Vue.extend({
             return request
         },
         async signRequest(request: RelayedRequest) {
-            const { type, gid, payload } = request
-            const resp: RelayedResponse = {}
             try {
+                const { type, gid, payload } = request
+                let result = null
                 if (type === 'tx') {
-                    resp.payload = await this.$signTx(gid || '', payload as M.TxRequest)
+                    result = await this.$signTx(gid || '', payload as M.TxRequest)
                 } else if (type === 'cert') {
-                    resp.payload = await this.$signCert(gid || '', {
+                    result = await this.$signCert(gid || '', {
                         ...(payload as M.CertRequest),
                         domain: this.host
                     })
                 }
+                this.respond({ payload: result! })
+                this.$router.replace({ name: 'sign-success', query: { type } })
             } catch (err) {
-                resp.error = err.message
+                console.warn(err)
             }
-            this.respond(resp)
         },
         async postStatus(suffix: string, result: object) {
             for (let i = 0; i < 3; i++) {
                 try {
-                    await this.$axios.post(`${this.baseUrl}${suffix}`, result)
+                    await this.$axios.post(`${this.rurl}${suffix}`, result)
                     return
                 } catch (err) {
                     console.warn(err)
@@ -174,16 +179,6 @@ export default Vue.extend({
                 this.$router.replace({ name: 'index' })
             }
         }
-    },
-    created() {
-        // the code block below is to post reject response on app closed
-        // const url = `${this.baseUrl}-resp`
-        // this.$onWindowEvent('pagehide', () => {
-        //     this.responded = true
-        //     const resp: RelayedResponse = { error: 'wallet closed' }
-        //     window.navigator.sendBeacon(url, JSON.stringify(resp))
-        //     this.close()
-        // })
     },
     beforeDestroy() {
         this.respond()

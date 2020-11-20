@@ -1,5 +1,5 @@
 <template>
-    <q-card-section>
+    <div>
         <div class="text-center">
             <!-- img loader -->
             <img
@@ -37,7 +37,7 @@
         <p>{{type}}</p>
         <div class="text-caption text-grey">Summary</div>
         <p>{{summary}}</p>
-    </q-card-section>
+    </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
