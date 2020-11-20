@@ -107,7 +107,7 @@ export default Vue.extend({
             }
         },
         isConfirming(): boolean {
-            return !!(this.tx.finished && this.tx.receipt!)
+            return !this.tx.finished
         },
         info(): Info {
             const link = (this.activity.glob.referer && this.activity.glob.referer.url) || ''
