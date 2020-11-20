@@ -2,7 +2,7 @@
     <q-list>
         <template v-for="wallet in wallets">
             <q-item-label
-                class="text-grey ellipsis"
+                header
                 :key="wallet.id"
             >{{wallet.meta.name}}</q-item-label>
             <q-expansion-item
@@ -21,7 +21,7 @@
                     >
                         <AddressAvatar
                             class="q-mx-auto"
-                            style="width: 50px; height: 30px; border-radius: 5px;"
+                            style="width: 40px; height: 40px; border-radius: 20px;"
                             :addr="address"
                         />
                     </q-item-section>
