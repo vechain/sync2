@@ -57,15 +57,15 @@
                         ]"
                     />
 
-                    <div class="text-center q-pt-xl">
+                    <div class="row q-mt-xl justify-center">
                         <q-btn
                             unelevated
                             :disable="importing"
-                            class="text-capitalize full-width"
+                            class="text-capitalize col-6 col-sm-auto"
                             color="blue-9"
                             type="submit"
                             label="Import"
-                        ></q-btn>
+                        />
                     </div>
                 </q-form>
             </div>

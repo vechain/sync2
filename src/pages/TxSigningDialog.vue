@@ -104,6 +104,7 @@
                                     <q-btn
                                         :disabled="!estGas"
                                         unelevated
+                                        class="col-6 col-sm-auto"
                                         color="blue-9"
                                         label="Sign"
                                         @click="signTx(connex, estGas)"
