@@ -30,7 +30,7 @@
                         class="monospace"
                         :class="{'text-primary': (current === address)}"
                     >
-                        {{address | abbrev(8,6)}}
+                        {{address | checksum | abbrev(8,6)}}
                     </q-item-section>
                 </template>
                 <slot :address="address" />
