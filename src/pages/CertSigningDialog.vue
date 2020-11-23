@@ -79,6 +79,7 @@
                             <q-item class="q-my-lg">
                                 <q-btn
                                     unelevated
+                                    class="col-6 col-sm-auto"
                                     color="blue-9"
                                     label="Sign"
                                     @click="sign(connex)"
