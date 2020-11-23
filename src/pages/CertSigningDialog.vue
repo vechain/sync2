@@ -30,7 +30,7 @@
                 >
                     <q-card-section>
                         <div class="text-h6 text-capitalize">{{req.message.purpose}}</div>
-                        <div class="text-grey text-body2">
+                        <div class="q-my-md text-grey-7 text-body2">
                             {{req.message.payload.content}}
                         </div>
                     </q-card-section>
@@ -77,12 +77,11 @@
                                 />
                             </AccountSelector>
                             <q-item class="q-my-lg">
-                                <SlideBtn
-                                    v-model="signed"
-                                    @checked="sign(connex)"
-                                    label="Slide to Sign"
-                                    style="width: 70%"
-                                    class="absolute-center"
+                                <q-btn
+                                    unelevated
+                                    color="blue-9"
+                                    label="Sign"
+                                    @click="sign(connex)"
                                 />
                             </q-item>
                         </q-list>
@@ -116,7 +115,6 @@ export default Vue.extend({
     data() {
         return {
             signer: '',
-            signed: false,
             signing: false
         }
     },
@@ -218,7 +216,6 @@ export default Vue.extend({
                     })
                 }
             } catch (error) {
-                this.signed = false
                 console.log(error)
             } finally {
                 this.signing = false

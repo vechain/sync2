@@ -100,14 +100,13 @@
                                         :tokens="tokens"
                                     />
                                 </AccountSelector>
-                                <q-item class="q-my-lg">
-                                    <SlideBtn
-                                        v-model="signed"
+                                <q-item class="q-my-lg justify-center">
+                                    <q-btn
                                         :disabled="!estGas"
-                                        @checked="onChecked(connex, estGas)"
-                                        label="Slide to Sign"
-                                        style="width: 70%"
-                                        class="absolute-center"
+                                        unelevated
+                                        color="blue-9"
+                                        label="Sign"
+                                        @click="signTx(connex, estGas)"
                                     />
                                 </q-item>
                             </q-list>
@@ -144,7 +143,6 @@ export default Vue.extend({
         return {
             signer: '',
             tokenSpecs,
-            signed: false,
             gasPriceCoef: 0,
             estGasError: null as Error | null,
             vmError: null as Error | null,
@@ -243,7 +241,7 @@ export default Vue.extend({
             return new BigNumber(NaN).toString(10)
         },
         // build Tx
-        async onChecked(connex: Connex, estGas: EstimateGasResult) {
+        async signTx(connex: Connex, estGas: EstimateGasResult) {
             const clauses: Connex.Thor.Transaction['clauses'] = this.clauseList.map(item => {
                 return {
                     to: item.to,
@@ -301,7 +299,6 @@ export default Vue.extend({
                     })
                 }
             } catch (error) {
-                this.signed = false
                 console.log(error)
             } finally {
                 this.signing = false
