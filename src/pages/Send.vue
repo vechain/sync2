@@ -128,7 +128,7 @@
             </q-list>
 
             <q-btn
-                class="q-mx-auto q-mt-auto q-mb-xl col-6 col-sm-auto"
+                class="q-mx-auto q-mt-auto q-mb-xl"
                 color="blue-9"
                 @click="$router.go(-1)"
                 label="Done"

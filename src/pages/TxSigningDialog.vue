@@ -208,9 +208,10 @@ export default Vue.extend({
             }
         },
         estGas(connex: Connex) {
+            const signer = this.signer
             return async () => {
-                if (this.signer && connex) {
-                    return await estimateGas(connex, this.clauseList, this.suggettedGas, this.signer)
+                if (signer && connex) {
+                    return await estimateGas(connex, this.clauseList, this.suggettedGas, signer)
                 } else {
                     return null
                 }
@@ -275,7 +276,6 @@ export default Vue.extend({
                     const glob: M.Activity.Tx = {
                         id: st.id!,
                         type: 'tx',
-                        finished: false,
                         comment: (this.req.options && this.req.options.comment) || '',
                         message: this.req.message,
                         signer: this.signer,
