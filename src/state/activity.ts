@@ -30,6 +30,7 @@ export function build() {
                     id: r.id,
                     gid: r.gid,
                     walletId: r.walletId,
+                    status: r.status,
                     createdTime: r.createdTime,
                     glob: JSON.parse(r.glob)
                 }

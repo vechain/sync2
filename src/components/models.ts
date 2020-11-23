@@ -71,13 +71,13 @@ declare namespace M {
         gid: string
         walletId: number
         createdTime: number
+        status: '' | 'completed'
         glob: T extends 'tx' ? Activity.Tx :
         T extends 'cert' ? Activity.Cert : never
     }
     namespace Activity {
         type Tx = {
             id: string
-            finished: boolean
             type: 'tx'
             message: Connex.Vendor.TxMessage
             comment: string
@@ -90,7 +90,6 @@ declare namespace M {
         }
         type Cert = {
             id: string
-            finished: boolean
             type: 'cert'
             message: Connex.Vendor.CertMessage
             signer: string

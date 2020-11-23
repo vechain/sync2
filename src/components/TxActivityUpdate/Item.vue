@@ -26,6 +26,9 @@ export default Vue.extend({
                 return item.gid === this.item.gid
             })
         },
+        isCompleted(): boolean {
+            return this.item.status === 'completed'
+        },
         tx(): M.Activity.Tx {
             return this.item.glob
         }
@@ -33,16 +36,16 @@ export default Vue.extend({
     methods: {
         txReceipt,
         async onReceipt(connex: Connex, receipt: Connex.Thor.Transaction.Receipt) {
-            if (!this.tx.finished) {
+            if (!this.isCompleted) {
                 const head = connex.thor.status.head
                 const confirmed = receipt ? head.number - receipt.meta.blockNumber >= 12 : false
                 const expired = !receipt && (head.timestamp - this.tx.timestamp > 18 * 10 + 10)
                 await this.$storage.activities.update({
                     id: this.item.id
                 }, {
+                    status: (confirmed || expired) ? 'completed' : '',
                     glob: JSON.stringify({
                         ...this.item.glob,
-                        finished: (confirmed || expired),
                         receipt: receipt
                     })
                 })

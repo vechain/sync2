@@ -197,7 +197,6 @@ export default Vue.extend({
                     const cert: M.Activity.Cert = {
                         id: id,
                         message: this.req.message,
-                        finished: true,
                         signer: this.signer,
                         type: 'cert',
                         referer: this.referer || {},
@@ -208,7 +207,7 @@ export default Vue.extend({
                         gid: this.gid,
                         walletId: this.wallet.id,
                         createdTime: Date.now(),
-                        status: '',
+                        status: 'completed',
                         glob: JSON.stringify(cert)
                     })
                     this.ok({

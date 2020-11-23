@@ -23,7 +23,7 @@
             <q-item-label
                 caption
                 lines="1"
-                v-if="isConfirming || status === 'sending'"
+                v-if="!isCompleted || status === 'sending'"
             >
                 <span v-if="status === 'sending'"> sending </span>
                 <ConnexObject
@@ -90,8 +90,11 @@ export default Vue.extend({
             }
             return result
         },
+        isCompleted(): boolean {
+            return this.activity.status === 'completed'
+        },
         status(): string {
-            if (this.tx.finished) {
+            if (this.isCompleted) {
                 return this.tx.receipt ? this.tx.receipt.reverted ? 'reverted' : 'completed' : 'expired'
             } else {
                 if (this.tx.receipt) {
@@ -105,9 +108,6 @@ export default Vue.extend({
                     }
                 }
             }
-        },
-        isConfirming(): boolean {
-            return !this.tx.finished
         },
         info(): Info {
             const link = (this.activity.glob.referer && this.activity.glob.referer.url) || ''
