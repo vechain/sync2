@@ -8,14 +8,14 @@
             <div>
                 <template v-if="!isCreate">
                     <div class="row justify-between">
-                        <span class="col-2 text-subtitle2 text-grey">To</span>
+                        <span class="col-2 text-caption text-grey">To</span>
                         <span class="col-4 text-subtitle2 text-right text-grey">
                             <slot />
                         </span>
                     </div>
                     <AddressAvatar
                         class="q-mx-auto"
-                        style="width: 80px; height: 80px; border-radius: 40px;"
+                        style="width: 60px; height: 60px; border-radius: 30px;"
                         :addr="toAddr"
                     />
                     <div
@@ -48,16 +48,16 @@
             </div>
             <!-- amount infos -->
             <div>
-                <span class="text-subtitle2 text-grey">Amount</span>
+                <span class="text-caption text-grey">Amount</span>
                 <div>
                     <template v-if="isToken">
-                        <TokenBalanceItem
+                        <TokenAmount
                             class="q-px-xs"
                             v-if="!isZeroVet"
                             :balance="vet"
                             :token="tokenSpecs.VET"
                         />
-                        <TokenBalanceItem
+                        <TokenAmount
                             class="q-px-xs"
                             v-if="decoded"
                             :balance="decoded.value"
@@ -65,7 +65,7 @@
                         />
                     </template>
                     <template v-else>
-                        <TokenBalanceItem
+                        <TokenAmount
                             class="q-px-xs"
                             :balance="vet"
                             :token="tokenSpecs.VET"
@@ -98,9 +98,13 @@
 import Vue from 'vue'
 import { BigNumber } from 'bignumber.js'
 import { abi } from 'thor-devkit'
-import { abis, tokenSpecs } from '../consts'
+import { abis, tokenSpecs } from '../../consts'
+import TokenAmount from './TokenAmount.vue'
 
 export default Vue.extend({
+    components: {
+        TokenAmount
+    },
     props: {
         tokens: Array as () => M.TokenSpec[],
         msg: Object as () => Connex.Vendor.TxMessage[0]
