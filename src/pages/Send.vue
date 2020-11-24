@@ -1,139 +1,140 @@
 <template>
-    <div class="fit no-wrap">
-        <div
-            style="max-width: 500px"
-            v-if="!txInfo"
-            class="q-mx-auto"
-        >
-            <q-form
-                class="q-px-md"
-                @submit="onSend"
+    <div class="column fit">
+        <page-toolbar title="Send" />
+        <div class="col no-wrap">
+            <div
+                style="max-width: 500px"
+                v-if="!txInfo"
+                class="q-mx-auto"
             >
-                <q-input
-                    no-error-icon
-                    autocomplete="off"
-                    clearable
-                    :rules="[val => isAddress(val) || 'Please enter a valid address']"
-                    v-model.lazy="to"
-                    label="To"
+                <q-form
+                    class="q-px-md"
+                    @submit="onSend"
                 >
-                    <template
-                        v-if="isAddress(to)"
-                        v-slot:prepend
-                    >
-                        <AddressAvatar
-                            class="q-mx-auto"
-                            style="width: 40px; height: 40px; border-radius: 20px;"
-                            :addr="to"
-                        />
-                    </template>
-                    <template v-slot:append>
-                        <AddressSelector
-                            rounded
-                            dense
-                            flat
-                            icon="add"
-                            :addresses="recentList"
-                            :wallets="wallets"
-                            @change="(e) => to = e"
-                        />
-                    </template>
-                </q-input>
-                <ConnexObject
-                    v-slot="{connex}"
-                    :node="node"
-                >
-                    <TokenSelector
-                        v-model="symbol"
-                        :connex="connex"
-                        :address="from"
-                        :tokens="tokenSpecs"
-                    />
                     <q-input
                         no-error-icon
                         autocomplete="off"
                         clearable
-                        v-model="amount"
-                        type="text"
-                        :rules="[balanceCheck]"
-                        inputmode="decimal"
-                        label="Amount"
-                    />
-                    <connex-continuous
-                        :key="symbol"
-                        :connex="connex"
-                        :query="() => query(connex)"
-                        v-slot="{data}"
+                        :rules="[val => isAddress(val) || 'Please enter a valid address']"
+                        v-model.lazy="to"
+                        label="To"
                     >
-                        <div class="text-grey q-mt-sm">
-                            <span>balance: {{data | balance(currentToken.decimals)}}</span>
-                        </div>
-                    </connex-continuous>
-                </ConnexObject>
-                <div class="row justify-center q-mt-xl">
-                    <q-btn
-                        type="submit"
-                        unelevated
-                        class="col-6 col-sm-auto"
-                        color="blue-9"
-                        label="Send"
+                        <template
+                            v-if="isAddress(to)"
+                            v-slot:prepend
+                        >
+                            <AddressAvatar
+                                class="q-mx-auto"
+                                style="width: 40px; height: 40px; border-radius: 20px;"
+                                :addr="to"
+                            />
+                        </template>
+                        <template v-slot:append>
+                            <AddressSelector
+                                rounded
+                                dense
+                                flat
+                                icon="add"
+                                :addresses="recentList"
+                                :wallets="wallets"
+                                @change="(e) => to = e"
+                            />
+                        </template>
+                    </q-input>
+                    <ConnexObject
+                        v-slot="{connex}"
+                        :node="node"
+                    >
+                        <TokenSelector
+                            v-model="symbol"
+                            :connex="connex"
+                            :address="from"
+                            :tokens="tokenSpecs"
+                        />
+                        <q-input
+                            no-error-icon
+                            autocomplete="off"
+                            clearable
+                            v-model="amount"
+                            type="text"
+                            :rules="[balanceCheck]"
+                            inputmode="decimal"
+                            label="Amount"
+                        />
+                        <connex-continuous
+                            :key="symbol"
+                            :connex="connex"
+                            :query="() => query(connex)"
+                            v-slot="{data}"
+                        >
+                            <div class="text-grey q-mt-sm">
+                                <span>balance: {{data | balance(currentToken.decimals)}}</span>
+                            </div>
+                        </connex-continuous>
+                    </ConnexObject>
+                    <div class="row justify-center q-mt-xl">
+                        <q-btn
+                            type="submit"
+                            unelevated
+                            class="col-6 col-sm-auto"
+                            color="blue-9"
+                            label="Send"
+                        />
+                    </div>
+                </q-form>
+            </div>
+            <div
+                class="q-px-md column fit"
+                v-else
+            >
+                <div class=" text-center">
+                    <q-icon
+                        size="50px"
+                        name="check_circle_outline"
+                        color="green"
                     />
                 </div>
-            </q-form>
-        </div>
-        <div
-            class="q-px-md column fit"
-            v-else
-        >
-            <div class=" text-center">
-                <q-icon
-                    size="50px"
-                    name="check_circle_outline"
-                    color="green"
+                <div class=" text-center text-h6 q-mt-md">You've signed the Transaction</div>
+                <div class=" text-center text-body2 text-grey q-my-md">It may take a while to see the transaction on the network. You can always check the detail via activities.</div>
+                <q-list
+                    bordered
+                    class="rounded-borders"
+                >
+                    <q-item>
+                        <q-item-section avatar>
+                            <q-item-label class="text-grey">TxID</q-item-label>
+                        </q-item-section>
+
+                        <q-item-section
+                            style="word-break: break-all"
+                            class="text-caption"
+                        >
+                            <span>
+                                {{txInfo.id}}
+                                <q-icon
+                                    @click="onCopy"
+                                    name="content_copy"
+                                />
+                            </span>
+                        </q-item-section>
+                    </q-item>
+                    <q-item>
+                        <q-item-section avatar>
+                            <q-item-label class="text-grey">Summary</q-item-label>
+                        </q-item-section>
+
+                        <q-item-section class="text-caption">
+                            <q-item-label lines="1">{{txInfo.comment}}</q-item-label>
+                        </q-item-section>
+                    </q-item>
+                </q-list>
+                <q-btn
+                    class="q-mx-auto q-mt-auto q-mb-xl"
+                    color="blue-9"
+                    @click="$router.go(-1)"
+                    label="Done"
                 />
             </div>
-            <div class=" text-center text-h6 q-mt-md">You've signed the Transaction</div>
-            <div class=" text-center text-body2 text-grey q-my-md">It may take a while to see the transaction on the network. You can always check the detail via activities.</div>
-            <q-list
-                bordered
-                class="rounded-borders"
-            >
-                <q-item>
-                    <q-item-section avatar>
-                        <q-item-label class="text-grey">TxID</q-item-label>
-                    </q-item-section>
-
-                    <q-item-section
-                        style="word-break: break-all"
-                        class="text-caption"
-                    >
-                        <span>
-                            {{txInfo.id}}
-                            <q-icon
-                                @click="onCopy"
-                                name="content_copy"
-                            />
-                        </span>
-                    </q-item-section>
-                </q-item>
-                <q-item>
-                    <q-item-section avatar>
-                        <q-item-label class="text-grey">Summary</q-item-label>
-                    </q-item-section>
-
-                    <q-item-section class="text-caption">
-                        <q-item-label lines="1">{{txInfo.comment}}</q-item-label>
-                    </q-item-section>
-                </q-item>
-            </q-list>
-
-            <q-btn
-                class="q-mx-auto q-mt-auto q-mb-xl"
-                color="blue-9"
-                @click="$router.go(-1)"
-                label="Done"
-            />
-
         </div>
     </div>
 </template>

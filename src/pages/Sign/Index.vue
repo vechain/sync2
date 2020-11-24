@@ -1,74 +1,77 @@
 <template>
-    <!-- load request -->
-    <async
-        :fn="loadRequest"
-        v-slot="{data, error, pending}"
-        tag="div"
-        class="column fit q-pa-md no-wrap"
-    >
-        <!-- loading -->
-        <delay
-            v-if="pending"
-            :t="200"
+    <div class="column fit">
+        <page-toolbar title="Sign" />
+        <!-- load request -->
+        <async
+            :fn="loadRequest"
+            v-slot="{data, error, pending}"
             tag="div"
-            class="q-my-auto text-center"
+            class="col column q-pa-md no-wrap"
         >
-            <p>
-                <q-spinner-dots class="text-h2" />
-            </p>
-            <p>Loading signing content ...</p>
-        </delay>
-        <!-- error to load -->
-        <div
-            v-else-if="error"
-            class="q-my-auto text-center"
-        >
-            <p>
-                <q-icon
-                    name="error"
-                    class="text-red text-h2"
+            <!-- loading -->
+            <delay
+                v-if="pending"
+                :t="200"
+                tag="div"
+                class="q-my-auto text-center"
+            >
+                <p>
+                    <q-spinner-dots class="text-h2" />
+                </p>
+                <p>Loading signing content ...</p>
+            </delay>
+            <!-- error to load -->
+            <div
+                v-else-if="error"
+                class="q-my-auto text-center"
+            >
+                <p>
+                    <q-icon
+                        name="error"
+                        class="text-red text-h2"
+                    />
+                </p>
+                <p>Failed to load content</p>
+            </div>
+            <!-- summary -->
+            <div
+                v-else
+                v-scrollDivider.both
+                class="row self-stretch q-mb-auto justify-center overflow-auto"
+            >
+                <Summary
+                    class="col-sm-8 col-12"
+                    :origin="origin"
+                    :request="data"
                 />
-            </p>
-            <p>Failed to load content</p>
-        </div>
-        <!-- summary -->
-        <div
-            v-else
-            v-scrollDivider.both
-            class="row self-stretch q-mb-auto justify-center overflow-auto"
-        >
-            <Summary
-                class="col-sm-8 col-12"
-                :origin="origin"
-                :request="data"
-            />
-        </div>
-        <!-- actions -->
-        <div class="row justify-evenly self-stretch q-mt-md q-gutter-sm">
-            <q-btn
-                v-if="error"
-                unelevated
-                color="primary"
-                class="col-6 col-sm-3"
-                @click="close()"
-            >Close</q-btn>
-            <template v-else-if="data">
+            </div>
+            <!-- actions -->
+            <div class="row justify-evenly self-stretch q-mt-md q-gutter-sm">
                 <q-btn
+                    v-if="error"
                     unelevated
                     color="primary"
                     class="col-6 col-sm-3"
-                    @click="signRequest(data)"
-                >Continue</q-btn>
-                <div class="col-12" />
-                <q-btn
-                    flat
-                    color="negative"
-                    class="col-6 col-sm-3"
                     @click="close()"
-                >Decline</q-btn>
-            </template>
-        </div>
-    </async>
+                >Close</q-btn>
+                <template v-else-if="data">
+                    <q-btn
+                        unelevated
+                        color="primary"
+                        class="col-6 col-sm-3"
+                        @click="signRequest(data)"
+                    >Continue</q-btn>
+                    <div class="col-12" />
+                    <q-btn
+                        flat
+                        color="negative"
+                        class="col-6 col-sm-3"
+                        @click="close()"
+                    >Decline</q-btn>
+                </template>
+            </div>
+        </async>
+    </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'

@@ -1,5 +1,6 @@
 <template>
     <div class="fit column no-wrap">
+        <page-toolbar :title="symbol" />
         <div class="q-mx-sm">
             <AddressInfo :address="address" :network="networkBadgeText"> {{wallet.meta.name + ' #' + (addressIndex + 1)}} </AddressInfo>
         </div>

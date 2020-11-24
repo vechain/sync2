@@ -1,4 +1,6 @@
 <template>
+<div class="column fit">
+    <page-toolbar title="Password"/>
     <div
         v-if="show"
         class="q-pt-md q-px-md"
@@ -18,6 +20,7 @@
             </div>
         </q-form>
     </div>
+</div>
 </template>
 <script lang="ts">
 import Vue from 'vue'

@@ -4,7 +4,7 @@
         @hide="$emit('hide')"
         position="bottom"
     >
-        <q-card>
+        <q-card style="min-width:300px">
             <q-list>
                 <template v-for="(a, i) in actions">
                     <q-separator
@@ -15,7 +15,7 @@
                         v-else
                         :clickable="!!a.onClick"
                         :key="i"
-                        @click="ok();a.onClick()"
+                        @click="onItemClick(a)"
                     >
                         <q-item-section
                             class="text-subtitle1 text-center q-py-sm"
@@ -33,18 +33,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Vue from 'vue'
 
+type Action = {
+    label: string
+    classes?: string | string[]
+    onClick?: Function
+}
+
 export default Vue.extend({
     props: {
-        actions: Array as () => Array<{ label: string, classes?: string | string[], onClick?: Function }>
+        actions: Array as () => Action[]
     },
     methods: {
         // method is REQUIRED by $q.dialog
         show() { (this.$refs.dialog as any).show() },
         // method is REQUIRED by $q.dialog
         hide() { (this.$refs.dialog as any).hide() },
-        ok(result: unknown) {
+        ok(result?: unknown) {
             this.$emit('ok', result)
             this.hide()
+        },
+        onItemClick(a: Action) {
+            this.ok()
+            a.onClick && a.onClick()
         }
     }
 })

@@ -1,7 +1,6 @@
-import Vue from 'vue'
-import { RouteConfig, Route, NavigationGuardNext } from 'vue-router'
+import { RouteConfig } from 'vue-router'
 import Main from 'layouts/Main.vue'
-import Index from 'pages/Index.vue'
+import Index from 'pages/Index'
 import Settings from 'pages/Settings.vue'
 import TokensSetting from 'pages/TokensSetting.vue'
 import Backup from 'pages/Backup'
@@ -20,69 +19,48 @@ const routes: RouteConfig[] = [
         children: [{
             path: '',
             name: 'index',
-            component: Index,
-            meta: { title: 'Sync', hasMenu: true }
+            component: Index
         }, {
             path: 'settings',
             name: 'settings',
-            component: Settings,
-            meta: { title: 'Settings' }
+            component: Settings
         }, {
             path: 'tokens-setting',
             name: 'tokens-setting',
-            component: TokensSetting,
-            meta: { title: 'Tokens' }
+            component: TokensSetting
         }, {
             path: 'backup',
             name: 'backup',
-            component: Backup,
-            meta: { title: 'Backup' }
+            component: Backup
         }, {
             path: 'account',
             name: 'account',
-            component: Account,
-            meta: { title: 'Account' }
+            component: Account
         }, {
             // this entry is to handle external signing request in SPA mode only
             path: 'sign',
             name: 'sign',
-            component: Sign,
-            meta: { title: 'Sign' }
+            component: Sign
         }, {
             path: 'activities',
             name: 'activities',
-            component: Activities,
-            meta: { title: 'Activities' }
+            component: Activities
         }, {
             path: 'reset-pin-code',
             name: 'reset-pin-code',
-            component: ResetPin,
-            meta: {
-                title: 'Password'
-            }
+            component: ResetPin
         }, {
             path: 'account-transfer-logs',
             name: 'account-transfer-logs',
-            component: AccountTransferLogs,
-            beforeEnter(to: Route, from: Route, next: NavigationGuardNext<Vue>) {
-                to.meta.title = to.query.symbol
-                next()
-            },
-            meta: {
-                title: ''
-            }
+            component: AccountTransferLogs
         }, {
             path: 'send',
             name: 'send',
-            component: Send,
-            meta: {
-                title: 'Send'
-            }
+            component: Send
         }, {
             path: 'sign-success',
             name: 'sign-success',
-            component: SignSuccess,
-            meta: { title: 'Success' }
+            component: SignSuccess
         }]
     }
 ]

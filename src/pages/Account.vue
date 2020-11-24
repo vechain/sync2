@@ -1,5 +1,6 @@
 <template>
     <div class="fit column no-wrap">
+        <page-toolbar title="Account" />
         <div class="q-mx-sm">
             <AddressInfo
                 :address="address"
