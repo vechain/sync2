@@ -8,7 +8,7 @@ import Account from 'pages/Account.vue'
 import Activities from 'pages/Activities'
 import ResetPin from 'pages/ResetPin.vue'
 import AccountTransferLogs from 'pages/AccountTransferLogs.vue'
-import Send from 'pages/Send.vue'
+import Send from 'pages/Send'
 import Sign from 'pages/Sign'
 import SignSuccess from 'pages/SignSuccess.vue'
 
