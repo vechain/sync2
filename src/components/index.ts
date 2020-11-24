@@ -1,5 +1,4 @@
 import StackedRouterView from './StackedRouterView.vue'
-import AddressCard from './AddressCard.vue'
 import ConnexObject from './ConnexObject'
 import ConnexContinuous from './ConnexContinuous'
 import PinCode from './PinCode.vue'
@@ -29,10 +28,10 @@ import TxActivityUpdate from './TxActivityUpdate'
 import InputPinCode from './InputPinCode.vue'
 import ProcessingTransition from './ProcessingTransition.vue'
 import AddressSelector from './AddressSelector.vue'
+import PageToolbar from './PageToolbar.vue'
 
 const components: { [name: string]: Vue.VueConstructor } = {
     StackedRouterView,
-    AddressCard,
     ConnexObject,
     ConnexContinuous,
     PinCode,
@@ -61,7 +60,8 @@ const components: { [name: string]: Vue.VueConstructor } = {
     TxActivityUpdate,
     InputPinCode,
     ProcessingTransition,
-    AddressSelector
+    AddressSelector,
+    PageToolbar
 }
 
 export default components
