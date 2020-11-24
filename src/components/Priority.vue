@@ -61,7 +61,7 @@
                                         {{l.label}}
                                     </q-item-section>
                                     <q-item-section side>
-                                        <div>
+                                        <div :class="(coef === calcCoef(i)) ? 'text-primary' : 'text-black'">
                                             <span class="monospace">{{ getFee(gas, bgp, calcCoef(i)) }}</span>
                                             <span class="text-caption monospace"> VTHO</span>
                                         </div>

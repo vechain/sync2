@@ -22,7 +22,7 @@
             </q-toolbar>
             <q-card-section
                 v-scrollDivider.both
-                class="overflow-auto col no-wrap"
+                class="overflow-auto col no-wrap bg-grey-2"
             >
                 <q-card
                     bordered
@@ -37,7 +37,7 @@
                 </q-card>
             </q-card-section>
             <q-card-actions
-                class="bg-grey-2 shadow-up-1 q-mt-auto"
+                class="shadow-up-1 q-mt-auto"
                 style="z-index: 2"
             >
                 <template v-if="!signing">
