@@ -2,8 +2,9 @@
     <q-banner
         dark
         dense
+        rounded
         inline-actions
-        class="bg-positive"
+        class="bg-positive q-mx-sm q-mb-sm"
     >
         <template v-slot:avatar>
             <q-icon name="upgrade" />
@@ -12,7 +13,6 @@
         <template v-slot:action>
             <q-btn
                 @click="reloadApp"
-                size="sm"
                 flat
                 label="Upgrade Now"
             />
