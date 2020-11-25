@@ -8,18 +8,11 @@
         transition-hide="slide-down"
     >
         <q-card class="fit column no-wrap">
-            <q-toolbar>
-                <q-toolbar-title class="absolute-center">
-                    Sign
-                </q-toolbar-title>
-                <q-btn
-                    flat
-                    round
-                    dense
-                    icon="close"
-                    @click="hide"
-                />
-            </q-toolbar>
+            <page-toolbar
+                title="Sign"
+                :nav="nav"
+                :gid="gid"
+            />
             <!-- clause list -->
             <q-card-section
                 v-scrollDivider.both
@@ -193,6 +186,14 @@ export default Vue.extend({
             return this.wallets.find((item: M.Wallet) => {
                 return item.meta.addresses.includes(this.signer)
             }) || null
+        },
+        nav() {
+            return {
+                icon: 'close',
+                action: () => {
+                    this.hide()
+                }
+            }
         }
     },
     mounted() {

@@ -1,6 +1,9 @@
 <template>
     <div class="fit column no-wrap">
-        <page-toolbar title="Account" />
+        <page-toolbar
+            title="Account"
+            :gid="wallet.gid"
+        />
         <div class="q-mx-sm">
             <AddressInfo
                 :address="address"

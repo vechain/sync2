@@ -10,6 +10,7 @@
         <PageToolbar
             :title="wallet.meta.name"
             :nav="nav"
+            :gid="wallet.gid"
         >
             <q-btn
                 class="q-ml-auto"
@@ -21,14 +22,10 @@
             />
         </PageToolbar>
         <upgrade-tip v-if="$state.app.updated" />
-        <backup-tip v-if="!wallet.meta.backedUp" />
-        <!-- <q-badge
-            v-show="networkBadgeText"
-            color="orange"
-            floating
-            transparent
-            class="z-top q-mt-md text-subtitle2 text-capitalize q-mr-lg"
-        >{{networkBadgeText}}</q-badge> -->
+        <backup-tip
+            v-if="!wallet.meta.backedUp"
+            class="self-center"
+        />
         <div
             class="container col row overflow-auto justify-center content-start"
             ref="list"

@@ -1,8 +1,14 @@
 <template>
     <div class="fit column no-wrap">
-        <page-toolbar :title="symbol" />
+        <page-toolbar
+            :title="symbol"
+            :gid="wallet.gid"
+        />
         <div class="q-mx-sm">
-            <AddressInfo :address="address" :network="networkBadgeText"> {{wallet.meta.name + ' #' + (addressIndex + 1)}} </AddressInfo>
+            <AddressInfo
+                :address="address"
+                :network="networkBadgeText"
+            > {{wallet.meta.name + ' #' + (addressIndex + 1)}} </AddressInfo>
         </div>
         <span class="text-h6 q-py-sm q-px-md">Transfers </span>
         <div
