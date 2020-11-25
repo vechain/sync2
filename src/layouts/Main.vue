@@ -1,17 +1,20 @@
 <template>
-    <q-layout
-        view="lHh Lpr lFf"
-        v-if="isSetPasswordShadow"
-    >
-        <q-page-container>
-            <StackedRouterView />
-        </q-page-container>
-    </q-layout>
-    <wizard
-        v-else
-        @done="isSetPasswordShadow = true"
-        class="fullscreen"
-    />
+    <transition name="q-transition--fade">
+        <q-layout
+            v-if="isSetPasswordShadow"
+            v-show="mounted"
+        >
+            <q-page-container>
+                <StackedRouterView />
+            </q-page-container>
+        </q-layout>
+        <wizard
+            v-else
+            v-show="mounted"
+            @done="isSetPasswordShadow = true"
+            class="fullscreen"
+        />
+    </transition>
 </template>
 
 <script lang="ts">
@@ -24,8 +27,12 @@ export default Vue.extend({
     },
     data() {
         return {
-            isSetPasswordShadow: !!this.$state.config.all.passwordShadow
+            isSetPasswordShadow: !!this.$state.config.all.passwordShadow,
+            mounted: false
         }
+    },
+    mounted() {
+        this.mounted = true
     }
 })
 </script>
