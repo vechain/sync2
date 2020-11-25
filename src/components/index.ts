@@ -5,7 +5,6 @@ import PinCode from './PinCode.vue'
 import ConfirmedPinCodeInput from './ConfirmedPinCodeInput.vue'
 import SlideContainer from './SlideContainer.vue'
 import Drawer from './Drawer.vue'
-import WalletItem from './WalletItem.vue'
 import Intersecting from './Intersecting.vue'
 import DigitKeypad from './DigitKeypad.vue'
 import QRCode from './QRCode.vue'
@@ -37,7 +36,6 @@ const components: { [name: string]: Vue.VueConstructor } = {
     ConfirmedPinCodeInput,
     SlideContainer,
     Drawer,
-    WalletItem,
     Intersecting,
     DigitKeypad,
     QRCode,

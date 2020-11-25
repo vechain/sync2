@@ -7,6 +7,7 @@
             <q-page-container>
                 <StackedRouterView />
             </q-page-container>
+            <TxActivityUpdate />
         </q-layout>
         <wizard
             v-else
