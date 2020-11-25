@@ -27,7 +27,6 @@ import AddressInfo from './AddressInfo.vue'
 import TxActivityUpdate from './TxActivityUpdate'
 import InputPinCode from './InputPinCode.vue'
 import ProcessingTransition from './ProcessingTransition.vue'
-import AddressSelector from './AddressSelector.vue'
 import PageToolbar from './PageToolbar.vue'
 
 const components: { [name: string]: Vue.VueConstructor } = {
@@ -60,7 +59,6 @@ const components: { [name: string]: Vue.VueConstructor } = {
     TxActivityUpdate,
     InputPinCode,
     ProcessingTransition,
-    AddressSelector,
     PageToolbar
 }
 

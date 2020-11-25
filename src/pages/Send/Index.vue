@@ -11,36 +11,21 @@
                     class="q-px-md"
                     @submit="onSend"
                 >
-                    <q-input
+                    <To
                         no-error-icon
                         autocomplete="off"
                         clearable
                         :rules="[val => isAddress(val) || 'Please enter a valid address']"
-                        v-model.lazy="to"
+                        v-model="to"
+                        :wallets="[
+                        {
+                            name: 'Recent Transfer',
+                            id: 'recent',
+                            addresses: recentList
+                        },
+                        ...wallets ]"
                         label="To"
-                    >
-                        <template
-                            v-if="isAddress(to)"
-                            v-slot:prepend
-                        >
-                            <AddressAvatar
-                                class="q-mx-auto"
-                                style="width: 40px; height: 40px; border-radius: 20px;"
-                                :addr="to"
-                            />
-                        </template>
-                        <template v-slot:append>
-                            <AddressSelector
-                                rounded
-                                dense
-                                flat
-                                icon="add"
-                                :addresses="recentList"
-                                :wallets="wallets"
-                                @change="(e) => to = e"
-                            />
-                        </template>
-                    </q-input>
+                    />
                     <ConnexObject
                         v-slot="{connex}"
                         :node="node"
@@ -142,11 +127,15 @@
 <script lang="ts">
 import Vue from 'vue'
 import { tokenBalanceOf } from 'components/queries'
-import { address, abi } from 'thor-devkit'
-import { tokenSpecs, abis } from '../consts'
+import { abi } from 'thor-devkit'
+import { tokenSpecs, abis } from '../../consts'
 import { copyToClipboard } from 'quasar'
+import To from './To.vue'
 
 export default Vue.extend({
+    components: {
+        To
+    },
     props: {
         wId: String,
         i: String,
@@ -167,9 +156,19 @@ export default Vue.extend({
                 return i.id === parseInt(this.wId, 10)
             })
         },
-        wallets(): M.Wallet[] {
+        wallets(): {
+            name: string,
+            id: number,
+            addresses: string[]
+        }[] {
             return this.$state.wallet.list.filter(i => {
                 return i.gid === this.wallet?.gid
+            }).map(w => {
+                return {
+                    name: w.meta.name,
+                    id: w.id,
+                    addresses: w.meta.addresses
+                }
             })
         },
         recentList(): string[] {
@@ -219,7 +218,6 @@ export default Vue.extend({
         }
     },
     methods: {
-        isAddress: address.test,
         tokenBalanceOf,
         onSend() {
             let msgItem!: Connex.Vendor.TxMessage[0]

@@ -51,42 +51,22 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import AddressInfo from './AddressInfo.vue'
+export type Group = {
+    name: string
+    id: string | number
+    addresses: string[]
+}
+
 export default Vue.extend({
-    components: {
-        AddressInfo
-    },
     props: {
-        addresses: {
-            type: Array as () => string[],
-            default: () => []
-        },
-        wallets: {
-            type: Array as () => M.Wallet[],
+        groups: {
+            type: Array as () => Group[],
             default: () => []
         }
     },
     data() {
         return {
             show: false
-        }
-    },
-    computed: {
-        groups(): { name: string, id: string | number, addresses: string[] }[] {
-            return [
-                {
-                    name: 'Recent Transfer',
-                    id: 'recent',
-                    addresses: this.addresses
-                },
-                ...this.wallets.map(w => {
-                    return {
-                        id: w.id,
-                        name: w.meta.name,
-                        addresses: w.meta.addresses
-                    }
-                })
-            ]
         }
     },
     methods: {
