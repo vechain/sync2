@@ -12,11 +12,11 @@
         <!-- action buttons -->
         <slot />
         <div
-            v-if="devMode"
-            class="fixed-center z-top no-pointer-events q-pa-lg text-h2 text-no-wrap"
+            v-if="warn"
+            class="fixed-center z-top no-pointer-events q-pa-lg text-h2 text-no-wrap text-capitalize"
             style="background: rgba(0,0,0,0.25);color: rgba(255,0,0,0.8)"
         >
-            Dev Mode
+            {{warn}}
         </div>
     </q-toolbar>
 </template>
@@ -29,11 +29,14 @@ export default Vue.extend({
         gid: String // to check if in dev mode
     },
     computed: {
-        devMode(): boolean {
+        warn(): string {
             if (this.gid) {
-                return this.$options.filters!.net(this.gid) !== 'main'
+                const net = this.$options.filters!.net(this.gid)
+                if (net !== 'main') {
+                    return net + ' net'
+                }
             }
-            return false
+            return ''
         }
     },
     methods: {
