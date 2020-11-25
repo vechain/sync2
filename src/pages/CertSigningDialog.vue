@@ -42,7 +42,7 @@
             >
                 <template v-if="!signing">
                     <div
-                        v-if="(isEnforced && !hasTheSigner) || !wallets.length"
+                        v-if="!hasTheSigner || !wallets.length"
                         class="column items-center q-mx-auto q-gutter-y-md"
                     >
                         <q-icon
@@ -79,6 +79,7 @@
                             <q-item class="q-my-lg">
                                 <q-btn
                                     unelevated
+                                    :disable="!connex"
                                     class="col-6 col-sm-auto"
                                     color="blue-9"
                                     label="Sign"
