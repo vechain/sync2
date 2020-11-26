@@ -11,6 +11,7 @@ import AccountTransferLogs from 'pages/AccountTransferLogs.vue'
 import Send from 'pages/Send'
 import Sign from 'pages/Sign'
 import SignSuccess from 'pages/SignSuccess.vue'
+import NodesSetting from 'src/pages/NodesSetting'
 
 const routes: RouteConfig[] = [
     {
@@ -61,6 +62,10 @@ const routes: RouteConfig[] = [
             path: 'sign-success',
             name: 'sign-success',
             component: SignSuccess
+        }, {
+            path: 'nodes-setting',
+            name: 'nodes-setting',
+            component: NodesSetting
         }]
     }
 ]
