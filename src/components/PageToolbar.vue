@@ -13,6 +13,10 @@
                 :style="titleStyle"
             >{{title}}
             </div>
+            <q-resize-observer
+                @resize="centerTitleText"
+                debounce="0"
+            />
         </q-toolbar-title>
         <!-- action buttons -->
         <slot />
@@ -23,10 +27,6 @@
         >
             {{warn}}
         </div>
-        <q-resize-observer
-            @resize="centerTitleText"
-            debounce="0"
-        />
     </q-toolbar>
 </template>
 <script lang="ts">
