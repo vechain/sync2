@@ -18,6 +18,13 @@
             />
         </template>
         <template v-slot:append>
+            <q-btn
+                rounded
+                dense
+                flat
+                icon="qr_code_scanner"
+                @click="onClickScan"
+            />
             <AddressSelector
                 rounded
                 dense
@@ -33,6 +40,8 @@
 import Vue from 'vue'
 import AddressSelector, { Group } from './AddressSelector.vue'
 import { address } from 'thor-devkit'
+import QrScannerDialog from 'pages/QrScannerDialog'
+
 export default Vue.extend({
     components: {
         AddressSelector
@@ -59,7 +68,14 @@ export default Vue.extend({
         }
     },
     methods: {
-        isAddress: address.test
+        isAddress: address.test,
+        onClickScan() {
+            this.$q.dialog({
+                component: QrScannerDialog
+            }).onOk((addr: string) => {
+                this.to = addr
+            })
+        }
     }
 })
 </script>
