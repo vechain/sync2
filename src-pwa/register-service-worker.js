@@ -23,13 +23,19 @@ register(process.env.SERVICE_WORKER_FILE, {
         console.log('Content has been cached for offline use.')
     },
 
-    updatefound(/* registration */) {
+    updatefound(registration) {
         console.log('New content is downloading.')
+        const installing = registration.installing
+        installing && installing.addEventListener('statechange', () => {
+            if (installing.state === 'installed') {
+                console.log('New content is installed')
+                window.AppState.updated = true
+            }
+        })
     },
 
     updated(/* registration */) {
-        console.log('New content is available; please refresh.')
-        window.AppState.updated = true
+        console.log('New content is available')
     },
 
     offline() {
