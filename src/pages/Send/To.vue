@@ -19,6 +19,7 @@
         </template>
         <template v-slot:append>
             <q-btn
+                v-if="hasCamera"
                 rounded
                 dense
                 flat
@@ -41,6 +42,7 @@ import Vue from 'vue'
 import AddressSelector, { Group } from './AddressSelector.vue'
 import { address } from 'thor-devkit'
 import QrScannerDialog from 'pages/QrScannerDialog'
+import { QrScanner } from 'src/utils/qr-scanner'
 
 export default Vue.extend({
     components: {
@@ -65,6 +67,11 @@ export default Vue.extend({
     watch: {
         to(v: string) {
             this.$emit('change', v)
+        }
+    },
+    computed: {
+        hasCamera() {
+            return QrScanner.hasCamera()
         }
     },
     methods: {
