@@ -6,9 +6,14 @@
             round
             :icon="nav? nav.icon : 'navigate_before'"
             @click="onClickNavButton()"
-        >
-        </q-btn>
-        <q-toolbar-title class="absolute-center">{{title}}</q-toolbar-title>
+        />
+        <q-toolbar-title class="text-center">
+            <div
+                ref="title"
+                :style="titleStyle"
+            >{{title}}
+            </div>
+        </q-toolbar-title>
         <!-- action buttons -->
         <slot />
         <div
@@ -18,6 +23,10 @@
         >
             {{warn}}
         </div>
+        <q-resize-observer
+            @resize="centerTitleText"
+            debounce="0"
+        />
     </q-toolbar>
 </template>
 <script lang="ts">
@@ -28,6 +37,14 @@ export default Vue.extend({
         nav: Object as () => { icon: string, action: () => void },
         gid: String // to check if in dev mode
     },
+    data: () => {
+        return {
+            titleMargin: {
+                left: 0,
+                right: 0
+            }
+        }
+    },
     computed: {
         warn(): string {
             if (this.gid) {
@@ -37,6 +54,12 @@ export default Vue.extend({
                 }
             }
             return ''
+        },
+        titleStyle(): { marginLeft: string, marginRight: string } {
+            return {
+                marginLeft: `${this.titleMargin.left}px`,
+                marginRight: `${this.titleMargin.right}px`
+            }
         }
     },
     methods: {
@@ -46,6 +69,16 @@ export default Vue.extend({
             } else {
                 this.$stack.canGoBack ? this.$router.back() : this.$router.replace('/')
             }
+        },
+        centerTitleText() {
+            const titleRect = (this.$refs.title as HTMLElement).getBoundingClientRect()
+            const containerRect = (this.$el as HTMLElement).getBoundingClientRect()
+
+            const leftSpace = titleRect.left - containerRect.left - this.titleMargin.left
+            const rightSpace = containerRect.right - titleRect.right - this.titleMargin.right
+
+            this.titleMargin.left = Math.max(leftSpace, rightSpace) - leftSpace
+            this.titleMargin.right = Math.max(leftSpace, rightSpace) - rightSpace
         }
     }
 })
