@@ -3,6 +3,8 @@ declare namespace M {
     interface Node {
         gid: string // the genesis id
         url: string
+        active: boolean
+        preset: boolean
     }
 
     interface Wallet {

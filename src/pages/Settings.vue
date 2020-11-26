@@ -59,6 +59,21 @@
                         <q-icon name="keyboard_arrow_right"></q-icon>
                     </q-item-section>
                 </q-item>
+                <q-separator inset="item" />
+                <q-item :to="{name: 'nodes-setting'}">
+                    <q-item-section avatar>
+                        <q-avatar
+                            color="primary"
+                            text-color="black"
+                        />
+                    </q-item-section>
+                    <q-item-section>
+                        <q-item-label lines="1">Nodes</q-item-label>
+                    </q-item-section>
+                    <q-item-section side>
+                        <q-icon name="keyboard_arrow_right"></q-icon>
+                    </q-item-section>
+                </q-item>
             </q-list>
         </div>
     </div>

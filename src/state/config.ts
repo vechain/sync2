@@ -5,10 +5,14 @@ import { gids, urls } from 'src/consts'
 const presetNodes: M.Node[] = [
     { // mainnet
         gid: gids.main,
+        preset: true,
+        active: true,
         url: 'https://mainnet.veblocks.net'
     },
     { // testnet
         gid: gids.test,
+        preset: true,
+        active: true,
         url: 'https://testnet.veblocks.net'
     }
 ]
@@ -56,14 +60,21 @@ export function build() {
             return {
                 get list(): M.Node[] {
                     const glob = all.nodes
-                    if (glob) {
-                        try {
-                            return [...presetNodes, ...JSON.parse(glob)]
-                        } catch (err) {
-                            console.warn(err)
-                        }
+                    const dbNodes = glob ? JSON.parse(glob) : []
+                    if (dbNodes.length) {
+                        return [...dbNodes].filter(n => n.active)
+                    } else {
+                        return [...presetNodes]
                     }
-                    return [...presetNodes]
+                },
+                get all(): M.Node[] {
+                    const glob = all.nodes
+                    const dbNodes = glob ? JSON.parse(glob) : []
+                    if (dbNodes.length) {
+                        return [...dbNodes]
+                    } else {
+                        return [...presetNodes]
+                    }
                 }
             }
         },
