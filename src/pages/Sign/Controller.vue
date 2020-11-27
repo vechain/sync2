@@ -1,13 +1,16 @@
 <template>
-    <div class="column fit">
-        <page-toolbar title="Sign" />
-        <!-- load request -->
-        <async
-            :fn="loadRequest"
-            v-slot="{data, error, pending}"
-            tag="div"
-            class="col column q-pa-md no-wrap"
-        >
+    <!-- load request -->
+    <async
+        :fn="loadRequest"
+        tag="div"
+        class="column fit"
+        v-slot="{data, error, pending}"
+    >
+        <page-toolbar
+            title="Sign"
+            :gid="data? data.gid : ''"
+        />
+        <div class="col column q-pa-md no-wrap">
             <!-- loading -->
             <delay
                 v-if="pending"
@@ -70,8 +73,8 @@
                     >Decline</q-btn>
                 </template>
             </div>
-        </async>
-    </div>
+        </div>
+    </async>
 </template>
 <script lang="ts">
 import Vue from 'vue'
@@ -143,9 +146,9 @@ export default Vue.extend({
                 const { type, gid, payload } = request
                 let result = null
                 if (type === 'tx') {
-                    result = await this.$signTx(gid || '', payload as M.TxRequest)
+                    result = await this.$signTx(gid, payload as M.TxRequest)
                 } else if (type === 'cert') {
-                    result = await this.$signCert(gid || '', {
+                    result = await this.$signCert(gid, {
                         ...(payload as M.CertRequest),
                         domain: this.host
                     })
