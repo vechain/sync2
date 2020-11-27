@@ -61,17 +61,18 @@ export default Vue.extend({
     },
     data() {
         return {
-            to: this.address
+            to: this.address,
+            hasCamera: undefined as unknown as boolean // type hack for async computed
+        }
+    },
+    asyncComputed: {
+        hasCamera() {
+            return QrScanner.hasCamera()
         }
     },
     watch: {
         to(v: string) {
             this.$emit('change', v)
-        }
-    },
-    computed: {
-        hasCamera() {
-            return QrScanner.hasCamera()
         }
     },
     methods: {
