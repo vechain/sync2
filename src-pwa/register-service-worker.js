@@ -26,7 +26,7 @@ register(process.env.SERVICE_WORKER_FILE, {
     updatefound(registration) {
         console.log('New content is downloading.')
         const installing = registration.installing
-        installing && installing.addEventListener('statechange', () => {
+        registration.active && installing && installing.addEventListener('statechange', () => {
             if (installing.state === 'installed') {
                 console.log('New content is installed')
                 window.AppState.updated = true
