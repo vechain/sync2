@@ -76,7 +76,7 @@ export default Vue.extend({
         summary(): string {
             const req = this.request
             if (req.type === 'tx') {
-                return (req.payload as M.TxRequest).options?.comment || ''
+                return (req.payload as M.TxRequest).options?.comment || 'None'
             } else if (req.type === 'cert') {
                 const msg = (req.payload as M.CertRequest).message
                 switch (msg.purpose) {
