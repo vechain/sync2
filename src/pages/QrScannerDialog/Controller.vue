@@ -8,9 +8,9 @@
         transition-show="slide-up"
         transition-hide="slide-down"
     >
-        <div class="fit">
+        <div class="fit overflow-hidden bg-black">
             <Scanner
-                class="fit bg-black"
+                class="fit"
                 @input="onScanned"
                 @error="onError"
             />
