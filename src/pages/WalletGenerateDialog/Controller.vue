@@ -87,8 +87,10 @@ export default Vue.extend({
         Network
     },
     props: {
-        type: String as () => 'import' | 'create',
-        default: () => 'create'
+        type: {
+            type: String as () => 'import' | 'create',
+            default: () => 'create'
+        }
     },
     computed: {
         nodes(): M.Node[] {
