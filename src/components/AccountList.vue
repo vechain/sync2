@@ -8,7 +8,7 @@
             <q-expansion-item
                 group="somegroup"
                 v-for="address in wallet.meta.addresses"
-                :key="address"
+                :key="address + wallet.id"
                 expand-icon-toggle
                 v-scrollIntoView="current === address"
                 @before-show="toggleContent(address)"
