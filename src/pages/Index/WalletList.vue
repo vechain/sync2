@@ -47,8 +47,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { gids } from 'src/consts'
-import CreateWalletDialog from 'pages/CreateWalletDialog.vue'
-import ImportWalletDialog from 'pages/ImportWalletDialog.vue'
+import WalletGenerateDialog from 'pages/WalletGenerateDialog'
 
 export default Vue.extend({
     computed: {
@@ -68,20 +67,14 @@ export default Vue.extend({
         },
         onClickAddWallet() {
             this.$actionSheets([
-                { label: 'Create Wallet', onClick: () => { this.onClickCreateWallet() } },
-                { label: 'Import Wallet', onClick: () => { this.onClickImportWallet() } }
+                { label: 'Create Wallet', onClick: () => { this.openGenerateDialog('create') } },
+                { label: 'Import Wallet', onClick: () => { this.openGenerateDialog('import') } }
             ])
         },
-        onClickCreateWallet() {
+        openGenerateDialog(type: 'import' | 'create') {
             this.$q.dialog({
-                component: CreateWalletDialog,
-                parent: this
-            })
-        },
-        onClickImportWallet() {
-            this.$q.dialog({
-                component: ImportWalletDialog,
-                parent: this
+                component: WalletGenerateDialog,
+                type
             })
         }
     }
