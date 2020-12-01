@@ -35,7 +35,7 @@
             >
                 <template v-if="!signing">
                     <div
-                        v-if="!hasTheSigner || !wallets.length"
+                        v-if="!wallets.length"
                         class="column items-center q-mx-auto q-gutter-y-md"
                     >
                         <q-icon
@@ -120,15 +120,29 @@ export default Vue.extend({
             }) || null
         },
         wallets(): M.Wallet[] {
-            return this.$state.wallet.list.filter(w => {
-                return w.gid === this.gid
-            })
+            if (this.isEnforced) {
+                return this.$state.wallet.list.filter(item => {
+                    return item.gid === this.gid && item.meta.addresses.includes(this.req.options!.signer || '')
+                }).map(item => {
+                    return {
+                        ...item,
+                        meta: {
+                            ...item.meta,
+                            addresses: [this.req.options!.signer!]
+                        }
+                    }
+                })
+            } else {
+                return this.$state.wallet.list.filter(item => {
+                    return item.gid === this.gid
+                })
+            }
         },
         isEnforced(): boolean {
             return !!(this.req.options && this.req.options.signer)
         },
         hasTheSigner(): boolean {
-            return this.isEnforced && this.addresses.includes(this.req.options!.signer!)
+            return this.addresses.includes(this.req.options!.signer!)
         },
         addresses(): string[] {
             let addrList: string[] = []

@@ -46,7 +46,7 @@
             >
                 <template v-if="!signing">
                     <div
-                        v-if="(isEnforced && !hasTheSigner) || !wallets.length"
+                        v-if="!wallets.length"
                         class="column items-center q-mx-auto q-gutter-y-md"
                     >
                         <q-icon
@@ -85,7 +85,7 @@
                                     :wallets="wallets"
                                     :connex="connex"
                                     v-slot="{address}"
-                                    :isSelectable="!isEnforced"
+                                    :isSelectable="true"
                                 >
                                     <BalanceList
                                         :connex="connex"
@@ -168,7 +168,7 @@ export default Vue.extend({
             return !!(this.req.options && this.req.options.signer)
         },
         hasTheSigner(): boolean {
-            return this.isEnforced && this.addresses.includes(this.req.options!.signer!)
+            return this.addresses.includes(this.req.options!.signer!)
         },
         addresses(): string[] {
             let addrList: string[] = []
@@ -178,9 +178,23 @@ export default Vue.extend({
             return addrList
         },
         wallets(): M.Wallet[] {
-            return this.$state.wallet.list.filter(item => {
-                return item.gid === this.gid
-            })
+            if (this.isEnforced) {
+                return this.$state.wallet.list.filter(item => {
+                    return item.gid === this.gid && item.meta.addresses.includes(this.req.options!.signer || '')
+                }).map(item => {
+                    return {
+                        ...item,
+                        meta: {
+                            ...item.meta,
+                            addresses: [this.req.options!.signer!]
+                        }
+                    }
+                })
+            } else {
+                return this.$state.wallet.list.filter(item => {
+                    return item.gid === this.gid
+                })
+            }
         },
         wallet(): M.Wallet | null {
             return this.wallets.find((item: M.Wallet) => {
