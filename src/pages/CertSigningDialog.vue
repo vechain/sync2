@@ -116,7 +116,7 @@ export default Vue.extend({
     computed: {
         node(): M.Node | null {
             return this.$state.config.node.list.find(n => {
-                return n.gid === this.gid
+                return n.genesis.id === this.gid
             }) || null
         },
         wallets(): M.Wallet[] {

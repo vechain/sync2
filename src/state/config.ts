@@ -1,16 +1,16 @@
 import Vue from 'vue'
 import { Storage } from 'core/storage'
-import { gids, urls } from 'src/consts'
+import { genesises, urls } from 'src/consts'
 
 const presetNodes: M.Node[] = [
     { // mainnet
-        gid: gids.main,
+        genesis: genesises.main,
         preset: true,
         active: true,
         url: 'https://mainnet.veblocks.net'
     },
     { // testnet
-        gid: gids.test,
+        genesis: genesises.test,
         preset: true,
         active: true,
         url: 'https://testnet.veblocks.net'
@@ -107,10 +107,13 @@ export function build() {
                 },
                 specs(gid: string, activeOnly: boolean) {
                     let specs: M.TokenSpec[] = []
-                    if (gid === gids.main) {
-                        specs = this.registry.main
-                    } else if (gid === gids.test) {
-                        specs = this.registry.test
+                    switch (genesises.which(gid)) {
+                        case 'main':
+                            specs = this.registry.main
+                            break
+                        case 'test':
+                            specs = this.registry.test
+                            break
                     }
                     const active = this.active
                     return activeOnly

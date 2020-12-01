@@ -88,7 +88,7 @@ export default Vue.extend({
             return this.$state.config.token.specs(this.wallet!.gid, true)
         },
         node(): M.Node {
-            return this.$state.config.node.list.find(n => n.gid === this.wallet!.gid)!
+            return this.$state.config.node.list.find(n => n.genesis.id === this.wallet!.gid)!
         },
         addressIndex(): number {
             return parseInt(this.i, 10)

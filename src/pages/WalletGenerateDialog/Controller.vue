@@ -78,8 +78,8 @@
 import Vue from 'vue'
 import { QDialog } from 'quasar'
 import Network from './Network.vue'
-import { Vault } from '../../core/vault'
-import { gids } from '../../consts'
+import { Vault } from 'src/core/vault'
+import { genesises } from 'src/consts'
 import { mnemonic } from 'thor-devkit'
 
 export default Vue.extend({
@@ -106,7 +106,7 @@ export default Vue.extend({
     data() {
         return {
             expanded: false,
-            gid: gids.main,
+            gid: genesises.main.id,
             name: '',
             words: ''
         }

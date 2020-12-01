@@ -158,7 +158,7 @@ export default Vue.extend({
         },
         node(): M.Node | undefined {
             return this.$state.config.node.list.find(item => {
-                return item.gid === this.gid
+                return item.genesis.id === this.gid
             })
         },
         tokens(): M.TokenSpec[] {

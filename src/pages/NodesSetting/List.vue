@@ -19,7 +19,7 @@
                 <template v-for="(item, i) in group.list">
                     <q-item
                         v-ripple
-                        :key="item.gid + i"
+                        :key="item.genesis.id + i"
                         clickable
                         @click="setActive(item, group)"
                     >
@@ -47,7 +47,7 @@
                         </q-item-section>
                     </q-item>
                     <q-separator
-                        :key="'s-' + item.gid + i"
+                        :key="'s-' + item.genesis.id + i"
                         spaced
                         inset="item"
                         v-if="i !== group.list.length - 1"
@@ -63,7 +63,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import { gids } from '../../consts'
+import { genesises } from '../../consts'
 import Add from './Add.vue'
 
 declare type NodesGroup = { list: M.Node[], name: string }
@@ -77,16 +77,24 @@ export default Vue.extend({
     computed: {
         nodesGroup() {
             return this.$state.config.node.all.reduce((result: { [key: string]: NodesGroup }, item) => {
-                if (!result[item.gid]) {
-                    let name = 'Private'
-                    gids.main === item.gid && (name = 'Mainnet')
-                    gids.test === item.gid && (name = 'Testnet')
-                    result[item.gid] = {
+                if (!result[item.genesis.id]) {
+                    let name
+                    switch (genesises.which(item.genesis.id)) {
+                        case 'main':
+                            name = 'Mainnet'
+                            break
+                        case 'test':
+                            name = 'Testnet'
+                            break
+                        default:
+                            name = 'Private'
+                    }
+                    result[item.genesis.id] = {
                         name,
                         list: []
                     }
                 }
-                result[item.gid].list.push(item)
+                result[item.genesis.id].list.push(item)
 
                 return result
             }, {})
@@ -107,13 +115,14 @@ export default Vue.extend({
         onAdd() {
             this.$q.dialog({
                 component: Add
-            }).onOk(async (infos: { gid: string, url: string }) => {
-                const list = [...this.$state.config.node.all, {
-                    active: !this.nodesGroup[infos.gid],
+            }).onOk(async (infos: { genesis: Connex.Thor.Block, url: string }) => {
+                const list = [...this.$state.config.node.all]
+                list.push({
+                    active: !this.nodesGroup[infos.genesis.id],
                     preset: false,
-                    gid: infos.gid,
+                    genesis: infos.genesis,
                     url: infos.url
-                }]
+                })
 
                 await this.$state.config.set('nodes', JSON.stringify(list))
             })

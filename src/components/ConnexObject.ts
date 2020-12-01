@@ -32,18 +32,18 @@ export default Vue.extend({
             this.connexRef = null
             this.error = null
 
-            if (!this.node || !this.node.gid || !this.node.url) {
+            if (!this.node) {
                 return
             }
 
             const node = { ...this.node }
 
             // to check if node prop is changes
-            const stale = () => !this.node || node.gid !== this.node.gid || node.url !== this.node.url
+            const stale = () => !this.node || node.genesis.id !== this.node.genesis.id || node.url !== this.node.url
 
             do {
                 try {
-                    const connexRef = await retain(node)
+                    const connexRef = await retain({ gid: node.genesis.id, url: node.url })
                     if (stale()) {
                         // discard
                         connexRef.release()

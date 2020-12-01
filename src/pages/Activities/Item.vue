@@ -66,7 +66,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { copyToClipboard, openURL } from 'quasar'
-import { urls, gids } from '../../consts'
+import { urls, genesises } from 'src/consts'
 export type Info = {
     gid: string,
     walletName?: string
@@ -86,12 +86,13 @@ export default Vue.extend({
     },
     computed: {
         txDetailUrl(): string {
-            if (this.info.gid === gids.main) {
-                return `${urls.explorerMain}transactions/`
-            } else if (this.info.gid === gids.test) {
-                return `${urls.explorerTest}transactions/`
-            } else {
-                return ''
+            switch (genesises.which(this.info.gid)) {
+                case 'main':
+                    return `${urls.explorerMain}transactions/`
+                case 'test':
+                    return `${urls.explorerTest}transactions/`
+                default:
+                    return ''
             }
         },
         networkBadgeText(): string {

@@ -1,7 +1,7 @@
 // here define models
 declare namespace M {
     interface Node {
-        gid: string // the genesis id
+        genesis: Connex.Thor.Block
         url: string
         active: boolean
         preset: boolean

@@ -53,7 +53,7 @@ export default Vue.extend({
             return net
         },
         node(): M.Node {
-            return this.$state.config.node.list.find(n => n.gid === this.wallet!.gid)!
+            return this.$state.config.node.list.find(n => n.genesis.id === this.wallet!.gid)!
         },
         tokens(): M.TokenSpec[] | null {
             const token = [...this.$state.config.token.specs(this.wallet!.gid, true), tokenSpecs.VTHO].find((item: M.TokenSpec) => {

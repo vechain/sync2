@@ -23,7 +23,7 @@ export default Vue.extend({
     computed: {
         node(): M.Node | undefined {
             return this.$state.config.node.list.find(item => {
-                return item.gid === this.item.gid
+                return item.genesis.id === this.item.gid
             })
         },
         isCompleted(): boolean {

@@ -71,7 +71,7 @@ export default Vue.extend({
             this.error = ''
             this.loading = true
             this.$axios.get(`${this.url}/blocks/0`).then(r => {
-                this.ok({ gid: r.data.id, url: this.url })
+                this.ok({ genesis: r.data, url: this.url })
             }).catch(() => {
                 this.error = 'Something wrong'
             }).finally(() => {

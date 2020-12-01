@@ -184,7 +184,7 @@ export default Vue.extend({
             return this.wallet!.meta.addresses[parseInt(this.i, 10)]
         },
         node(): M.Node {
-            return this.$state.config.node.list.find(n => n.gid === this.gid)!
+            return this.$state.config.node.list.find(n => n.genesis.id === this.gid)!
         },
         tokenSpecs(): M.TokenSpec[] {
             return [...this.$state.config.token.specs(this.gid, true)]

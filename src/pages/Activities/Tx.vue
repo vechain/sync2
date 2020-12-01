@@ -53,7 +53,7 @@ export default Vue.extend({
     computed: {
         node(): M.Node | undefined {
             return this.$state.config.node.list.find(item => {
-                return item.gid === this.activity.gid
+                return item.genesis.id === this.activity.gid
             })
         },
         tx(): M.Activity.Tx {

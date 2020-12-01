@@ -46,15 +46,15 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import { gids } from 'src/consts'
+import { genesises } from 'src/consts'
 import WalletGenerateDialog from 'pages/WalletGenerateDialog'
 
 export default Vue.extend({
     computed: {
         wallets() {
             const weights = {
-                [gids.main]: 2,
-                [gids.test]: 1
+                [genesises.main.id]: 2,
+                [genesises.test.id]: 1
             }
             return [...this.$state.wallet.list].sort((a, b) => {
                 return (weights[b.gid] || 0) - (weights[a.gid] || 0)

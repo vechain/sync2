@@ -84,7 +84,7 @@ export default Vue.extend({
             return this.$state.wallet.current!
         },
         node(): M.Node {
-            return this.$state.config.node.list.find(n => n.gid === this.wallet.gid)!
+            return this.$state.config.node.list.find(n => n.genesis.id === this.wallet.gid)!
         },
         addresses(): string[] {
             return this.wallet.meta.addresses

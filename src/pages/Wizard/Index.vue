@@ -128,7 +128,7 @@ export default Vue.extend({
             await this.$storage.transaction(async () => {
                 await this.$state.config.set('passwordShadow', shadow)
                 await this.$storage.wallets.insert({
-                    gid: this.$state.config.node.list[0].gid,
+                    gid: this.$state.config.node.list[0].genesis.id,
                     vault: vault.encode(),
                     meta: JSON.stringify(meta)
                 })
