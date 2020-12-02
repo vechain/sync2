@@ -33,6 +33,10 @@ function magicTable<E extends Storage.Entity, M extends Storage.Entity>(
                     q.where(cond)
                     return this
                 },
+                except(cond: Partial<E>) {
+                    q.except(cond)
+                    return this
+                },
                 reverse() {
                     q.reverse()
                     return this
@@ -51,9 +55,29 @@ function magicTable<E extends Storage.Entity, M extends Storage.Entity>(
     }
 }
 
-function buildWalletService(t: Storage['wallets']) {
+declare global {
+    type ConfigKey = 'nodes' | 'passwordShadow' | 'tokenRegistry' | 'activeTokens' | 'recentContact'
+}
+
+function buildConfigService(storage: Storage) {
+    const mt = magicTable<Storage.ConfigEntity, Storage.ConfigEntity>(
+        storage.configs,
+        e => e,
+        m => m
+    )
+    return {
+        byKey(key: ConfigKey) {
+            return mt.all().where({ key }).query()
+        },
+        set(key: ConfigKey, value: string) {
+            return mt.insert({ key, value }, true)
+        }
+    }
+}
+
+function buildWalletService(storage: Storage) {
     const mt = magicTable<Storage.WalletEntity, M.Wallet>(
-        t,
+        storage.wallets,
         e => ({
             id: e.id,
             gid: e.gid,
@@ -79,15 +103,44 @@ function buildWalletService(t: Storage['wallets']) {
     }
 }
 
+function buildActivityService(storage: Storage) {
+    const mt = magicTable<Storage.ActivityEntity, M.Activity<'tx' | 'cert'>>(
+        storage.activities,
+        e => ({
+            id: e.id,
+            gid: e.gid,
+            walletId: e.walletId,
+            createdTime: e.createdTime,
+            status: e.status,
+            glob: JSON.parse(e.glob)
+        }),
+        m => ({
+            id: m.id,
+            gid: m.gid,
+            walletId: m.walletId,
+            createdTime: m.createdTime,
+            status: m.status,
+            glob: m.glob && JSON.stringify(m.glob)
+        })
+    )
+    return {
+        uncompleted() {
+            return mt.all().except({ status: 'completed' }).query()
+        }
+    }
+}
+
 function build(storage: Storage) {
     return {
-        wallet: buildWalletService(storage.wallets)
+        config: buildConfigService(storage),
+        wallet: buildWalletService(storage),
+        activity: buildActivityService(storage)
     }
 }
 
 declare module 'vue/types/vue' {
     interface Vue {
-        $svc: ReturnType<typeof build>
+        $service: ReturnType<typeof build>
     }
 }
 
@@ -95,7 +148,7 @@ export default boot(async ({ Vue }) => {
     const service = build(await Storage.init())
 
     Object.defineProperties(Vue.prototype, {
-        $svc: {
+        $service: {
             get() { return service }
         }
     })

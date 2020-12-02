@@ -153,7 +153,3 @@ export function build() {
         }
     }
 }
-
-declare global {
-    type ConfigKey = 'nodes' | 'passwordShadow' | 'tokenRegistry' | 'activeTokens' | 'recentContact'
-}
