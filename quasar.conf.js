@@ -10,7 +10,7 @@
 
 const { configure } = require('quasar/wrappers')
 const path = require('path')
-const {execSync} = require('child_process')
+const { execSync } = require('child_process')
 
 const appVersion = require('./package.json').version
 const appBuild = execSync('git --no-pager log -n 1 --date=short --pretty="%ad.%h"')
@@ -30,7 +30,8 @@ module.exports = configure(function (/* ctx */) {
       'filters',
       'directives',
       'txer',
-      'thor'
+      'thor',
+      'services'
     ],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css

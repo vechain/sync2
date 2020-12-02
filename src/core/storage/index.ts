@@ -58,7 +58,7 @@ export namespace Storage {
          * @param row the row
          * @param replace use upsert
          */
-        insert(row: Omit<T, keyof Entity>, replace?: boolean): Promise<void>
+        insert(row: Partial<T>, replace?: boolean): Promise<void>
 
         /**
          * update rows that match the given condition
