@@ -31,7 +31,8 @@ function wrapTable<T extends Storage.Entity>(table: Dexie.Table<T, number>): Sto
         },
         all: () => {
             const opt: {
-                cond?: Partial<T>
+                equal?: Partial<T>
+                notEqual?: Partial<T>
                 reverse?: boolean
                 limit?: {
                     count: number
@@ -41,7 +42,11 @@ function wrapTable<T extends Storage.Entity>(table: Dexie.Table<T, number>): Sto
 
             return {
                 where(cond) {
-                    opt.cond = cond
+                    opt.equal = cond
+                    return this
+                },
+                except(cond) {
+                    opt.notEqual = cond
                     return this
                 },
                 reverse() {
@@ -57,8 +62,27 @@ function wrapTable<T extends Storage.Entity>(table: Dexie.Table<T, number>): Sto
                 },
                 query() {
                     let c: Dexie.Collection<T, number> | undefined
-                    if (opt.cond) {
-                        c = table.where(opt.cond as {})
+                    if (opt.equal) {
+                        c = table.where(opt.equal as {})
+                    }
+                    if (opt.notEqual) {
+                        const cond = opt.notEqual
+                        const keys = Object.keys(cond)
+                        if (!c && keys.length === 1) {
+                            const key = keys[0]
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            c = table.where(key).notEqual((cond as any)[key])
+                        } else {
+                            c = c || table.toCollection()
+                            c = c.filter(i => {
+                                for (const key in cond) {
+                                    if (i[key] === cond[key]) {
+                                        return false
+                                    }
+                                }
+                                return true
+                            })
+                        }
                     }
                     if (opt.reverse) {
                         c = (c || table).reverse()

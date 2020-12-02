@@ -92,10 +92,16 @@ export namespace Storage {
     /** the querier */
     export interface Querier<T extends Entity> {
         /**
-         * apply where condition
+         * apply where equal condition
          * @param cond the condition
          */
         where(cond: Partial<T>): this
+
+        /**
+         * apply where not equal condition
+         * @param cond the condition
+         */
+        except(cond: Partial<T>): this
 
         /** reverse the result set, before limit operation */
         reverse(): this

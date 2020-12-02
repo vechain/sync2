@@ -78,7 +78,8 @@ function wrapTable<T extends Storage.Entity>(runner: SQLRunner, tableName: strin
         },
         all: () => {
             const opt: {
-                cond?: Partial<T>
+                equal?: Partial<T>
+                notEqual?: Partial<T>
                 reverse?: boolean
                 limit?: {
                     count: number
@@ -88,7 +89,11 @@ function wrapTable<T extends Storage.Entity>(runner: SQLRunner, tableName: strin
 
             return {
                 where(cond) {
-                    opt.cond = cond
+                    opt.equal = cond
+                    return this
+                },
+                except(cond) {
+                    opt.notEqual = cond
                     return this
                 },
                 reverse() {
@@ -105,10 +110,16 @@ function wrapTable<T extends Storage.Entity>(runner: SQLRunner, tableName: strin
                 query() {
                     let sql = `SELECT * FROM ${tableName} WHERE 1`
                     const params = []
-                    if (opt.cond) {
-                        for (const key in opt.cond) {
+                    if (opt.equal) {
+                        for (const key in opt.equal) {
                             sql += ` AND ${key}=?`
-                            params.push(opt.cond[key])
+                            params.push(opt.equal[key])
+                        }
+                    }
+                    if (opt.notEqual) {
+                        for (const key in opt.notEqual) {
+                            sql += ` AND ${key}<>?`
+                            params.push(opt.notEqual[key])
                         }
                     }
                     if (opt.reverse) {
