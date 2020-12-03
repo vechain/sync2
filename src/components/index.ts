@@ -27,6 +27,7 @@ import TxActivityUpdate from './TxActivityUpdate'
 import InputPinCode from './InputPinCode.vue'
 import ProcessingTransition from './ProcessingTransition.vue'
 import PageToolbar from './PageToolbar.vue'
+import Resolve from './Resolve'
 
 const components: { [name: string]: Vue.VueConstructor } = {
     StackedRouterView,
@@ -57,7 +58,8 @@ const components: { [name: string]: Vue.VueConstructor } = {
     TxActivityUpdate,
     InputPinCode,
     ProcessingTransition,
-    PageToolbar
+    PageToolbar,
+    Resolve
 }
 
 export default components
