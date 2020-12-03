@@ -10,8 +10,9 @@
         <q-card class="fit column no-wrap">
             <page-toolbar
                 title="Sign"
-                :nav="nav"
+                icon="close"
                 :gid="gid"
+                @action="hide()"
             />
             <q-card-section
                 v-scrollDivider.both
@@ -155,14 +156,6 @@ export default Vue.extend({
             return this.wallets.find((w: M.Wallet) => {
                 return w.meta.addresses.includes(this.signer)
             }) || null
-        },
-        nav() {
-            return {
-                icon: 'close',
-                action: () => {
-                    this.hide()
-                }
-            }
         }
     },
     mounted() {

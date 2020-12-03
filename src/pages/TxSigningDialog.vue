@@ -10,8 +10,9 @@
         <q-card class="fit column no-wrap">
             <page-toolbar
                 title="Sign"
-                :nav="nav"
+                icon="close"
                 :gid="gid"
+                @action="hide()"
             />
             <!-- clause list -->
             <q-card-section
@@ -200,14 +201,6 @@ export default Vue.extend({
             return this.wallets.find((item: M.Wallet) => {
                 return item.meta.addresses.includes(this.signer)
             }) || null
-        },
-        nav() {
-            return {
-                icon: 'close',
-                action: () => {
-                    this.hide()
-                }
-            }
         }
     },
     mounted() {

@@ -4,7 +4,7 @@
             flat
             dense
             round
-            :icon="nav? nav.icon : 'navigate_before'"
+            :icon="icon || 'navigate_before'"
             @click="onClickNavButton()"
         />
         <q-toolbar-title class="text-center">
@@ -35,7 +35,7 @@ import Vue from 'vue'
 export default Vue.extend({
     props: {
         title: String,
-        nav: Object as () => { icon: string, action: () => void },
+        icon: String,
         gid: String // to check if in dev mode
     },
     data: () => {
@@ -65,8 +65,8 @@ export default Vue.extend({
     },
     methods: {
         onClickNavButton() {
-            if (this.nav) {
-                this.nav.action()
+            if (this.$listeners.action) {
+                this.$emit('action')
             } else {
                 this.$stack.canGoBack ? this.$router.back() : this.$router.replace('/')
             }
