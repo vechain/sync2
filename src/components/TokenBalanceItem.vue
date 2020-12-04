@@ -7,7 +7,7 @@
         <q-item-section avatar>
             <q-avatar
                 v-if="icon"
-                square
+                style="box-sizing: content-box; border: 1px solid #E5E5EA"
                 :size="dense ? 'sm' : 'md'"
             >
                 <img :src="icon" />
@@ -16,7 +16,7 @@
                 v-else
                 :size="dense ? 'sm' : 'md'"
                 color="primary"
-                square
+                rounded
                 text-color="white"
             >
                 {{token.symbol.slice(0,1)}}
@@ -45,10 +45,14 @@ export default Vue.extend({
     },
     computed: {
         icon(): string {
-            if (this.token && this.token.icon) {
+            if (this.token.symbol === 'VET') {
+                return require('assets/vet.svg')
+            } else if (this.token.symbol === 'VTHO') {
+                return require('assets/vtho.svg')
+            } else if (this.token && this.token.icon) {
                 return `${urls.tokenRegistry}assets/${this.token.icon}`
             } else {
-                return require('../assets/vet.png')
+                return require('assets/vet.svg')
             }
         }
     }

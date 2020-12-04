@@ -19,7 +19,7 @@
                         <q-item :key="item.symbol">
                             <q-item-section avatar>
                                 <q-avatar
-                                    square
+                                    style="box-sizing: content-box; border: 1px solid #E5E5EA"
                                     size="md"
                                 >
                                     <q-img :src="item.icon" />
