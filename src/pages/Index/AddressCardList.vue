@@ -1,6 +1,6 @@
 <template>
     <div
-        class="row overflow-auto justify-center"
+        class="row overflow-auto justify-center content-start"
         v-scrollDivider
     >
         <Intersecting
