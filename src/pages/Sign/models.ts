@@ -8,7 +8,7 @@ export type RelayedRequest = {
         message: object
         options: object
     }
-    /* nonce: string */
+    origin?: string
 }
 
 export namespace RelayedRequest {
@@ -18,7 +18,8 @@ export namespace RelayedRequest {
         payload: {
             message: v => v instanceof Object ? '' : 'message requires object type',
             options: v => v instanceof Object ? '' : 'options requires object type'
-        }
+        },
+        origin: () => ''
     }
     export function validate(obj: RelayedRequest) {
         return V.validate(obj, scheme)

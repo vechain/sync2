@@ -1,19 +1,25 @@
 <template>
-    <!-- load request -->
-    <async
-        :fn="loadRequest"
-        tag="div"
-        class="column fit"
-        v-slot="{data, error, pending}"
-    >
+    <div class="column fit">
         <page-toolbar
             title="Sign"
-            :gid="data? data.gid : ''"
+            :gid="request ? request.gid : ''"
         />
         <div class="col column q-pa-md no-wrap">
+            <!-- summary -->
+            <div
+                v-if="$asyncComputed.request.success"
+                v-scrollDivider.both
+                class="row self-stretch q-mb-auto justify-center overflow-auto"
+            >
+                <Summary
+                    class="col-sm-8 col-12"
+                    :origin="origin"
+                    :request="request"
+                />
+            </div>
             <!-- loading -->
             <delay
-                v-if="pending"
+                v-else-if="$asyncComputed.request.updating"
                 :t="200"
                 tag="div"
                 class="q-my-auto text-center"
@@ -25,7 +31,7 @@
             </delay>
             <!-- error to load -->
             <div
-                v-else-if="error"
+                v-else
                 class="q-my-auto text-center"
             >
                 <p>
@@ -36,33 +42,14 @@
                 </p>
                 <p>Failed to load content</p>
             </div>
-            <!-- summary -->
-            <div
-                v-else
-                v-scrollDivider.both
-                class="row self-stretch q-mb-auto justify-center overflow-auto"
-            >
-                <Summary
-                    class="col-sm-8 col-12"
-                    :origin="origin"
-                    :request="data"
-                />
-            </div>
             <!-- actions -->
             <div class="row justify-evenly self-stretch q-mt-md q-gutter-sm">
-                <q-btn
-                    v-if="error"
-                    unelevated
-                    color="primary"
-                    class="col-6 col-sm-3"
-                    @click="close()"
-                >Close</q-btn>
-                <template v-else-if="data">
+                <template v-if="request">
                     <q-btn
                         unelevated
                         color="primary"
                         class="col-6 col-sm-3"
-                        @click="signRequest(data)"
+                        @click="signRequest(request)"
                     >Continue</q-btn>
                     <div class="col-12" />
                     <q-btn
@@ -72,9 +59,16 @@
                         @click="close()"
                     >Decline</q-btn>
                 </template>
+                <q-btn
+                    v-else-if="$asyncComputed.request.error"
+                    unelevated
+                    color="primary"
+                    class="col-6 col-sm-3"
+                    @click="close()"
+                >Close</q-btn>
             </div>
         </div>
-    </async>
+    </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
@@ -89,11 +83,13 @@ export default Vue.extend({
     },
     data: () => {
         return {
-            origin: '',
             responded: false
         }
     },
     computed: {
+        origin(): string {
+            return (this.request && this.request.origin) || ''
+        },
         host(): string {
             try {
                 return new URL(this.origin).host
@@ -102,8 +98,8 @@ export default Vue.extend({
             }
         }
     },
-    methods: {
-        async loadRequest() {
+    asyncComputed: {
+        async request(): Promise<RelayedRequest> {
             const urlObject = new URL(this.rurl)
             if (!['http:', 'https:'].includes(urlObject.protocol)) {
                 throw new Error('invalid request')
@@ -136,11 +132,13 @@ export default Vue.extend({
                 throw new Error('incorrect content hash')
             }
             const request = RelayedRequest.validate(JSON.parse(resp.data))
-            this.origin = resp.headers['x-data-origin']
+            request.origin = resp.headers['x-data-origin']
             this.postStatus('-accepted', {})
             // TODO validate body
             return request
-        },
+        }
+    },
+    methods: {
         async signRequest(request: RelayedRequest) {
             try {
                 const { type, gid, payload } = request
