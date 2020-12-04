@@ -1,16 +1,13 @@
 <template>
-    <ConnexObject
-        v-if="wallet"
-        :node="node"
-        v-slot="{connex}"
-        tag="div"
+    <div
         class="column fit"
         v-touch-pan.right.mouse.prevent="handleDrawerTouchPan"
     >
         <PageToolbar
-            :title="wallet.meta.name"
-            :nav="nav"
-            :gid="wallet.gid"
+            :title="wallet && wallet.meta.name"
+            icon="menu"
+            :gid="wallet && wallet.gid"
+            @action="drawerOpen=true"
         >
             <q-btn
                 class="q-ml-auto"
@@ -23,107 +20,73 @@
         </PageToolbar>
         <upgrade-tip v-if="$state.app.updated" />
         <backup-tip
-            v-if="!wallet.meta.backedUp"
+            v-if="wallet && !wallet.meta.backedUp"
             class="self-center"
         />
-        <div
-            class="container col row overflow-auto justify-center content-start"
+        <address-card-list
+            v-if="wallet"
             ref="list"
-            v-scrollDivider
-        >
-            <Intersecting
-                :cfg="{threshold: 0.2}"
-                v-for="(address,i) in addresses"
-                class="address-card-wrap q-pa-md"
-                :key="address"
-                v-slot="{entry}"
-            >
-                <ConnexContinuous
-                    :connex="entry.isIntersecting ? connex: null"
-                    :query="()=> connex.thor.account(address).get()"
-                    v-slot="{data}"
-                >
-                    <AddressCard
-                        class="address-card fit"
-                        :index="i"
-                        :address="address"
-                        :account="data"
-                        @click="onClickCard(i)"
-                    />
-                </ConnexContinuous>
-            </Intersecting>
-        </div>
+            :wallet="wallet"
+            class="container col"
+        />
         <drawer
             v-model="drawerOpen"
             ref="drawer"
         >
-            <DrawerContent />
+            <drawer-panel>
+                <wallet-list
+                    :wallets="wallets"
+                    v-model="selectedWalletId"
+                />
+            </drawer-panel>
         </drawer>
-    </ConnexObject>
+    </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import AddressCard from './AddressCard.vue'
 import BackupTip from './BackupTip.vue'
-import DrawerContent from './DrawerContent.vue'
 import UpgradeTip from './UpgradeTip.vue'
+import DrawerPanel from './DrawerPanel.vue'
+import WalletList from './WalletList.vue'
+import AddressCardList from './AddressCardList.vue'
 import { Vault } from 'core/vault'
 import { scroll } from 'quasar'
 
 const MAX_ADDRESS = 10
 
 export default Vue.extend({
-    components: { AddressCard, BackupTip, DrawerContent, UpgradeTip },
+    components: { BackupTip, UpgradeTip, DrawerPanel, WalletList, AddressCardList },
     data: () => {
         return {
-            drawerOpen: false
+            drawerOpen: false,
+            selectedWalletId: 0
         }
     },
     computed: {
-        wallet(): M.Wallet {
-            return this.$state.wallet.current!
-        },
-        node(): M.Node {
-            return this.$state.config.node.list.find(n => n.genesis.id === this.wallet.gid)!
-        },
-        addresses(): string[] {
-            return this.wallet.meta.addresses
-        },
-        networkBadgeText(): string {
-            const net = this.$options.filters!.net(this.wallet.gid)
-            if (net === 'main') {
-                return ''
-            }
-            return (net || 'private') + ' net'
-        },
-        nav() {
-            return {
-                icon: 'menu',
-                action: () => {
-                    this.drawerOpen = true
-                }
-            }
+        wallet(): M.Wallet | null {
+            return this.wallets.find(w => w.id === this.selectedWalletId) || null
+        }
+    },
+    asyncComputed: {
+        wallets: {
+            get() { return this.$svc.wallet.all() },
+            default: []
         }
     },
     watch: {
-        'wallet.id'() {
+        selectedWalletId() {
             this.drawerOpen = false
-            const list = this.$refs.list as HTMLElement
-            list && list.scrollTo({ top: 0, behavior: 'auto' })
+            const list = this.$refs.list as Vue
+            list && list.$el.scrollTo({ top: 0, behavior: 'auto' })
         }
     },
     methods: {
-        onClickCard(index: number) {
-            this.$router.push({
-                name: 'account',
-                query: {
-                    wId: this.wallet.id.toString(),
-                    i: index.toString()
-                }
-            })
-        },
         onClickMenuBtn() {
-            const addressFull = this.addresses.length >= MAX_ADDRESS
+            const wallet = this.wallet
+            if (!wallet) {
+                return
+            }
+            const addressFull = wallet.meta.addresses.length >= MAX_ADDRESS
             this.$actionSheets([
                 {
                     label: 'New Account',
@@ -147,10 +110,12 @@ export default Vue.extend({
             ])
         },
         newAccount() {
+            const wallet = this.wallet
+            if (!wallet) {
+                return
+            }
             this.$loading(async () => {
-                const wallet = this.wallet
                 const addresses = wallet.meta.addresses
-
                 if (addresses.length >= MAX_ADDRESS) {
                     return
                 }
@@ -166,11 +131,15 @@ export default Vue.extend({
                     { meta: JSON.stringify(newMeta) })
 
                 await new Promise(resolve => setTimeout(resolve, 300))
-                const list = this.$refs.list as HTMLElement
-                scroll.setScrollPosition(list, list.scrollHeight, 500)
+                const list = this.$refs.list as Vue
+                list && scroll.setScrollPosition(list.$el, list.$el.scrollHeight, 500)
             })
         },
         rename() {
+            const wallet = this.wallet
+            if (!wallet) {
+                return
+            }
             this.$q.dialog({
                 title: 'Rename',
                 message: 'Wallet name helps you quickly identify the wallet.',
@@ -184,15 +153,19 @@ export default Vue.extend({
                     label: 'Save'
                 }
             }).onOk((data: string) => {
-                this.wallet.meta.name = data
-                this.$storage.wallets.update({ id: this.wallet.id }, {
-                    meta: JSON.stringify(this.wallet.meta)
+                wallet.meta.name = data
+                this.$storage.wallets.update({ id: wallet.id }, {
+                    meta: JSON.stringify(wallet.meta)
                 }).then(() => {
                     this.$q.notify('Wallet updated')
                 })
             })
         },
         delete() {
+            const wallet = this.wallet
+            if (!wallet) {
+                return
+            }
             this.$q.dialog({
                 title: 'Delete Wallet',
                 message: 'Are you sure? this cannot be undone. Unless you have backed up your wallet beforehand',
@@ -208,7 +181,7 @@ export default Vue.extend({
                 await this.$authenticate(() => {
                     return Promise.resolve()
                 })
-                this.$storage.wallets.delete({ id: this.wallet.id })
+                this.$storage.wallets.delete({ id: wallet.id })
             })
         },
         handleDrawerTouchPan(ev: Record<string, unknown>) {
@@ -224,12 +197,5 @@ export default Vue.extend({
 }
 body.q-ios-padding .container {
     padding-bottom: env(safe-area-inset-bottom) !important;
-}
-.address-card-wrap {
-    width: min(100vw, 375px);
-    height: calc(min(100vw, 375px) * 0.67);
-}
-.address-card {
-    border-radius: calc(min(100vw, 375px) * 0.05);
 }
 </style>

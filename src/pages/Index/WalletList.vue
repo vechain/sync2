@@ -1,5 +1,5 @@
 <template>
-    <div class="column">
+    <div class="column fit">
         <q-item>
             <q-item-section>Wallets</q-item-section>
             <q-item-section side>
@@ -17,11 +17,11 @@
             class="col overflow-auto full-width"
             v-scrollDivider.both
         >
-            <template v-for="(wallet, i) in wallets">
+            <template v-for="(wallet, i) in sortedWallets">
                 <q-item-label
                     header
                     class="text-capitalize"
-                    v-if="i === 0 || wallet.gid !== wallets[i-1].gid"
+                    v-if="i === 0 || wallet.gid !== sortedWallets[i-1].gid"
                     :key="wallet.id + '-' + 'section'"
                 >
                     {{wallet.gid | net}} net
@@ -30,9 +30,9 @@
                     :key="wallet.id"
                     clickable
                     :inset-level="0.25"
-                    :active="wallet.id === $state.wallet.current.id"
+                    :active="wallet.id === value"
                     active-class="bg-blue-1"
-                    @click="onClickWallet(wallet.id)"
+                    @click="$emit('input', wallet.id)"
                 >
                     <q-item-section>
                         <q-item-label lines="1">
@@ -49,22 +49,36 @@ import Vue from 'vue'
 import { genesises } from 'src/consts'
 import WalletGenerateDialog from 'pages/WalletGenerateDialog'
 
+const weights = {
+    [genesises.main.id]: 2,
+    [genesises.test.id]: 1
+}
+
 export default Vue.extend({
+    props: {
+        wallets: Array as () => M.Wallet[],
+        value: Number // selected wallet id
+    },
+    model: {
+        prop: 'value',
+        event: 'input'
+    },
     computed: {
-        wallets() {
-            const weights = {
-                [genesises.main.id]: 2,
-                [genesises.test.id]: 1
-            }
-            return [...this.$state.wallet.list].sort((a, b) => {
+        sortedWallets() {
+            return [...this.wallets].sort((a, b) => {
                 return (weights[b.gid] || 0) - (weights[a.gid] || 0)
             })
         }
     },
+    watch: {
+        wallets(newVal: M.Wallet[]) {
+            if (!newVal.find(w => w.id === this.value)) {
+                const w0 = newVal[0]
+                w0 && this.$emit('input', w0.id)
+            }
+        }
+    },
     methods: {
-        onClickWallet(id: number) {
-            this.$state.wallet.setCurrentId(id)
-        },
         onClickAddWallet() {
             this.$actionSheets([
                 { label: 'Create Wallet', onClick: () => { this.openGenerateDialog('create') } },

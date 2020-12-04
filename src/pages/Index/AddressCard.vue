@@ -13,11 +13,11 @@
             />
             <!-- balances -->
             <div class="text-right">
-                <span class="text-h6 text-weight-regular">{{account?account.balance:null | balance}}</span>
+                <span class="text-h6 text-weight-regular">{{account && account.balance | balance}}</span>
                 <span class="monospace text-caption"> VET&nbsp;</span>
             </div>
             <div class="text-right">
-                <span class="text-h6 text-weight-regular">{{account?account.energy:null | balance}}</span>
+                <span class="text-h6 text-weight-regular">{{account && account.energy | balance}}</span>
                 <span class="monospace text-caption"> VTHO</span>
             </div>
             <div class="row items-baseline q-mt-auto">
@@ -40,7 +40,7 @@ export default Vue.extend({
     props: {
         address: String,
         index: Number,
-        account: Object as () => Connex.Thor.Account
+        account: Object as () => (Connex.Thor.Account | null)
     },
     computed: {
         svg(): string {

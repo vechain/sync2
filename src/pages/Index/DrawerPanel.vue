@@ -12,10 +12,10 @@
                 Sync2
             </q-toolbar-title>
         </q-toolbar>
-
-        <!-- wallet list -->
-        <WalletList class="col" />
-
+        <!-- content slot -->
+        <div class="col">
+            <slot />
+        </div>
         <!-- drawer content footer -->
         <q-list>
             <q-item :to="{name: 'settings'}">
@@ -42,10 +42,8 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import WalletList from './WalletList.vue'
 
 export default Vue.extend({
-    components: { WalletList },
     computed: {
         version() {
             return `v${process.env.APP_VERSION} (${process.env.APP_BUILD})`
