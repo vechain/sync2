@@ -35,10 +35,14 @@ export default Vue.extend({
     },
     computed: {
         icon(): string {
-            if (this.token && this.token.icon) {
+            if (this.token.symbol === 'VET') {
+                return require('assets/vet.svg')
+            } else if (this.token.symbol === 'VTHO') {
+                return require('assets/vtho.svg')
+            } else if (this.token && this.token.icon) {
                 return `${urls.tokenRegistry}assets/${this.token.icon}`
             } else {
-                return require('../../assets/vet.png')
+                return require('assets/vet.svg')
             }
         }
     }
