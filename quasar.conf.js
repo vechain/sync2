@@ -30,7 +30,6 @@ module.exports = configure(function (/* ctx */) {
       'filters',
       'directives',
       'txer',
-      'thor',
       'services'
     ],
 
