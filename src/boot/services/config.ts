@@ -36,11 +36,8 @@ export function build(storage: Storage) {
             return t.insert({ key, value }, true)
         },
         async nodes() {
-            const json = await this.get('nodes')
-            if (json) {
-                return JSON.parse(json) as M.Node[]
-            }
-            return [...presetNodes]
+            const json = (await this.get('nodes')) || JSON.stringify(presetNodes)
+            return JSON.parse(json) as M.Node[]
         },
         async activeNodes() {
             const nodes = await this.nodes()
