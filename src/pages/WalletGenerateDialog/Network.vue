@@ -4,11 +4,11 @@
         <div class="q-gutter-sm">
             <q-radio
                 v-for="item in nodes"
-                :key="item.gid"
+                :key="item.genesis.id"
                 v-model="gid"
-                :val="item.gid"
+                :val="item.genesis.id"
                 class="text-capitalize"
-                :label="item.gid | net"
+                :label="item.genesis.id | net"
             />
         </div>
     </div>
