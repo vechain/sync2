@@ -3,6 +3,7 @@ import { abis } from 'src/consts'
 
 function serve(exec: ReturnType<typeof createThorFactory>) {
     return {
+        exec,
         getAccount(addr: string) {
             return exec(thor => thor.account(addr).get())
         },
