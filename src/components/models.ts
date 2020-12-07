@@ -23,13 +23,13 @@ declare namespace M {
     }
 
     interface TokenSpec {
+        gid: string
         name: string
         symbol: string
         decimals: number
         address: string
-        desc: string
-        icon: string
-        totalSupply: string
+        iconSrc: string
+        permanent: boolean
     }
 
     interface TxRequest {
