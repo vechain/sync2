@@ -46,13 +46,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import { genesises } from 'src/consts'
 import WalletGenerateDialog from 'pages/WalletGenerateDialog'
-
-const weights = {
-    [genesises.main.id]: 2,
-    [genesises.test.id]: 1
-}
 
 export default Vue.extend({
     props: {
@@ -65,8 +59,10 @@ export default Vue.extend({
     },
     computed: {
         sortedWallets() {
+            const gids: string[] = []
+            this.wallets.forEach(w => gids.includes(w.gid) || gids.push(w.gid))
             return [...this.wallets].sort((a, b) => {
-                return (weights[b.gid] || 0) - (weights[a.gid] || 0)
+                return gids.indexOf(a.gid) - gids.indexOf(b.gid)
             })
         }
     },
