@@ -28,7 +28,7 @@
                         <q-item-section side>
                             <q-toggle
                                 color="green"
-                                v-model="activeTokens"
+                                v-model="activeSymbols"
                                 :val="item.symbol"
                             />
                         </q-item-section>
@@ -37,15 +37,15 @@
             </q-list>
             <template v-else>
                 <q-inner-loading
-                    v-if="pending"
+                    v-if="$asyncComputed.tokens.updating"
                     showing
                 />
                 <div
-                    v-else-if="!!error"
+                    v-else-if="$asyncComputed.tokens.error"
                     class="fit column flex-center"
                 >
                     <p>Something wrong</p>
-                    <q-btn @click="reload">Refresh</q-btn>
+                    <q-btn @click="$asyncComputed.tokens.update()">Refresh</q-btn>
                 </div>
             </template>
         </div>
@@ -57,14 +57,14 @@ import Vue from 'vue'
 export default Vue.extend({
     data() {
         return {
-            activeTokens: null as string[] | null
+            activeSymbols: null as string[] | null
         }
     },
     asyncComputed: {
         tokens: {
             async get(): Promise<M.TokenSpec[]> {
-                if (!this.activeTokens) {
-                    this.activeTokens = await this.$svc.config.activeTokenSymbols()
+                if (!this.activeSymbols) {
+                    this.activeSymbols = await this.$svc.config.activeTokenSymbols()
                 }
                 const seen: string[] = []
                 const all = await this.$svc.config.tokens()
@@ -80,8 +80,8 @@ export default Vue.extend({
         }
     },
     async beforeDestroy() {
-        if (this.activeTokens) {
-            await this.$svc.config.setActiveTokenSymbols(this.activeTokens)
+        if (this.activeSymbols) {
+            await this.$svc.config.setActiveTokenSymbols(this.activeSymbols)
         }
     }
 })
