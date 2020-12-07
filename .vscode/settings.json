@@ -1,16 +1,24 @@
-{  
-  "eslint.validate": ["javascript", "javascriptreact", "typescript", "vue"],
-  "typescript.tsdk": "node_modules/typescript/lib",
-
-  "javascript.format.placeOpenBraceOnNewLineForControlBlocks": false,
-  "javascript.format.placeOpenBraceOnNewLineForFunctions": false,
-  "typescript.format.placeOpenBraceOnNewLineForControlBlocks": false,
-  "typescript.format.placeOpenBraceOnNewLineForFunctions": false,
-
-  "vetur.validation.template": false,
-  "vetur.experimental.templateInterpolationService": true,
-  "vetur.format.defaultFormatter.html": "js-beautify-html",
-  "vetur.format.defaultFormatter.js": "vscode-typescript",
-  "vetur.format.defaultFormatter.ts": "vscode-typescript",
-  "vetur.format.options.tabSize": 4
+{
+    "eslint.validate": [
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "vue"
+    ],
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "javascript.format.placeOpenBraceOnNewLineForControlBlocks": false,
+    "javascript.format.placeOpenBraceOnNewLineForFunctions": false,
+    "typescript.format.placeOpenBraceOnNewLineForControlBlocks": false,
+    "typescript.format.placeOpenBraceOnNewLineForFunctions": false,
+    "vetur.validation.template": false,
+    "vetur.experimental.templateInterpolationService": true,
+    "vetur.format.defaultFormatter.html": "js-beautify-html",
+    "vetur.format.defaultFormatter.js": "vscode-typescript",
+    "vetur.format.defaultFormatter.ts": "vscode-typescript",
+    "vetur.format.options.tabSize": 4,
+    "i18n-ally.localesPaths": "src/i18n",
+    "i18n-ally.enabledParsers": [
+        "ts"
+    ],
+    "i18n-ally.keystyle": "nested"
 }
