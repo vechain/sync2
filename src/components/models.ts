@@ -3,7 +3,7 @@ declare namespace M {
     interface Node {
         genesis: Connex.Thor.Block
         url: string
-        preset: boolean
+        preset?: boolean
     }
 
     interface Wallet {
