@@ -3,24 +3,22 @@ import { delegateTable } from './utils'
 import { genesises } from 'src/consts'
 import { TokenRegistry } from './token-registry'
 
-declare global {
-    type ConfigKey = 'nodes' | 'passwordShadow' | 'tokenRegistry' | 'activeTokenSymbols' | 'recentContact' | 'currentWalletId'
-}
-
 const presetNodes: M.Node[] = [
     { // mainnet
         genesis: genesises.main,
         preset: true,
-        active: true,
         url: 'https://mainnet.veblocks.net'
     },
     { // testnet
         genesis: genesises.test,
         preset: true,
-        active: true,
         url: 'https://testnet.veblocks.net'
     }
 ]
+
+function nodeSignature(n: M.Node) {
+    return `${n.genesis.id}@${n.url}`
+}
 
 export function build(storage: Storage) {
     const t = delegateTable<Storage.ConfigEntity, Storage.ConfigEntity>(
@@ -28,34 +26,57 @@ export function build(storage: Storage) {
         e => e,
         m => m
     )
-    return {
-        async get(key: ConfigKey) {
-            const row = (await t.all().where({ key }).query())[0]
-            return row ? row.value : ''
+    type Key = 'nodes' | 'activeNodeSignature' | 'passwordShadow' | 'tokenRegistry' | 'activeTokenSymbols' | 'recentContact' | 'currentWalletId'
+    const get = async (key: Key) => {
+        const row = (await t.all().where({ key }).query())[0]
+        return row ? row.value : ''
+    }
+
+    const set = (key: Key, value: string) => {
+        return t.insert({ key, value }, true)
+    }
+
+    const node = {
+        async all(): Promise<M.Node[]> {
+            // prepend preset nodes
+            return [
+                ...JSON.parse(JSON.stringify(presetNodes)),
+                ...JSON.parse(await get('nodes') || '[]')
+            ]
         },
-        set(key: ConfigKey, value: string) {
-            return t.insert({ key, value }, true)
+        save(val: M.Node[]) {
+            // exclude preset nodes
+            return set('nodes', JSON.stringify(val.filter(n => !n.preset)))
         },
-        // --- nodes ---
-        async nodes() {
-            const json = (await this.get('nodes')) || JSON.stringify(presetNodes)
-            return JSON.parse(json) as M.Node[]
-        },
-        async activeNodes() {
-            const nodes = await this.nodes()
-            return nodes.reduce<Record<string, M.Node>>((prev, cur) => {
-                const gid = cur.genesis.id
-                if (!prev[gid]) {
-                    prev[gid] = cur
-                } else if (cur.active) {
-                    prev[cur.genesis.id] = cur
-                }
+        async actives() {
+            const [nodes, activeSigs] = await Promise.all([
+                this.all(),
+                get('activeNodeSignature').then(r => JSON.parse(r || '[]') as string[])
+            ])
+            const grouped = nodes.reduce((prev, cur) => {
+                prev.set(
+                    cur.genesis.id,
+                    [...(prev.get(cur.genesis.id) || []), cur])
                 return prev
-            }, {})
+            }, new Map<string, M.Node[]>())
+
+            return Array.from(grouped.values())
+                .map(g => {
+                    return g.find(n => activeSigs.includes(nodeSignature(n))) || g[0]
+                })
         },
-        // ---- tokens ---
-        async tokens() {
-            const json = await this.get('tokenRegistry')
+        saveActives(val: M.Node[]) {
+            const sigs = val.reduce<string[]>((prev, cur) => {
+                prev.find(s => s.startsWith(cur.genesis.id)) || prev.push(nodeSignature(cur))
+                return prev
+            }, [])
+            return set('activeNodeSignature', JSON.stringify(sigs))
+        }
+    }
+
+    const token = {
+        async all() {
+            const json = await get('tokenRegistry')
             const registry: TokenRegistry = json ? JSON.parse(json) : {
                 updated: 0,
                 main: [],
@@ -64,7 +85,7 @@ export function build(storage: Storage) {
             if (registry.updated + 6 * 60 * 60 * 1000 < Date.now()) {
                 // fetch in background and don't block
                 TokenRegistry.fetch()
-                    .then(r => this.set('tokenRegistry', JSON.stringify(r)))
+                    .then(r => set('tokenRegistry', JSON.stringify(r)))
                     .catch(err => console.warn(err))
             }
 
@@ -87,11 +108,16 @@ export function build(storage: Storage) {
                 ...registry.test.map(e => toModel(genesises.test.id, e, false))
             ]
         },
-        async activeTokenSymbols() {
-            return JSON.parse((await this.get('activeTokenSymbols')) || '[]') as string[]
+        async activeSymbols() {
+            return JSON.parse((await get('activeTokenSymbols')) || '[]') as string[]
         },
-        setActiveTokenSymbols(val: string[]) {
-            return this.set('activeTokenSymbols', JSON.stringify(val))
+        saveActiveSymbols(val: string[]) {
+            val = Array.from(new Set(val))
+            return set('activeTokenSymbols', JSON.stringify(val))
         }
+    }
+    return {
+        get node() { return node },
+        get token() { return token }
     }
 }

@@ -25,16 +25,21 @@ export default boot(async ({ Vue }) => {
     const wallet = Wallet.build(storage)
     const activity = Activity.build(storage)
 
-    let activeNodesPromise = config.activeNodes()
-    const bc = Blockchain.build(async (gid) => {
-        return (await activeNodesPromise)[gid]
+    let activeNodes = await config.node.actives()
+    const bc = Blockchain.build(gid => {
+        const node = activeNodes.find(n => n.genesis.id === gid)
+        if (!node) {
+            throw new Error('no proper node found')
+        }
+        return node
     })
 
+    // watch and update active nodes
     void (async () => {
         const ob = storage.configs.observe()
         for (; ;) {
             await ob.changed()
-            activeNodesPromise = config.activeNodes()
+            activeNodes = await config.node.actives()
         }
     })()
 
