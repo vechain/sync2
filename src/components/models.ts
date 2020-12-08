@@ -3,7 +3,6 @@ declare namespace M {
     interface Node {
         genesis: Connex.Thor.Block
         url: string
-        active: boolean
         preset: boolean
     }
 
