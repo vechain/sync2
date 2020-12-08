@@ -35,19 +35,17 @@
                     </q-item>
                 </template>
             </q-list>
-            <template v-else>
-                <q-inner-loading
-                    v-if="$asyncComputed.tokens.updating"
-                    showing
-                />
-                <div
-                    v-else-if="$asyncComputed.tokens.error"
-                    class="fit column flex-center"
-                >
-                    <p>Something wrong</p>
-                    <q-btn @click="$asyncComputed.tokens.update()">Refresh</q-btn>
-                </div>
-            </template>
+            <q-inner-loading
+                v-else-if="$asyncComputed.tokens.updating"
+                showing
+            />
+            <div
+                v-else-if="$asyncComputed.tokens.error"
+                class="fit column flex-center"
+            >
+                <p>Something wrong</p>
+                <q-btn @click="$asyncComputed.tokens.update()">Refresh</q-btn>
+            </div>
         </div>
     </div>
 </template>
@@ -55,7 +53,7 @@
 import Vue from 'vue'
 
 export default Vue.extend({
-    data() {
+    data: () => {
         return {
             activeSymbols: null as string[] | null
         }
@@ -64,15 +62,15 @@ export default Vue.extend({
         tokens: {
             async get(): Promise<M.TokenSpec[]> {
                 if (!this.activeSymbols) {
-                    this.activeSymbols = await this.$svc.config.activeTokenSymbols()
+                    this.activeSymbols = await this.$svc.config.token.activeSymbols()
                 }
-                const seen: string[] = []
-                const all = await this.$svc.config.tokens()
+                const seen = new Set<string>()
+                const all = await this.$svc.config.token.all()
                 return all.filter(t => {
-                    if (t.permanent || seen.includes(t.symbol)) {
+                    if (t.permanent || seen.has(t.symbol)) {
                         return false
                     }
-                    seen.push(t.symbol)
+                    seen.add(t.symbol)
                     return true
                 })
             },
@@ -81,7 +79,7 @@ export default Vue.extend({
     },
     async beforeDestroy() {
         if (this.activeSymbols) {
-            await this.$svc.config.setActiveTokenSymbols(this.activeSymbols)
+            await this.$svc.config.token.saveActiveSymbols(this.activeSymbols)
         }
     }
 })
