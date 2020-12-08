@@ -25,7 +25,22 @@ export default boot(async ({ Vue }) => {
     const wallet = Wallet.build(storage)
     const activity = Activity.build(storage)
 
-    let activeNodes = await config.node.actives()
+    const getActiveNodes = async () => {
+        const [all, map] = await Promise.all([config.node.all(), config.node.activeMap()])
+        const added = new Set<string>()
+        return all.filter(n => {
+            if (added.has(n.genesis.id)) {
+                return false
+            }
+            if (map[n.genesis.id] === n.url || !map[n.genesis.id]) {
+                added.add(n.genesis.id)
+                return true
+            }
+            return false
+        })
+    }
+
+    let activeNodes = await getActiveNodes()
     const bc = Blockchain.build(gid => {
         const node = activeNodes.find(n => n.genesis.id === gid)
         if (!node) {
@@ -39,7 +54,7 @@ export default boot(async ({ Vue }) => {
         const ob = storage.configs.observe()
         for (; ;) {
             await ob.changed()
-            activeNodes = await config.node.actives()
+            activeNodes = await getActiveNodes()
         }
     })()
 

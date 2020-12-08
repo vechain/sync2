@@ -16,17 +16,13 @@ const presetNodes: M.Node[] = [
     }
 ]
 
-function nodeSignature(n: M.Node) {
-    return `${n.genesis.id}@${n.url}`
-}
-
 export function build(storage: Storage) {
     const t = delegateTable<Storage.ConfigEntity, Storage.ConfigEntity>(
         storage.configs,
         e => e,
         m => m
     )
-    type Key = 'nodes' | 'activeNodeSignature' | 'passwordShadow' | 'tokenRegistry' | 'activeTokenSymbols' | 'recentContact' | 'currentWalletId'
+    type Key = 'nodes' | 'activeNodeMap' | 'passwordShadow' | 'tokenRegistry' | 'activeTokenSymbols' | 'recentContact' | 'currentWalletId'
     const get = async (key: Key) => {
         const row = (await t.all().where({ key }).query())[0]
         return row ? row.value : ''
@@ -48,29 +44,11 @@ export function build(storage: Storage) {
             // exclude preset nodes
             return set('nodes', JSON.stringify(val.filter(n => !n.preset)))
         },
-        async actives() {
-            const [nodes, activeSigs] = await Promise.all([
-                this.all(),
-                get('activeNodeSignature').then(r => JSON.parse(r || '[]') as string[])
-            ])
-            const grouped = nodes.reduce((prev, cur) => {
-                prev.set(
-                    cur.genesis.id,
-                    [...(prev.get(cur.genesis.id) || []), cur])
-                return prev
-            }, new Map<string, M.Node[]>())
-
-            return Array.from(grouped.values())
-                .map(g => {
-                    return g.find(n => activeSigs.includes(nodeSignature(n))) || g[0]
-                })
+        async activeMap() {
+            return JSON.parse(await get('activeNodeMap') || '{}') as Record<string, string>
         },
-        saveActives(val: M.Node[]) {
-            const sigs = val.reduce<string[]>((prev, cur) => {
-                prev.find(s => s.startsWith(cur.genesis.id)) || prev.push(nodeSignature(cur))
-                return prev
-            }, [])
-            return set('activeNodeSignature', JSON.stringify(sigs))
+        saveActiveMap(val: Record<string, string>) {
+            return set('activeNodeMap', JSON.stringify(val))
         }
     }
 
