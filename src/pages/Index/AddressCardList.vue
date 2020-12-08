@@ -11,7 +11,7 @@
             v-slot="{entry}"
         >
             <resolve
-                :promise="entry.isIntersecting? $svc.bc(wallet.gid).getAccount(address) : null"
+                :promise="entry.isIntersecting? $svc.bc(wallet.gid).thor.account(address).get() : null"
                 v-slot="{data}"
             >
                 <AddressCard
