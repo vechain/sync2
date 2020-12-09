@@ -16,7 +16,7 @@
         <div class="col">
             <slot />
         </div>
-        <!-- drawer content footer --> 
+        <!-- drawer content footer -->
         <q-list>
             <q-item :to="{name: 'settings'}">
                 <q-item-section avatar>

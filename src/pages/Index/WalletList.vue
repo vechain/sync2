@@ -17,16 +17,16 @@
             class="col overflow-auto full-width"
             v-scrollDivider.both
         >
-            <template v-for="(wallet, i) in sortedWallets">
+            <template v-for="(group, gi) in walletGroups">
                 <q-item-label
                     header
                     class="text-capitalize"
-                    v-if="i === 0 || wallet.gid !== sortedWallets[i-1].gid"
-                    :key="wallet.id + '-' + 'section'"
+                    :key="`h-${gi}`"
                 >
-                    {{networkName(wallet.gid)}}
+                    {{networkName(group[0].gid)}}
                 </q-item-label>
                 <q-item
+                    v-for="wallet in group"
                     :key="wallet.id"
                     clickable
                     :inset-level="0.25"
@@ -47,6 +47,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import WalletGenerateDialog from 'pages/WalletGenerateDialog'
+import { groupBy } from 'src/utils/array'
 
 export default Vue.extend({
     props: {
@@ -58,12 +59,8 @@ export default Vue.extend({
         event: 'input'
     },
     computed: {
-        sortedWallets() {
-            const gids: string[] = []
-            this.wallets.forEach(w => gids.includes(w.gid) || gids.push(w.gid))
-            return [...this.wallets].sort((a, b) => {
-                return gids.indexOf(a.gid) - gids.indexOf(b.gid)
-            })
+        walletGroups() {
+            return groupBy(this.wallets, w => w.gid)
         }
     },
     watch: {
