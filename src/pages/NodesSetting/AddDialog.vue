@@ -50,8 +50,7 @@ export default Vue.extend({
         }
     },
     watch: {
-        url() { this.error = '' },
-        '$stack.scoped'() { this.hide() }
+        url() { this.error = '' }
     },
     methods: {
         // method is REQUIRED by $q.dialog

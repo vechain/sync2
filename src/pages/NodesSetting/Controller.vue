@@ -119,6 +119,7 @@ export default Vue.extend({
         },
         onAdd() {
             this.$q.dialog({
+                parent: this,
                 component: AddDialog
             }).onOk(async (val: M.Node) => {
                 if (this.nodes.find(n => n.genesis.id === val.genesis.id && n.url === val.url)) {
@@ -141,6 +142,7 @@ export default Vue.extend({
         },
         onDelete(val: M.Node) {
             this.$q.dialog({
+                parent: this,
                 title: 'Delete',
                 message: 'Are you sure?',
                 ok: {

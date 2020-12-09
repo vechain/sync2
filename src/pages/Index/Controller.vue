@@ -142,6 +142,7 @@ export default Vue.extend({
                 return
             }
             this.$q.dialog({
+                parent: this,
                 title: this.$t('index.dialog_rename_title').toString(),
                 message: this.$t('index.dialog_rename_msg').toString(),
                 prompt: {
@@ -168,6 +169,7 @@ export default Vue.extend({
                 return
             }
             this.$q.dialog({
+                parent: this,
                 title: this.$t('index.dialog_remove_title').toString(),
                 message: this.$t('index.dialog_remove_msg').toString(),
                 ok: {

@@ -80,6 +80,7 @@ export default Vue.extend({
         },
         openGenerateDialog(type: 'import' | 'create') {
             this.$q.dialog({
+                parent: this,
                 component: WalletGenerateDialog,
                 type
             })
