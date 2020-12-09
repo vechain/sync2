@@ -63,7 +63,6 @@
 <script lang="ts">
 import Vue from 'vue'
 import AddDialog from './AddDialog.vue'
-import { genesises } from 'src/consts'
 import { count, groupBy } from 'src/utils/array'
 
 type NodeGroup = { list: M.Node[], selection: number }
@@ -101,10 +100,11 @@ export default Vue.extend({
     },
     methods: {
         networkName(val: M.Node) {
-            switch (genesises.which(val.genesis.id)) {
-                case 'main': return 'Mainnet'
-                case 'test': return 'Testnet'
-                default: return 'Private'
+            const gid = val.genesis.id
+            switch (this.$svc.bc(gid).net) {
+                case 'main': return this.$t('common.network_mainnet').toString()
+                case 'test': return this.$t('common.network_testnet').toString()
+                default: return this.$t('common.network_private').toString() + `-${gid.slice(-6)}`
             }
         },
         canDelete(val: M.Node) {
@@ -125,11 +125,18 @@ export default Vue.extend({
                     this.$q.notify({
                         type: 'warning',
                         message: 'Node already exists!',
-                        timeout: 5000
+                        timeout: 5000,
+                        actions: [{ icon: 'close', color: 'white' }]
                     })
                     return
                 }
                 await this.$svc.config.node.save([...this.nodes, val])
+                this.$q.notify({
+                    type: 'positive',
+                    message: 'Node added!',
+                    timeout: 5000,
+                    actions: [{ icon: 'close', color: 'white' }]
+                })
             })
         },
         onDelete(val: M.Node) {
@@ -145,6 +152,12 @@ export default Vue.extend({
             }).onOk(async () => {
                 const nodes = this.nodes.filter(n => !(n.genesis.id === val.genesis.id && n.url === val.url))
                 await this.$svc.config.node.save(nodes)
+                this.$q.notify({
+                    type: 'info',
+                    message: 'Node deleted!',
+                    timeout: 5000,
+                    actions: [{ icon: 'close', color: 'white' }]
+                })
             })
         }
     },

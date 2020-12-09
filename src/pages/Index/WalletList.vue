@@ -88,7 +88,7 @@ export default Vue.extend({
             switch (this.$svc.bc(gid).net) {
                 case 'main': return this.$t('common.network_mainnet').toString()
                 case 'test': return this.$t('common.network_testnet').toString()
-                default: return this.$t('common.network_private').toString() + `(${gid.slice(-6)})`
+                default: return this.$t('common.network_private').toString() + `-${gid.slice(-6)}`
             }
         }
     }
