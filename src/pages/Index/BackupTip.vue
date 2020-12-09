@@ -7,16 +7,16 @@
                 rounded
                 class="bg-warning text-white q-mx-sm q-mb-sm"
             >
-                Backup allows you to regain wallet access if you lose this device.
+            {{$t('index.msg_backupTip')}}
                 <template v-slot:action>
                     <q-btn
                         flat
-                        label="Dismiss"
+                        :label="$t('index.action_backupTip_dismiss')"
                         @click="show=false"
                     />
                     <q-btn
                         flat
-                        label="Backup"
+                        :label="$t('index.action_backupTip_backup')"
                         :to="{name: 'backup'}"
                     />
                 </template>

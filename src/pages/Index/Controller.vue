@@ -89,21 +89,21 @@ export default Vue.extend({
             const addressFull = wallet.meta.addresses.length >= MAX_ADDRESS
             this.$actionSheets([
                 {
-                    label: 'New Account',
+                    label: this.$t('index.action_newAccount').toString(),
                     onClick: addressFull ? undefined : () => this.newAccount(),
                     classes: addressFull ? 'text-grey' : ''
                 },
                 {
-                    label: 'Backup',
+                    label: this.$t('index.action_backup').toString(),
                     onClick: () => this.$router.push({ name: 'backup' })
                 },
                 {
-                    label: 'Rename',
+                    label: this.$t('index.action_rename').toString(),
                     onClick: () => this.rename()
                 },
                 { label: '-' }, // separator
                 {
-                    label: 'Delete',
+                    label: this.$t('index.action_remove').toString(),
                     classes: 'text-negative',
                     onClick: () => this.delete()
                 }
@@ -141,8 +141,8 @@ export default Vue.extend({
                 return
             }
             this.$q.dialog({
-                title: 'Rename',
-                message: 'Wallet name helps you quickly identify the wallet.',
+                title: this.$t('index.dialog_rename_title').toString(),
+                message: this.$t('index.dialog_rename_msg').toString(),
                 prompt: {
                     model: '',
                     isValid: (val: string) => { return !!val && !!val.trim() },
@@ -150,14 +150,14 @@ export default Vue.extend({
                 },
                 cancel: true,
                 ok: {
-                    label: 'Save'
+                    label: this.$t('common.confirm').toString()
                 }
             }).onOk((data: string) => {
                 wallet.meta.name = data
                 this.$storage.wallets.update({ id: wallet.id }, {
                     meta: JSON.stringify(wallet.meta)
                 }).then(() => {
-                    this.$q.notify('Wallet updated')
+                    this.$q.notify(this.$t('notify.msg_reanmeComplete'))
                 })
             })
         },
@@ -167,14 +167,14 @@ export default Vue.extend({
                 return
             }
             this.$q.dialog({
-                title: 'Delete Wallet',
-                message: 'Are you sure? this cannot be undone. Unless you have backed up your wallet beforehand',
+                title: this.$t('index.dialog_remove_title').toString(),
+                message: this.$t('index.dialog_remove_msg').toString(),
                 ok: {
-                    label: 'Delete',
+                    label: this.$t('common.yes').toString(),
                     color: 'negative'
                 },
                 cancel: {
-                    label: 'Cancel',
+                    label: this.$t('common.no').toString(),
                     flat: true
                 }
             }).onOk(async () => {

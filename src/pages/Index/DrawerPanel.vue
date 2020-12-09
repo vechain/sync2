@@ -16,7 +16,7 @@
         <div class="col">
             <slot />
         </div>
-        <!-- drawer content footer -->
+        <!-- drawer content footer --> 
         <q-list>
             <q-item :to="{name: 'settings'}">
                 <q-item-section avatar>
@@ -25,7 +25,7 @@
                         name="settings"
                     />
                 </q-item-section>
-                <q-item-section>Settings</q-item-section>
+                <q-item-section>{{$t('index.action_settings')}}</q-item-section>
             </q-item>
             <q-item :to="{name: 'activities'}">
                 <q-item-section avatar>
@@ -34,7 +34,7 @@
                         name="history"
                     />
                 </q-item-section>
-                <q-item-section>Activities</q-item-section>
+                <q-item-section>{{$t('index.action_activities')}}</q-item-section>
             </q-item>
         </q-list>
         <span class="full-width text-center text-grey text-caption">{{version}}</span>
