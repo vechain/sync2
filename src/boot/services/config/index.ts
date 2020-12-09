@@ -1,5 +1,5 @@
 import { Storage } from 'core/storage'
-import { delegateTable } from './utils'
+import { delegateTable } from '../utils'
 import { genesises } from 'src/consts'
 import { TokenRegistry } from './token-registry'
 
