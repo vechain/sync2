@@ -24,7 +24,7 @@
                     v-if="i === 0 || wallet.gid !== sortedWallets[i-1].gid"
                     :key="wallet.id + '-' + 'section'"
                 >
-                    {{wallet.gid | net}} net
+                    {{networkName(wallet.gid)}}
                 </q-item-label>
                 <q-item
                     :key="wallet.id"
@@ -86,6 +86,13 @@ export default Vue.extend({
                 component: WalletGenerateDialog,
                 type
             })
+        },
+        networkName(gid: string) {
+            switch (this.$svc.bc(gid).net) {
+                case 'main': return this.$t('common.network_mainnet').toString()
+                case 'test': return this.$t('common.network_testnet').toString()
+                default: return this.$t('common.network_private').toString() + `(${gid.slice(-6)})`
+            }
         }
     }
 })
