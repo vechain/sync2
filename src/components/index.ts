@@ -19,8 +19,6 @@ import BalanceList from './BalanceList.vue'
 import Priority from './Priority.vue'
 import Delay from './Delay'
 import TokenSelector from './TokenSelector.vue'
-import LogItem from './LogItem.vue'
-import Logs from './Logs.vue'
 import AddressInfo from './AddressInfo.vue'
 import TxActivityUpdate from './TxActivityUpdate'
 import InputPinCode from './InputPinCode.vue'
@@ -50,8 +48,6 @@ const components: { [name: string]: Vue.VueConstructor } = {
     Delay,
     BalanceList,
     TokenSelector,
-    LogItem,
-    Logs,
     AddressInfo,
     TxActivityUpdate,
     InputPinCode,
