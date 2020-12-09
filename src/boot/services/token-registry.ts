@@ -40,7 +40,7 @@ export namespace TokenRegistry {
     export async function fetch(): Promise<TokenRegistry> {
         const nets = ['main', 'test']
         const result = await Promise.all(nets.map(async net => {
-            const resp = await axios.get(`${url}${net}.json`, { transformResponse: data => data })
+            const resp = await axios.get(`${url}${net}.json`, { transformResponse: data => data, timeout: 30 * 1000 })
             return (JSON.parse(resp.data) as TokenRegistry.Entity[]).filter(t => t.symbol !== 'VTHO')
         }))
         return {
