@@ -20,7 +20,8 @@
         </PageToolbar>
         <upgrade-tip v-if="$state.app.updated" />
         <backup-tip
-            v-if="wallet && !wallet.meta.backedUp"
+            v-if="wallet"
+            :wallet="wallet"
             class="self-center"
         />
         <address-card-list
