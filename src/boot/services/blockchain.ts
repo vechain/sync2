@@ -75,10 +75,10 @@ function createPool(resolveNode: (gid: string) => M.Node) {
 function serve(gid: string, pool: ReturnType<typeof createPool>) {
     return {
         get thor() { return pool.get(gid).thor },
-        balanceOf(addr: string, spec: M.TokenSpec | 'vet' | 'vtho') {
-            if (spec === 'vet') {
+        balanceOf(addr: string, spec: M.TokenSpec) {
+            if (spec.symbol === 'VET') {
                 return this.thor.account(addr).get().then(a => a.balance)
-            } else if (spec === 'vtho') {
+            } else if (spec.symbol === 'VTHO') {
                 return this.thor.account(addr).get().then(a => a.energy)
             } else {
                 return this.thor.account(spec.address)
