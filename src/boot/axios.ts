@@ -8,5 +8,5 @@ declare module 'vue/types/vue' {
 }
 
 export default boot(({ Vue }) => {
-    Vue.prototype.$axios = axios
+    Vue.prototype.$axios = axios.create({ timeout: 30 * 1000 })
 })
