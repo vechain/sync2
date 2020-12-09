@@ -2,6 +2,7 @@
     <q-dialog
         ref="dialog"
         @hide="$emit('hide')"
+        no-backdrop-dismiss
     >
         <q-card class="column full-width no-wrap">
             <q-card-section>
@@ -13,15 +14,15 @@
                         :error-message="error"
                         v-model="url"
                         autocomplete="off"
-                        :rules="[validateUrl]"
                         no-error-icon
+                        :disable="loading"
                     />
                     <div class="text-right q-mt-md">
                         <q-btn
+                            v-close-popup
                             flat
                             class="q-mr-md"
                             label="Cancel"
-                            @click="hide"
                         />
                         <q-btn
                             flat
@@ -39,6 +40,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { QDialog } from 'quasar'
+
 export default Vue.extend({
     data() {
         return {
@@ -46,6 +48,10 @@ export default Vue.extend({
             loading: false,
             error: ''
         }
+    },
+    watch: {
+        url() { this.error = '' },
+        '$stack.scoped'() { this.hide() }
     },
     methods: {
         // method is REQUIRED by $q.dialog
@@ -56,27 +62,32 @@ export default Vue.extend({
             this.$emit('ok', result)
             this.hide()
         },
-        validateUrl(url: string) {
-            let result = false
-            if (url.startsWith('http')) {
-                try {
-                    const temp = new URL(url)
-                    result = !!temp
-                } catch (error) { }
+
+        async onSubmit() {
+            this.error = ''
+            try {
+                const urlObj = new URL(this.url)
+                if (!['http:', 'https:'].includes(urlObj.protocol)) {
+                    this.error = 'Invalid URL: unsupported protocol'
+                    return
+                }
+            } catch (err) {
+                this.error = err.message
+                return
             }
 
-            return result || 'Invalid Url'
-        },
-        onSubmit() {
-            this.error = ''
             this.loading = true
-            this.$axios.get(`${this.url}/blocks/0`).then(r => {
-                this.ok({ genesis: r.data, url: this.url })
-            }).catch(() => {
-                this.error = 'Something wrong'
-            }).finally(() => {
+            try {
+                const resp = await this.$axios.get('blocks/0', {
+                    baseURL: this.url
+                })
+                const node: M.Node = { genesis: resp.data, url: this.url }
+                this.ok(node)
+            } catch (err) {
+                this.error = err.message
+            } finally {
                 this.loading = false
-            })
+            }
         }
     }
 })

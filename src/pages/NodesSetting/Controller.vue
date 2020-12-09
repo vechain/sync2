@@ -46,11 +46,10 @@
                         </q-item-section>
                         <q-item-section side>
                             <q-btn
-                                size="12px"
+                                v-if="canDelete(node)"
                                 @click.prevent.stop="onDelete(node)"
                                 flat
                                 dense
-                                v-if="canDelete(node)"
                                 round
                                 icon="delete_forever"
                             />
@@ -63,7 +62,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import Add from './Add.vue'
+import AddDialog from './AddDialog.vue'
 import { genesises } from 'src/consts'
 import { count, groupBy } from 'src/utils/array'
 
@@ -120,9 +119,9 @@ export default Vue.extend({
         },
         onAdd() {
             this.$q.dialog({
-                component: Add
-            }).onOk(async (infos: { genesis: Connex.Thor.Block, url: string }) => {
-                if (this.nodes.find(n => n.genesis.id === infos.genesis.id && n.url === infos.url)) {
+                component: AddDialog
+            }).onOk(async (val: M.Node) => {
+                if (this.nodes.find(n => n.genesis.id === val.genesis.id && n.url === val.url)) {
                     this.$q.notify({
                         type: 'warning',
                         message: 'Node already exists!',
@@ -130,14 +129,7 @@ export default Vue.extend({
                     })
                     return
                 }
-
-                const nodes = [...this.nodes]
-                nodes.push({
-                    genesis: infos.genesis,
-                    preset: false,
-                    url: infos.url
-                })
-                await this.$svc.config.node.save(nodes)
+                await this.$svc.config.node.save([...this.nodes, val])
             })
         },
         onDelete(val: M.Node) {
@@ -146,12 +138,10 @@ export default Vue.extend({
                 message: 'Are you sure?',
                 ok: {
                     label: 'Delete',
-                    color: 'negative'
-                },
-                cancel: {
-                    label: 'Cancel',
+                    color: 'negative',
                     flat: true
-                }
+                },
+                cancel: true
             }).onOk(async () => {
                 const nodes = this.nodes.filter(n => !(n.genesis.id === val.genesis.id && n.url === val.url))
                 await this.$svc.config.node.save(nodes)
