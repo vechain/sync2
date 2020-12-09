@@ -35,7 +35,7 @@
                         <TokenItem
                             :token="token"
                             :balance="data"
-                            @click="onTokenClick"
+                            @click="onTokenClick(token.symbol)"
                         />
                         <q-separator
                             v-if="index !== tokenList.length - 1"
@@ -119,7 +119,7 @@ export default Vue.extend({
             this.$router.push({
                 name: 'account-transfer-logs',
                 query: {
-                    wId: this.wid,
+                    wid: this.wid,
                     i: this.i,
                     symbol: sym
                 }
