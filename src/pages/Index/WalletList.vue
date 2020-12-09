@@ -1,7 +1,7 @@
 <template>
     <div class="column fit">
         <q-item>
-            <q-item-section>Wallets</q-item-section>
+            <q-item-section>{{$t('index.label_wallets')}}</q-item-section>
             <q-item-section side>
                 <q-btn
                     flat
