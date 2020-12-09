@@ -1,6 +1,6 @@
 import { Framework } from '@vechain/connex-framework'
 import { DriverNoVendor, SimpleNet } from '@vechain/connex-driver'
-import { abis } from 'src/consts'
+import { abis, genesises } from 'src/consts'
 import Vue from 'vue'
 
 function createPool(resolveNode: (gid: string) => M.Node) {
@@ -75,6 +75,13 @@ function createPool(resolveNode: (gid: string) => M.Node) {
 function serve(gid: string, pool: ReturnType<typeof createPool>) {
     return {
         get thor() { return pool.get(gid).thor },
+        get net() {
+            switch (gid) {
+                case genesises.main.id: return 'main'
+                case genesises.test.id: return 'test'
+                default: return 'private'
+            }
+        },
         balanceOf(addr: string, spec: M.TokenSpec) {
             if (spec.symbol === 'VET') {
                 return this.thor.account(addr).get().then(a => a.balance)
