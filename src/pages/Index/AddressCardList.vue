@@ -39,7 +39,7 @@ export default Vue.extend({
             this.$router.push({
                 name: 'account',
                 query: {
-                    wId: this.wallet.id.toString(),
+                    wid: this.wallet.id.toString(),
                     i: index.toString()
                 }
             })

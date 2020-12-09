@@ -21,7 +21,6 @@ import Delay from './Delay'
 import TokenSelector from './TokenSelector.vue'
 import LogItem from './LogItem.vue'
 import Logs from './Logs.vue'
-import ReceiveDialog from './ReceiveDialog.vue'
 import AddressInfo from './AddressInfo.vue'
 import TxActivityUpdate from './TxActivityUpdate'
 import InputPinCode from './InputPinCode.vue'
@@ -53,7 +52,6 @@ const components: { [name: string]: Vue.VueConstructor } = {
     TokenSelector,
     LogItem,
     Logs,
-    ReceiveDialog,
     AddressInfo,
     TxActivityUpdate,
     InputPinCode,
