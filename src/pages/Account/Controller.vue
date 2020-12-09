@@ -28,14 +28,14 @@
             <q-list>
                 <template v-for="(token, index) in tokenList">
                     <resolve
-                        :promise="$svc.bc(wallet.gid).balanceOf(address, token)"
+                        :promise="$svc.bc(token.gid).balanceOf(address, token)"
                         v-slot="{data}"
                         :key="token.symbol"
                     >
                         <TokenItem
                             :token="token"
                             :balance="data"
-                            @click="onTokeClick"
+                            @click="onTokenClick"
                         />
                         <q-separator
                             v-if="index !== tokenList.length - 1"
@@ -101,7 +101,7 @@ export default Vue.extend({
                         this.$svc.config.token.activeSymbols()
                     ]
                 )
-                return tokens.filter(token => token.gid === w!.gid && activeSymbols.includes(token.symbol))
+                return tokens.filter(token => token.gid === w!.gid && (activeSymbols.includes(token.symbol) || token.permanent))
             },
             default: []
         }
