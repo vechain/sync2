@@ -3,11 +3,6 @@
         @load="onLoad"
         :offset="0"
     >
-        <ConnexContinuous
-            @data="onNewLogs"
-            :connex="connex"
-            :query="() => fetchRecent()"
-        />
         <div
             v-for="(item, index) in logs"
             :key="index"
@@ -38,17 +33,18 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import { vetTransfers, tokenTransfers } from '../components/queries'
+import { vetTransfers, tokenTransfers } from './queries'
+import LogItem from './LogItem.vue'
 
 export default Vue.extend({
+    components: {
+        LogItem
+    },
     props: {
         connex: Object as () => Connex,
         pageSize: Number,
         address: String,
-        tokens: {
-            type: Array as () => M.TokenSpec[],
-            default: null
-        }
+        tokens: Array as () => M.TokenSpec[]
     },
     data() {
         return {
@@ -59,8 +55,37 @@ export default Vue.extend({
             splitBlock: null as unknown as number
         }
     },
+    asyncComputed: {
+        recentList: {
+            async get() {
+                let on = true
+                let list: M.TransferLog[] = []
+                const from = (this.logs.length ? this.logs[0].meta.blockNumber : this.splitBlock) + 1
+                const to = this.$svc.bc(this.gid).thor.status.head.number
+                while (on) {
+                    const r = await this.query(from, to, list.length)
+                    on = r.length === this.pageSize
+                    list = [...list, ...r]
+                }
+                return list
+            },
+            default: []
+        }
+    },
+    computed: {
+        gid() {
+            return this.tokens && this.tokens[0].gid
+        }
+    },
     created() {
-        this.splitBlock = this.connex.thor.status.head.number
+        this.splitBlock = this.$svc.bc(this.gid).thor.status.head.number
+    },
+    watch: {
+        recentList(data: M.TransferLog[]) {
+            if (data.length) {
+                this.logs = [...data, ...this.logs]
+            }
+        }
     },
     methods: {
         vetTransfers,
@@ -69,18 +94,6 @@ export default Vue.extend({
             if (data.length) {
                 this.logs = [...data, ...this.logs]
             }
-        },
-        async fetchRecent() {
-            let on = true
-            let list: M.TransferLog[] = []
-            const from = (this.logs.length ? this.logs[0].meta.blockNumber : this.splitBlock) + 1
-            const to = this.connex.thor.status.head.number
-            while (on) {
-                const r = await this.query(from, to, list.length)
-                on = r.length === this.pageSize
-                list = [...list, ...r]
-            }
-            return list
         },
         async onLoad(index: number, done: (stop: boolean) => void) {
             try {
@@ -96,10 +109,13 @@ export default Vue.extend({
             }
         },
         async query(fb: number, tb: number, offset: number) {
-            if (this.tokens) {
-                return await this.tokenTransfers(this.connex, this.tokens, this.address, fb, tb, offset, this.pageSize)
+            if (fb >= tb) {
+                return []
+            }
+            if (this.tokens && this.tokens[0].symbol !== 'VET') {
+                return await this.tokenTransfers(this.$svc.bc(this.gid).thor, this.tokens, this.address, fb, tb, offset, this.pageSize)
             } else {
-                return await this.vetTransfers(this.connex, this.address, fb, tb, offset, this.pageSize)
+                return await this.vetTransfers(this.$svc.bc(this.gid).thor, this.tokens[0], this.address, fb, tb, offset, this.pageSize)
             }
         }
     }
