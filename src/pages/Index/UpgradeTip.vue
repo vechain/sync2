@@ -9,12 +9,12 @@
         <template v-slot:avatar>
             <q-icon name="upgrade" />
         </template>
-        New version is ready :)
+        {{$t('index.msg_upgrade')}}
         <template v-slot:action>
             <q-btn
                 @click="reloadApp"
                 flat
-                label="Upgrade Now"
+                :label="$t('index.action_upgrade')"
             />
         </template>
     </q-banner>

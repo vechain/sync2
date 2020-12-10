@@ -7,16 +7,16 @@
                 rounded
                 class="bg-warning text-white q-mx-sm q-mb-sm"
             >
-                {{$t('index.msg_backupTip')}}
+                {{$t('index.msg_backup')}}
                 <template v-slot:action>
                     <q-btn
                         flat
-                        :label="$t('index.action_backupTip_dismiss')"
+                        :label="$t('common.dismiss')"
                         @click="$set(dismissed, wallet.id, true)"
                     />
                     <q-btn
                         flat
-                        :label="$t('index.action_backupTip_backup')"
+                        :label="$t('index.action_backup')"
                         :to="{name: 'backup'}"
                     />
                 </template>
