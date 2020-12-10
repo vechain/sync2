@@ -25,7 +25,7 @@ export function newVault(salt: Buffer, entity: Entity): Vault {
         },
         clone: async (password, newPassword) => {
             if (!entity.cipherGlob) {
-                throw new Error('unsupported operation')
+                return newVault(salt, { ...entity })
             }
             const key = await decrypt(entity.cipherGlob, password, salt)
             return newVault(salt, {
