@@ -1,12 +1,24 @@
 import { Storage } from 'core/storage'
 import Vue from 'vue'
 
+function cleanKeys<T>(target: T, src: object) {
+    for (const tk in target) {
+        if (!(tk in src)) {
+            delete (target as Record<string, unknown>)[tk]
+        }
+    }
+    return target
+}
+
 /** make the table reactive on table change and auto transform entity from/to model */
 export function delegateTable<E extends Storage.Entity, M extends Storage.Entity>(
     table: Storage.Table<E>,
-    e2m: (e: E) => M,
-    m2e: (m: Partial<M>) => Partial<E>
+    _e2m: (e: E) => M,
+    _m2e: (m: Partial<M>) => Partial<E>
 ) {
+    const e2m = (e: E) => cleanKeys(_e2m(e), e)
+    const m2e = (m: Partial<M>) => cleanKeys(_m2e(m), m)
+
     const reactor = Vue.observable({ v: 0 })
     void (async () => {
         const ob = table.observe()
