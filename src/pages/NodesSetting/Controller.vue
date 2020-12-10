@@ -102,9 +102,9 @@ export default Vue.extend({
         networkName(val: M.Node) {
             const gid = val.genesis.id
             switch (this.$svc.bc(gid).net) {
-                case 'main': return this.$t('common.network_mainnet').toString()
-                case 'test': return this.$t('common.network_testnet').toString()
-                default: return this.$t('common.network_private').toString() + `-${gid.slice(-6)}`
+                case 'main': return this.$t('common.mainnet').toString()
+                case 'test': return this.$t('common.testnet').toString()
+                default: return this.$t('common.private').toString() + `-${gid.slice(-6)}`
             }
         },
         canDelete(val: M.Node) {

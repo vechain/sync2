@@ -74,8 +74,8 @@ export default Vue.extend({
     methods: {
         onClickAddWallet() {
             this.$actionSheets([
-                { label: 'Create Wallet', onClick: () => { this.openGenerateDialog('create') } },
-                { label: 'Import Wallet', onClick: () => { this.openGenerateDialog('import') } }
+                { label: this.$t('index.action_create').toString(), onClick: () => { this.openGenerateDialog('create') } },
+                { label: this.$t('index.action_import').toString(), onClick: () => { this.openGenerateDialog('import') } }
             ])
         },
         openGenerateDialog(type: 'import' | 'create') {
@@ -87,9 +87,9 @@ export default Vue.extend({
         },
         networkName(gid: string) {
             switch (this.$svc.bc(gid).net) {
-                case 'main': return this.$t('common.network_mainnet').toString()
-                case 'test': return this.$t('common.network_testnet').toString()
-                default: return this.$t('common.network_private').toString() + `-${gid.slice(-6)}`
+                case 'main': return this.$t('common.mainnet').toString()
+                case 'test': return this.$t('common.testnet').toString()
+                default: return this.$t('common.private').toString() + `-${gid.slice(-6)}`
             }
         }
     }

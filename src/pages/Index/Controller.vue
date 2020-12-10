@@ -90,7 +90,7 @@ export default Vue.extend({
             const addressFull = wallet.meta.addresses.length >= MAX_ADDRESS
             this.$actionSheets([
                 {
-                    label: this.$t('index.action_newAccount').toString(),
+                    label: this.$t('index.action_new_account').toString(),
                     onClick: addressFull ? undefined : () => this.newAccount(),
                     classes: addressFull ? 'text-grey' : ''
                 },
@@ -104,7 +104,7 @@ export default Vue.extend({
                 },
                 { label: '-' }, // separator
                 {
-                    label: this.$t('index.action_remove').toString(),
+                    label: this.$t('common.delete').toString(),
                     classes: 'text-negative',
                     onClick: () => this.delete()
                 }
@@ -143,8 +143,8 @@ export default Vue.extend({
             }
             this.$q.dialog({
                 parent: this,
-                title: this.$t('index.dialog_rename_title').toString(),
-                message: this.$t('index.dialog_rename_msg').toString(),
+                title: this.$t('index.action_rename').toString(),
+                message: this.$t('index.msg_rename').toString(),
                 prompt: {
                     model: '',
                     isValid: (val: string) => { return !!val && !!val.trim() },
@@ -159,7 +159,7 @@ export default Vue.extend({
                 this.$storage.wallets.update({ id: wallet.id }, {
                     meta: JSON.stringify(wallet.meta)
                 }).then(() => {
-                    this.$q.notify(this.$t('notify.msg_reanmeComplete'))
+                    this.$q.notify(this.$t('common.wallet_updated'))
                 })
             })
         },
@@ -170,8 +170,8 @@ export default Vue.extend({
             }
             this.$q.dialog({
                 parent: this,
-                title: this.$t('index.dialog_remove_title').toString(),
-                message: this.$t('index.dialog_remove_msg').toString(),
+                title: this.$t('common.delete').toString(),
+                message: this.$t('index.msg_delete').toString(),
                 ok: {
                     label: this.$t('common.yes').toString(),
                     color: 'negative'
