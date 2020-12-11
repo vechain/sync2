@@ -1,5 +1,6 @@
 <template>
-    <q-item
+    <div />
+    <!-- <q-item
         :clickable="isSelectable"
     >
         <connex-continuous
@@ -69,36 +70,36 @@
                 </q-card-section>
             </q-card>
         </q-popup-proxy>
-    </q-item>
+    </q-item> -->
 </template>
 <script lang="ts">
 import Vue from 'vue'
 export default Vue.extend({
-    model: {
-        prop: 'current',
-        event: 'change'
-    },
-    props: {
-        connex: Object as () => Connex,
-        wallets: Array as () => M.Wallet[],
-        isSelectable: Boolean,
-        current: String
-    },
-    data() {
-        return {
-            show: false,
-            signer: this.current || this.wallets[0].meta.addresses[0],
-            currentAccountTab: ''
-        }
-    },
-    methods: {
-        AccountTabChange(account: string) {
-            this.currentAccountTab = account
-        },
-        signerChange(account: string) {
-            this.$emit('change', account)
-            this.show = false
-        }
-    }
+    // model: {
+    //     prop: 'current',
+    //     event: 'change'
+    // },
+    // props: {
+    //     connex: Object as () => Connex,
+    //     wallets: Array as () => M.Wallet[],
+    //     isSelectable: Boolean,
+    //     current: String
+    // },
+    // data() {
+    //     return {
+    //         show: false,
+    //         signer: this.current || this.wallets[0].meta.addresses[0],
+    //         currentAccountTab: ''
+    //     }
+    // },
+    // methods: {
+    //     AccountTabChange(account: string) {
+    //         this.currentAccountTab = account
+    //     },
+    //     signerChange(account: string) {
+    //         this.$emit('change', account)
+    //         this.show = false
+    //     }
+    // }
 })
 </script>

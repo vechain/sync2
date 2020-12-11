@@ -1,6 +1,4 @@
 import StackedRouterView from './StackedRouterView.vue'
-import ConnexObject from './ConnexObject'
-import ConnexContinuous from './ConnexContinuous'
 import PinCode from './PinCode.vue'
 import ConfirmedPinCodeInput from './ConfirmedPinCodeInput.vue'
 import SlideContainer from './SlideContainer.vue'
@@ -9,7 +7,6 @@ import Intersecting from './Intersecting.vue'
 import DigitKeypad from './DigitKeypad.vue'
 import QRCode from './QRCode.vue'
 import TokenBalanceItem from './TokenBalanceItem.vue'
-import Async from './Async'
 import ClauseCard from './ClauseCard'
 import SlideBtn from './SlideBtn.vue'
 import AddressAvatar from './AddressAvatar.vue'
@@ -27,8 +24,6 @@ import Resolve from './Resolve'
 
 const components: { [name: string]: Vue.VueConstructor } = {
     StackedRouterView,
-    ConnexObject,
-    ConnexContinuous,
     PinCode,
     ConfirmedPinCodeInput,
     SlideContainer,
@@ -37,7 +32,6 @@ const components: { [name: string]: Vue.VueConstructor } = {
     DigitKeypad,
     QRCode,
     TokenBalanceItem,
-    Async,
     ClauseCard,
     SlideBtn,
     AddressAvatar,

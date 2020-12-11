@@ -61,7 +61,6 @@
                             <AccountSelector
                                 v-model="signer"
                                 :wallets="wallets"
-                                :connex="connex"
                                 v-slot="{address}"
                                 :isSelectable="!isEnforced"
                             >

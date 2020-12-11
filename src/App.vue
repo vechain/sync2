@@ -9,7 +9,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { listen } from 'core/connex/external-url'
+import { listen } from 'src/utils/external-url'
 
 export default Vue.extend({
     methods: {
