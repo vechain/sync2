@@ -24,6 +24,9 @@ export function build(storage: Storage) {
     return {
         uncompleted() {
             return t.all().except({ status: 'completed' }).query()
+        },
+        page(count: number, offset: number) {
+            return t.all().limit(count, offset).query()
         }
     }
 }

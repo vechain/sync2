@@ -22,7 +22,7 @@ export function build(storage: Storage) {
         e => e,
         m => m
     )
-    type Key = 'nodes' | 'activeNodeMap' | 'passwordShadow' | 'tokenRegistry' | 'activeTokenSymbols' | 'recentContact' | 'currentWalletId'
+    type Key = 'nodes' | 'activeNodeMap' | 'passwordShadow' | 'tokenRegistry' | 'activeTokenSymbols' | 'recentRecipients'
     const get = async (key: Key) => {
         const row = (await t.all().where({ key }).query())[0]
         return row ? row.value : ''
@@ -96,6 +96,15 @@ export function build(storage: Storage) {
     }
     return {
         get node() { return node },
-        get token() { return token }
+        get token() { return token },
+        getPasswordShadow() {
+            return get('passwordShadow')
+        },
+        savePasswordShadow(val: string) {
+            return set('passwordShadow', val)
+        },
+        getRecentRecipients() {
+            return get('recentRecipients').then(r => JSON.parse(r || '[]') as string[])
+        }
     }
 }
