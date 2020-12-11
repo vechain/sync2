@@ -74,25 +74,6 @@ const paramsGet: abi.Function.Definition = {
     type: 'function'
 }
 
-const VTHO: M.TokenSpec = {
-    symbol: 'VTHO',
-    name: 'VeChain Thor',
-    address: '0x0000000000000000000000000000456e65726779',
-    decimals: 18,
-    desc: 'Represents the underlying cost of using VeChainThor',
-    icon: '3ac553ea77911248ab4519bca020e0aa2891a6c6.png',
-    totalSupply: ''
-}
-const VET: M.TokenSpec = {
-    symbol: 'VET',
-    name: 'VeChain',
-    address: '',
-    decimals: 18,
-    desc: '',
-    icon: '',
-    totalSupply: ''
-}
-
 export const abis = {
     transfer: transferABI,
     balanceOf: vip180balanceOf,
@@ -100,12 +81,7 @@ export const abis = {
     transferEvent
 }
 
-export const tokenSpecs = {
-    VTHO, VET
-}
-
 export const urls = {
-    get tokenRegistry() { return 'https://vechain.github.io/token-registry/' },
     get explorerMain() {
         return 'http://explore.vechain.org/'
     },

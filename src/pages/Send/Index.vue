@@ -1,6 +1,6 @@
 <template>
     <div class="column fit">
-        <page-toolbar title="Send" />
+        <!-- <page-toolbar title="Send" />
         <div class="col no-wrap">
             <div
                 style="max-width: 500px"
@@ -120,153 +120,140 @@
                     label="Done"
                 />
             </div>
-        </div>
+        </div> -->
     </div>
 </template>
-
 <script lang="ts">
 import Vue from 'vue'
-import { tokenBalanceOf } from 'components/queries'
-import { abi } from 'thor-devkit'
-import { tokenSpecs, abis } from '../../consts'
-import { copyToClipboard } from 'quasar'
-import To from './To.vue'
+// import { tokenBalanceOf } from 'components/queries'
+// import { abi } from 'thor-devkit'
+// import { abis } from '../../consts'
+// import { copyToClipboard } from 'quasar'
+// import To from './To.vue'
+// import { AddressGroup } from './models'
 
 export default Vue.extend({
-    components: {
-        To
-    },
-    props: {
-        wId: String,
-        i: String,
-        defaultSymbol: String
-    },
-    data() {
-        return {
-            to: '',
-            amount: '',
-            symbol: this.defaultSymbol || 'VET',
-            amountError: '',
-            txInfo: null as unknown as { id: string, comment: string }
-        }
-    },
-    computed: {
-        wallet(): M.Wallet | undefined {
-            return this.$state.wallet.list.find(i => {
-                return i.id === parseInt(this.wId, 10)
-            })
-        },
-        wallets(): {
-            name: string,
-            id: number,
-            addresses: string[]
-        }[] {
-            return this.$state.wallet.list.filter(i => {
-                return i.gid === this.wallet?.gid
-            }).map(w => {
-                return {
-                    name: w.meta.name,
-                    id: w.id,
-                    addresses: w.meta.addresses
-                }
-            })
-        },
-        recentList(): string[] {
-            return this.$state.config.recent.addresses
-        },
-        addressIndex(): number {
-            return parseInt(this.i, 10)
-        },
-        gid(): string {
-            return this.wallet!.gid
-        },
-        from(): string {
-            return this.wallet!.meta.addresses[parseInt(this.i, 10)]
-        },
-        node(): M.Node {
-            return this.$state.config.node.list.find(n => n.genesis.id === this.gid)!
-        },
-        tokenSpecs(): M.TokenSpec[] {
-            return [...this.$state.config.token.specs(this.gid, true)]
-        },
-        currentToken(): M.TokenSpec | undefined {
-            if (this.symbol === 'VET') {
-                return tokenSpecs.VET
-            } else if (this.symbol === 'VTHO') {
-                return tokenSpecs.VTHO
-            } else {
-                return this.tokenSpecs.find(item => this.symbol === item.symbol)
-            }
-        },
-        balanceCheck(): (v: string) => boolean | string {
-            const regexp = new RegExp(`^(([1-9]{1}\\d*)|(0{1}))(\\.\\d{1,${this.currentToken!.decimals}})?$`)
-            return (val) => {
-                return regexp.test(val) || 'Invalide balance'
-            }
-        },
-        query(): (connex: Connex) => Promise<string> {
-            if (['VET', 'VTHO'].includes(this.symbol)) {
-                return async (connex: Connex) => {
-                    const account = await connex.thor.account(this.from).get()
-                    return this.symbol === 'VET' ? account.balance : account.energy
-                }
-            } else {
-                return (connex: Connex) => {
-                    return this.tokenBalanceOf(connex, this.from, this.currentToken!)
-                }
-            }
-        }
-    },
-    methods: {
-        tokenBalanceOf,
-        onSend() {
-            let msgItem!: Connex.Vendor.TxMessage[0]
-            let comment = ''
-            if (this.symbol === 'VET') {
-                comment = `Transferring ${this.amount} VET`
-                msgItem = {
-                    to: this.to,
-                    value: Vue.filter('toWei')(this.amount),
-                    comment
-                }
-            } else {
-                const func = new abi.Function(abis.transfer)
-                comment = `Transferring ${this.amount} ${this.symbol}`
-                const data = func.encode(this.to,
-                    Vue.filter('toWei')(this.amount, this.currentToken!.decimals))
-                msgItem = {
-                    to: this.currentToken!.address,
-                    value: 0,
-                    data: data,
-                    comment
-                }
-            }
-            this.$signTx(this.gid, {
-                message: [msgItem],
-                options: {
-                    signer: this.from,
-                    comment: comment
-                }
-            }).then((r) => {
-                this.txInfo = {
-                    id: r.txid,
-                    comment: comment
-                }
-                const temp = [this.to, ...this.recentList].reduce((result: string[], cv: string) => {
-                    !result.includes(cv.toLowerCase()) && result.push(cv.toLowerCase())
-                    return result
-                }, []).slice(0, 10)
+    // components: {
+    //     To
+    // },
+    // props: {
+    //     wid: String,
+    //     i: String,
+    //     defaultSymbol: String
+    // },
+    // data() {
+    //     return {
+    //         to: '',
+    //         amount: '',
+    //         symbol: this.defaultSymbol || 'VET',
+    //         amountError: '',
+    //         txInfo: null as unknown as { id: string, comment: string }
+    //     }
+    // },
+    // asyncComputed: {
+    //     wallet(): Promise<M.Wallet | null> {
+    //         return this.$svc.wallet.get(parseInt(this.wid))
+    //     },
+    //     recentRecipients: {
+    //         async get(): Promise<AddressGroup[]> {
+    //             if (!this.wallet) {
+    //                 return []
+    //             }
 
-                this.$state.config.set('recentContact', JSON.stringify(temp))
-            })
-        },
-        onCopy() {
-            copyToClipboard(this.txInfo.id).then(
-                () => {
-                    this.$q.notify('copied')
-                }
-            ).catch(console.error)
-        }
-    }
+    //             const [wallets, recent] = await Promise.all([
+    //                 this.$svc.wallet.getByGid(this.wallet.gid),
+    //                 this.$svc.config.getRecentRecipients()
+    //             ])
+    //             return [{
+    //                 name: 'Recent',
+    //                 list: recent
+    //             },
+    //             ...wallets.map<AddressGroup>(w => {
+    //                 return {
+    //                     name: w.meta.name,
+    //                     list: w.meta.addresses
+    //                 }
+    //             })]
+    //         },
+    //         default: []
+    //     }
+    //     // wallets(): Promise<M.Wallet[]> {
+    //     //     return this.$svc.wallet.all()
+    //     // }
+    // },
+    // computed: {
+    //     from(): string {
+    //         return this.wallet!.meta.addresses[parseInt(this.i, 10)]
+    //     },
+    //     balanceCheck(): (v: string) => boolean | string {
+    //         const regexp = new RegExp(`^(([1-9]{1}\\d*)|(0{1}))(\\.\\d{1,${this.currentToken!.decimals}})?$`)
+    //         return (val) => {
+    //             return regexp.test(val) || 'Invalide balance'
+    //         }
+    //     },
+    //     query(): (connex: Connex) => Promise<string> {
+    //         if (['VET', 'VTHO'].includes(this.symbol)) {
+    //             return async (connex: Connex) => {
+    //                 const account = await connex.thor.account(this.from).get()
+    //                 return this.symbol === 'VET' ? account.balance : account.energy
+    //             }
+    //         } else {
+    //             return (connex: Connex) => {
+    //                 return this.tokenBalanceOf(connex, this.from, this.currentToken!)
+    //             }
+    //         }
+    //     }
+    // },
+    // methods: {
+    //     tokenBalanceOf,
+    //     onSend() {
+    //         let msgItem!: Connex.Vendor.TxMessage[0]
+    //         let comment = ''
+    //         if (this.symbol === 'VET') {
+    //             comment = `Transferring ${this.amount} VET`
+    //             msgItem = {
+    //                 to: this.to,
+    //                 value: Vue.filter('toWei')(this.amount),
+    //                 comment
+    //             }
+    //         } else {
+    //             const func = new abi.Function(abis.transfer)
+    //             comment = `Transferring ${this.amount} ${this.symbol}`
+    //             const data = func.encode(this.to,
+    //                 Vue.filter('toWei')(this.amount, this.currentToken!.decimals))
+    //             msgItem = {
+    //                 to: this.currentToken!.address,
+    //                 value: 0,
+    //                 data: data,
+    //                 comment
+    //             }
+    //         }
+    //         this.$signTx(this.gid, {
+    //             message: [msgItem],
+    //             options: {
+    //                 signer: this.from,
+    //                 comment: comment
+    //             }
+    //         }).then((r) => {
+    //             this.txInfo = {
+    //                 id: r.txid,
+    //                 comment: comment
+    //             }
+    //             const temp = [this.to, ...this.recentList].reduce((result: string[], cv: string) => {
+    //                 !result.includes(cv.toLowerCase()) && result.push(cv.toLowerCase())
+    //                 return result
+    //             }, []).slice(0, 10)
+
+    //             this.$state.config.set('recentContact', JSON.stringify(temp))
+    //         })
+    //     },
+    //     onCopy() {
+    //         copyToClipboard(this.txInfo.id).then(
+    //             () => {
+    //                 this.$q.notify('copied')
+    //             }
+    //         ).catch(console.error)
+    //     }
+    // }
 })
 </script>

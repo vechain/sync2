@@ -1,22 +1,15 @@
 import { boot } from 'quasar/wrappers'
-import * as State from 'src/state'
+import * as State from './state'
+import * as Plugins from './plugins'
+
 import AuthenticationDialog from 'pages/AuthenticationDialog.vue'
-import { Storage } from 'core/storage'
 import { QSpinnerIos, DialogChainObject, QDialogOptions } from 'quasar'
-import AsyncComputed from 'vue-async-computed'
 import ActionSheets from 'pages/ActionSheets.vue'
 import TxSigningDialog from 'pages/TxSigningDialog.vue'
 import CertSigningDialog from 'pages/CertSigningDialog.vue'
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Fragment = require('vue-fragment')
-
 declare module 'vue/types/vue' {
     interface Vue {
-        $state: ReturnType<typeof State.build>
-
-        $storage: Storage
-
         /**
          * pop up the authentication dialog to ask user entering password,
          * then run the given task and return the result
@@ -86,12 +79,10 @@ const replaceDialog = (() => {
     }
 })()
 
-export default boot(async ({ Vue }) => {
-    Vue.use(AsyncComputed)
-    Vue.use(Fragment.Plugin)
+export default boot(({ Vue }) => {
+    State.boot()
+    Plugins.boot()
 
-    const state = State.build()
-    const storage = await Storage.init()
     let loadingCount = 0
 
     const delayedSpinner = Vue.component('DelayedSpinner', {
@@ -113,12 +104,6 @@ export default boot(async ({ Vue }) => {
     })
 
     Object.defineProperties(Vue.prototype, {
-        $state: {
-            get() { return state }
-        },
-        $storage: {
-            get() { return storage }
-        },
         $authenticate: {
             get(): Vue['$authenticate'] {
                 const vm = this as Vue

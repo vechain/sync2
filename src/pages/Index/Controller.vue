@@ -18,7 +18,7 @@
                 @click="onClickMenuBtn"
             />
         </PageToolbar>
-        <upgrade-tip v-if="$state.app.updated" />
+        <upgrade-tip v-if="$state.app.updateAvailable" />
         <backup-tip
             v-if="wallet"
             :wallet="wallet"
@@ -127,9 +127,7 @@ export default Vue.extend({
                     addresses: [...addresses, newAddress]
                 }
 
-                await this.$storage.wallets.update(
-                    { id: wallet.id },
-                    { meta: JSON.stringify(newMeta) })
+                await this.$svc.wallet.update(wallet.id, newMeta)
 
                 await new Promise(resolve => setTimeout(resolve, 300))
                 const list = this.$refs.list as Vue
@@ -155,9 +153,9 @@ export default Vue.extend({
                     label: this.$t('common.confirm').toString()
                 }
             }).onOk((data: string) => {
-                wallet.meta.name = data
-                this.$storage.wallets.update({ id: wallet.id }, {
-                    meta: JSON.stringify(wallet.meta)
+                this.$svc.wallet.update(wallet.id, {
+                    ...wallet.meta,
+                    name: data
                 }).then(() => {
                     this.$q.notify(this.$t('common.wallet_updated'))
                 })
@@ -184,7 +182,7 @@ export default Vue.extend({
                 await this.$authenticate(() => {
                     return Promise.resolve()
                 })
-                this.$storage.wallets.delete({ id: wallet.id })
+                await this.$svc.wallet.delete(wallet.id)
             })
         },
         handleDrawerTouchPan(ev: Record<string, unknown>) {

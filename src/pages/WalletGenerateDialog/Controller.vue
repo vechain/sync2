@@ -92,10 +92,15 @@ export default Vue.extend({
             default: () => 'create'
         }
     },
+    asyncComputed: {
+        nodes: {
+            get(): Promise<M.Node[]> {
+                return this.$svc.config.node.all()
+            },
+            default: []
+        }
+    },
     computed: {
-        nodes(): M.Node[] {
-            return this.$state.config.node.list
-        },
         title(): string {
             return `${this.type} wallet`
         },
@@ -131,10 +136,10 @@ export default Vue.extend({
                 addresses: [node0.address],
                 backedUp: false
             }
-            await this.$storage.wallets.insert({
+            await this.$svc.wallet.insert({
                 gid: this.gid,
                 vault: vault.encode(),
-                meta: JSON.stringify(meta)
+                meta
             })
         },
         async onSubmit() {

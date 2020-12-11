@@ -26,15 +26,9 @@
                 v-if="!isCompleted || status === 'sending'"
             >
                 <span v-if="status === 'sending'"> sending </span>
-                <ConnexObject
-                    v-else
-                    :node="node"
-                    v-slot="{connex}"
-                >
-                    <span v-if="connex">
-                        Confirming {{connex.thor.status.head.number - (tx.receipt && tx.receipt.meta.blockNumber)}} / 12
-                    </span>
-                </ConnexObject>
+                <span v-if="confirms>0">
+                    Confirming {{confirms}} / 12
+                </span>
             </q-item-label>
         </template>
     </Item>
@@ -51,11 +45,6 @@ export default Vue.extend({
         walletNames: Object as () => { [key: number]: string }
     },
     computed: {
-        node(): M.Node | undefined {
-            return this.$state.config.node.list.find(item => {
-                return item.genesis.id === this.activity.gid
-            })
-        },
         tx(): M.Activity.Tx {
             return this.activity.glob
         },
@@ -121,6 +110,12 @@ export default Vue.extend({
                 time: `Tx · ${Vue.filter('dateTime')(this.activity.createdTime)}`,
                 txId: this.tx.id
             }
+        },
+        confirms(): number {
+            if (!this.tx.receipt) {
+                return -1
+            }
+            return this.$svc.bc(this.activity.gid).thor.status.head.number - this.tx.receipt.meta.blockNumber
         }
     },
     methods: {

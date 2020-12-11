@@ -7,7 +7,7 @@
         transition-show="slide-up"
         transition-hide="slide-down"
     >
-        <q-card class="fit column no-wrap">
+        <!-- <q-card class="fit column no-wrap">
             <page-toolbar
                 title="Sign"
                 icon="close"
@@ -92,144 +92,144 @@
                     </div>
                 </template>
             </q-card-actions>
-        </q-card>
+        </q-card> -->
     </q-dialog>
 </template>
 
 <script lang="ts">
-import { QDialog } from 'quasar'
 import Vue from 'vue'
-import { Vault } from 'core/vault'
-import { Certificate, secp256k1, blake2b256 } from 'thor-devkit'
+// import { QDialog } from 'quasar'
+// import { Vault } from 'core/vault'
+// import { Certificate, secp256k1, blake2b256 } from 'thor-devkit'
 
 export default Vue.extend({
-    props: {
-        req: Object as () => M.CertRequest,
-        gid: String,
-        referer: Object as () => M.Referer
-    },
-    data() {
-        return {
-            signer: '',
-            signing: false
-        }
-    },
-    computed: {
-        node(): M.Node | null {
-            return this.$state.config.node.list.find(n => {
-                return n.genesis.id === this.gid
-            }) || null
-        },
-        wallets(): M.Wallet[] {
-            if (this.isEnforced) {
-                return this.$state.wallet.list.filter(item => {
-                    return item.gid === this.gid && item.meta.addresses.includes(this.req.options!.signer || '')
-                }).map(item => {
-                    return {
-                        ...item,
-                        meta: {
-                            ...item.meta,
-                            addresses: [this.req.options!.signer!]
-                        }
-                    }
-                })
-            } else {
-                return this.$state.wallet.list.filter(item => {
-                    return item.gid === this.gid
-                })
-            }
-        },
-        isEnforced(): boolean {
-            return !!(this.req.options && this.req.options.signer)
-        },
-        hasTheSigner(): boolean {
-            return this.addresses.includes(this.req.options!.signer!)
-        },
-        addresses(): string[] {
-            let addrList: string[] = []
-            this.wallets.forEach(wallet => {
-                addrList = [...addrList, ...wallet.meta.addresses]
-            })
-            return addrList
-        },
-        wallet(): M.Wallet | null {
-            return this.wallets.find((w: M.Wallet) => {
-                return w.meta.addresses.includes(this.signer)
-            }) || null
-        }
-    },
-    mounted() {
-        this.initData()
-    },
-    methods: {
-        initData() {
-            if (this.isEnforced) {
-                this.signer = this.hasTheSigner
-                    ? this.req.options!.signer!
-                    : ''
-            } else {
-                this.signer = this.wallets[0].meta.addresses[0]
-            }
-        },
-        // method is REQUIRED by $q.dialog
-        show() { (this.$refs.dialog as QDialog).show() },
-        // method is REQUIRED by $q.dialog
-        hide() { (this.$refs.dialog as QDialog).hide() },
-        ok(result: M.CertResponse) {
-            this.$emit('ok', result)
-            this.hide()
-        },
-        async sign(connex: Connex) {
-            try {
-                const pin = await this.$authenticate(pin => Promise.resolve(pin))
-                this.signing = true
-                if (this.wallet) {
-                    const vault = await Vault.decode(this.wallet.vault)
-                    const node = await vault.derive(this.wallet.meta.addresses.indexOf(this.signer))
-                    const privateKey = await node.unlock(pin)
-                    const annex = {
-                        signer: this.signer,
-                        timestamp: connex.thor.status.head.timestamp,
-                        domain: this.req.domain
-                    }
-                    const unsigned = Certificate.encode({
-                        ...this.req.message,
-                        ...annex
-                    })
-                    const signature = '0x' + secp256k1.sign(blake2b256(unsigned), privateKey).toString('hex')
-                    const id = '0x' + blake2b256(Certificate.encode({
-                        ...this.req.message,
-                        ...annex,
-                        signature: signature
-                    })).toString('hex')
+    // props: {
+    //     req: Object as () => M.CertRequest,
+    //     gid: String,
+    //     referer: Object as () => M.Referer
+    // },
+    // data() {
+    //     return {
+    //         signer: '',
+    //         signing: false
+    //     }
+    // },
+    // computed: {
+    //     node(): M.Node | null {
+    //         return this.$state.config.node.list.find(n => {
+    //             return n.genesis.id === this.gid
+    //         }) || null
+    //     },
+    //     wallets(): M.Wallet[] {
+    //         if (this.isEnforced) {
+    //             return this.$state.wallet.list.filter(item => {
+    //                 return item.gid === this.gid && item.meta.addresses.includes(this.req.options!.signer || '')
+    //             }).map(item => {
+    //                 return {
+    //                     ...item,
+    //                     meta: {
+    //                         ...item.meta,
+    //                         addresses: [this.req.options!.signer!]
+    //                     }
+    //                 }
+    //             })
+    //         } else {
+    //             return this.$state.wallet.list.filter(item => {
+    //                 return item.gid === this.gid
+    //             })
+    //         }
+    //     },
+    //     isEnforced(): boolean {
+    //         return !!(this.req.options && this.req.options.signer)
+    //     },
+    //     hasTheSigner(): boolean {
+    //         return this.addresses.includes(this.req.options!.signer!)
+    //     },
+    //     addresses(): string[] {
+    //         let addrList: string[] = []
+    //         this.wallets.forEach(wallet => {
+    //             addrList = [...addrList, ...wallet.meta.addresses]
+    //         })
+    //         return addrList
+    //     },
+    //     wallet(): M.Wallet | null {
+    //         return this.wallets.find((w: M.Wallet) => {
+    //             return w.meta.addresses.includes(this.signer)
+    //         }) || null
+    //     }
+    // },
+    // mounted() {
+    //     this.initData()
+    // },
+    // methods: {
+    //     initData() {
+    //         if (this.isEnforced) {
+    //             this.signer = this.hasTheSigner
+    //                 ? this.req.options!.signer!
+    //                 : ''
+    //         } else {
+    //             this.signer = this.wallets[0].meta.addresses[0]
+    //         }
+    //     },
+    //     // method is REQUIRED by $q.dialog
+    //     show() { (this.$refs.dialog as QDialog).show() },
+    //     // method is REQUIRED by $q.dialog
+    //     hide() { (this.$refs.dialog as QDialog).hide() },
+    //     ok(result: M.CertResponse) {
+    //         this.$emit('ok', result)
+    //         this.hide()
+    //     },
+    //     async sign(connex: Connex) {
+    //         try {
+    //             const pin = await this.$authenticate(pin => Promise.resolve(pin))
+    //             this.signing = true
+    //             if (this.wallet) {
+    //                 const vault = await Vault.decode(this.wallet.vault)
+    //                 const node = await vault.derive(this.wallet.meta.addresses.indexOf(this.signer))
+    //                 const privateKey = await node.unlock(pin)
+    //                 const annex = {
+    //                     signer: this.signer,
+    //                     timestamp: connex.thor.status.head.timestamp,
+    //                     domain: this.req.domain
+    //                 }
+    //                 const unsigned = Certificate.encode({
+    //                     ...this.req.message,
+    //                     ...annex
+    //                 })
+    //                 const signature = '0x' + secp256k1.sign(blake2b256(unsigned), privateKey).toString('hex')
+    //                 const id = '0x' + blake2b256(Certificate.encode({
+    //                     ...this.req.message,
+    //                     ...annex,
+    //                     signature: signature
+    //                 })).toString('hex')
 
-                    const cert: M.Activity.Cert = {
-                        id: id,
-                        message: this.req.message,
-                        signer: this.signer,
-                        type: 'cert',
-                        referer: this.referer || {},
-                        timestamp: connex.thor.status.head.timestamp,
-                        signature: signature
-                    }
-                    this.$storage.activities.insert({
-                        gid: this.gid,
-                        walletId: this.wallet.id,
-                        createdTime: Date.now(),
-                        status: 'completed',
-                        glob: JSON.stringify(cert)
-                    })
-                    this.ok({
-                        annex,
-                        signature
-                    })
-                }
-            } catch (error) {
-                console.log(error)
-            } finally {
-                this.signing = false
-            }
-        }
-    }
+    //                 const cert: M.Activity.Cert = {
+    //                     id: id,
+    //                     message: this.req.message,
+    //                     signer: this.signer,
+    //                     type: 'cert',
+    //                     referer: this.referer || {},
+    //                     timestamp: connex.thor.status.head.timestamp,
+    //                     signature: signature
+    //                 }
+    //                 this.$storage.activities.insert({
+    //                     gid: this.gid,
+    //                     walletId: this.wallet.id,
+    //                     createdTime: Date.now(),
+    //                     status: 'completed',
+    //                     glob: JSON.stringify(cert)
+    //                 })
+    //                 this.ok({
+    //                     annex,
+    //                     signature
+    //                 })
+    //             }
+    //         } catch (error) {
+    //             console.log(error)
+    //         } finally {
+    //             this.signing = false
+    //         }
+    //     }
+    // }
 })
 </script>

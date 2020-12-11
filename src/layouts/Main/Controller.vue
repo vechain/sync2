@@ -1,18 +1,19 @@
 <template>
-    <transition name="q-transition--fade">
+    <transition
+        v-if="passwordSet || !$asyncComputed.passwordSet.updating"
+        name="q-transition--fade"
+    >
         <q-layout
-            v-if="isSetPasswordShadow"
+            v-if="passwordSet"
             v-show="mounted"
         >
             <q-page-container>
                 <StackedRouterView />
             </q-page-container>
-            <TxActivityUpdate />
         </q-layout>
         <wizard
             v-else
             v-show="mounted"
-            @done="isSetPasswordShadow = true"
             class="fullscreen"
         />
     </transition>
@@ -28,8 +29,15 @@ export default Vue.extend({
     },
     data() {
         return {
-            isSetPasswordShadow: !!this.$state.config.all.passwordShadow,
             mounted: false
+        }
+    },
+    asyncComputed: {
+        passwordSet(): Promise<boolean> {
+            return this.$svc.config.getPasswordShadow().then(r => !!r)
+        },
+        uncompleted(): Promise<M.Activity<'tx' | 'cert'>[]> {
+            return this.$svc.activity.uncompleted()
         }
     },
     mounted() {

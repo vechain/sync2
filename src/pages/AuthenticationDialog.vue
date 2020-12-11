@@ -115,7 +115,8 @@ export default Vue.extend({
         runTask(pin: string) {
             return this.$loading(async () => {
                 try {
-                    await Vault.verifyPassword(this.$state.config.all.passwordShadow, pin)
+                    const passwordShadow = await this.$svc.config.getPasswordShadow()
+                    await Vault.verifyPassword(passwordShadow, pin)
                     this.ok(await this.task(pin))
                 } catch (err) {
                     this.pin = ''

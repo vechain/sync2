@@ -3,7 +3,7 @@
         id="q-app"
         class="non-selectable"
     >
-        <router-view v-if="ready" />
+        <router-view />
     </div>
 </template>
 
@@ -12,12 +12,6 @@ import Vue from 'vue'
 import { listen } from 'core/connex/external-url'
 
 export default Vue.extend({
-    computed: {
-        ready() {
-            return this.$state.wallet.ready &&
-                this.$state.config.ready
-        }
-    },
     methods: {
         async externalSignHandlerLoop() {
             let destroyed = false

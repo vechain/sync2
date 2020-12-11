@@ -43,15 +43,16 @@ export default Vue.extend({
         },
         tokens: {
             async get(): Promise<M.TokenSpec[]> {
-                const [w, tokens, activeSymbols] = await Promise.all(
-                    [
-                        this.$svc.wallet.get(parseInt(this.wid)),
-                        this.$svc.config.token.all(),
-                        this.$svc.config.token.activeSymbols()
-                    ]
-                )
+                const wallet = this.wallet
+                if (!wallet) {
+                    return []
+                }
+                const [tokens, activeSymbols] = await Promise.all([
+                    this.$svc.config.token.all(),
+                    this.$svc.config.token.activeSymbols()
+                ])
                 return tokens.filter(token => {
-                    return token.gid === w!.gid &&
+                    return token.gid === wallet.gid &&
                         (activeSymbols.includes(token.symbol) || token.permanent) &&
                         token.symbol === this.symbol
                 })

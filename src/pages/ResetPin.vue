@@ -1,46 +1,36 @@
 <template>
-<div class="column fit">
-    <page-toolbar title="Password"/>
-    <div
-        v-if="show"
-        class="q-pt-md q-px-md"
-    >
-        <div class="text-subtitle2">
-            Password allows you to access Sync2 and unlock your wallet. If you forget the password, you will NOT be able to access Sync2.
-        </div>
-        <q-form @submit="onSubmit">
-            <InputPinCode v-model="code" />
-            <div class="text-center q-mt-lg">
-                <q-btn
-                    type="submit"
-                    label="Confirm"
-                    class="q-mt-md full-width q-mx-auto"
-                    color="blue-9"
-                ></q-btn>
+    <div class="column fit">
+        <page-toolbar title="Password" />
+        <div
+            v-if="show"
+            class="q-pt-md q-px-md"
+        >
+            <div class="text-subtitle2">
+                Password allows you to access Sync2 and unlock your wallet. If you forget the password, you will NOT be able to access Sync2.
             </div>
-        </q-form>
+            <q-form @submit="onSubmit">
+                <InputPinCode v-model="code" />
+                <div class="text-center q-mt-lg">
+                    <q-btn
+                        type="submit"
+                        label="Confirm"
+                        class="q-mt-md full-width q-mx-auto"
+                        color="blue-9"
+                    ></q-btn>
+                </div>
+            </q-form>
+        </div>
     </div>
-</div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
 import { Vault } from '../core/vault'
 export default Vue.extend({
-    data() {
+    data: () => {
         return {
             show: false,
             code: '',
             oldPin: ''
-        }
-    },
-    async created() {
-        try {
-            this.oldPin = await this.$authenticate((pin) => {
-                return Promise.resolve(pin)
-            })
-            this.show = true
-        } catch (error) {
-            this.$router.back()
         }
     },
     methods: {
@@ -68,22 +58,23 @@ export default Vue.extend({
             )
         },
         async updateDB(pin: string) {
-            await this.$storage.transaction(async () => {
-                const wallets = await this.$storage.wallets.all().query()
-                const shadow = await this.$storage.waitFor(Vault.shadowPassword(pin))
-                await this.$storage.configs.update({ key: 'passwordShadow' }, {
-                    value: shadow
-                })
-                for (let i = 0; i < wallets.length; i++) {
-                    const w = wallets[i]
-                    const vault = await this.$storage.waitFor(Vault.decode(w.vault))
-                    const words = await this.$storage.waitFor(vault.decrypt(this.oldPin)) as string
-                    const newVault = await this.$storage.waitFor(Vault.createHD(words.split(' '), pin))
-                    await this.$storage.wallets.update({ id: w.id }, {
-                        vault: newVault.encode()
-                    })
-                }
+            const newShadow = await Vault.shadowPassword(pin)
+            return this.$svc.wallet.reEncryptAll(
+                vault => {
+                    return Vault.decode(vault)
+                        .then(v => v.clone(this.oldPin, pin))
+                        .then(v => v.encode())
+                }, () => this.$svc.config.savePasswordShadow(newShadow))
+        }
+    },
+    async created() {
+        try {
+            this.oldPin = await this.$authenticate((pin) => {
+                return Promise.resolve(pin)
             })
+            this.show = true
+        } catch (error) {
+            this.$router.back()
         }
     }
 })

@@ -5,9 +5,9 @@
             v-scrollDivider
             class="col overflow-auto"
         >
-            <template v-if="activities.length">
+            <template v-if="list.length">
                 <component
-                    v-for="a in activities"
+                    v-for="a in list"
                     :is="a.glob.type"
                     :activity="a"
                     :walletNames="walletNames"
@@ -34,17 +34,22 @@ export default Vue.extend({
         cert: Cert,
         tx: Tx
     },
-    computed: {
-        activities(): M.Activity<'tx' | 'cert'>[] {
-            return this.$state.activity.list
+    asyncComputed: {
+        list: {
+            get(): Promise<M.Activity<'tx' | 'cert'>[]> {
+                return this.$svc.activity.page(100, 0)
+            },
+            default: []
         },
-        walletNames(): { [key: number]: string } {
-            const result: { [key: number]: string } = {}
-            this.$state.wallet.list.map(w => {
-                result[w.id] = w.meta.name
-            })
-
-            return result
+        walletNames: {
+            async get() {
+                const wallets = await this.$svc.wallet.all()
+                return wallets.reduce<Record<number, string>>((prev, cur) => {
+                    prev[cur.id] = cur.meta.name
+                    return prev
+                }, {})
+            },
+            default: {}
         }
     }
 })

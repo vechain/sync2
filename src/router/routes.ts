@@ -1,5 +1,5 @@
 import { RouteConfig } from 'vue-router'
-import Main from 'layouts/Main.vue'
+import Main from 'layouts/Main'
 import Index from 'pages/Index'
 import Settings from 'pages/Settings.vue'
 import TokensSetting from 'pages/TokensSetting.vue'

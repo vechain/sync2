@@ -1,21 +1,4 @@
-import { abis, tokenSpecs } from '../consts'
-import { abi } from 'thor-devkit/dist/abi'
-/**
- * fetch vip180 token balance for given address
- * @param connex the connex object
- * @param addr the address
- * @param spec token spec
- * @returns balance value
- */
-export function tokenBalanceOf(connex: Connex, addr: string, spec: M.TokenSpec): Promise<string> {
-    return connex
-        .thor
-        .account(spec.address)
-        .method(abis.balanceOf)
-        .cache([addr])
-        .call(addr)
-        .then(output => output.decoded.balance)
-}
+import { abis } from '../consts'
 
 const paramsCache: Record<string, string> = {}
 
@@ -48,53 +31,6 @@ export function createEventCriteria(connex: Connex, tokens: string[], address: s
         })
     })
     return [...from, ...to]
-}
-
-export async function vetTransfers(connex: Connex, address: string, fromBlock: number, toBlock: number, offset: number, size: number): Promise<M.TransferLog[]> {
-    const transferCriteria = [{ sender: address }, { recipient: address }]
-    const filter = connex.thor.filter('transfer', transferCriteria)
-    const transfers = await filter.order('desc').range({
-        unit: 'block',
-        from: fromBlock,
-        to: toBlock
-    }).apply(offset, size)
-
-    return transfers.map(item => {
-        return {
-            token: tokenSpecs.VET,
-            meta: item.meta,
-            amount: item.amount,
-            sender: item.sender,
-            recipient: item.recipient
-        }
-    })
-}
-
-export async function tokenTransfers(connex: Connex, tokenList: M.TokenSpec[], address: string, fromBlock: number, toBlock: number, offset: number, size: number): Promise<M.TransferLog[]> {
-    const tokenMap: { [k: string]: M.TokenSpec } = {}
-    tokenList.forEach(item => {
-        tokenMap[item.address] = item
-    })
-    const tokenCriteria = createEventCriteria(connex, tokenList.map(item => item.address), address)
-    const filter = connex.thor.filter('event', tokenCriteria)
-
-    const event = await filter.order('desc').range({
-        unit: 'block',
-        from: fromBlock,
-        to: toBlock
-    }).apply(offset, size)
-
-    const ev = new abi.Event(abis.transferEvent)
-    return event.map(item => {
-        const decode = ev.decode(item.data, item.topics)
-        return {
-            token: tokenMap[item.address],
-            meta: item.meta,
-            sender: decode._from,
-            amount: decode._value,
-            recipient: decode._to
-        }
-    })
 }
 
 export async function txReceipt(connex: Connex, txid: string) {

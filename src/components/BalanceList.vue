@@ -1,6 +1,6 @@
 <template>
     <q-list>
-        <connex-continuous
+        <!-- <connex-continuous
             :connex="connex"
             :query="() => connex.thor.account(address).get()"
             v-slot="{data}"
@@ -41,38 +41,37 @@
                     :balance="data"
                 />
             </connex-continuous>
-        </template>
+        </template> -->
     </q-list>
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import { tokenBalanceOf } from 'components/queries'
-import { tokenSpecs } from '../consts'
+
 export default Vue.extend({
-    data() {
-        return {
-            VET: tokenSpecs.VET,
-            VTHO: tokenSpecs.VTHO
-        }
-    },
-    props: {
-        connex: Object as () => Connex,
-        address: String,
-        tokens: Array as () => M.TokenSpec[],
-        selectabel: {
-            type: Boolean,
-            default: false
-        },
-        dense: {
-            type: Boolean,
-            default: false
-        }
-    },
-    methods: {
-        tokenBalanceOf,
-        onSelect(symbol: string) {
-            this.$emit('select', symbol)
-        }
-    }
+    // data() {
+    //     return {
+    //         VET: tokenSpecs.VET,
+    //         VTHO: tokenSpecs.VTHO
+    //     }
+    // },
+    // props: {
+    //     connex: Object as () => Connex,
+    //     address: String,
+    //     tokens: Array as () => M.TokenSpec[],
+    //     selectabel: {
+    //         type: Boolean,
+    //         default: false
+    //     },
+    //     dense: {
+    //         type: Boolean,
+    //         default: false
+    //     }
+    // },
+    // methods: {
+    //     tokenBalanceOf,
+    //     onSelect(symbol: string) {
+    //         this.$emit('select', symbol)
+    //     }
+    // }
 })
 </script>

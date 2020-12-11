@@ -20,7 +20,6 @@ import Priority from './Priority.vue'
 import Delay from './Delay'
 import TokenSelector from './TokenSelector.vue'
 import AddressInfo from './AddressInfo.vue'
-import TxActivityUpdate from './TxActivityUpdate'
 import InputPinCode from './InputPinCode.vue'
 import ProcessingTransition from './ProcessingTransition.vue'
 import PageToolbar from './PageToolbar.vue'
@@ -49,7 +48,6 @@ const components: { [name: string]: Vue.VueConstructor } = {
     BalanceList,
     TokenSelector,
     AddressInfo,
-    TxActivityUpdate,
     InputPinCode,
     ProcessingTransition,
     PageToolbar,

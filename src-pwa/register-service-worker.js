@@ -29,7 +29,7 @@ register(process.env.SERVICE_WORKER_FILE, {
         registration.active && installing && installing.addEventListener('statechange', () => {
             if (installing.state === 'installed') {
                 console.log('New content is installed')
-                window.AppState.updated = true
+                window.AppState.updateAvailable = true
             }
         })
     },

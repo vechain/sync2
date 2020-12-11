@@ -7,15 +7,15 @@
         transition-show="slide-up"
         transition-hide="slide-down"
     >
-        <q-card class="fit column no-wrap">
+        <!-- <q-card class="fit column no-wrap">
             <page-toolbar
                 title="Sign"
                 icon="close"
                 :gid="gid"
                 @action="hide()"
-            />
+            /> -->
             <!-- clause list -->
-            <q-card-section
+            <!-- <q-card-section
                 v-scrollDivider.both
                 class="overflow-auto col no-wrap bg-grey-2"
             >
@@ -39,9 +39,9 @@
                 >
                     {{ `Clause #${i+1}`}}
                 </ClauseCard>
-            </q-card-section>
+            </q-card-section> -->
             <!-- signer infos -->
-            <q-card-actions
+            <!-- <q-card-actions
                 class="shadow-up-1 q-mt-auto"
                 style="z-index: 2"
             >
@@ -117,202 +117,202 @@
                     </div>
                 </template>
             </q-card-actions>
-        </q-card>
+        </q-card> -->
     </q-dialog>
 </template>
 <script lang="ts">
-import { QDialog } from 'quasar'
 import Vue from 'vue'
-import { BigNumber } from 'bignumber.js'
-import { tokenSpecs } from '../consts'
-import { estimateGas, EstimateGasResult, buildTx } from '../utils/tx'
-import { Vault } from 'core/vault'
+// import { QDialog } from 'quasar'
+// import { BigNumber } from 'bignumber.js'
+// import { tokenSpecs } from '../consts'
+// import { estimateGas, EstimateGasResult, buildTx } from '../utils/tx'
+// import { Vault } from 'core/vault'
 
 export default Vue.extend({
-    props: {
-        req: Object as () => M.TxRequest,
-        gid: String,
-        referer: Object as () => M.Referer
-    },
-    data() {
-        return {
-            signer: '',
-            tokenSpecs,
-            gasPriceCoef: 0,
-            estGasError: null as Error | null,
-            vmError: null as Error | null,
-            signing: false
-        }
-    },
-    computed: {
-        clauseList(): Connex.VM.Clause[] {
-            return this.req.message.map((item: Connex.Vendor.TxMessage[0]) => {
-                return {
-                    to: item.to,
-                    value: item.value,
-                    data: item.data
-                }
-            })
-        },
-        suggettedGas(): number {
-            return this.req.options ? this.req.options.gas || 0 : 0
-        },
-        node(): M.Node | undefined {
-            return this.$state.config.node.list.find(item => {
-                return item.genesis.id === this.gid
-            })
-        },
-        tokens(): M.TokenSpec[] {
-            return this.$state.config.token.specs(this.gid, true)
-        },
-        isEnforced(): boolean {
-            return !!(this.req.options && this.req.options.signer)
-        },
-        hasTheSigner(): boolean {
-            return this.addresses.includes(this.req.options!.signer!)
-        },
-        addresses(): string[] {
-            let addrList: string[] = []
-            this.wallets.forEach(wallet => {
-                addrList = [...addrList, ...wallet.meta.addresses]
-            })
-            return addrList
-        },
-        wallets(): M.Wallet[] {
-            if (this.isEnforced) {
-                return this.$state.wallet.list.filter(item => {
-                    return item.gid === this.gid && item.meta.addresses.includes(this.req.options!.signer || '')
-                }).map(item => {
-                    return {
-                        ...item,
-                        meta: {
-                            ...item.meta,
-                            addresses: [this.req.options!.signer!]
-                        }
-                    }
-                })
-            } else {
-                return this.$state.wallet.list.filter(item => {
-                    return item.gid === this.gid
-                })
-            }
-        },
-        wallet(): M.Wallet | null {
-            return this.wallets.find((item: M.Wallet) => {
-                return item.meta.addresses.includes(this.signer)
-            }) || null
-        }
-    },
-    mounted() {
-        this.initData()
-    },
-    methods: {
-        estimateHandler(data: EstimateGasResult) {
-            this.estGasError = null
-            if (data.reverted) {
-                this.vmError = new Error(data.vmError)
-            } else {
-                this.vmError = null
-            }
-        },
-        estGas(connex: Connex) {
-            const signer = this.signer
-            return async () => {
-                if (signer && connex) {
-                    return await estimateGas(connex, this.clauseList, this.suggettedGas, signer)
-                } else {
-                    return null
-                }
-            }
-        },
-        // method is REQUIRED by $q.dialog
-        show() { (this.$refs.dialog as QDialog).show() },
-        // method is REQUIRED by $q.dialog
-        hide() { (this.$refs.dialog as QDialog).hide() },
+    // props: {
+    //     req: Object as () => M.TxRequest,
+    //     gid: String,
+    //     referer: Object as () => M.Referer
+    // },
+    // data() {
+    //     return {
+    //         signer: '',
+    //         tokenSpecs,
+    //         gasPriceCoef: 0,
+    //         estGasError: null as Error | null,
+    //         vmError: null as Error | null,
+    //         signing: false
+    //     }
+    // },
+    // computed: {
+    //     clauseList(): Connex.VM.Clause[] {
+    //         return this.req.message.map((item: Connex.Vendor.TxMessage[0]) => {
+    //             return {
+    //                 to: item.to,
+    //                 value: item.value,
+    //                 data: item.data
+    //             }
+    //         })
+    //     },
+    //     suggettedGas(): number {
+    //         return this.req.options ? this.req.options.gas || 0 : 0
+    //     },
+    //     node(): M.Node | undefined {
+    //         return this.$state.config.node.list.find(item => {
+    //             return item.genesis.id === this.gid
+    //         })
+    //     },
+    //     tokens(): M.TokenSpec[] {
+    //         return this.$state.config.token.specs(this.gid, true)
+    //     },
+    //     isEnforced(): boolean {
+    //         return !!(this.req.options && this.req.options.signer)
+    //     },
+    //     hasTheSigner(): boolean {
+    //         return this.addresses.includes(this.req.options!.signer!)
+    //     },
+    //     addresses(): string[] {
+    //         let addrList: string[] = []
+    //         this.wallets.forEach(wallet => {
+    //             addrList = [...addrList, ...wallet.meta.addresses]
+    //         })
+    //         return addrList
+    //     },
+    //     wallets(): M.Wallet[] {
+    //         if (this.isEnforced) {
+    //             return this.$state.wallet.list.filter(item => {
+    //                 return item.gid === this.gid && item.meta.addresses.includes(this.req.options!.signer || '')
+    //             }).map(item => {
+    //                 return {
+    //                     ...item,
+    //                     meta: {
+    //                         ...item.meta,
+    //                         addresses: [this.req.options!.signer!]
+    //                     }
+    //                 }
+    //             })
+    //         } else {
+    //             return this.$state.wallet.list.filter(item => {
+    //                 return item.gid === this.gid
+    //             })
+    //         }
+    //     },
+    //     wallet(): M.Wallet | null {
+    //         return this.wallets.find((item: M.Wallet) => {
+    //             return item.meta.addresses.includes(this.signer)
+    //         }) || null
+    //     }
+    // },
+    // mounted() {
+    //     this.initData()
+    // },
+    // methods: {
+    //     estimateHandler(data: EstimateGasResult) {
+    //         this.estGasError = null
+    //         if (data.reverted) {
+    //             this.vmError = new Error(data.vmError)
+    //         } else {
+    //             this.vmError = null
+    //         }
+    //     },
+    //     estGas(connex: Connex) {
+    //         const signer = this.signer
+    //         return async () => {
+    //             if (signer && connex) {
+    //                 return await estimateGas(connex, this.clauseList, this.suggettedGas, signer)
+    //             } else {
+    //                 return null
+    //             }
+    //         }
+    //     },
+    //     // method is REQUIRED by $q.dialog
+    //     show() { (this.$refs.dialog as QDialog).show() },
+    //     // method is REQUIRED by $q.dialog
+    //     hide() { (this.$refs.dialog as QDialog).hide() },
 
-        ok(result: M.TxResponse) {
-            this.$emit('ok', result)
-            this.hide()
-        },
-        initData() {
-            if (this.isEnforced) {
-                this.signer = this.hasTheSigner
-                    ? this.req.options!.signer!
-                    : ''
-            } else {
-                this.signer = this.wallets[0].meta.addresses[0]
-            }
-        },
-        getFee(gas: number, bgp: string, coef: number): string {
-            if (gas > 0) {
-                const gp = new BigNumber(bgp).times(coef).idiv(255).plus(bgp)
-                return gp.times(gas).toString(10)
-            }
-            return new BigNumber(NaN).toString(10)
-        },
-        // build Tx
-        async signTx(connex: Connex, estGas: EstimateGasResult) {
-            const clauses: Connex.Thor.Transaction['clauses'] = this.clauseList.map(item => {
-                return {
-                    to: item.to,
-                    value: '0x' + new BigNumber(item.value).toString(16),
-                    data: item.data || '0x'
-                }
-            })
-            const builtTx = buildTx(
-                connex,
-                clauses,
-                this.gasPriceCoef,
-                estGas.gas,
-                (this.req.options && this.req.options.dependsOn) || null
-            )
-            try {
-                const pin = await this.$authenticate(pin => Promise.resolve(pin))
-                this.signing = true
-                if (this.wallet) {
-                    const vault = await Vault.decode(this.wallet.vault)
-                    const node = await vault.derive(this.wallet.meta.addresses.indexOf(this.signer))
-                    const pk = await node.unlock(pin)
-                    const st = builtTx.signTx(pk)
-                    const raw = '0x' + st.encode().toString('hex')
-                    this.$txer.request(
-                        st.id!,
-                        `${this.node!.url}/transactions`,
-                        raw
-                    )
+    //     ok(result: M.TxResponse) {
+    //         this.$emit('ok', result)
+    //         this.hide()
+    //     },
+    //     initData() {
+    //         if (this.isEnforced) {
+    //             this.signer = this.hasTheSigner
+    //                 ? this.req.options!.signer!
+    //                 : ''
+    //         } else {
+    //             this.signer = this.wallets[0].meta.addresses[0]
+    //         }
+    //     },
+    //     getFee(gas: number, bgp: string, coef: number): string {
+    //         if (gas > 0) {
+    //             const gp = new BigNumber(bgp).times(coef).idiv(255).plus(bgp)
+    //             return gp.times(gas).toString(10)
+    //         }
+    //         return new BigNumber(NaN).toString(10)
+    //     },
+    //     // build Tx
+    //     async signTx(connex: Connex, estGas: EstimateGasResult) {
+    //         const clauses: Connex.Thor.Transaction['clauses'] = this.clauseList.map(item => {
+    //             return {
+    //                 to: item.to,
+    //                 value: '0x' + new BigNumber(item.value).toString(16),
+    //                 data: item.data || '0x'
+    //             }
+    //         })
+    //         const builtTx = buildTx(
+    //             connex,
+    //             clauses,
+    //             this.gasPriceCoef,
+    //             estGas.gas,
+    //             (this.req.options && this.req.options.dependsOn) || null
+    //         )
+    //         try {
+    //             const pin = await this.$authenticate(pin => Promise.resolve(pin))
+    //             this.signing = true
+    //             if (this.wallet) {
+    //                 const vault = await Vault.decode(this.wallet.vault)
+    //                 const node = await vault.derive(this.wallet.meta.addresses.indexOf(this.signer))
+    //                 const pk = await node.unlock(pin)
+    //                 const st = builtTx.signTx(pk)
+    //                 const raw = '0x' + st.encode().toString('hex')
+    //                 this.$txer.request(
+    //                     st.id!,
+    //                     `${this.node!.url}/transactions`,
+    //                     raw
+    //                 )
 
-                    const glob: M.Activity.Tx = {
-                        id: st.id!,
-                        type: 'tx',
-                        comment: (this.req.options && this.req.options.comment) || '',
-                        message: this.req.message,
-                        signer: this.signer,
-                        timestamp: connex.thor.status.head.timestamp,
-                        estimatedFee: this.getFee(estGas.gas, estGas.baseGasPrice, this.gasPriceCoef),
-                        referer: this.referer || {},
-                        raw: raw,
-                        receipt: null
-                    }
+    //                 const glob: M.Activity.Tx = {
+    //                     id: st.id!,
+    //                     type: 'tx',
+    //                     comment: (this.req.options && this.req.options.comment) || '',
+    //                     message: this.req.message,
+    //                     signer: this.signer,
+    //                     timestamp: connex.thor.status.head.timestamp,
+    //                     estimatedFee: this.getFee(estGas.gas, estGas.baseGasPrice, this.gasPriceCoef),
+    //                     referer: this.referer || {},
+    //                     raw: raw,
+    //                     receipt: null
+    //                 }
 
-                    this.$storage.activities.insert({
-                        gid: this.gid,
-                        walletId: this.wallet.id,
-                        createdTime: Date.now(),
-                        status: '',
-                        glob: JSON.stringify(glob)
-                    })
+    //                 this.$storage.activities.insert({
+    //                     gid: this.gid,
+    //                     walletId: this.wallet.id,
+    //                     createdTime: Date.now(),
+    //                     status: '',
+    //                     glob: JSON.stringify(glob)
+    //                 })
 
-                    this.ok({
-                        txid: st.id!,
-                        signer: this.signer
-                    })
-                }
-            } catch (error) {
-                console.log(error)
-            } finally {
-                this.signing = false
-            }
-        }
-    }
+    //                 this.ok({
+    //                     txid: st.id!,
+    //                     signer: this.signer
+    //                 })
+    //             }
+    //         } catch (error) {
+    //             console.log(error)
+    //         } finally {
+    //             this.signing = false
+    //         }
+    //     }
+    // }
 })
 </script>

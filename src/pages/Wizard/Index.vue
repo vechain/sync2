@@ -77,6 +77,8 @@
 import Vue from 'vue'
 import { Vault } from '../../core/vault'
 import Tabs from './Tabs.vue'
+import { genesises } from 'src/consts'
+
 const createSteps = [
     'Generating your VeChain wallet',
     'Generating random seed & entrophy',
@@ -125,13 +127,11 @@ export default Vue.extend({
 
             const shadow = await Vault.shadowPassword(pin)
 
-            await this.$storage.transaction(async () => {
-                await this.$state.config.set('passwordShadow', shadow)
-                await this.$storage.wallets.insert({
-                    gid: this.$state.config.node.list[0].genesis.id,
-                    vault: vault.encode(),
-                    meta: JSON.stringify(meta)
-                })
+            await this.$svc.config.savePasswordShadow(shadow)
+            await this.$svc.wallet.insert({
+                gid: genesises.main.id,
+                vault: vault.encode(),
+                meta
             })
         }
     }
