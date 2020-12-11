@@ -177,11 +177,7 @@ export default Vue.extend({
             }
         },
         close() {
-            if (this.$stack.canGoBack) {
-                this.$router.back()
-            } else {
-                this.$router.replace({ name: 'index' })
-            }
+            this.$backOrHome()
         }
     },
     beforeDestroy() {

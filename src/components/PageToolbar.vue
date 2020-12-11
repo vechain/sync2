@@ -68,7 +68,7 @@ export default Vue.extend({
             if (this.$listeners.action) {
                 this.$emit('action')
             } else {
-                this.$stack.canGoBack ? this.$router.back() : this.$router.replace('/')
+                this.$backOrHome()
             }
         },
         centerTitleText() {

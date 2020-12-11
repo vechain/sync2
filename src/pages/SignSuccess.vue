@@ -50,11 +50,7 @@ export default Vue.extend({
     },
     methods: {
         close() {
-            if (this.$stack.canGoBack) {
-                this.$router.back()
-            } else {
-                this.$router.replace({ name: 'index' })
-            }
+            this.$backOrHome()
         }
     }
 })

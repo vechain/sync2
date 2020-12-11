@@ -10,6 +10,7 @@ import CertSigningDialog from 'pages/CertSigningDialog.vue'
 
 declare module 'vue/types/vue' {
     interface Vue {
+        $backOrHome(): void
         /**
          * pop up the authentication dialog to ask user entering password,
          * then run the given task and return the result
@@ -104,6 +105,16 @@ export default boot(({ Vue }) => {
     })
 
     Object.defineProperties(Vue.prototype, {
+        $backOrHome: {
+            get() {
+                const vm = this as Vue
+                return () => {
+                    vm.$stack.canGoBack
+                        ? vm.$router.back()
+                        : vm.$router.replace('/')
+                }
+            }
+        },
         $authenticate: {
             get(): Vue['$authenticate'] {
                 const vm = this as Vue
