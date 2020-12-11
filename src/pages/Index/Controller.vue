@@ -30,6 +30,18 @@
             :wallet="wallet"
             class="container col"
         />
+        <div
+            v-if="wallets.length === 0 && !$asyncComputed.wallets.updating"
+            class="row q-my-auto flex-center"
+        >
+            <p class="text-grey text-h5 text-center col-12">No Wallet</p>
+            <q-btn
+                unelevated
+                color="primary"
+                class="col-6 col-sm-3"
+                :label="$t('index.action_create')"
+            />
+        </div>
         <drawer
             v-model="drawerOpen"
             ref="drawer"

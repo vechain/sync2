@@ -17,6 +17,10 @@
             class="col overflow-auto full-width"
             v-scrollDivider.both
         >
+            <span
+                class="absolute-center text-grey"
+                v-if="walletGroups.length === 0"
+            >No Wallet</span>
             <template v-for="(group, gi) in walletGroups">
                 <q-item-label
                     header
