@@ -27,7 +27,7 @@
                     class="text-capitalize"
                     :key="`h-${gi}`"
                 >
-                    {{networkName(group[0].gid)}}
+                    {{$netDisplayName(group[0].gid)}}
                 </q-item-label>
                 <q-item
                     v-for="wallet in group"
@@ -88,13 +88,6 @@ export default Vue.extend({
                 component: WalletGenerateDialog,
                 type
             })
-        },
-        networkName(gid: string) {
-            switch (this.$svc.bc(gid).net) {
-                case 'main': return this.$t('common.mainnet').toString()
-                case 'test': return this.$t('common.testnet').toString()
-                default: return this.$t('common.private').toString() + `-${gid.slice(-6)}`
-            }
         }
     }
 })

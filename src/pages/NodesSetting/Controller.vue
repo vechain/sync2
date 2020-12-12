@@ -20,7 +20,7 @@
                 <q-item-label
                     header
                     :key="`h-${gi}`"
-                >{{networkName(group.list[0])}}</q-item-label>
+                >{{$netDisplayName(group.list[0].genesis.id)}}</q-item-label>
                 <template v-for="(node, i) in group.list">
                     <q-separator
                         v-if="i > 0"
@@ -99,14 +99,6 @@ export default Vue.extend({
         }
     },
     methods: {
-        networkName(val: M.Node) {
-            const gid = val.genesis.id
-            switch (this.$svc.bc(gid).net) {
-                case 'main': return this.$t('common.mainnet').toString()
-                case 'test': return this.$t('common.testnet').toString()
-                default: return this.$t('common.private').toString() + `-${gid.slice(-6)}`
-            }
-        },
         canDelete(val: M.Node) {
             return !val.preset &&
                 count(this.nodes, n => n.genesis.id === val.genesis.id) > 1

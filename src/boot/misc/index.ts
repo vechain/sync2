@@ -2,15 +2,19 @@ import { boot } from 'quasar/wrappers'
 import * as State from './state'
 import * as Plugins from './plugins'
 
-import AuthenticationDialog from 'pages/AuthenticationDialog.vue'
+import AuthenticationDialog from 'pages/AuthenticationDialog'
 import { QSpinnerIos, DialogChainObject, QDialogOptions } from 'quasar'
 import ActionSheets from 'pages/ActionSheets.vue'
 import TxSigningDialog from 'pages/TxSigningDialog.vue'
 import CertSigningDialog from 'pages/CertSigningDialog.vue'
+import { genesises } from 'src/consts'
 
 declare module 'vue/types/vue' {
     interface Vue {
+        /** navigate back or go to home(/) if stack empty */
         $backOrHome(): void
+        /** returns the display name of network identified by gid */
+        $netDisplayName(gid: string): string
         /**
          * pop up the authentication dialog to ask user entering password,
          * then run the given task and return the result
@@ -18,8 +22,7 @@ declare module 'vue/types/vue' {
          * @param options
          */
         $authenticate<T>(
-            task: (password: string) => Promise<T>,
-            args?: AuthenticationDialog.Args
+            task: (password: string) => Promise<T>
         ): Promise<T>
 
         /**
@@ -115,16 +118,27 @@ export default boot(({ Vue }) => {
                 }
             }
         },
+        $netDisplayName: {
+            get(): Vue['$netDisplayName'] {
+                const vm = this as Vue
+                return gid => {
+                    switch (gid) {
+                        case genesises.main.id: return vm.$t('common.mainnet').toString()
+                        case genesises.test.id: return vm.$t('common.testnet').toString()
+                        default: return vm.$t('common.private') + `-${gid.slice(-6)}`
+                    }
+                }
+            }
+        },
         $authenticate: {
             get(): Vue['$authenticate'] {
                 const vm = this as Vue
-                return (task, args) => {
+                return (task) => {
                     return new Promise((resolve, reject) => {
                         vm.$q.dialog({
                             component: AuthenticationDialog,
                             parent: vm,
-                            task,
-                            args: args || {}
+                            task
                         })
                             .onOk(resolve)
                             .onCancel(() => reject(new Error('cancelled')))
