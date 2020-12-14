@@ -2,6 +2,7 @@ import { Storage } from 'core/storage'
 import { delegateTable } from '../utils'
 import { genesises } from 'src/consts'
 import { TokenRegistry } from './token-registry'
+import { unique } from 'src/utils/array'
 
 const presetNodes: M.Node[] = [
     { // mainnet
@@ -53,8 +54,8 @@ export function build(storage: Storage) {
     }
 
     const token = {
-        async all() {
-            const json = await get('tokenRegistry')
+        async all(): Promise<M.TokenSpec[]> {
+            const [json, nodes] = await Promise.all([get('tokenRegistry'), node.all()])
             const registry: TokenRegistry = json ? JSON.parse(json) : {
                 updated: 0,
                 main: [],
@@ -79,12 +80,12 @@ export function build(storage: Storage) {
                 }
             }
 
-            return [
-                ...TokenRegistry.permanents.map(e => toModel(genesises.main.id, e, true)),
-                ...registry.main.map(e => toModel(genesises.main.id, e, false)),
-                ...TokenRegistry.permanents.map(e => toModel(genesises.test.id, e, true)),
-                ...registry.test.map(e => toModel(genesises.test.id, e, false))
-            ]
+            const gids = unique(nodes.map(n => n.genesis.id))
+            return ([] as M.TokenSpec[]).concat(
+                ...gids.map(gid => TokenRegistry.permanents.map(e => toModel(gid, e, true))),
+                registry.main.map(e => toModel(genesises.main.id, e, false)),
+                registry.test.map(e => toModel(genesises.test.id, e, false))
+            )
         },
         async activeSymbols() {
             return JSON.parse((await get('activeTokenSymbols')) || '[]') as string[]
