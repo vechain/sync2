@@ -15,7 +15,6 @@ import AccountSelector from './AccountSelector.vue'
 import BalanceList from './BalanceList.vue'
 import Priority from './Priority.vue'
 import Delay from './Delay'
-import TokenSelector from './TokenSelector.vue'
 import AddressInfo from './AddressInfo.vue'
 import InputPinCode from './InputPinCode.vue'
 import ProcessingTransition from './ProcessingTransition.vue'
@@ -40,7 +39,6 @@ const components: { [name: string]: Vue.VueConstructor } = {
     Priority,
     Delay,
     BalanceList,
-    TokenSelector,
     AddressInfo,
     InputPinCode,
     ProcessingTransition,

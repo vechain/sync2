@@ -105,6 +105,9 @@ export function build(storage: Storage) {
         },
         getRecentRecipients() {
             return get('recentRecipients').then(r => JSON.parse(r || '[]') as string[])
+        },
+        saveRecentRecipients(val: string[]) {
+            return set('recentRecipients', JSON.stringify(val))
         }
     }
 }

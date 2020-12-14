@@ -3,7 +3,7 @@
         no-error-icon
         autocomplete="off"
         clearable
-        :rules="[val => isAddress(val) || 'Please enter a valid address']"
+        :rules="[val => isAddress(val) || 'Please enter a valid address', val => checkSumAddress(val) || 'Checksum incorrect' ]"
         v-model.lazy="to"
         label="To"
     >
@@ -32,7 +32,7 @@
                 flat
                 icon="add"
                 :groups="wallets"
-                @change="(e) => to = e"
+                @change="onAddressChange"
             />
         </template>
     </q-input>
@@ -76,7 +76,13 @@ export default Vue.extend({
         }
     },
     methods: {
+        onAddressChange(addr: string) {
+            this.to = address.toChecksumed(addr)
+        },
         isAddress: address.test,
+        checkSumAddress(v: string) {
+            return !(v !== v.toLowerCase() && address.toChecksumed(v) !== v)
+        },
         onClickScan() {
             this.$q.dialog({
                 component: QrScannerDialog

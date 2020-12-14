@@ -29,13 +29,22 @@
                     v-scrollDivider
                     class="col overflow-auto q-pt-none"
                 >
-                    <BalanceList
-                        @select="onSelect"
-                        :tokens="tokens"
-                        :address="address"
-                        :connex="connex"
-                        selectabel
-                    />
+                    <q-list>
+                        <template v-for="token in tokens">
+                            <Resolve
+                                :key="token.symbol"
+                                :promise="$svc.bc(token.gid).balanceOf(address, token)"
+                                v-slot="{data}"
+                            >
+                                <TokenItem
+                                    clickable
+                                    @click="onSelect(token.symbol)"
+                                    :balance="data"
+                                    :token="token"
+                                />
+                            </Resolve>
+                        </template>
+                    </q-list>
                 </q-card-section>
             </q-card>
         </q-popup-proxy>
@@ -43,14 +52,17 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
+import TokenItem from './TokenItem.vue'
 
 export default Vue.extend({
+    components: {
+        TokenItem
+    },
     model: {
         prop: 'symbol',
         event: 'change'
     },
     props: {
-        connex: Object as () => Connex,
         address: String,
         tokens: Array as () => M.TokenSpec[],
         symbol: String
@@ -61,8 +73,8 @@ export default Vue.extend({
         }
     },
     computed: {
-        token(): M.TokenSpec | undefined {
-            return this.tokens.find(item => item.symbol === this.symbol)
+        token() {
+            return this.tokens.find(t => t.symbol === this.symbol)
         }
     },
     methods: {
