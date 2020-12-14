@@ -46,6 +46,7 @@ export namespace Storage {
     /** the wallet activity entity */
     export interface ActivityEntity extends Entity {
         gid: string // the genesis id bound to
+        type: 'tx' | 'cert'
         walletId: number // related wallet id
         createdTime: number
         status: '' | 'completed'

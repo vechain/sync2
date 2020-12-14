@@ -63,40 +63,33 @@ declare namespace M {
         sender: string,
         recipient: string
     }
-    type Referer = {
-        url?: string
-        title?: string
-    }
-    interface Activity<T extends 'tx' | 'cert'> {
+
+    type Activity = {
         id: number
         gid: string
         walletId: number
         createdTime: number
         status: '' | 'completed'
-        glob: T extends 'tx' ? Activity.Tx :
-        T extends 'cert' ? Activity.Cert : never
-    }
+    } & ({
+        type: 'tx'
+        glob: Activity.TxGlob
+    } | {
+        type: 'cert'
+        glob: Activity.CertGlob
+    })
+
     namespace Activity {
-        type Tx = {
-            id: string
-            type: 'tx'
-            message: Connex.Vendor.TxMessage
+        type Glob = {
+            id: string // the tx/cert id
+            encoded: string // encoded tx/cert
+            signer: string // the address signed the tx/cert
+            origin?: string // the dapp url if any
+            link?: string // the url linking to dapp to reveal tx/cert if provided
+        }
+        type TxGlob = Glob & {
             comment: string
-            timestamp: number
-            signer: string
-            estimatedFee: string
-            referer: Referer
-            raw: string
             receipt: Connex.Thor.Transaction.Receipt | null
         }
-        type Cert = {
-            id: string
-            type: 'cert'
-            message: Connex.Vendor.CertMessage
-            signer: string
-            referer: Referer
-            timestamp: number
-            signature: string
-        }
+        type CertGlob = Glob
     }
 }

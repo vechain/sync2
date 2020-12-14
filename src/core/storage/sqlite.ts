@@ -15,18 +15,19 @@ const schemas = [
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         gid TEXT NOT NULL,  
         vault TEXT,
-        meta TEXT  
+        meta TEXT
     )`,
     'CREATE INDEX IF NOT EXISTS wallets_i0 ON wallets(gid)',
     `CREATE TABLE IF NOT EXISTS activities (
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-        gid TEXT NOT NULL, 
+        gid TEXT NOT NULL,
+        type TEXT NOT NULL,
         walletId INTEGER NOT NULL,
         createdTime INTEGER NOT NULL,
         status TEXT NOT NULL,
         glob TEXT
     )`,
-    'CREATE INDEX IF NOT EXISTS activities_i0 ON activities(gid)',
+    'CREATE INDEX IF NOT EXISTS activities_i0 ON activities(type)',
     'CREATE INDEX IF NOT EXISTS activities_i1 ON activities(walletId)',
     'CREATE INDEX IF NOT EXISTS activities_i2 ON activities(createdTime)',
     'CREATE INDEX IF NOT EXISTS activities_i3 ON activities(status)'
