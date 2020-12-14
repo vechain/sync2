@@ -191,9 +191,7 @@ export default Vue.extend({
                     flat: true
                 }
             }).onOk(async () => {
-                await this.$authenticate(() => {
-                    return Promise.resolve()
-                })
+                await this.$authenticate()
                 await this.$svc.wallet.delete(wallet.id)
             })
         },

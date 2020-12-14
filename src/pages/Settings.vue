@@ -100,7 +100,8 @@ export default Vue.extend({
             this.bioPassSaved = null
             try {
                 if (newVal) {
-                    await this.$authenticate(password => bioPass.save(password))
+                    const password = await this.$authenticate()
+                    await bioPass.save(password)
                 } else {
                     await bioPass.delete()
                 }

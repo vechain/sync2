@@ -175,7 +175,7 @@ export default Vue.extend({
             // authentication
             let password: string
             try {
-                password = await this.$authenticate(password => Promise.resolve(password))
+                password = await this.$authenticate()
             } catch {
                 return
             }

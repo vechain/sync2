@@ -16,14 +16,10 @@ declare module 'vue/types/vue' {
         /** returns the display name of network identified by gid */
         $netDisplayName(gid: string): string
         /**
-         * pop up the authentication dialog to ask user entering password,
-         * then run the given task and return the result
-         * @param task a task which requires the password to finish
-         * @param options
+         * pop up the authentication dialog to ask user entering password
+         * @returns verified user password
          */
-        $authenticate<T>(
-            task: (password: string) => Promise<T>
-        ): Promise<T>
+        $authenticate(): Promise<string>
 
         /**
          * protected the async task with a loading mask
@@ -133,12 +129,11 @@ export default boot(({ Vue }) => {
         $authenticate: {
             get(): Vue['$authenticate'] {
                 const vm = this as Vue
-                return (task) => {
+                return () => {
                     return new Promise((resolve, reject) => {
                         vm.$q.dialog({
                             component: AuthenticationDialog,
-                            parent: vm,
-                            task
+                            parent: vm
                         })
                             .onOk(resolve)
                             .onCancel(() => reject(new Error('cancelled')))

@@ -69,9 +69,7 @@ export default Vue.extend({
     },
     async created() {
         try {
-            this.oldPin = await this.$authenticate((pin) => {
-                return Promise.resolve(pin)
-            })
+            this.oldPin = await this.$authenticate()
             this.show = true
         } catch (error) {
             this.$router.back()
