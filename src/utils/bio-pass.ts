@@ -21,7 +21,7 @@ export interface BioPass {
     readonly name: string
 
     /** if the password previously saved */
-    saved(): Promise<boolean>
+    readonly saved: boolean
 
     /** save the password */
     save(password: string): Promise<void>
@@ -41,8 +41,12 @@ export namespace BioPass {
             const touchid = window.plugins.touchid
 
             let type = ''
+            let saved = false
             try {
                 type = await promisify<string>(touchid.isAvailable.bind(touchid))
+                saved = await promisify(touchid.has.bind(touchid), name)
+                    .then(() => true)
+                    .catch(() => false)
             } catch {
                 return null
             }
@@ -50,11 +54,7 @@ export namespace BioPass {
             return {
                 get authType() { return type === 'face' ? 'face' : 'touch' },
                 get name() { return name },
-                saved: () => {
-                    return promisify(touchid.has.bind(touchid), name)
-                        .then(() => true)
-                        .catch(() => false)
-                },
+                get saved() { return saved },
                 save: (password) => {
                     return promisify(touchid.save.bind(touchid), name, password, true)
                 },

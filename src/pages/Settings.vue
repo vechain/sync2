@@ -33,7 +33,7 @@
                         />
                     </q-item-section>
                     <q-item-section>
-                        <q-item-label lines="1">{{bioPassTypeText}}</q-item-label>
+                        <q-item-label lines="1">Biometric Authentication</q-item-label>
                     </q-item-section>
                     <q-item-section side>
                         <q-toggle
@@ -83,21 +83,24 @@ import Vue from 'vue'
 import { BioPass } from 'src/utils/bio-pass'
 
 export default Vue.extend({
-    data: () => {
-        return {
-            bioPassType: null as BioPass['authType'] | null,
-            bioPassSaved: null as boolean | null
+    asyncComputed: {
+        bioPass() {
+            return BioPass.open()
+        }
+    },
+    computed: {
+        bioPassSaved(): boolean | null {
+            return this.bioPass ? this.bioPass.saved : null
         }
     },
     methods: {
         // TODO faceID
         async toggleBioPass(newVal: boolean) {
-            const bioPass = await BioPass.open()
+            const bioPass = this.bioPass
             if (!bioPass) {
                 return
             }
-            // set to intermediate state
-            this.bioPassSaved = null
+
             try {
                 if (newVal) {
                     const password = await this.$authenticate()
@@ -105,22 +108,10 @@ export default Vue.extend({
                 } else {
                     await bioPass.delete()
                 }
+                this.$asyncComputed.bioPass.update()
             } catch (err) {
                 console.warn(err)
             }
-            this.bioPassSaved = await bioPass.saved()
-        }
-    },
-    computed: {
-        bioPassTypeText() {
-            return this.bioPassType === 'face' ? 'Face ID' : 'Touch ID'
-        }
-    },
-    async created() {
-        const bioPass = await BioPass.open()
-        if (bioPass) {
-            this.bioPassType = bioPass.authType
-            this.bioPassSaved = await bioPass.saved()
         }
     }
 })

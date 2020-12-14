@@ -59,17 +59,14 @@ export default Vue.extend({
     },
     computed: {
         bioAuthTypeIcon(): string {
-            return this.bioPassType === 'face' ? 'sentiment_satisfied' : 'fingerprint'
+            return this.bioPass
+                ? (this.bioPass.authType === 'face' ? 'sentiment_satisfied' : 'fingerprint')
+                : ''
         }
     },
     asyncComputed: {
-        async bioPassType(): Promise<BioPass['authType'] | null> {
-            const bioPass = await BioPass.open()
-            return bioPass ? bioPass.authType : null
-        },
-        async bioPassSaved(): Promise<boolean> {
-            const bioPass = await BioPass.open()
-            return bioPass ? await bioPass.saved() : false
+        bioPass() {
+            return BioPass.open()
         }
     },
     watch: {
@@ -98,18 +95,20 @@ export default Vue.extend({
                     this.error = 'Incorrect password'
                 }
             })
+        },
+        async recallBioPass() {
+            const bioPass = this.bioPass
+            if (!bioPass) {
+                return
+            }
+
+            try {
+                const password = await bioPass.recall('recall password')
+                this.ok(password)
+            } catch (err) {
+                console.warn(err)
+            }
         }
-        // async recallBioPass() {
-        //     const bioPass = await BioPass.open()
-        //     if (bioPass) {
-        //         try {
-        //             const pin = await bioPass.recall('recall pin')
-        //             await this.runTask(pin)
-        //         } catch (err) {
-        //             console.warn(err)
-        //         }
-        //     }
-        // },
     }
 })
 </script>
