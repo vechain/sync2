@@ -27,7 +27,7 @@ async function loadOrGenerateSalt() {
         const rows = await storage
             .configs
             .all()
-            .where({ key: saltStorageKey })
+            .where({ key: saltStorageKey, subKey: '' })
             .query()
 
         if (rows.length > 0) {

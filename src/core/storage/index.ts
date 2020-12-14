@@ -32,6 +32,7 @@ export namespace Storage {
     /** the config entity */
     export interface ConfigEntity extends Entity {
         key: string // config key
+        subKey: string // config sub key
         value: string // config value
     }
 

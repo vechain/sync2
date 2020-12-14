@@ -24,12 +24,12 @@ export function build(storage: Storage) {
     )
     type Key = 'nodes' | 'activeNodeMap' | 'passwordShadow' | 'tokenRegistry' | 'activeTokenSymbols' | 'recentRecipients'
     const get = async (key: Key) => {
-        const row = (await t.all().where({ key }).query())[0]
+        const row = (await t.all().where({ key, subKey: '' }).query())[0]
         return row ? row.value : ''
     }
 
     const set = (key: Key, value: string) => {
-        return t.insert({ key, value }, true)
+        return t.insert({ key, subKey: '', value }, true)
     }
 
     const node = {

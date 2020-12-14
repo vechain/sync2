@@ -6,9 +6,11 @@ import { newObservable } from './observable'
 const schemas = [
     `CREATE TABLE IF NOT EXISTS configs (
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-        key TEXT NOT NULL UNIQUE,
+        key TEXT NOT NULL,
+        subKey TEXT NOT NULL,
         value TEXT
     )`,
+    'CREATE UNIQUE INDEX IF NOT EXISTS configs_i0 ON configs(key, subKey)',
     `CREATE TABLE IF NOT EXISTS wallets (
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         gid TEXT NOT NULL,  

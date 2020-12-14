@@ -109,7 +109,7 @@ export async function open(): Promise<Storage> {
     )
 
     db.version(1).stores({
-        configs: 'key',
+        configs: '++id, &[key+subKey]',
         wallets: '++id, gid',
         activities: '++id, gid, walletId, createdTime, status'
     })
