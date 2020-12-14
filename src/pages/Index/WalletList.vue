@@ -8,7 +8,7 @@
                     round
                     dense
                     icon="add"
-                    @click="onClickAddWallet"
+                    :to="{name:'new-wallet'}"
                 />
             </q-item-section>
         </q-item>
@@ -50,7 +50,6 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import WalletGenerateDialog from 'pages/WalletGenerateDialog'
 import { groupBy } from 'src/utils/array'
 
 export default Vue.extend({
@@ -73,21 +72,6 @@ export default Vue.extend({
                 const w0 = newVal[0]
                 w0 && this.$emit('input', w0.id)
             }
-        }
-    },
-    methods: {
-        onClickAddWallet() {
-            this.$actionSheets([
-                { label: this.$t('index.action_create').toString(), onClick: () => { this.openGenerateDialog('create') } },
-                { label: this.$t('index.action_import').toString(), onClick: () => { this.openGenerateDialog('import') } }
-            ])
-        },
-        openGenerateDialog(type: 'import' | 'create') {
-            this.$q.dialog({
-                parent: this,
-                component: WalletGenerateDialog,
-                type
-            })
         }
     }
 })

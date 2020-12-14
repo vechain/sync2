@@ -1,6 +1,7 @@
 import { RouteConfig } from 'vue-router'
 import Main from 'layouts/Main'
 import Index from 'pages/Index'
+import NewWallet from 'pages/NewWallet'
 import Settings from 'pages/Settings.vue'
 import TokensSetting from 'pages/TokensSetting.vue'
 import Backup from 'pages/Backup'
@@ -21,6 +22,10 @@ const routes: RouteConfig[] = [
             path: '',
             name: 'index',
             component: Index
+        }, {
+            path: 'new-wallet',
+            name: 'new-wallet',
+            component: NewWallet
         }, {
             path: 'settings',
             name: 'settings',
