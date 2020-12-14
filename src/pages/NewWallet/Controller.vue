@@ -18,8 +18,10 @@
                 bottom-slots
                 filled
                 label="Wallet Name"
-                :value="inputName || suggestedName"
-                @input="inputName = $event"
+                v-model="name"
+                :error="!!error"
+                :error-message="error"
+                no-error-icon
             >
                 <template v-slot:hint>
                     <div class="text-right">
@@ -41,14 +43,14 @@
                 color="primary"
                 unelevated
                 label="Generate"
-                @click="onClickGenerate()"
+                @click="newWallet('generate')"
             />
             <q-btn
                 class="self-center w50"
                 color="primary"
                 flat
                 label="Import backup"
-                @click="onClickImport()"
+                @click="newWallet('import')"
             />
         </div>
     </div>
@@ -68,9 +70,10 @@ export default Vue.extend({
     components: { PageToolbar },
     data: () => {
         return {
-            inputName: '',
+            name: '',
             gid: defaultGid,
-            wordsCount: defaultWordsCount
+            wordsCount: defaultWordsCount,
+            error: ''
         }
     },
     computed: {
@@ -107,6 +110,14 @@ export default Vue.extend({
             default: []
         }
     },
+    watch: {
+        suggestedName(newVal: string) {
+            this.name = newVal
+        },
+        name() {
+            this.error = ''
+        }
+    },
     methods: {
         onClickOptions() {
             type Action = Parameters<Vue['$actionSheets']>[0][0]
@@ -134,36 +145,63 @@ export default Vue.extend({
                 }))
             this.$actionSheets(actions)
         },
-        async newWallet(words?: string[]) {
-            const password = await this.$authenticate(password => Promise.resolve(password))
-            await this.$loading(async () => {
-                words = words || await Vault.generateMnemonic(this.wordsCount / 3 * 4)
-                const vault = await Vault.createHD(words, password)
-                const node0 = await vault.derive(0)
-                const meta: M.Wallet.Meta = {
-                    name: this.inputName || this.suggestedName,
-                    addresses: [node0.address],
-                    backedUp: false
-                }
-                await this.$svc.wallet.insert({
-                    gid: this.gid,
-                    vault: vault.encode(),
-                    meta
+        async newWallet(type: 'generate' | 'import') {
+            // check name
+            if (!this.name) {
+                this.error = 'Please give a name'
+                return
+            }
+            // reset error
+            this.error = ''
+
+            let words: string[] | undefined
+            if (type === 'import') {
+                // get user input words
+                const inputWords = await new Promise<string[] | null>(resolve => {
+                    this.$q.dialog({
+                        component: MnemonicInputDialog,
+                        parent: this
+                    }).onOk((words: string[]) => {
+                        resolve(words)
+                    }).onDismiss(() => {
+                        resolve(null)
+                    })
                 })
-            })
-            this.$backOrHome()
-            this.$q.notify('Wallet created successfully')
-        },
-        onClickGenerate() {
-            this.newWallet()
-        },
-        onClickImport() {
-            this.$q.dialog({
-                component: MnemonicInputDialog,
-                parent: this
-            }).onOk((words: string[]) => {
-                this.newWallet(words)
-            })
+                if (!inputWords) {
+                    return
+                }
+                words = inputWords
+            }
+            // authentication
+            let password: string
+            try {
+                password = await this.$authenticate(password => Promise.resolve(password))
+            } catch {
+                return
+            }
+            try {
+                // main process
+                await this.$loading(async () => {
+                    const vault = await Vault.createHD(
+                        words || await Vault.generateMnemonic(this.wordsCount / 3 * 4),
+                        password)
+                    const node0 = await vault.derive(0)
+                    const meta: M.Wallet.Meta = {
+                        name: this.name,
+                        addresses: [node0.address],
+                        backedUp: false
+                    }
+                    await this.$svc.wallet.insert({
+                        gid: this.gid,
+                        vault: vault.encode(),
+                        meta
+                    })
+                })
+                this.$backOrHome()
+                this.$q.notify('Wallet created successfully')
+            } catch (err) {
+                this.error = err.message
+            }
         }
     }
 })
