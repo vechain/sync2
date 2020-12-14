@@ -130,7 +130,7 @@ export default Vue.extend({
             this.$router.push({
                 name: 'send',
                 query: {
-                    wId: this.wid,
+                    wid: this.wid,
                     i: this.i
                 }
             })
