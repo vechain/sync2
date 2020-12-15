@@ -4,33 +4,33 @@
         @hide="$emit('hide')"
         position="bottom"
     >
-        <q-card class="column full-width">
+        <q-card class="full-width">
             <q-toolbar>
                 <q-toolbar-title class="text-center">Import</q-toolbar-title>
             </q-toolbar>
-            <q-form @submit="onSubmit()">
-                <q-card-section class="col">
-                    <q-input
-                        v-model="words"
-                        label="Please input your mnemonic words"
-                        type="textarea"
-                        outlined
-                        :error="!!error"
-                        :error-message="error"
-                        no-error-icon
-                        @keydown.enter.prevent="onSubmit()"
-                    />
-                </q-card-section>
-                <q-card-actions class="row flex-center">
-                    <q-btn
-                        class="col-6"
-                        unelevated
-                        color="primary"
-                        label="OK"
-                        type="submit"
-                    />
-                </q-card-actions>
-            </q-form>
+            <q-card-section>
+                <q-input
+                    autofocus
+                    v-model="words"
+                    label="Please input your mnemonic words"
+                    type="textarea"
+                    outlined
+                    :error="!!error"
+                    :error-message="error"
+                    no-error-icon
+                    @keydown.enter.prevent="onSubmit()"
+                />
+            </q-card-section>
+            <q-card-actions>
+                <q-btn
+                    :disable="!words"
+                    class="w50 q-mx-auto"
+                    unelevated
+                    color="primary"
+                    label="OK"
+                    @click="onSubmit()"
+                />
+            </q-card-actions>
         </q-card>
     </q-dialog>
 </template>
