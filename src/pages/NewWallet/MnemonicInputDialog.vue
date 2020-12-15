@@ -6,13 +6,13 @@
     >
         <q-card class="full-width">
             <q-toolbar>
-                <q-toolbar-title class="text-center">Import</q-toolbar-title>
+                <q-toolbar-title class="text-center">{{$t('newWallet.action_import')}}</q-toolbar-title>
             </q-toolbar>
             <q-card-section>
                 <q-input
                     autofocus
                     v-model="words"
-                    label="Please input your mnemonic words"
+                    :label="$t('newWallet.label_mnemonic')"
                     type="textarea"
                     outlined
                     :error="!!error"
@@ -27,7 +27,7 @@
                     class="w50 q-mx-auto"
                     unelevated
                     color="primary"
-                    label="OK"
+                    :label="$t('common.confirm')"
                     @click="onSubmit()"
                 />
             </q-card-actions>
@@ -63,7 +63,7 @@ export default Vue.extend({
         onSubmit() {
             const wordsArray = this.words.split(' ').filter(w => !!w)
             if (!mnemonic.validate(wordsArray)) {
-                this.error = 'Invalid mnemonic words'
+                this.error = this.$t('newWallet.msg_mnemonic_error').toString()
                 return
             }
             this.ok(wordsArray)

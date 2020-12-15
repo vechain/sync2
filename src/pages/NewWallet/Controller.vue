@@ -17,7 +17,7 @@
                 class="q-mx-md"
                 bottom-slots
                 filled
-                label="Wallet Name"
+                :label="$t('newWallet.label_wallet_name')"
                 v-model="name"
                 :error="!!error"
                 :error-message="error"
@@ -35,21 +35,23 @@
                     </div>
                 </template>
             </q-input>
-            <div class="col column flex-center overflow-scroll">
-                <div>xx</div>
+            <div class="col column flex-center overflow-hidden no-wrap">
+                <img src="~assets/new-wallet.svg">
+                <p class="text-h6">{{$t('newWallet.title_desc')}}</p>
+                <p class="text-body1">{{$t('newWallet.msg_desc')}}</p>
             </div>
             <q-btn
                 class="self-center w50"
                 color="primary"
                 unelevated
-                label="Generate"
+                :label="$t('newWallet.action_generate')"
                 @click="newWallet('generate')"
             />
             <q-btn
                 class="self-center w50"
                 color="primary"
                 flat
-                label="Import backup"
+                :label="$t('newWallet.action_import')"
                 @click="newWallet('import')"
             />
         </div>
@@ -83,7 +85,7 @@ export default Vue.extend({
                 hints.push(this.$netDisplayName(this.gid))
             }
             if (this.wordsCount !== defaultWordsCount) {
-                hints.push(`${this.wordsCount} words mnemonic`)
+                hints.push(`${this.wordsCount}` + ' ' + this.$t('newWallet.msg_mnemonic_words').toString())
             }
             return hints
         }
@@ -92,7 +94,7 @@ export default Vue.extend({
         suggestedName: {
             async get(): Promise<string> {
                 const wallets = await this.$svc.wallet.all()
-                const baseName = 'New Wallet'
+                const baseName = this.$t('newWallet.title').toString()
                 for (let i = 1; ; i++) {
                     const name = `${baseName}${i}`
                     if (!wallets.find(w => w.meta.name === name)) {
@@ -137,7 +139,7 @@ export default Vue.extend({
                 .filter(n => n !== this.wordsCount)
                 .map(n => {
                     return {
-                        label: `${n} words mnemonic` + (n === defaultWordsCount ? ' (default)' : ''),
+                        label: `${n}` + ' ' + this.$t('newWallet.msg_mnemonic_words').toString() + (n === defaultWordsCount ? ' (default)' : ''),
                         onClick: () => {
                             this.wordsCount = n
                         }
@@ -148,7 +150,7 @@ export default Vue.extend({
         async newWallet(type: 'generate' | 'import') {
             // check name
             if (!this.name) {
-                this.error = 'Please give a name'
+                this.error = this.$t('common.required_field').toString()
                 return
             }
             // reset error
@@ -198,7 +200,7 @@ export default Vue.extend({
                     })
                 })
                 this.$backOrHome()
-                this.$q.notify('Wallet created successfully')
+                this.$q.notify(this.$t('common.wallet_created').toString())
             } catch (err) {
                 this.error = err.message
             }
