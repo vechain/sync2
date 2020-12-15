@@ -10,20 +10,23 @@
             </q-toolbar>
             <q-card-section>
                 <p class="text-center">Enter password to unlock</p>
-                <q-input
-                    autofocus
-                    class="q-mx-lg"
-                    ref="pwd"
-                    dense
-                    input-class="text-center"
-                    no-error-icon
-                    :error="!!error"
-                    :error-message="error"
-                    v-model="password"
-                    outlined
-                    type="password"
-                    @keydown.enter.prevent="onSubmit()"
-                ></q-input>
+                <q-form>
+                    <q-input
+                        autofocus
+                        class="q-mx-lg"
+                        ref="pwd"
+                        dense
+                        input-class="text-center"
+                        no-error-icon
+                        :error="!!error"
+                        :error-message="error"
+                        v-model="password"
+                        outlined
+                        type="password"
+                        autocomplete="off"
+                        @keydown.enter.prevent="onSubmit()"
+                    />
+                </q-form>
             </q-card-section>
             <q-card-actions>
                 <q-btn
