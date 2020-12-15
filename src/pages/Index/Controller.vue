@@ -4,12 +4,13 @@
         v-touch-pan.right.mouse.prevent="handleDrawerTouchPan"
     >
         <PageToolbar
-            :title="wallet && wallet.meta.name"
+            :title="title"
             icon="menu"
             :gid="wallet && wallet.gid"
             @action="drawerOpen=true"
         >
             <q-btn
+                v-show="wallet"
                 class="q-ml-auto"
                 flat
                 dense
@@ -32,14 +33,15 @@
         />
         <div
             v-if="wallets.length === 0 && !$asyncComputed.wallets.updating"
-            class="row q-my-auto flex-center"
+            class="narrow-page q-my-auto text-center self-center"
         >
             <p class="text-grey text-h5 text-center col-12">No Wallet</p>
             <q-btn
                 unelevated
                 color="primary"
-                class="col-6 col-sm-3"
+                class="w40"
                 :label="$t('index.action_create')"
+                :to="{name: 'new-wallet'}"
             />
         </div>
         <drawer
@@ -78,6 +80,9 @@ export default Vue.extend({
     computed: {
         wallet(): M.Wallet | null {
             return this.wallets.find(w => w.id === this.selectedWalletId) || null
+        },
+        title(): string {
+            return (this.wallet && this.wallet.meta.name) || 'Sync'
         }
     },
     asyncComputed: {

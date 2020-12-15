@@ -24,7 +24,7 @@
             <q-card-actions>
                 <q-btn
                     :disable="!words"
-                    class="w50 q-mx-auto"
+                    class="w40 q-mx-auto"
                     unelevated
                     color="primary"
                     :label="$t('common.confirm')"

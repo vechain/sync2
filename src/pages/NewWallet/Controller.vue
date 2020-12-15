@@ -9,10 +9,7 @@
                 @click="onClickOptions()"
             />
         </page-toolbar>
-        <div
-            class="col self-center full-width column no-wrap q-gutter-y-md q-pa-md"
-            :style="{maxWidth:`${$q.screen.sizes.sm}px`}"
-        >
+        <div class="narrow-page col self-center column no-wrap q-gutter-y-md q-pa-md">
             <q-input
                 class="q-mx-md"
                 bottom-slots
@@ -41,14 +38,14 @@
                 <p class="text-body1">{{$t('newWallet.msg_desc')}}</p>
             </div>
             <q-btn
-                class="self-center w50"
+                class="self-center w40"
                 color="primary"
                 unelevated
                 :label="$t('newWallet.action_generate')"
                 @click="newWallet('generate')"
             />
             <q-btn
-                class="self-center w50"
+                class="self-center w40"
                 color="primary"
                 flat
                 :label="$t('newWallet.action_import')"
