@@ -9,10 +9,7 @@
                 @click="onClickOptions()"
             />
         </page-toolbar>
-        <div
-            class="col self-center full-width column no-wrap q-gutter-y-md q-pa-md"
-            :style="{maxWidth:`${$q.screen.sizes.sm}px`}"
-        >
+        <div class="narrow-page col self-center column no-wrap q-gutter-y-md q-pa-md">
             <q-input
                 class="q-mx-md"
                 bottom-slots

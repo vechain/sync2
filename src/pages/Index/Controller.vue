@@ -33,8 +33,7 @@
         />
         <div
             v-if="wallets.length === 0 && !$asyncComputed.wallets.updating"
-            :style="{maxWidth:`${$q.screen.sizes.sm}px`}"
-            class="full-width q-my-auto text-center self-center"
+            class="narrow-page q-my-auto text-center self-center"
         >
             <p class="text-grey text-h5 text-center col-12">No Wallet</p>
             <q-btn
