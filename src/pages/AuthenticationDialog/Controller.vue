@@ -4,43 +4,44 @@
         @hide="$emit('hide')"
         position="bottom"
     >
-        <q-card class="column full-width">
+        <q-card class="full-width">
             <q-toolbar>
                 <q-toolbar-title class="text-center">Authenticate</q-toolbar-title>
             </q-toolbar>
-            <q-form @submit="onSubmit()">
-                <q-card-section>
-                    <q-input
-                        class="q-mx-lg"
-                        ref="pwd"
-                        label="Enter password to unlock"
-                        dense
-                        input-class="text-center"
-                        no-error-icon
-                        :error="!!error"
-                        :error-message="error"
-                        v-model="password"
-                        outlined
-                        type="password"
-                    ></q-input>
-                </q-card-section>
-                <q-card-actions class="row justify-center">
-                    <q-btn
-                        class="col-6"
-                        type="submit"
-                        label="Unlock"
-                        unelevated
-                        color="primary"
-                    />
-                    <!-- <q-btn
+            <q-card-section>
+                <p class="text-center">Enter password to unlock</p>
+                <q-input
+                    autofocus
+                    class="q-mx-lg"
+                    ref="pwd"
+                    dense
+                    input-class="text-center"
+                    no-error-icon
+                    :error="!!error"
+                    :error-message="error"
+                    v-model="password"
+                    outlined
+                    type="password"
+                    @keydown.enter.prevent="onSubmit()"
+                ></q-input>
+            </q-card-section>
+            <q-card-actions>
+                <q-btn
+                    :disable="!password"
+                    class="w50 q-mx-auto"
+                    label="Unlock"
+                    unelevated
+                    color="primary"
+                    @click="onSubmit()"
+                />
+                <!-- <q-btn
                         v-if="bioPassSaved"
                         flat
                         text-color="primary"
                         class="q-mt-lg"
                         label="Unlock with FaceID"
                     /> -->
-                </q-card-actions>
-            </q-form>
+            </q-card-actions>
         </q-card>
     </q-dialog>
 </template>
@@ -85,6 +86,7 @@ export default Vue.extend({
         },
         onSubmit() {
             const password = this.password
+            this.error = ''
             this.$loading(async () => {
                 try {
                     const passwordShadow = await this.$svc.config.getPasswordShadow()
