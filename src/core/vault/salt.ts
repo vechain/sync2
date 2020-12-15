@@ -36,6 +36,7 @@ async function loadOrGenerateSalt() {
         const salt = await generateSalt()
         await storage.configs.insert({
             key: saltStorageKey,
+            subKey: '',
             value: salt.toString('hex')
         })
         return salt
