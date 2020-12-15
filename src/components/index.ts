@@ -17,7 +17,6 @@ import Priority from './Priority.vue'
 import Delay from './Delay'
 import AddressInfo from './AddressInfo.vue'
 import InputPinCode from './InputPinCode.vue'
-import ProcessingTransition from './ProcessingTransition.vue'
 import PageToolbar from './PageToolbar.vue'
 import Resolve from './Resolve'
 
@@ -41,7 +40,6 @@ const components: { [name: string]: Vue.VueConstructor } = {
     BalanceList,
     AddressInfo,
     InputPinCode,
-    ProcessingTransition,
     PageToolbar,
     Resolve
 }

@@ -12,7 +12,7 @@
         >
             <div class="column fit q-pa-md">
                 <h4 class="q-my-md q-px-md">Welcome</h4>
-                <Tabs class="col column q-pb-xl q-pt-sm" />
+                <feature-slides class="col column q-pb-xl q-pt-sm" />
                 <div class="row items-center justify-center q-mt-auto">
                     <q-btn
                         class="col-6 col-sm-auto"
@@ -51,7 +51,7 @@
             class="q-pa-none column q-pt-xl items-center"
             name="process"
         >
-            <ProcessingTransition
+            <Progress
                 :appear="true"
                 style="max-width: 500px"
                 class="q-px-md q-mt-xl"
@@ -68,15 +68,16 @@
                         color="blue-9"
                     />
                 </div>
-            </ProcessingTransition>
+            </Progress>
         </q-carousel-slide>
     </q-carousel>
 </template>
 <script lang="ts">
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Vue from 'vue'
+import FeatureSlides from './FeatureSlides.vue'
+import Progress from './Progress.vue'
 import { Vault } from '../../core/vault'
-import Tabs from './Tabs.vue'
 import { genesises } from 'src/consts'
 
 const createSteps = [
@@ -88,7 +89,8 @@ const createSteps = [
 ]
 export default Vue.extend({
     components: {
-        Tabs
+        Progress,
+        FeatureSlides
     },
     data: () => {
         return {
