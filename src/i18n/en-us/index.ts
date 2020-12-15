@@ -15,8 +15,12 @@ export default {
         testnet: 'Test Net',
         private: 'Private',
 
+        // error_message
+        required_field: 'This field is required',
+
         // notify
-        wallet_updated: 'Wallet Updated'
+        wallet_updated: 'Wallet Updated',
+        wallet_created: 'Wallet created successfully'
     },
     index: {
         action_new_account: 'New Account',
@@ -25,14 +29,30 @@ export default {
         action_upgrade: 'Upgrade Now',
         action_settings: 'Settings',
         action_activities: 'Activities',
-        action_create: 'Create Wallet',
-        action_import: 'Import Wallet',
-
+        action_create: 'Create Now',
         msg_rename: 'Wallet name helps you quickly identify the wallet.',
         msg_upgrade: 'New version is ready :)',
         msg_delete: 'Are you sure? this cannot be undone. Unless you have backed up your wallet beforehand.',
         msg_backup: 'Backup allows you to regain wallet access if you lose the device.',
-
         label_wallets: 'Wallets'
+    },
+    newWallet: {
+        title: 'New Wallet',
+        title_desc: 'Sync Wallet',
+        msg_desc: 'Manage assets with ease, anytime,anywhere',
+        msg_mnemonic_error: 'Invalid mnemonic words',
+        msg_mnemonic_words: 'words mnemonic',
+        msg_mnemonic_hint: 'Enter the mnemonic words and separated by single space',
+        action_generate: 'Generate',
+        action_import: 'Import',
+        label_wallet_name: 'Wallet Name',
+        label_mnemonic: 'Please enter your mnemonic words'
+    },
+    authenticationDialog: {
+        title: 'Authenticate',
+        msg_password_error: 'Incorrect password',
+        action_faceID: 'Unlock with FaceID',
+        action_unlock: 'Unlock',
+        label_input_password: 'Enter password to unlock'
     }
 }

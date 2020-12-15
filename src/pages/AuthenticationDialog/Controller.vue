@@ -6,10 +6,10 @@
     >
         <q-card class="full-width">
             <q-toolbar>
-                <q-toolbar-title class="text-center">Authenticate</q-toolbar-title>
+                <q-toolbar-title class="text-center">{{$t('authenticationDialog.title')}}</q-toolbar-title>
             </q-toolbar>
             <q-card-section>
-                <p class="text-center">Enter password to unlock</p>
+                <p class="text-center">{{$t('authenticationDialog.label_input_password')}}</p>
                 <q-form>
                     <q-input
                         autofocus
@@ -32,7 +32,7 @@
                 <q-btn
                     :disable="!password"
                     class="w40 q-mx-auto"
-                    label="Unlock"
+                    :label="$t('authenticationDialog.action_unlock')"
                     unelevated
                     color="primary"
                     @click="onSubmit()"
@@ -42,7 +42,7 @@
                         flat
                         text-color="primary"
                         class="q-mt-lg"
-                        label="Unlock with FaceID"
+                        label="$t('authenticationDialog.action_faceID')"
                     /> -->
             </q-card-actions>
         </q-card>
@@ -97,7 +97,7 @@ export default Vue.extend({
                     this.ok(password)
                 } catch {
                     void (this.$refs.pwd as Vue).$el.getElementsByTagName('input')[0].select()
-                    this.error = 'Incorrect password'
+                    this.error = this.$t('authenticationDialog.msg_password_error').toString()
                 }
             })
         },
