@@ -1,5 +1,5 @@
 <template>
-    <q-page
+    <div
         @mousedown.capture="testTouchPan"
         @touchstart.capture="testTouchPan"
         v-touch-pan.right.mouse.prevent="shouldHandlePan? handleTouchPan: undefined"
@@ -23,7 +23,7 @@
             v-show="panning||transiting"
         />
         <q-resize-observer @resize="onResize" />
-    </q-page>
+    </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'

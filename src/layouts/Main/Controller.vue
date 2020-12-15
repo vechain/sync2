@@ -3,14 +3,10 @@
         v-if="passwordSet || !$asyncComputed.passwordSet.updating"
         name="q-transition--fade"
     >
-        <q-layout
+        <StackedRouterView
             v-if="passwordSet"
             v-show="mounted"
-        >
-            <q-page-container>
-                <StackedRouterView />
-            </q-page-container>
-        </q-layout>
+        />
         <wizard
             v-else
             v-show="mounted"
@@ -36,7 +32,7 @@ export default Vue.extend({
         passwordSet(): Promise<boolean> {
             return this.$svc.config.getPasswordShadow().then(r => !!r)
         },
-        uncompleted(): Promise<M.Activity<'tx' | 'cert'>[]> {
+        uncompleted(): Promise<M.Activity[]> {
             return this.$svc.activity.uncompleted()
         }
     },
