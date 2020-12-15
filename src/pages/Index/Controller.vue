@@ -39,7 +39,7 @@
             <q-btn
                 unelevated
                 color="primary"
-                class="w50"
+                class="w40"
                 :label="$t('index.action_create')"
                 :to="{name: 'new-wallet'}"
             />

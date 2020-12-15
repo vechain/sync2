@@ -31,7 +31,7 @@
             <q-card-actions>
                 <q-btn
                     :disable="!password"
-                    class="w50 q-mx-auto"
+                    class="w40 q-mx-auto"
                     label="Unlock"
                     unelevated
                     color="primary"

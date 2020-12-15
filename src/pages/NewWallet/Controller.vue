@@ -36,14 +36,14 @@
                 <div>xx</div>
             </div>
             <q-btn
-                class="self-center w50"
+                class="self-center w40"
                 color="primary"
                 unelevated
                 label="Generate"
                 @click="newWallet('generate')"
             />
             <q-btn
-                class="self-center w50"
+                class="self-center w40"
                 color="primary"
                 flat
                 label="Import backup"

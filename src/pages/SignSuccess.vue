@@ -1,7 +1,7 @@
 <template>
     <div class="column fit">
         <page-toolbar title="Success" />
-        <div class="col column q-pa-md no-wrap">
+        <div class="narrow-page col column self-center items-center q-pa-md no-wrap q-gutter-y-sm">
             <div class="q-my-auto text-center">
                 <p>
                     <q-icon
@@ -12,21 +12,18 @@
                 </p>
                 <p class="text-h6">You've signed the {{typeText}}</p>
             </div>
-            <div class="row justify-evenly self-stretch q-mt-md q-gutter-sm">
-                <q-btn
-                    unelevated
-                    color="primary"
-                    class="col-6 col-sm-3"
-                    @click="close()"
-                >Close</q-btn>
-                <div class="col-12" />
-                <q-btn
-                    flat
-                    color="primary"
-                    class="col-6 col-sm-3"
-                    :to="{name:'activities'}"
-                >View Activities</q-btn>
-            </div>
+            <q-btn
+                unelevated
+                color="primary"
+                class="w40"
+                @click="close()"
+            >Close</q-btn>
+            <q-btn
+                flat
+                color="primary"
+                class="w40"
+                :to="{name:'activities'}"
+            >View Activities</q-btn>
         </div>
     </div>
 </template>
