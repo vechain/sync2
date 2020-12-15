@@ -2,11 +2,12 @@ import { Storage } from 'core/storage'
 import { delegateTable } from './utils'
 
 export function build(storage: Storage) {
-    const t = delegateTable<Storage.ActivityEntity, M.Activity<'tx' | 'cert'>>(
+    const t = delegateTable<Storage.ActivityEntity, M.Activity>(
         storage.activities,
         e => ({
             id: e.id,
             gid: e.gid,
+            type: e.type,
             walletId: e.walletId,
             createdTime: e.createdTime,
             status: e.status,
@@ -15,6 +16,7 @@ export function build(storage: Storage) {
         m => ({
             id: m.id,
             gid: m.gid,
+            type: m.type,
             walletId: m.walletId,
             createdTime: m.createdTime,
             status: m.status,
