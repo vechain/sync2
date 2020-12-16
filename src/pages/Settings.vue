@@ -1,24 +1,20 @@
 <template>
     <div class="column fit">
-        <page-toolbar title="Settings" />
+        <page-toolbar :title="$t('settings.title')" />
         <div
             v-scrollDivider
             class="col overflow-auto"
         >
-            <h5 class="q-ma-none q-pa-md">General</h5>
             <q-list>
                 <q-item
                     clickable
                     :to="{name: 'reset-pin-code'}"
                 >
                     <q-item-section avatar>
-                        <q-avatar
-                            color="primary"
-                            text-color="black"
-                        />
+                        <q-avatar icon="mdi-lock" />
                     </q-item-section>
                     <q-item-section>
-                        <q-item-label>Change Password</q-item-label>
+                        <q-item-label>{{$t('settings.action_change_password')}}</q-item-label>
                     </q-item-section>
                     <q-item-section side>
                         <q-icon name="keyboard_arrow_right"></q-icon>
@@ -27,13 +23,10 @@
                 <q-separator inset="item" />
                 <q-item>
                     <q-item-section avatar>
-                        <q-avatar
-                            color="primary"
-                            text-color="black"
-                        />
+                        <q-avatar icon="mdi-shield-account" />
                     </q-item-section>
                     <q-item-section>
-                        <q-item-label lines="1">Biometric Authentication</q-item-label>
+                        <q-item-label lines="1">{{$t('settings.action_bio_auth')}}</q-item-label>
                     </q-item-section>
                     <q-item-section side>
                         <q-toggle
@@ -47,13 +40,10 @@
                 <q-separator inset="item" />
                 <q-item :to="{name: 'tokens-setting'}">
                     <q-item-section avatar>
-                        <q-avatar
-                            color="primary"
-                            text-color="black"
-                        />
+                        <q-avatar icon="mdi-plus-circle-multiple-outline" />
                     </q-item-section>
                     <q-item-section>
-                        <q-item-label lines="1">Token List</q-item-label>
+                        <q-item-label lines="1">{{$t('settings.action_token_list')}}</q-item-label>
                     </q-item-section>
                     <q-item-section side>
                         <q-icon name="keyboard_arrow_right"></q-icon>
@@ -62,13 +52,22 @@
                 <q-separator inset="item" />
                 <q-item :to="{name: 'nodes-setting'}">
                     <q-item-section avatar>
-                        <q-avatar
-                            color="primary"
-                            text-color="black"
-                        />
+                        <q-avatar icon="mdi-access-point-network" />
                     </q-item-section>
                     <q-item-section>
-                        <q-item-label lines="1">Nodes</q-item-label>
+                        <q-item-label lines="1">{{$t('settings.action_nodes')}}</q-item-label>
+                    </q-item-section>
+                    <q-item-section side>
+                        <q-icon name="keyboard_arrow_right"></q-icon>
+                    </q-item-section>
+                </q-item>
+                <q-separator inset="item" />
+                <q-item>
+                    <q-item-section avatar>
+                        <q-avatar icon="mdi-earth" />
+                    </q-item-section>
+                    <q-item-section>
+                        <q-item-label lines="1">{{$t('settings.action_language')}}</q-item-label>
                     </q-item-section>
                     <q-item-section side>
                         <q-icon name="keyboard_arrow_right"></q-icon>
