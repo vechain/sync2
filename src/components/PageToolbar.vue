@@ -21,17 +21,18 @@
         </q-toolbar-title>
         <!-- action buttons -->
         <slot />
-        <div
+        <q-badge
             v-if="warn"
-            class="fixed-center z-top no-pointer-events q-pa-lg text-h2 text-no-wrap text-capitalize"
-            style="background: rgba(0,0,0,0.25);color: rgba(255,0,0,0.8)"
+            color="negative"
+            class="absolute-bottom-right no-pointer-events text-bold"
         >
             {{warn}}
-        </div>
+        </q-badge>
     </q-toolbar>
 </template>
 <script lang="ts">
 import Vue from 'vue'
+import { genesises } from 'src/consts'
 export default Vue.extend({
     props: {
         title: String,
@@ -48,13 +49,10 @@ export default Vue.extend({
     },
     computed: {
         warn(): string {
-            if (this.gid) {
-                const net = this.$options.filters!.net(this.gid)
-                if (net !== 'main') {
-                    return net + ' net'
-                }
+            if (!this.gid || this.gid === genesises.main.id) {
+                return ''
             }
-            return ''
+            return this.$netDisplayName(this.gid)
         },
         titleStyle(): { marginLeft: string, marginRight: string } {
             return {
