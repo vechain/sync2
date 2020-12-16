@@ -23,14 +23,13 @@
                         v-model="password"
                         outlined
                         type="password"
-                        autocomplete="off"
+                        autocomplete="current-password"
                         @keydown.enter.prevent="onSubmit()"
                     />
                 </q-form>
             </q-card-section>
             <q-card-actions>
                 <q-btn
-                    :disable="!password"
                     class="w40 q-mx-auto"
                     :label="$t('authenticationDialog.action_unlock')"
                     unelevated
@@ -49,8 +48,8 @@
     </q-dialog>
 </template>
 <script lang="ts">
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import Vue from 'vue'
+import { QDialog } from 'quasar'
 import { BioPass } from 'src/utils/bio-pass'
 import { Vault } from 'core/vault'
 
@@ -80,15 +79,18 @@ export default Vue.extend({
     },
     methods: {
         // method is REQUIRED by $q.dialog
-        show() { (this.$refs.dialog as any).show() },
+        show() { (this.$refs.dialog as QDialog).show() },
         // method is REQUIRED by $q.dialog
-        hide() { (this.$refs.dialog as any).hide() },
+        hide() { (this.$refs.dialog as QDialog).hide() },
         ok(result: string) {
             this.$emit('ok', result)
             this.hide()
         },
         onSubmit() {
             const password = this.password
+            if (password.length === 0) {
+                return
+            }
             this.error = ''
             this.$loading(async () => {
                 try {
