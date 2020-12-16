@@ -18,7 +18,7 @@
         >
             <img
                 class="q-my-auto"
-                style="max-height:200px;min-height:32px"
+                style="max-height:200px;min-height:32px;max-width:100%"
                 draggable="false"
                 :src="item.img"
             />
