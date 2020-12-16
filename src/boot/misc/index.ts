@@ -121,7 +121,11 @@ export default boot(({ Vue }) => {
                     switch (gid) {
                         case genesises.main.id: return vm.$t('common.mainnet').toString()
                         case genesises.test.id: return vm.$t('common.testnet').toString()
-                        default: return vm.$t('common.private') + `-${gid.slice(-6)}`
+                        default: {
+                            const name = vm.$t('common.private').toString()
+                            const suffix = gid ? `-${gid.slice(-6)}` : ''
+                            return name + suffix
+                        }
                     }
                 }
             }
