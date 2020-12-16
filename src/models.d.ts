@@ -64,20 +64,19 @@ declare namespace M {
         recipient: string
     }
 
-    type Activity = {
-        id: number
-        gid: string
-        walletId: number
-        createdTime: number
-        status: '' | 'completed'
-    } & ({
-        type: 'tx'
-        glob: Activity.TxGlob
-    } | {
-        type: 'cert'
-        glob: Activity.CertGlob
-    })
-
+    type Activity<T extends 'id?' | 'id!' = 'id!'> =
+        (T extends 'id!' ? { id: number } : { id?: number }) & {
+            gid: string
+            walletId: number
+            createdTime: number
+            status: '' | 'completed'
+        } & ({
+            type: 'tx'
+            glob: Activity.TxGlob
+        } | {
+            type: 'cert'
+            glob: Activity.CertGlob
+        })
     namespace Activity {
         type Glob = {
             id: string // the tx/cert id
