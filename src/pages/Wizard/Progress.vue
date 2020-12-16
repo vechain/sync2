@@ -1,22 +1,16 @@
 <template>
     <transition-group
-        v-bind="$attrs"
         tag="div"
+        name="q-transition--jump-down"
+        class="column q-gutter-y-md"
     >
         <div
-            v-for="(str, i) in steps"
-            class="text-h5 q-mb-lg"
-            :class="steps.length === i+1 ? 'text-dark' : 'text-grey'"
-            :key="`${i}`"
+            v-for="(_, i) in history"
+            class="text-h5"
+            :class="getClass(i)"
+            :key="i+''"
         >
-            {{str}}
-        </div>
-        <div
-            :key="sentences.length"
-            v-if="done"
-            class="text-center"
-        >
-            <slot />
+            {{getContent(i)}}
         </div>
     </transition-group>
 </template>
@@ -24,33 +18,28 @@
 import Vue from 'vue'
 export default Vue.extend({
     props: {
-        sentences: {
-            type: Array as () => string[],
-            default: () => []
-        }
+        current: String
     },
     data() {
         return {
-            steps: [] as string[],
-            done: false
+            history: [] as string[]
         }
     },
-    computed: {
-        isDone(): boolean {
-            return this.steps.length === this.sentences.length
+    watch: {
+        current(newVal: string) {
+            this.history.push(newVal)
         }
-    },
-    mounted() {
-        this.start()
     },
     methods: {
-        async start() {
-            for (let i = 0; i < this.sentences.length; i++) {
-                this.steps.push(this.sentences[i])
-                this.isDone && this.$emit('done')
-                await new Promise(resolve => setTimeout(resolve, this.isDone ? 300 : 1000))
-                this.done = this.isDone
+        getClass(i: number) {
+            return i + 1 === this.history.length ? 'text-dark' : 'text-grey'
+        },
+        getContent(i: number) {
+            const str = this.history[i]
+            if (str) {
+                return i + 1 === this.history.length ? str + '...' : str
             }
+            return ''
         }
     }
 })
