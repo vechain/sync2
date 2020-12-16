@@ -1,7 +1,7 @@
 <template>
     <div
         id="q-app"
-        class="non-selectable"
+        class="non-selectable full-height"
     >
         <router-view />
     </div>

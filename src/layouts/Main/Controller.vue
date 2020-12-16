@@ -1,20 +1,19 @@
 <template>
     <transition
-        v-if="passwordSet || !$asyncComputed.passwordSet.updating"
+        v-if="mounted"
         name="q-transition--fade"
     >
         <StackedRouterView
-            v-if="passwordSet"
-            v-show="mounted"
+            v-if="initialized"
+            class="fit"
         />
         <wizard
             v-else
-            v-show="mounted"
-            class="fullscreen"
+            class="fit"
+            @done="initialized=true"
         />
     </transition>
 </template>
-
 <script lang="ts">
 import Vue from 'vue'
 import Wizard from 'pages/Wizard'
@@ -25,18 +24,17 @@ export default Vue.extend({
     },
     data() {
         return {
+            initialized: false,
             mounted: false
         }
     },
     asyncComputed: {
-        passwordSet(): Promise<boolean> {
-            return this.$svc.config.getPasswordShadow().then(r => !!r)
-        },
         uncompleted(): Promise<M.Activity[]> {
             return this.$svc.activity.uncompleted()
         }
     },
-    mounted() {
+    async mounted() {
+        this.initialized = await this.$svc.config.getPasswordShadow().then(r => !!r)
         this.mounted = true
     }
 })
