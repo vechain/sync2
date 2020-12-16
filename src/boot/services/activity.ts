@@ -29,6 +29,9 @@ export function build(storage: Storage) {
         },
         page(count: number, offset: number) {
             return t.all().limit(count, offset).query()
+        },
+        add(a: M.Activity<'id?'>) {
+            return t.insert(a)
         }
     }
 }
