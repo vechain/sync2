@@ -39,10 +39,11 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import AddressSelector, { Group } from './AddressSelector.vue'
+import AddressSelector from './AddressSelector.vue'
 import { address } from 'thor-devkit'
 import QrScannerDialog from 'pages/QrScannerDialog'
 import { QrScanner } from 'src/utils/qr-scanner'
+import { AddressGroup } from './models'
 
 export default Vue.extend({
     components: {
@@ -54,7 +55,7 @@ export default Vue.extend({
     },
     props: {
         wallets: {
-            type: Array as () => Group[],
+            type: Array as () => AddressGroup[],
             default: []
         },
         address: String

@@ -19,24 +19,24 @@
                     class="col overflow-auto q-pt-none"
                 >
                     <q-list>
-                        <template v-for="group in groups">
-                            <template v-if="group.addresses.length">
+                        <template v-for="(group, gi) in groups">
+                            <template v-if="group.list.length">
                                 <q-item-label
                                     header
-                                    :key="group.id"
+                                    :key="gi"
                                 >
                                     {{group.name}}
                                 </q-item-label>
-                                <template v-for="addr in group.addresses">
+                                <template v-for="(addr, i) in group.list">
                                     <AddressInfo
                                         clickable
                                         dense
                                         @click="onClick(addr)"
-                                        :key="group.id + addr"
+                                        :key="`${gi}-${i}`"
                                         :address="addr"
                                     />
                                     <q-separator
-                                        :key="'s' + group.id + addr"
+                                        :key="`s-${gi}-${i}`"
                                         class="q-my-sm"
                                         inset="item"
                                     />
@@ -51,16 +51,12 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-export type Group = {
-    name: string
-    id: string | number
-    addresses: string[]
-}
+import { AddressGroup } from './models'
 
 export default Vue.extend({
     props: {
         groups: {
-            type: Array as () => Group[],
+            type: Array as () => AddressGroup[],
             default: () => []
         }
     },
