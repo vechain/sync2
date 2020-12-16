@@ -17,7 +17,6 @@
                         no-error-icon
                         autocomplete="off"
                         clearable
-                        :rules="[val => isAddress(val) || 'Please enter a valid address']"
                         v-model="to"
                         :wallets="toWallets"
                         label="To"
@@ -39,6 +38,7 @@
                         label="Amount"
                     />
                     <Resolve
+                        v-if="currentToken"
                         :promise="$svc.bc(currentToken.gid).balanceOf(address, currentToken)"
                         v-slot="{data}"
                     >
@@ -64,7 +64,6 @@
 import Vue from 'vue'
 import { abi } from 'thor-devkit'
 import { abis } from 'src/consts'
-import { copyToClipboard } from 'quasar'
 import To from './To.vue'
 import TokenSelector from './TokenSelector.vue'
 import { AddressGroup } from './models'
@@ -83,43 +82,36 @@ export default Vue.extend({
         return {
             to: '',
             amount: '',
-            symbol: this.defaultSymbol || 'VET',
-            amountError: '',
-            txInfo: null as unknown as { id: string, comment: string }
+            symbol: this.defaultSymbol || 'VET'
         }
     },
     asyncComputed: {
         wallet(): Promise<M.Wallet | null> {
             return this.$svc.wallet.get(parseInt(this.wid))
         },
-        toWallets: {
-            async get(): Promise<AddressGroup[]> {
+        recent: {
+            async get(): Promise<string[]> {
+                return this.$svc.config.getRecentRecipients()
+            },
+            default: []
+        },
+        wallets: {
+            async get(): Promise<M.Wallet[]> {
                 if (!this.wallet) {
                     return []
                 }
-
-                const [wallets, recent] = await Promise.all([
-                    this.$svc.wallet.getByGid(this.wallet.gid),
-                    this.$svc.config.getRecentRecipients()
-                ])
-                return [{
-                    name: 'Recent',
-                    addresses: recent
-                },
-                ...wallets.map<AddressGroup>(w => {
-                    return {
-                        name: w.meta.name,
-                        addresses: w.meta.addresses
-                    }
-                })]
+                return await this.$svc.wallet.getByGid(this.wallet.gid)
             },
             default: []
         },
         tokenList: {
             async get(): Promise<M.TokenSpec[]> {
-                const [w, tokens, activeSymbols] = await Promise.all(
+                const w = this.wallet
+                if (!w) {
+                    return []
+                }
+                const [tokens = [], activeSymbols = []] = await Promise.all(
                     [
-                        this.$svc.wallet.get(parseInt(this.wid)),
                         this.$svc.config.token.all(),
                         this.$svc.config.token.activeSymbols()
                     ]
@@ -133,14 +125,23 @@ export default Vue.extend({
         }
     },
     computed: {
-        currentToken(): M.TokenSpec {
+        toWallets(): AddressGroup[] {
+            return [
+                {
+                    name: 'Recent',
+                    list: this.recent
+                },
+                ...this.wallets.map<AddressGroup>(w => { return { name: w.meta.name, list: w.meta.addresses } })
+            ]
+        },
+        currentToken(): M.TokenSpec | undefined {
             return this.tokenList.find(item => item.symbol === this.symbol)
         },
         from(): string {
-            return this.wallet!.meta.addresses[parseInt(this.i, 10)]
+            return this.wallet ? this.wallet.meta.addresses[parseInt(this.i, 10)] : ''
         },
         balanceCheck(): (v: string) => boolean | string {
-            const regexp = new RegExp(`^(([1-9]{1}\\d*)|(0{1}))(\\.\\d{1,${this.currentToken.decimals}})?$`)
+            const regexp = new RegExp(`^(([1-9]{1}\\d*)|(0{1}))(\\.\\d{1,${this.currentToken!.decimals}})?$`)
             return (val) => {
                 return regexp.test(val) || 'Invalide balance'
             }
@@ -164,39 +165,29 @@ export default Vue.extend({
                 const func = new abi.Function(abis.transfer)
                 comment = `Transferring ${this.amount} ${this.symbol}`
                 const data = func.encode(this.to,
-                    Vue.filter('toWei')(this.amount, this.currentToken.decimals))
+                    Vue.filter('toWei')(this.amount, this.currentToken!.decimals))
                 msgItem = {
-                    to: this.currentToken.address,
+                    to: this.currentToken!.address,
                     value: 0,
                     data: data,
                     comment
                 }
             }
-            this.$signTx(this.gid, {
+            this.$signTx(this.wallet!.gid, {
                 message: [msgItem],
                 options: {
                     signer: this.from,
                     comment: comment
                 }
-            }).then((r) => {
-                this.txInfo = {
-                    id: r.txid,
-                    comment: comment
-                }
-                const temp = [this.to, ...this.recentList].reduce((result: string[], cv: string) => {
+            }).then(() => {
+                const temp = [this.to, ...this.recent].reduce((result: string[], cv: string) => {
                     !result.includes(cv.toLowerCase()) && result.push(cv.toLowerCase())
                     return result
                 }, []).slice(0, 10)
 
                 this.$svc.config.saveRecentRecipients(temp)
+                this.$router.replace({ name: 'sign-success', query: { type: 'tx' } })
             })
-        },
-        onCopy() {
-            copyToClipboard(this.txInfo.id).then(
-                () => {
-                    this.$q.notify('copied')
-                }
-            ).catch(console.error)
         }
     }
 })
