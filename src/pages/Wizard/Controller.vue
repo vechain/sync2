@@ -107,7 +107,8 @@ export default Vue.extend({
                     vault: vault.encode(),
                     meta: {
                         name: 'My Wallet',
-                        addresses: [node0.address]
+                        addresses: [node0.address],
+                        backedUp: false
                     }
                 })
             })(), 0.5)

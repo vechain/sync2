@@ -188,7 +188,7 @@ export default Vue.extend({
                     const meta: M.Wallet.Meta = {
                         name: this.name,
                         addresses: [node0.address],
-                        backedUp: false
+                        backedUp: type === 'import'
                     }
                     await this.$svc.wallet.insert({
                         gid: this.gid,
