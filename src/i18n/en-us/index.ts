@@ -42,7 +42,6 @@ export default {
         msg_desc: 'Manage assets with ease, anytime,anywhere',
         msg_mnemonic_error: 'Invalid mnemonic words',
         msg_mnemonic_words: 'words mnemonic',
-        msg_mnemonic_hint: 'Enter the mnemonic words and separated by single space',
         action_generate: 'Generate',
         action_import: 'Import',
         label_wallet_name: 'Wallet Name',
@@ -54,5 +53,13 @@ export default {
         action_faceID: 'Unlock with FaceID',
         action_unlock: 'Unlock',
         label_input_password: 'Enter password to unlock'
+    },
+    settings: {
+        title: 'Settings',
+        action_change_password: 'Password',
+        action_bio_auth: 'Biometric Authentication',
+        action_token_list: 'Tokens',
+        action_nodes: 'Nodes',
+        action_language: 'Language'
     }
 }
