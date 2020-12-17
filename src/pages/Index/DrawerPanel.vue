@@ -6,7 +6,7 @@
         <!-- drawer content header -->
         <q-toolbar>
             <q-avatar square>
-                <img src="~assets/logoSync.svg">
+                <img src="~assets/logo-sync.svg">
             </q-avatar>
             <q-toolbar-title>
                 Sync2
