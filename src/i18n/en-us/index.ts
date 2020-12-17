@@ -20,7 +20,7 @@ export default {
 
         // error_message
         required_field: 'This field is required',
-        something_wrong: 'Something Wrong',
+        something_wrong: 'Something is Wrong',
 
         // notify
         wallet_updated: 'Wallet Updated',
@@ -36,14 +36,14 @@ export default {
         action_create: 'Create Now',
         msg_rename: 'Wallet name helps you quickly identify the wallet.',
         msg_upgrade: 'New version is ready :)',
-        msg_delete: 'Are you sure? this cannot be undone. Unless you have backed up your wallet beforehand.',
+        msg_delete: 'Are you sure? This cannot be undone. Unless you have backed up your wallet beforehand.',
         msg_backup: 'Backup allows you to regain wallet access if you lose the device.',
         label_wallets: 'Wallets'
     },
     newWallet: {
         title: 'New Wallet',
         title_desc: 'Sync Wallet',
-        msg_desc: 'Manage assets with ease, anytime,anywhere',
+        msg_desc: 'Manage assets with ease, anytime, anywhere',
         msg_mnemonic_error: 'Invalid mnemonic words',
         msg_mnemonic_words: 'words mnemonic',
         action_generate: 'Generate',
