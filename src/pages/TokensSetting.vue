@@ -3,9 +3,12 @@
         <page-toolbar title="Tokens" />
         <div
             v-scrollDivider
-            class="col overflow-auto"
+            class="col overflow-auto narrow-page q-mx-auto"
         >
-            <q-list v-if="tokens.length>0">
+            <q-list
+                v-if="tokens.length>0"
+                padding
+            >
                 <template v-for="(item, index) in tokens">
                     <q-separator
                         v-if="index !==0 "

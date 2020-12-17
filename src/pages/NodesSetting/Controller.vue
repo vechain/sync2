@@ -10,7 +10,11 @@
                 @click="onAdd"
             />
         </page-toolbar>
-        <q-list>
+        <q-list
+            padding
+            v-scrollDivider
+            class="col narrow-page q-mx-auto overflow-auto"
+        >
             <template v-for="(group, gi) in groups">
                 <q-separator
                     v-if="gi > 0"
