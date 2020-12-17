@@ -6,12 +6,14 @@ function wrapTable<T extends Storage.Entity>(table: Dexie.Table<T, number>): Sto
     const ob = newObservable()
     return {
         insert: async (row, replace) => {
+            let id
             if (replace) {
-                await table.put(row as T)
+                id = await table.put(row as T)
             } else {
-                await table.add(row as T)
+                id = await table.add(row as T)
             }
             ob.notify()
+            return id
         },
         update: async (cond, values) => {
             if (Object.keys(cond).length > 0) {

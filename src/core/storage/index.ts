@@ -60,7 +60,7 @@ export namespace Storage {
          * @param row the row
          * @param replace use upsert
          */
-        insert(row: Partial<T>, replace?: boolean): Promise<void>
+        insert(row: Partial<T>, replace?: boolean): Promise<number>
 
         /**
          * update rows that match the given condition

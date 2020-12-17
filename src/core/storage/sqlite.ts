@@ -35,7 +35,7 @@ const schemas = [
 
 export interface SQLRunner {
     query<T extends Storage.Entity>(sql: string, ...params: unknown[]): Promise<T[]>
-    exec(sql: string, ...params: unknown[]): Promise<void>
+    exec(sql: string, ...params: unknown[]): Promise<{ insertId: number }>
 }
 
 function wrapTable<T extends Storage.Entity>(runner: SQLRunner, tableName: string): Storage.Table<T> {
@@ -50,7 +50,10 @@ function wrapTable<T extends Storage.Entity>(runner: SQLRunner, tableName: strin
             }
             return runner.exec(`${replace ? 'REPLACE' : 'INSERT'} INTO ${tableName} (${keys.join(',')}) VALUES(${keys.map(() => '?').join(',')})`,
                 ...values)
-                .then(() => ob.notify())
+                .then(({ insertId }) => {
+                    ob.notify()
+                    return insertId
+                })
         },
         update: (cond, values) => {
             const keys = []

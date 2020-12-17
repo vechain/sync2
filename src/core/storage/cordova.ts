@@ -35,7 +35,8 @@ export async function open() {
                 db.executeSql(
                     sql,
                     params,
-                    () => resolve(),
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    (r: any) => resolve({ insertId: r.insertId }),
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     (err: any) => reject(new Error(err.message)))
             })

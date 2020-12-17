@@ -9,8 +9,11 @@ export async function open() {
         query: (sql, ...params) => {
             return db.all(sql, ...params)
         },
-        exec: async (sql, ...params) => {
-            await db.run(sql, ...params)
+        exec: (sql, ...params) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            return db.run(sql, ...params).then((r: any) => {
+                return { insertId: r.lastID }
+            })
         }
     })
 }
