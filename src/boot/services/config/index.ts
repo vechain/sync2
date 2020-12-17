@@ -33,7 +33,7 @@ export function build(storage: Storage) {
     }
 
     const set = (key: Key, value: string) => {
-        return t.insert({ key, subKey: '', value }, true)
+        return t.insert({ key, subKey: '', value }, true).then(() => { })
     }
 
     const node = {
