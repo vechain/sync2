@@ -185,16 +185,16 @@ export default Vue.extend({
                         words || await Vault.generateMnemonic(this.wordsCount / 3 * 4),
                         password)
                     const node0 = await vault.derive(0)
-                    const meta: M.Wallet.Meta = {
-                        name: this.name,
-                        addresses: [node0.address],
-                        backedUp: type === 'import'
-                    }
-                    await this.$svc.wallet.insert({
+                    const newId = await this.$svc.wallet.insert({
                         gid: this.gid,
                         vault: vault.encode(),
-                        meta
+                        meta: {
+                            name: this.name,
+                            addresses: [node0.address],
+                            backedUp: type === 'import'
+                        }
                     })
+                    await this.$svc.config.saveSelectedWalletId(newId)
                 })
                 this.$backOrHome()
                 this.$q.notify(this.$t('common.wallet_created').toString())

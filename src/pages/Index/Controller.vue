@@ -49,10 +49,7 @@
             ref="drawer"
         >
             <drawer-panel>
-                <wallet-list
-                    :wallets="wallets"
-                    v-model="selectedWalletId"
-                />
+                <wallet-list :wallets="wallets" />
             </drawer-panel>
         </drawer>
     </div>
@@ -73,13 +70,12 @@ export default Vue.extend({
     components: { BackupTip, UpgradeTip, DrawerPanel, WalletList, AddressCardList },
     data: () => {
         return {
-            drawerOpen: false,
-            selectedWalletId: 0
+            drawerOpen: false
         }
     },
     computed: {
         wallet(): M.Wallet | null {
-            return this.wallets.find(w => w.id === this.selectedWalletId) || null
+            return this.wallets.find(w => w.id === this.selectedWalletId) || this.wallets[0] || null
         },
         title(): string {
             return (this.wallet && this.wallet.meta.name) || 'Sync'
@@ -89,11 +85,13 @@ export default Vue.extend({
         wallets: {
             get() { return this.$svc.wallet.all() },
             default: []
+        },
+        selectedWalletId() {
+            return this.$svc.config.getSelectedWalletId()
         }
     },
     watch: {
         selectedWalletId() {
-            this.drawerOpen = false
             const list = this.$refs.list as Vue
             list && list.$el.scrollTo({ top: 0, behavior: 'auto' })
         }

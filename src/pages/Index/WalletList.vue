@@ -34,9 +34,9 @@
                     :key="wallet.id"
                     clickable
                     :inset-level="0.25"
-                    :active="wallet.id === value"
+                    :active="wallet.id === selectedWalletId"
                     active-class="bg-blue-1"
-                    @click="$emit('input', wallet.id)"
+                    @click="$svc.config.saveSelectedWalletId(wallet.id)"
                 >
                     <q-item-section>
                         <q-item-label lines="1">
@@ -54,24 +54,16 @@ import { groupBy } from 'src/utils/array'
 
 export default Vue.extend({
     props: {
-        wallets: Array as () => M.Wallet[],
-        value: Number // selected wallet id
-    },
-    model: {
-        prop: 'value',
-        event: 'input'
+        wallets: Array as () => M.Wallet[]
     },
     computed: {
-        walletGroups() {
+        walletGroups(): M.Wallet[][] {
             return groupBy(this.wallets, w => w.gid)
         }
     },
-    watch: {
-        wallets(newVal: M.Wallet[]) {
-            if (!newVal.find(w => w.id === this.value)) {
-                const w0 = newVal[0]
-                w0 && this.$emit('input', w0.id)
-            }
+    asyncComputed: {
+        selectedWalletId(): Promise<number> {
+            return this.$svc.config.getSelectedWalletId()
         }
     }
 })
