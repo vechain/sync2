@@ -17,6 +17,7 @@
                 target="#lang"
                 anchor="bottom right"
                 self="top right"
+                :offset="[-16,0]"
             >
                 <q-list separator>
                     <q-item
