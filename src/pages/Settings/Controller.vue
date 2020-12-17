@@ -13,7 +13,7 @@
                 :value="languageDisplayName($i18n.locale)"
                 clickable
             />
-            <q-popup-proxy
+            <q-menu
                 target="#lang"
                 anchor="bottom right"
                 self="top right"
@@ -29,7 +29,7 @@
                         <q-item-section>{{languageDisplayName(lang)}}</q-item-section>
                     </q-item>
                 </q-list>
-            </q-popup-proxy>
+            </q-menu>
             <q-separator inset="item" />
             <item
                 icon="mdi-lock"
