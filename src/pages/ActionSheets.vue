@@ -4,7 +4,7 @@
         @hide="$emit('hide')"
         position="bottom"
     >
-        <q-card style="min-width:300px">
+        <q-card class="full-width">
             <q-list>
                 <template v-for="(a, i) in actions">
                     <q-separator
