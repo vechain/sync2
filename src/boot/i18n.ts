@@ -14,7 +14,8 @@ Vue.use(VueI18n)
 export const i18n = new VueI18n({
     locale: 'en-us',
     fallbackLocale: 'en-us',
-    messages
+    messages,
+    silentFallbackWarn: true
 })
 
 export default boot(({ app }) => {
