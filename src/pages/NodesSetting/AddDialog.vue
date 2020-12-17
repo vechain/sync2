@@ -6,7 +6,7 @@
     >
         <q-card class="column full-width no-wrap">
             <q-card-section>
-                <div class="text-h6">Add Node</div>
+                <div class="text-h6">{{$t('nodes.title_add_dialog')}}</div>
                 <q-form @submit="onSubmit">
                     <q-input
                         label="URL"
@@ -22,12 +22,12 @@
                             v-close-popup
                             flat
                             class="q-mr-md"
-                            label="Cancel"
+                            :label="$t('common.cancel')"
                         />
                         <q-btn
                             flat
                             :loading="loading"
-                            label="Add"
+                            :label="$t('common.add')"
                             color="primary"
                             type="submit"
                         />

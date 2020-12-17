@@ -8,7 +8,7 @@
         >
             <item
                 id="lang"
-                icon="mdi-earth"
+                icon="mdi-translate"
                 :title="$t('settings.action_language')"
                 :value="languageDisplayName($i18n.locale)"
                 clickable

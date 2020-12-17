@@ -11,7 +11,7 @@
                 name="welcome"
                 class="column q-gutter-y-md no-wrap"
             >
-                <h4 class="q-mt-md q-mb-none">Welcome</h4>
+                <h4 class="q-mt-md q-mb-none">{{$t('wizard.title_welcome')}}</h4>
                 <feature-slides class="col" />
                 <q-btn
                     class="w40 self-center"
@@ -25,18 +25,21 @@
                 class="column q-gutter-y-md no-wrap"
                 name="progress"
             >
-                <h4 class="q-mt-md q-mb-none">Initialize</h4>
+                <h4 class="q-mt-md q-mb-none">{{$t('wizard.title_init')}}</h4>
                 <Progress
                     :current="progressStr"
                     class="col"
                 />
-                <h5 v-if="finished">Wallet created!</h5>
+                <h5
+                    class="text-center"
+                    v-if="finished"
+                >{{$t('wizard.msg_init_complete')}}</h5>
                 <q-btn
                     v-if="finished"
                     class="w40 self-center"
                     unelevated
                     color="primary"
-                    label="OK"
+                    :label="$t('common.finish')"
                     @click="$emit('done')"
                 />
             </q-carousel-slide>
@@ -85,19 +88,19 @@ export default Vue.extend({
             this.slide = 'progress'
             await this.$nextTick()
 
-            this.progressStr = 'Collecting entropy'
+            this.progressStr = this.$t('wizard.msg_init_animation_s1').toString()
             const words = await randomDelay(Vault.generateMnemonic(16), 1)
 
-            this.progressStr = 'Generating random seed'
+            this.progressStr = this.$t('wizard.msg_init_animation_s2').toString()
             await randomDelay(Promise.resolve(), 0.5)
 
-            this.progressStr = 'Creating wallet'
+            this.progressStr = this.$t('wizard.msg_init_animation_s3').toString()
             await randomDelay(Promise.resolve(), 0.5)
 
-            this.progressStr = 'Encrypting wallet'
+            this.progressStr = this.$t('wizard.msg_init_animation_s4').toString()
             const vault = await randomDelay(Vault.createHD(words, password), 0.5)
 
-            this.progressStr = 'Saving wallet'
+            this.progressStr = this.$t('wizard.msg_init_animation_s5').toString()
             await randomDelay((async () => {
                 const node0 = await vault.derive(0)
                 const shadow = await Vault.shadowPassword(password)
