@@ -1,6 +1,6 @@
 <template>
     <div class="column fit">
-        <page-toolbar title="Tokens" />
+        <page-toolbar :title="$t('settings.action_token_list')" />
         <div
             v-scrollDivider
             class="col overflow-auto narrow-page q-mx-auto"
@@ -46,7 +46,7 @@
                 v-else-if="$asyncComputed.tokens.error"
                 class="fit column flex-center"
             >
-                <p>Something wrong</p>
+                <p>{{$t('common.something_wrong')}}</p>
                 <q-btn @click="$asyncComputed.tokens.update()">Refresh</q-btn>
             </div>
         </div>

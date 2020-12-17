@@ -6,11 +6,11 @@
     >
         <div
             v-for="(_, i) in history"
-            class="text-h5"
+            class="text-h5 text-center"
             :class="getClass(i)"
             :key="i+''"
         >
-            {{getContent(i)}}
+            {{history[i]}}
         </div>
     </transition-group>
 </template>
@@ -33,13 +33,6 @@ export default Vue.extend({
     methods: {
         getClass(i: number) {
             return i + 1 === this.history.length ? 'text-dark' : 'text-grey'
-        },
-        getContent(i: number) {
-            const str = this.history[i]
-            if (str) {
-                return i + 1 === this.history.length ? str + '...' : str
-            }
-            return ''
         }
     }
 })

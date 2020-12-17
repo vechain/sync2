@@ -9,6 +9,9 @@ export default {
         no: 'No',
         dismiss: 'Dismiss',
         delete: 'Delete',
+        add: 'Add',
+        cancel: 'Cancel',
+        finish: 'Finish',
 
         // network
         mainnet: 'Main Net',
@@ -17,10 +20,11 @@ export default {
 
         // error_message
         required_field: 'This field is required',
+        something_wrong: 'Something Wrong',
 
         // notify
         wallet_updated: 'Wallet Updated',
-        wallet_created: 'Wallet created successfully'
+        wallet_created: 'Wallet Created!'
     },
     index: {
         action_new_account: 'New Account',
@@ -61,5 +65,27 @@ export default {
         action_token_list: 'Tokens',
         action_nodes: 'Nodes',
         action_language: 'Language'
+    },
+    nodes: {
+        title_add_dialog: 'Add Node',
+        msg_node_added: 'Node Added',
+        msg_node_deleted: 'Node Deleted',
+        msg_node_existed: 'Node already exists!',
+        msg_delete: 'Are you sure you want to delete the node?'
+    },
+    wizard: {
+        title_welcome: 'Welcome',
+        title_init: 'One moment',
+        title_feature_2: 'Wallet Management',
+        title_feature_3: 'Signing Service',
+        msg_init_animation_s1: 'Initializing',
+        msg_init_animation_s2: 'Collecting entropy for random seed',
+        msg_init_animation_s3: 'Generating your wallet',
+        msg_init_animation_s4: 'Encrypting wallet using your password',
+        msg_init_animation_s5: 'Saving wallet to a local secure vault',
+        msg_init_complete: 'Your wallet is ready!',
+        msg_feature_1: 'The brand new Sync enhanced design focuses on your experience',
+        msg_feature_2: 'Manage assets with ease, anytime, anywhere.',
+        msg_feature_3: 'Seamless user experience to sign transactions or certificates requested by the dapp.'
     }
 }

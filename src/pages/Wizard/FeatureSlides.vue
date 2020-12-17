@@ -41,17 +41,17 @@ export default Vue.extend({
                 img: require('assets/logo-sync.svg'),
                 title: 'VeChain Sync2',
                 name: 's1',
-                content: 'The brand new Sync enhanced design focuses on your experience'
+                content: this.$t('wizard.msg_feature_1').toString()
             }, {
                 img: require('assets/wallet-cards.svg'),
-                title: 'Wallet Management',
+                title: this.$t('wizard.title_feature_2'),
                 name: 's2',
-                content: 'Manage assets with ease, anytime, anywhere.'
+                content: this.$t('wizard.msg_feature_2').toString()
             }, {
                 img: require('assets/signing.svg'),
-                title: 'Signing Services',
+                title: this.$t('wizard.title_feature_3'),
                 name: 's3',
-                content: 'Seamless user experience to sign transactions or certificates requested by the dapp.'
+                content: this.$t('wizard.msg_feature_3').toString()
             }]
         }
     }

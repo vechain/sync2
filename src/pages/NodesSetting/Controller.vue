@@ -1,6 +1,6 @@
 <template>
     <div class="fit column no-warp">
-        <page-toolbar title="Nodes">
+        <page-toolbar :title="$t('settings.action_nodes')">
             <q-btn
                 class="q-ml-auto"
                 flat
@@ -121,7 +121,7 @@ export default Vue.extend({
                 if (this.nodes.find(n => n.genesis.id === val.genesis.id && n.url === val.url)) {
                     this.$q.notify({
                         type: 'warning',
-                        message: 'Node already exists!',
+                        message: this.$t('nodes.msg_node_existed').toString(),
                         timeout: 5000,
                         actions: [{ icon: 'close', color: 'white' }]
                     })
@@ -130,7 +130,7 @@ export default Vue.extend({
                 await this.$svc.config.node.save([...this.nodes, val])
                 this.$q.notify({
                     type: 'positive',
-                    message: 'Node added!',
+                    message: this.$t('nodes.msg_node_added').toString(),
                     timeout: 5000,
                     actions: [{ icon: 'close', color: 'white' }]
                 })
@@ -139,20 +139,22 @@ export default Vue.extend({
         onDelete(val: M.Node) {
             this.$q.dialog({
                 parent: this,
-                title: 'Delete',
-                message: 'Are you sure?',
+                title: this.$t('common.delete').toString(),
+                message: this.$t('nodes.msg_delete').toString(),
                 ok: {
-                    label: 'Delete',
+                    label: this.$t('common.yes'),
                     color: 'negative',
                     flat: true
                 },
-                cancel: true
+                cancel: {
+                    label: this.$t('common.cancel')
+                }
             }).onOk(async () => {
                 const nodes = this.nodes.filter(n => !(n.genesis.id === val.genesis.id && n.url === val.url))
                 await this.$svc.config.node.save(nodes)
                 this.$q.notify({
                     type: 'info',
-                    message: 'Node deleted!',
+                    message: this.$t('nodes.msg_node_deleted').toString(),
                     timeout: 5000,
                     actions: [{ icon: 'close', color: 'white' }]
                 })

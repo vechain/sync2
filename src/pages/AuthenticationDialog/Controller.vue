@@ -41,7 +41,7 @@
                         flat
                         text-color="primary"
                         class="q-mt-lg"
-                        label="$t('authenticationDialog.action_faceID')"
+                        :label="$t('authenticationDialog.action_faceID')"
                     /> -->
             </q-card-actions>
         </q-card>
