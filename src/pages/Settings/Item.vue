@@ -10,6 +10,9 @@
             <q-item-label lines="1">{{title}}</q-item-label>
         </q-item-section>
         <q-item-section side>
+            {{value}}
+        </q-item-section>
+        <q-item-section side>
             <q-icon
                 v-if="!$slots.default"
                 name="keyboard_arrow_right"
@@ -23,7 +26,8 @@ import Vue from 'vue'
 export default Vue.extend({
     props: {
         icon: String,
-        title: String
+        title: String,
+        value: String
     }
 })
 </script>

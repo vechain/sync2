@@ -7,9 +7,29 @@
             class="col narrow-page q-mx-auto overflow-auto"
         >
             <item
+                id="lang"
                 icon="mdi-earth"
                 :title="$t('settings.action_language')"
+                :value="languageDisplayName($i18n.locale)"
+                clickable
             />
+            <q-popup-proxy
+                target="#lang"
+                anchor="bottom right"
+                self="top right"
+            >
+                <q-list separator>
+                    <q-item
+                        clickable
+                        v-close-popup
+                        v-for="lang in $i18n.availableLocales"
+                        :key="lang"
+                        @click="setLanguage(lang)"
+                    >
+                        <q-item-section>{{languageDisplayName(lang)}}</q-item-section>
+                    </q-item>
+                </q-list>
+            </q-popup-proxy>
             <q-separator inset="item" />
             <item
                 icon="mdi-lock"
@@ -37,7 +57,6 @@
             />
             <q-separator inset="item" />
             <item
-                nosep
                 icon="mdi-access-point-network"
                 :title="$t('settings.action_nodes')"
                 :to="{name: 'nodes-setting'}"
@@ -107,6 +126,19 @@ export default Vue.extend({
                     }
                 })
             })
+        },
+        languageDisplayName(lang: string) {
+            try {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const ns = new (Intl as any).DisplayNames([lang], { type: 'language' })
+                return ns.of(lang)
+            } catch {
+                return lang
+            }
+        },
+        setLanguage(lang: string) {
+            this.$i18n.locale = lang
+            this.$svc.config.saveLanguage(lang)
         }
     }
 })

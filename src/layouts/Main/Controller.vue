@@ -35,6 +35,8 @@ export default Vue.extend({
     },
     async mounted() {
         this.initialized = await this.$svc.config.getPasswordShadow().then(r => !!r)
+        const lang = await this.$svc.config.getLanguage()
+        lang && (this.$i18n.locale = lang)
         this.mounted = true
     }
 })
