@@ -5,7 +5,7 @@
     >
         <q-card-section>
             <!-- to infos -->
-            <!-- <div>
+            <div>
                 <template v-if="!isCreate">
                     <div class="row justify-between">
                         <span class="col-2 text-caption text-grey">To</span>
@@ -45,19 +45,19 @@
                         <div>New Contract</div>
                     </div>
                 </template>
-            </div> -->
+            </div>
             <!-- amount infos -->
-            <!-- <div>
+            <div>
                 <span class="text-caption text-grey">Amount</span>
                 <div>
-                    <template v-if="isToken">
-                        <TokenAmount
+                    <template v-if="token">
+                        <TokenBalance
                             class="q-px-xs"
                             v-if="!isZeroVet"
                             :balance="vet"
-                            :token="tokenSpecs.VET"
+                            :token="tokenVET"
                         />
-                        <TokenAmount
+                        <TokenBalance
                             class="q-px-xs"
                             v-if="decoded"
                             :balance="decoded.value"
@@ -65,17 +65,17 @@
                         />
                     </template>
                     <template v-else>
-                        <TokenAmount
+                        <TokenBalance
                             class="q-px-xs"
                             :balance="vet"
-                            :token="tokenSpecs.VET"
+                            :token="tokenVET"
                         />
                     </template>
                 </div>
                 <div class="q-my-xs text-body2 text-grey-7">{{msg.comment}}</div>
-            </div> -->
+            </div>
             <!-- data infos -->
-            <!-- <div v-if="msg.data">
+            <div v-if="msg.data">
                 <q-expansion-item
                     v-model="expanded"
                     :label=" expanded ? 'Hide Details' : 'Show Details'"
@@ -90,82 +90,82 @@
                         type="textarea"
                     />
                 </q-expansion-item>
-            </div> -->
+            </div>
         </q-card-section>
     </q-card>
 </template>
 <script lang="ts">
 import Vue from 'vue'
-// import { BigNumber } from 'bignumber.js'
-// import { abi } from 'thor-devkit'
-// import { abis } from '../../consts'
-// import TokenAmount from './TokenAmount.vue'
+import { BigNumber } from 'bignumber.js'
+import { abi } from 'thor-devkit'
+import { abis } from '../../consts'
+import TokenBalance from './TokenBalance.vue'
 
 export default Vue.extend({
-    // components: {
-    //     TokenAmount
-    // },
-    // props: {
-    //     tokens: Array as () => M.TokenSpec[],
-    //     msg: Object as () => Connex.Vendor.TxMessage[0]
-    // },
-    // data() {
-    //     return {
-    //         expanded: false,
-    //         isShort: true
-    //     }
-    // },
-    // computed: {
-    //     isZeroVet(): boolean {
-    //         return new BigNumber(this.msg.value).isZero()
-    //     },
-    //     vet(): string {
-    //         return this.msg.value.toString()
-    //     },
-    //     toAddr(): string {
-    //         let content = ''
-    //         if (this.isVet) {
-    //             content = this.msg.to || ''
-    //         } else if (this.isToken) {
-    //             content = this.decoded ? this.decoded.to : ''
-    //         } else { }
-    //         return content
-    //     },
-    //     token(): M.TokenSpec | undefined {
-    //         if (this.isToken) {
-    //             return this.tokens.find(item => {
-    //                 return item.address.toLowerCase() === this.msg.to?.toLowerCase()
-    //             })
-    //         } else {
-    //             return undefined
-    //         }
-    //     },
-    //     isVet(): boolean {
-    //         return !!this.msg.to && !!this.msg.value
-    //     },
-    //     decoded(): { to: string, value: string | number } | undefined {
-    //         if (this.isToken && this.msg.data) {
-    //             return this.tokenDecode(this.msg.data)
-    //         } else {
-    //             return undefined
-    //         }
-    //     },
-    //     isCreate(): boolean {
-    //         return !this.msg.to && !!this.msg.data
-    //     }
-    // },
-    // methods: {
-    //     tokenDecode(data: string): { to: string, value: string | number } | undefined {
-    //         try {
-    //             const params = abi.decodeParameters(abis.transfer.inputs, `0x${data.slice(10)}`)
-    //             return {
-    //                 to: params._to,
-    //                 value: params._value
-    //             }
-    //         } catch (error) {
-    //             console.log(error)
-    //         }
-    //     }
-    // }
+    name: 'ClauseCard',
+    components: {
+        TokenBalance
+    },
+    props: {
+        tokens: Array as () => M.TokenSpec[],
+        msg: Object as () => Connex.Vendor.TxMessage[0]
+    },
+    data() {
+        return {
+            expanded: false,
+            isShort: true
+        }
+    },
+    computed: {
+        isZeroVet(): boolean {
+            return new BigNumber(this.msg.value).isZero()
+        },
+        vet(): string {
+            return this.msg.value.toString()
+        },
+        toAddr(): string {
+            let content = ''
+            if (this.isVet) {
+                content = this.msg.to || ''
+            } else if (this.token) {
+                content = this.decoded ? this.decoded.to : ''
+            } else { }
+            return content
+        },
+        token(): M.TokenSpec | undefined {
+            return this.tokens.find(item => {
+                return item.address.toLowerCase() === this.msg.to?.toLowerCase()
+            })
+        },
+        tokenVET(): M.TokenSpec | undefined {
+            return this.tokens.find(item => item.symbol === 'VET')
+        },
+        isVet(): boolean {
+            return !!this.msg.to && !!this.msg.value
+        },
+        decoded(): { to: string, value: string | number } | undefined {
+            if (this.token && this.msg.data) {
+                return this.tokenDecode(this.msg.data)
+            } else {
+                return undefined
+            }
+        },
+        isCreate(): boolean {
+            return !this.msg.to && !!this.msg.data
+        }
+    },
+    methods: {
+        tokenDecode(data: string): { to: string, value: string | number } | undefined {
+            try {
+                const params = abi.decodeParameters(abis.transfer.inputs, `0x${data.slice(10)}`)
+                return {
+                    to: params._to,
+                    value: params._value
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        }
+    }
 })
 </script>

@@ -24,6 +24,7 @@
 import Vue from 'vue'
 
 export default Vue.extend({
+    name: 'TokenBalance',
     props: {
         token: Object as () => M.TokenSpec,
         balance: String

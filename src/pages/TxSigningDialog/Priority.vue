@@ -3,7 +3,7 @@
         <q-item-section>
             <q-item-label class="text-body2">
                 Est Fee
-                <span v-if="gas">{{ getFee(gas, bgp, coef) }}</span>
+                <span v-if="!loading">{{ getFee(gas, bgp, coef) }}</span>
                 <q-spinner-dots
                     v-else
                     color="blue"
@@ -15,7 +15,7 @@
         </q-item-section>
         <q-item-section side>
             <q-btn
-                :loading="!gas"
+                :loading="loading"
                 size="sm"
                 color="primary"
                 outline
@@ -83,6 +83,7 @@ type Level = {
     label: string
 }
 export default Vue.extend({
+    name: 'Priority',
     model: {
         prop: 'coef',
         event: 'change'
@@ -90,7 +91,8 @@ export default Vue.extend({
     props: {
         gas: Number,
         bgp: String,
-        coef: Number
+        coef: Number,
+        loading: Boolean
     },
     data() {
         return {

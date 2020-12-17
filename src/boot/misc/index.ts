@@ -5,7 +5,7 @@ import * as Plugins from './plugins'
 import AuthenticationDialog from 'pages/AuthenticationDialog'
 import { QSpinnerIos, DialogChainObject, QDialogOptions } from 'quasar'
 import ActionSheets from 'pages/ActionSheets.vue'
-import TxSigningDialog from 'pages/TxSigningDialog.vue'
+import TxSigningDialog from 'pages/TxSigningDialog'
 import CertSigningDialog from 'pages/CertSigningDialog.vue'
 import { genesises } from 'src/consts'
 
