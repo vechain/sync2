@@ -11,7 +11,10 @@
                 name="welcome"
                 class="column q-gutter-y-md no-wrap"
             >
-                <h4 class="q-mt-md q-mb-none">{{$t('wizard.title_welcome')}}</h4>
+                <div class="row">
+                    <h4 class="q-my-none">{{$t('wizard.title_welcome')}}</h4>
+                    <lang-selector class="q-ml-auto" />
+                </div>
                 <feature-slides class="col" />
                 <q-btn
                     class="w40 self-center"
@@ -51,6 +54,7 @@ import Vue from 'vue'
 import FeatureSlides from './FeatureSlides.vue'
 import Progress from './Progress.vue'
 import NewPasswordDialog from 'pages/NewPasswordDialog'
+import LangSelector from './LangSelector.vue'
 import { Vault } from 'core/vault'
 import { genesises } from 'src/consts'
 
@@ -65,7 +69,8 @@ async function randomDelay<T>(p: Promise<T>, aboutSeconds: number) {
 export default Vue.extend({
     components: {
         Progress,
-        FeatureSlides
+        FeatureSlides,
+        LangSelector
     },
     data: () => {
         return {
