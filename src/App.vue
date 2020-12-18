@@ -12,6 +12,18 @@ import Vue from 'vue'
 import { listen } from 'src/utils/external-url'
 
 export default Vue.extend({
+    asyncComputed: {
+        lang(): Promise<string> {
+            return this.$svc.config.getLanguage()
+        }
+    },
+    watch: {
+        // watch the language setting change
+        lang(newVal: string) {
+            // if language not set (auto), use the navigator lang
+            this.$i18n.locale = (newVal || navigator.language).toLowerCase()
+        }
+    },
     methods: {
         async externalSignHandlerLoop() {
             let destroyed = false
