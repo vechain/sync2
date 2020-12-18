@@ -3,8 +3,6 @@
         ref="dialog"
         @hide="$emit('hide')"
         maximized
-        persistent
-        seamless
         transition-show="slide-up"
         transition-hide="slide-down"
     >
