@@ -30,8 +30,8 @@
     </q-dialog>
 </template>
 <script lang="ts">
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import Vue from 'vue'
+import { QDialog } from 'quasar'
 
 type Action = {
     label: string
@@ -45,9 +45,9 @@ export default Vue.extend({
     },
     methods: {
         // method is REQUIRED by $q.dialog
-        show() { (this.$refs.dialog as any).show() },
+        show() { (this.$refs.dialog as QDialog).show() },
         // method is REQUIRED by $q.dialog
-        hide() { (this.$refs.dialog as any).hide() },
+        hide() { (this.$refs.dialog as QDialog).hide() },
         ok(result?: unknown) {
             this.$emit('ok', result)
             this.hide()
