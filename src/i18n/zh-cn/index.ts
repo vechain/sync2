@@ -24,7 +24,9 @@ export default {
 
         // notify
         wallet_updated: '钱包已升级',
-        wallet_created: '钱包已创建'
+        wallet_created: '钱包已创建',
+
+        lang_auto: '自动'
     },
     index: {
         action_new_account: '新建账户',

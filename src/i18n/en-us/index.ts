@@ -24,7 +24,9 @@ export default {
 
         // notify
         wallet_updated: 'Wallet Updated',
-        wallet_created: 'Wallet Created!'
+        wallet_created: 'Wallet Created!',
+
+        lang_auto: 'Automatic'
     },
     index: {
         action_new_account: 'New Account',

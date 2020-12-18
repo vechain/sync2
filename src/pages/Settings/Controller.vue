@@ -6,7 +6,19 @@
             v-scrollDivider
             class="col narrow-page q-mx-auto overflow-auto"
         >
-            <lang-item />
+            <language-list-popup
+                v-slot="{displayName}"
+                anchor="bottom right"
+                self="top right"
+                :offset="[-16, 0]"
+            >
+                <item
+                    icon="mdi-translate"
+                    :title="$t('settings.action_language')"
+                    :value="displayName"
+                    clickable
+                />
+            </language-list-popup>
             <q-separator inset="item" />
             <item
                 icon="mdi-lock"
@@ -45,12 +57,12 @@
 import Vue from 'vue'
 import Item from './Item.vue'
 import NewPasswordDialog from 'pages/NewPasswordDialog'
-import LangItem from './LangItem.vue'
 import { Vault } from 'core/vault'
 import { BioPass } from 'src/utils/bio-pass'
+import LanguageListPopup from 'pages/LanguageListPopup.vue'
 
 export default Vue.extend({
-    components: { Item, LangItem },
+    components: { Item, LanguageListPopup },
     asyncComputed: {
         bioPass() {
             return BioPass.open()

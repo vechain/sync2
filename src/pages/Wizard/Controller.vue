@@ -13,7 +13,21 @@
             >
                 <div class="row">
                     <h4 class="q-my-none">{{$t('wizard.title_welcome')}}</h4>
-                    <lang-selector class="q-ml-auto" />
+                    <language-list-popup
+                        class="q-ml-auto"
+                        v-slot="{displayName}"
+                        anchor="bottom right"
+                        self="top right"
+                    >
+                        <q-btn
+                            flat
+                            class="q-ml-auto"
+                            icon="mdi-translate"
+                            size="sm"
+                            color="primary"
+                            :label="displayName"
+                        />
+                    </language-list-popup>
                 </div>
                 <feature-slides class="col" />
                 <q-btn
@@ -54,9 +68,9 @@ import Vue from 'vue'
 import FeatureSlides from './FeatureSlides.vue'
 import Progress from './Progress.vue'
 import NewPasswordDialog from 'pages/NewPasswordDialog'
-import LangSelector from './LangSelector.vue'
 import { Vault } from 'core/vault'
 import { genesises } from 'src/consts'
+import LanguageListPopup from 'pages/LanguageListPopup.vue'
 
 async function randomDelay<T>(p: Promise<T>, aboutSeconds: number) {
     const [r] = await Promise.all<T, unknown>([
@@ -70,7 +84,7 @@ export default Vue.extend({
     components: {
         Progress,
         FeatureSlides,
-        LangSelector
+        LanguageListPopup
     },
     data: () => {
         return {
