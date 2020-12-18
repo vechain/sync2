@@ -32,7 +32,7 @@
 
         <!-- descriptions -->
         <div class="text-caption text-grey">From DApp</div>
-        <p>{{origin}}</p>
+        <p>{{request.origin}}</p>
         <div class="text-caption text-grey">Type</div>
         <p>{{type}}</p>
         <div class="text-caption text-grey">Summary</div>
@@ -50,13 +50,12 @@ export default Vue.extend({
         }
     },
     props: {
-        origin: String,
         request: Object as () => RelayedRequest
     },
     computed: {
         host(): string {
             try {
-                return new URL(this.origin).host
+                return new URL(this.request.origin || '').host
             } catch {
                 return ''
             }

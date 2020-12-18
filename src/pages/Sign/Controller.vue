@@ -2,24 +2,12 @@
     <div class="column fit">
         <page-toolbar
             title="Sign"
-            :gid="request ? request.gid : ''"
+            :gid="request && request.gid"
         />
-        <div class="col column q-pa-md no-wrap">
-            <!-- summary -->
-            <div
-                v-if="$asyncComputed.request.success"
-                v-scrollDivider.both
-                class="row self-stretch q-mb-auto justify-center overflow-auto"
-            >
-                <Summary
-                    class="col-sm-8 col-12"
-                    :origin="origin"
-                    :request="request"
-                />
-            </div>
+        <div class="col column narrow-page q-pa-md no-wrap q-mx-auto q-gutter-y-md">
             <!-- loading -->
             <delay
-                v-else-if="$asyncComputed.request.updating"
+                v-if="$asyncComputed.request.updating"
                 :t="200"
                 tag="div"
                 class="q-my-auto text-center"
@@ -29,44 +17,55 @@
                 </p>
                 <p>Loading signing content ...</p>
             </delay>
-            <!-- error to load -->
-            <div
-                v-else
-                class="q-my-auto text-center"
-            >
-                <p>
-                    <q-icon
-                        name="error"
-                        class="text-red text-h2"
-                    />
-                </p>
-                <p>Failed to load content</p>
-            </div>
-            <!-- actions -->
-            <div class="row justify-evenly self-stretch q-mt-md q-gutter-sm">
-                <template v-if="request">
-                    <q-btn
-                        unelevated
-                        color="primary"
-                        class="col-6 col-sm-3"
-                        @click="signRequest(request)"
-                    >Continue</q-btn>
-                    <div class="col-12" />
-                    <q-btn
-                        flat
-                        color="negative"
-                        class="col-6 col-sm-3"
-                        @click="close()"
-                    >Decline</q-btn>
-                </template>
+            <!-- summary -->
+            <template v-else-if="request">
+                <Summary
+                    class="col overflow-auto"
+                    v-scrollDivider.both
+                    :request="request"
+                />
                 <q-btn
-                    v-else-if="$asyncComputed.request.error"
                     unelevated
+                    label="Continue"
                     color="primary"
-                    class="col-6 col-sm-3"
-                    @click="close()"
-                >Close</q-btn>
-            </div>
+                    class="w40 self-center"
+                    @click="signRequest()"
+                />
+                <q-btn
+                    flat
+                    label="Decline"
+                    color="negative"
+                    class="w40 self-center"
+                    @click="$backOrHome()"
+                />
+            </template>
+            <!-- error to load -->
+            <template v-else-if="$asyncComputed.request.exception">
+                <div class="q-my-auto text-center overflow-auto">
+                    <p>
+                        <q-icon
+                            name="error"
+                            class="text-red text-h2"
+                        />
+                    </p>
+                    <p>Failed to load content</p>
+                    <p class="text-grey">{{$asyncComputed.request.exception.message}}</p>
+                </div>
+                <q-btn
+                    unelevated
+                    label="Retry"
+                    color="primary"
+                    class="w40 self-center"
+                    @click="$asyncComputed.request.update()"
+                />
+                <q-btn
+                    flat
+                    label="Close"
+                    color="primary"
+                    class="w40 self-center"
+                    @click="$backOrHome()"
+                />
+            </template>
         </div>
     </div>
 </template>
@@ -86,20 +85,8 @@ export default Vue.extend({
             responded: false
         }
     },
-    computed: {
-        origin(): string {
-            return (this.request && this.request.origin) || ''
-        },
-        host(): string {
-            try {
-                return new URL(this.origin).host
-            } catch {
-                return ''
-            }
-        }
-    },
     asyncComputed: {
-        async request(): Promise<RelayedRequest> {
+        async request(): Promise<RelayedRequest | null> {
             const urlObject = new URL(this.rurl)
             if (!['http:', 'https:'].includes(urlObject.protocol)) {
                 throw new Error('invalid request')
@@ -139,16 +126,25 @@ export default Vue.extend({
         }
     },
     methods: {
-        async signRequest(request: RelayedRequest) {
+        async signRequest() {
+            const request = this.request
+            if (!request) {
+                return
+            }
             try {
                 const { type, gid, payload } = request
                 let result = null
                 if (type === 'tx') {
                     result = await this.$signTx(gid, payload as M.TxRequest)
                 } else if (type === 'cert') {
+                    let host
+                    try {
+                        host = new URL(this.request!.origin!).host
+                    } catch {
+                    }
                     result = await this.$signCert(gid, {
                         ...(payload as M.CertRequest),
-                        domain: this.host
+                        domain: host || ''
                     })
                 }
                 this.respond({ payload: result! })
@@ -175,9 +171,6 @@ export default Vue.extend({
                     error: 'user decline'
                 })
             }
-        },
-        close() {
-            this.$backOrHome()
         }
     },
     beforeDestroy() {
