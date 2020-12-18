@@ -29,7 +29,10 @@ export default Vue.extend({
                     values.status = 'completed'
                 }
             } else {
-                const expired = head.number > parseInt(tx.body.blockRef.slice(0, 6)) + tx.body.expiration + CONFIRMED_N
+                const expired = head.number > parseInt(tx.body.blockRef.slice(0, 10)) +
+                    tx.body.expiration +
+                    CONFIRMED_N
+
                 if (expired) {
                     values.status = 'completed'
                 } else {
@@ -42,5 +45,8 @@ export default Vue.extend({
                 await this.$svc.activity.update(a.id, values)
             }
         }
+    },
+    render(h) {
+        return h()
     }
 })
