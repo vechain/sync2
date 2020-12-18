@@ -29,7 +29,6 @@ module.exports = configure(function (/* ctx */) {
       'misc',
       'filters',
       'directives',
-      'txer',
       'services'
     ],
 

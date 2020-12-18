@@ -1,9 +1,8 @@
 import { Framework } from '@vechain/connex-framework'
 import { DriverNoVendor, SimpleNet } from '@vechain/connex-driver'
-import { abis } from 'src/consts'
 import Vue from 'vue'
 
-function createPool(resolveNode: (gid: string) => M.Node) {
+export function createPool(resolveNode: (gid: string) => M.Node) {
     type Instance = {
         thor: Connex.Thor
         driver: DriverNoVendor
@@ -68,37 +67,9 @@ function createPool(resolveNode: (gid: string) => M.Node) {
             // touch to be reactive on node change / blockchain ticks
             void (nodeReactor[gid], tickReactor[sig])
             return inst
+        },
+        resoleNode(gid: string) {
+            return resolveNode(gid)
         }
-    }
-}
-
-function serve(gid: string, pool: ReturnType<typeof createPool>) {
-    return {
-        get thor() { return pool.get(gid).thor },
-        balanceOf(addr: string, spec: M.TokenSpec) {
-            if (spec.symbol === 'VET') {
-                return this.thor.account(addr).get().then(a => a.balance)
-            } else if (spec.symbol === 'VTHO') {
-                return this.thor.account(addr).get().then(a => a.energy)
-            } else {
-                return this.thor.account(spec.address)
-                    .method(abis.balanceOf)
-                    .cache([addr])
-                    .call(addr)
-                    .then(output => output.decoded.balance)
-            }
-        }
-    }
-}
-
-export function build(resolveNode: (gid: string) => M.Node) {
-    const pool = createPool(resolveNode)
-    const cache = new Map<string, ReturnType<typeof serve>>()
-    return (gid: string) => {
-        let handler = cache.get(gid)
-        if (!handler) {
-            cache.set(gid, handler = serve(gid, pool))
-        }
-        return handler
     }
 }
