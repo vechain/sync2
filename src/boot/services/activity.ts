@@ -32,6 +32,10 @@ export function build(storage: Storage) {
         },
         add(a: M.Activity<'id?'>) {
             return t.insert(a)
+        },
+        // only tx activity is allowed to be updated
+        update(id: number, values: { status?: M.Activity['status'], glob?: M.Activity.TxGlob }) {
+            return t.update({ id }, values)
         }
     }
 }

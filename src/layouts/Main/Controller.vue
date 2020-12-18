@@ -28,11 +28,6 @@ export default Vue.extend({
             mounted: false
         }
     },
-    asyncComputed: {
-        uncompleted(): Promise<M.Activity[]> {
-            return this.$svc.activity.uncompleted()
-        }
-    },
     async mounted() {
         this.initialized = await this.$svc.config.getPasswordShadow().then(r => !!r)
         this.mounted = true
