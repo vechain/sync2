@@ -5,49 +5,58 @@
                 <AddressAvatar
                     class="q-mx-auto relative-position"
                     style="width: 40px; height: 40px; border-radius: 20px;"
-                    :addr="info.signer"
+                    :addr="entry.signer"
                 >
-                    <div class="absolute-bottom flex">
-                        <q-badge
-                            style="opacity: 0.9"
-                            v-if="networkBadgeText"
-                            class="text-capitalize q-mx-auto"
-                            color="orange"
-                            :label="networkBadgeText"
-                        />
-                    </div>
                 </AddressAvatar>
             </q-item-section>
             <q-item-section>
                 <q-item-label
                     class="text-body1 ellipsis-2-lines"
                     style="word-break: break-all;"
-                >{{ info.walletName || '--' }}</q-item-label>
+                >{{ entry.walletName || '--' }}</q-item-label>
                 <q-item-label
                     caption
                     lines="1"
-                >{{ info.signer | abbrev(8, 6) }}</q-item-label>
+                >{{ entry.signer | abbrev(8, 6) }}</q-item-label>
             </q-item-section>
             <q-item-section side>
-                <slot name="status" />
+                <q-item-label>
+                    <q-icon
+                        v-if="icon.name"
+                        class="q-pa-none"
+                        size="xs"
+                        :name="icon.name"
+                        :color="icon.color"
+                    />
+                    <q-badge
+                        v-if="entry.status === 'reverted'"
+                        color="warning"
+                        text-color="white"
+                        label="Reverted"
+                    />
+                    <span
+                        class="text-red"
+                        v-if="entry.status === 'expired'"
+                    > Expired </span>
+                </q-item-label>
+                <q-item-label
+                    caption
+                    lines="1"
+                    v-if="entry.status === 'success?' || entry.status === 'sending'"
+                >
+                    <span v-if="entry.status === 'sending'"> sending </span>
+                    <span v-if="entry.status === 'success?'">
+                        {{entry.confirming}}
+                    </span>
+                </q-item-label>
             </q-item-section>
         </q-item>
         <div class="q-px-md text-body2 q-pt-xs">
-            {{info.comment}}
-        </div>
-        <div
-            v-if="info.link"
-            class="q-px-lg text-grey q-pt-xs text-caption"
-        >
-            <q-icon
-                name="link"
-                size="xs"
-            />
-            {{info.refererText}}
+            {{entry.comment}}
         </div>
         <div class="q-px-md text-grey q-pt-xs text-caption row justify-between items-center">
             <span>
-                {{info.time}}
+                {{entry.time}}
             </span>
             <q-btn
                 round
@@ -67,26 +76,51 @@
 import Vue from 'vue'
 import { copyToClipboard, openURL } from 'quasar'
 import { urls, genesises } from 'src/consts'
-export type Info = {
+export type Entry = {
     gid: string,
-    walletName?: string
+    walletName: string
     signer: string
     comment: string
-    refererText: string
-    txId?: string
     time: string
     link: string
+    status: 'reverted' | 'reverted?' | 'success' | 'success?' | 'sending' | 'expired'
     message?: string
+    txId?: string
+    confirming?: string
 }
 export default Vue.extend({
     props: {
-        info: {
-            type: Object as () => Info
-        }
+        entry: Object as () => Entry
     },
     computed: {
+        icon(): { name: string, color: string } {
+            const result: { name: string, color: string } = { name: '', color: '' }
+            switch (this.entry.status) {
+                case 'success': {
+                    result.name = 'mdi-check-circle-outline'
+                    result.color = 'positive'
+                    break
+                }
+                case 'success?': {
+                    result.name = 'mdi-progress-check'
+                    result.color = 'info'
+                    break
+                }
+                case 'reverted?': {
+                    result.name = 'mdi-progress-check'
+                    result.color = 'warning'
+                    break
+                }
+                case 'sending': {
+                    result.name = 'mdi-progress-upload'
+                    result.color = 'info'
+                    break
+                }
+            }
+            return result
+        },
         txDetailUrl(): string {
-            switch (genesises.which(this.info.gid)) {
+            switch (genesises.which(this.entry.gid)) {
                 case 'main':
                     return `${urls.explorerMain}transactions/`
                 case 'test':
@@ -96,7 +130,7 @@ export default Vue.extend({
             }
         },
         networkBadgeText(): string {
-            const net = Vue.filter('net')(this.info.gid)
+            const net = Vue.filter('net')(this.entry.gid)
             if (net === 'main') {
                 return ''
             }
@@ -110,12 +144,12 @@ export default Vue.extend({
             }).catch(console.error)
         },
         viewOnExplorer() {
-            openURL(`${this.txDetailUrl}${this.info.txId}`)
+            openURL(`${this.txDetailUrl}${this.entry.txId}`)
         },
         viewContent() {
             this.$q.dialog({
                 title: 'Signed Content',
-                message: this.info.message
+                message: this.entry.message
             })
         },
         onClick() {
@@ -125,7 +159,7 @@ export default Vue.extend({
                 onClick?: Function
             }[] = []
 
-            if (this.info.txId) {
+            if (this.entry.txId) {
                 actions = [
                     {
                         label: 'View on explorer',
@@ -136,7 +170,7 @@ export default Vue.extend({
                     {
                         label: 'Copy TxID',
                         onClick: () => {
-                            this.copy(this.info.txId!)
+                            this.copy(this.entry.txId!)
                         }
                     }
                 ]
@@ -148,11 +182,11 @@ export default Vue.extend({
                     }
                 ]
             }
-            if (this.info.link) {
+            if (this.entry.link) {
                 actions.push({
                     label: 'Copy dApp URL',
                     onClick: () => {
-                        this.copy(this.info.link)
+                        this.copy(this.entry.link)
                     }
                 })
             }
