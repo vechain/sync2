@@ -18,16 +18,16 @@
                 @resize="centerTitleText"
                 debounce="0"
             />
+            <q-badge
+                v-if="warn"
+                color="negative"
+                class="absolute-top-right no-pointer-events text-bold"
+            >
+                {{warn}}
+            </q-badge>
         </q-toolbar-title>
         <!-- action buttons -->
         <slot />
-        <q-badge
-            v-if="warn"
-            color="negative"
-            class="absolute-bottom-right no-pointer-events text-bold"
-        >
-            {{warn}}
-        </q-badge>
     </q-toolbar>
 </template>
 <script lang="ts">
