@@ -297,7 +297,7 @@ export default Vue.extend({
                         glob: txGlob
                     })
 
-                    // TODO TX Request
+                    this.$svc.bc(this.gid).commitTx(raw)
 
                     this.ok({
                         txid: st.id!,
