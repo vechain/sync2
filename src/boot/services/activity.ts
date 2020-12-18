@@ -28,7 +28,7 @@ export function build(storage: Storage) {
             return t.all().except({ status: 'completed' }).query()
         },
         page(count: number, offset: number) {
-            return t.all().limit(count, offset).query()
+            return t.all().reverse().limit(count, offset).query()
         },
         add(a: M.Activity<'id?'>) {
             return t.insert(a)
