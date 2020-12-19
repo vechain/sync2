@@ -50,7 +50,10 @@
             ref="drawer"
         >
             <drawer-panel>
-                <wallet-list :wallets="wallets" />
+                <wallet-list
+                    :wallets="wallets"
+                    @select="drawerOpen=false"
+                />
             </drawer-panel>
         </drawer>
     </div>

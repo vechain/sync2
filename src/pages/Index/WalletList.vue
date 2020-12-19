@@ -36,7 +36,7 @@
                     :inset-level="0.25"
                     :active="wallet.id === selectedWalletId"
                     active-class="bg-blue-1"
-                    @click="$svc.config.saveSelectedWalletId(wallet.id)"
+                    @click="onClickWalletItem(wallet.id)"
                 >
                     <q-item-section>
                         <q-item-label lines="1">
@@ -64,6 +64,15 @@ export default Vue.extend({
     asyncComputed: {
         selectedWalletId(): Promise<number> {
             return this.$svc.config.getSelectedWalletId()
+        }
+    },
+    methods: {
+        onClickWalletItem(id: number) {
+            if (id === this.selectedWalletId) {
+                return
+            }
+            this.$svc.config.saveSelectedWalletId(id)
+            this.$emit('select')
         }
     }
 })
