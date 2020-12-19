@@ -10,14 +10,15 @@
             @action="drawerOpen=true"
         >
             <q-btn
-                v-show="wallet"
+                v-if="wallet"
                 class="q-ml-auto"
                 flat
                 dense
                 round
                 icon="more_horiz"
-                @click="onClickMenuBtn"
-            />
+            >
+                <Menu :wallet="wallet" />
+            </q-btn>
         </PageToolbar>
         <upgrade-tip v-if="$state.app.updateAvailable" />
         <backup-tip
@@ -61,13 +62,11 @@ import UpgradeTip from './UpgradeTip.vue'
 import DrawerPanel from './DrawerPanel.vue'
 import WalletList from './WalletList.vue'
 import AddressCardList from './AddressCardList.vue'
-import { Vault } from 'core/vault'
+import Menu from './Menu.vue'
 import { scroll } from 'quasar'
 
-const MAX_ADDRESS = 10
-
 export default Vue.extend({
-    components: { BackupTip, UpgradeTip, DrawerPanel, WalletList, AddressCardList },
+    components: { BackupTip, UpgradeTip, DrawerPanel, WalletList, AddressCardList, Menu },
     data: () => {
         return {
             drawerOpen: false
@@ -75,7 +74,8 @@ export default Vue.extend({
     },
     computed: {
         wallet(): M.Wallet | null {
-            return this.wallets.find(w => w.id === this.selectedWalletId) || this.wallets[0] || null
+            return this.wallets ? this.wallets.find(w => w.id === this.selectedWalletId) || this.wallets[0] || null
+                : null
         },
         title(): string {
             return (this.wallet && this.wallet.meta.name) || 'Sync'
@@ -94,110 +94,19 @@ export default Vue.extend({
         selectedWalletId() {
             const list = this.$refs.list as Vue
             list && list.$el.scrollTo({ top: 0, behavior: 'auto' })
+        },
+        wallet(newVal: M.Wallet | null, oldVal: M.Wallet | null) {
+            if (newVal && oldVal) {
+                // new address added
+                if (newVal.id === oldVal.id &&
+                    newVal.meta.addresses.length !== oldVal.meta.addresses.length) {
+                    const list = this.$refs.list as Vue
+                    list && scroll.setScrollPosition(list.$el, list.$el.scrollHeight, 500)
+                }
+            }
         }
     },
     methods: {
-        onClickMenuBtn() {
-            const wallet = this.wallet
-            if (!wallet) {
-                return
-            }
-            const addressFull = wallet.meta.addresses.length >= MAX_ADDRESS
-            this.$actionSheets([
-                {
-                    label: this.$t('index.action_new_account').toString(),
-                    onClick: addressFull ? undefined : () => this.newAccount(),
-                    classes: addressFull ? 'text-grey' : ''
-                },
-                {
-                    label: this.$t('index.action_backup').toString(),
-                    onClick: () => this.$router.push({ name: 'backup' })
-                },
-                {
-                    label: this.$t('index.action_rename').toString(),
-                    onClick: () => this.rename()
-                },
-                { label: '-' }, // separator
-                {
-                    label: this.$t('common.delete').toString(),
-                    classes: 'text-negative',
-                    onClick: () => this.delete()
-                }
-            ])
-        },
-        newAccount() {
-            const wallet = this.wallet
-            if (!wallet) {
-                return
-            }
-            this.$loading(async () => {
-                const addresses = wallet.meta.addresses
-                if (addresses.length >= MAX_ADDRESS) {
-                    return
-                }
-                const vault = await Vault.decode(wallet.vault)
-                const newAddress = (await vault.derive(addresses.length)).address
-                const newMeta: M.Wallet.Meta = {
-                    ...wallet.meta,
-                    addresses: [...addresses, newAddress]
-                }
-
-                await this.$svc.wallet.update(wallet.id, newMeta)
-
-                await new Promise(resolve => setTimeout(resolve, 300))
-                const list = this.$refs.list as Vue
-                list && scroll.setScrollPosition(list.$el, list.$el.scrollHeight, 500)
-            })
-        },
-        rename() {
-            const wallet = this.wallet
-            if (!wallet) {
-                return
-            }
-            this.$q.dialog({
-                parent: this,
-                title: this.$t('index.action_rename').toString(),
-                message: this.$t('index.msg_rename').toString(),
-                prompt: {
-                    model: '',
-                    isValid: (val: string) => { return !!val && !!val.trim() },
-                    type: 'text'
-                },
-                cancel: true,
-                ok: {
-                    label: this.$t('common.confirm').toString()
-                }
-            }).onOk((data: string) => {
-                this.$svc.wallet.update(wallet.id, {
-                    ...wallet.meta,
-                    name: data
-                }).then(() => {
-                    this.$q.notify(this.$t('common.wallet_updated'))
-                })
-            })
-        },
-        delete() {
-            const wallet = this.wallet
-            if (!wallet) {
-                return
-            }
-            this.$q.dialog({
-                parent: this,
-                title: this.$t('common.delete').toString(),
-                message: this.$t('index.msg_delete').toString(),
-                ok: {
-                    label: this.$t('common.yes').toString(),
-                    color: 'negative'
-                },
-                cancel: {
-                    label: this.$t('common.no').toString(),
-                    flat: true
-                }
-            }).onOk(async () => {
-                await this.$authenticate()
-                await this.$svc.wallet.delete(wallet.id)
-            })
-        },
         handleDrawerTouchPan(ev: Record<string, unknown>) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (this.$refs.drawer as any).handleTouchPanExternal(ev)
