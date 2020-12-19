@@ -30,4 +30,8 @@ body
 
 .narrow-page
   width: 100%
-  max-width: map-get($sizes, "sm") 
+  max-width: map-get($sizes, "sm")
+
+// the workaround for the q-popup-proxy bug: can't set menu's max-width
+.q-menu
+  max-width: 80% !important
