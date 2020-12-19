@@ -20,12 +20,16 @@
                 <Menu :wallet="wallet" />
             </q-btn>
         </PageToolbar>
-        <upgrade-tip v-if="$state.app.updateAvailable" />
-        <backup-tip
-            v-if="wallet"
-            :wallet="wallet"
-            class="self-center"
-        />
+        <!-- tips -->
+        <div class="narrow-page q-pa-sm q-mx-auto q-gutter-y-sm">
+            <upgrade-tip v-if="$state.app.updateAvailable" />
+            <backup-tip
+                v-for="w in wallets"
+                :key="w.id"
+                v-show="w.id === selectedWalletId && !w.meta.backedUp"
+            />
+        </div>
+        <!-- address list -->
         <address-card-list
             v-if="wallet"
             ref="list"
@@ -45,6 +49,7 @@
                 :to="{name: 'new-wallet'}"
             />
         </div>
+        <!-- the drawer -->
         <drawer
             v-model="drawerOpen"
             ref="drawer"

@@ -4,7 +4,7 @@
         dense
         rounded
         inline-actions
-        class="bg-positive q-mx-sm q-mb-sm"
+        class="bg-positive"
     >
         <template v-slot:avatar>
             <q-icon name="upgrade" />
