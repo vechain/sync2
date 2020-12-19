@@ -16,12 +16,9 @@
                     <language-list-popup
                         class="q-ml-auto"
                         v-slot="{displayName}"
-                        anchor="bottom right"
-                        self="top right"
                     >
                         <q-btn
                             flat
-                            class="q-ml-auto"
                             icon="mdi-translate"
                             size="sm"
                             color="primary"

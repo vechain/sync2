@@ -1,10 +1,10 @@
 <template>
-    <fragment>
+    <div>
         <slot :displayName="displayName(configLang)" />
         <q-popup-proxy
-            :target="$children.length > 1 ? $children[0]: undefined"
             v-bind="$attrs"
             v-on="$listeners"
+            position="bottom"
         >
             <q-card>
                 <q-list separator>
@@ -20,7 +20,7 @@
                 </q-list>
             </q-card>
         </q-popup-proxy>
-    </fragment>
+    </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
