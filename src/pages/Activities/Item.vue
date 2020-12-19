@@ -62,9 +62,10 @@
                 round
                 flat
                 size="sm"
-                @click="onClick"
                 icon="more_horiz"
-            />
+            >
+                <pop-sheets :sheets="sheets" />
+            </q-btn>
         </div>
         <q-separator
             spaced
@@ -76,6 +77,8 @@
 import Vue from 'vue'
 import { copyToClipboard, openURL } from 'quasar'
 import { urls, genesises } from 'src/consts'
+import PopSheets, { Sheet } from 'src/components/PopSheets.vue'
+
 export type Entry = {
     gid: string,
     walletName: string
@@ -88,7 +91,9 @@ export type Entry = {
     txId?: string
     confirming?: string
 }
+
 export default Vue.extend({
+    components: { PopSheets },
     props: {
         entry: Object as () => Entry
     },
@@ -135,6 +140,30 @@ export default Vue.extend({
                 return ''
             }
             return net
+        },
+        sheets() {
+            const sheets: Sheet[] = []
+            if (this.entry.txId) {
+                sheets.push({
+                    label: 'View on explorer',
+                    action: () => this.viewOnExplorer()
+                }, {
+                    label: 'Copy TxID',
+                    action: () => this.copy(this.entry.txId!)
+                })
+            } else {
+                sheets.push({
+                    label: 'View signed content',
+                    action: () => this.viewContent()
+                })
+            }
+            if (this.entry.link) {
+                sheets.push({
+                    label: 'Copy dApp URL',
+                    action: () => this.copy(this.entry.link)
+                })
+            }
+            return sheets
         }
     },
     methods: {
@@ -151,46 +180,6 @@ export default Vue.extend({
                 title: 'Signed Content',
                 message: this.entry.message
             })
-        },
-        onClick() {
-            let actions: {
-                label: string,
-                classes?: string | string[],
-                onClick?: Function
-            }[] = []
-
-            if (this.entry.txId) {
-                actions = [
-                    {
-                        label: 'View on explorer',
-                        onClick: () => {
-                            this.viewOnExplorer()
-                        }
-                    },
-                    {
-                        label: 'Copy TxID',
-                        onClick: () => {
-                            this.copy(this.entry.txId!)
-                        }
-                    }
-                ]
-            } else {
-                actions = [
-                    {
-                        label: 'View signed content',
-                        onClick: () => this.viewContent()
-                    }
-                ]
-            }
-            if (this.entry.link) {
-                actions.push({
-                    label: 'Copy dApp URL',
-                    onClick: () => {
-                        this.copy(this.entry.link)
-                    }
-                })
-            }
-            this.$actionSheets(actions)
         }
     }
 })
