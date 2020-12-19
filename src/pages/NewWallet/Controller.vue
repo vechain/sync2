@@ -6,8 +6,9 @@
                 icon="more_horiz"
                 dense
                 round
-                @click="onClickOptions()"
-            />
+            >
+                <pop-sheets :sheets="optionSheets" />
+            </q-btn>
         </page-toolbar>
         <div class="narrow-page col self-center column no-wrap q-gutter-y-md q-pa-md">
             <q-input
@@ -26,7 +27,7 @@
                             class="q-ml-sm"
                             outline
                             color="primary"
-                            v-for="(h,i) in optionsHints"
+                            v-for="(h,i) in optionHints"
                             :key="i"
                         >{{h}}</q-badge>
                     </div>
@@ -61,12 +62,13 @@ import { genesises } from 'src/consts'
 import { unique } from 'src/utils/array'
 import { Vault } from 'src/core/vault'
 import MnemonicInputDialog from './MnemonicInputDialog.vue'
+import PopSheets, { Sheet } from 'src/components/PopSheets.vue'
 
 const defaultGid = genesises.main.id
 const defaultWordsCount = 12
 
 export default Vue.extend({
-    components: { PageToolbar },
+    components: { PageToolbar, PopSheets },
     data: () => {
         return {
             name: '',
@@ -76,7 +78,29 @@ export default Vue.extend({
         }
     },
     computed: {
-        optionsHints() {
+        optionSheets() {
+            return [
+                ...this.gids
+                    .filter(gid => gid !== this.gid)
+                    .map<Sheet>(gid => {
+                        return {
+                            label: this.$netDisplayName(gid) + (gid === defaultGid ? ' (default)' : ''),
+                            action: () => { this.gid = gid }
+                        }
+                    }),
+                ...[12, 24]
+                    .filter(n => n !== this.wordsCount)
+                    .map<Sheet>(n => {
+                        return {
+                            label: `${n}` + ' ' + this.$t('newWallet.msg_mnemonic_words').toString() + (n === defaultWordsCount ? ' (default)' : ''),
+                            action: () => {
+                                this.wordsCount = n
+                            }
+                        }
+                    })
+            ]
+        },
+        optionHints() {
             const hints = []
             if (this.gid !== defaultGid) {
                 hints.push(this.$netDisplayName(this.gid))
@@ -118,32 +142,6 @@ export default Vue.extend({
         }
     },
     methods: {
-        onClickOptions() {
-            type Action = Parameters<Vue['$actionSheets']>[0][0]
-            const actions: Action[] = []
-            actions.push(...this.gids
-                .filter(gid => gid !== this.gid)
-                .map<Action>(gid => {
-                    return {
-                        label: this.$netDisplayName(gid) + (gid === defaultGid ? ' (default)' : ''),
-                        onClick: () => {
-                            this.gid = gid
-                        }
-                    }
-                }))
-            actions.push({ label: '-' })
-            actions.push(...[12, 24]
-                .filter(n => n !== this.wordsCount)
-                .map(n => {
-                    return {
-                        label: `${n}` + ' ' + this.$t('newWallet.msg_mnemonic_words').toString() + (n === defaultWordsCount ? ' (default)' : ''),
-                        onClick: () => {
-                            this.wordsCount = n
-                        }
-                    }
-                }))
-            this.$actionSheets(actions)
-        },
         async newWallet(type: 'generate' | 'import') {
             // check name
             if (!this.name) {
