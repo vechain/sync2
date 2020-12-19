@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import AuthenticationDialog from 'pages/AuthenticationDialog'
-import ActionSheets from 'components/ActionSheets.vue'
 import TxSigningDialog from 'pages/TxSigningDialog'
 import CertSigningDialog from 'pages/CertSigningDialog.vue'
 import { QSpinnerIos } from 'quasar'
@@ -19,9 +18,6 @@ declare module 'vue/types/vue' {
          * @returns the result of the task
          */
         $loading<T>(task: () => Promise<T>): Promise<T>
-
-        /** display an action sheets */
-        $actionSheets(actions: Array<{ label: string, classes?: string | string[], onClick?: Function }>): Promise<boolean>
 
         /**
          * sign tx
@@ -106,19 +102,6 @@ export function boot() {
                 }
             }
         },
-        $actionSheets: {
-            get(): Vue['$actionSheets'] {
-                const vm = this as Vue
-                return actions => {
-                    return dialog(vm, {
-                        component: ActionSheets,
-                        actions
-                    }).then(() => true)
-                        .catch(() => false)
-                }
-            }
-        },
-
         $signTx: {
             get(): Vue['$signTx'] {
                 const vm = this as Vue
