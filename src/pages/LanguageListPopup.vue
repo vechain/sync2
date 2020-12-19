@@ -1,29 +1,16 @@
 <template>
     <div>
         <slot :displayName="displayName(configLang)" />
-        <q-popup-proxy
+        <pop-sheets
             v-bind="$attrs"
             v-on="$listeners"
-            position="bottom"
-        >
-            <q-card>
-                <q-list separator>
-                    <q-item
-                        clickable
-                        v-close-popup
-                        v-for="(item,i) in items"
-                        :key="i"
-                        @click="setLanguage(item.lang)"
-                    >
-                        <q-item-section class="q-px-lg text-center">{{item.displayName}}</q-item-section>
-                    </q-item>
-                </q-list>
-            </q-card>
-        </q-popup-proxy>
+            :sheets="sheets"
+        />
     </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
+import PopSheets, { Sheet } from 'src/components/PopSheets.vue'
 
 // maps lang to lang's localized display name
 const displayNames: Record<string, string> = {
@@ -37,14 +24,15 @@ type Item = {
 }
 
 export default Vue.extend({
+    components: { PopSheets },
     computed: {
-        items(): Array<Item> {
+        sheets(): Sheet[] {
             // empty lang means auto
             return ['', ...this.$i18n.availableLocales]
-                .map(lang => {
+                .map<Sheet>(lang => {
                     return {
-                        lang,
-                        displayName: this.displayName(lang)
+                        label: this.displayName(lang),
+                        action: () => { this.$svc.config.saveLanguage(lang) }
                     }
                 })
         }
@@ -70,9 +58,6 @@ export default Vue.extend({
             } catch {
                 return lang
             }
-        },
-        setLanguage(lang: string) {
-            this.$svc.config.saveLanguage(lang)
         }
     }
 })
