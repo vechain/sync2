@@ -5,20 +5,25 @@
         position="bottom"
     >
         <q-card>
-            <q-list separator>
-                <template v-if="customized">
+            <q-list
+                padding
+                :separator="separator"
+            >
+                <template v-for="(sheet,i) in sheets">
+                    <q-separator
+                        v-if="sheet.separator"
+                        :key="`s-${i}`"
+                    />
                     <fragment
-                        v-for="(sheet,i) in sheets"
+                        v-if="customized"
                         :key="i"
                     >
                         <slot :sheet="sheet" />
                     </fragment>
-                </template>
-                <template v-else>
                     <q-item
+                        v-else
                         clickable
                         v-close-popup
-                        v-for="(sheet,i) in sheets"
                         :key="i"
                         @click="sheet.action()"
                     >
@@ -45,11 +50,13 @@ export type Sheet<T = never> = {
     action: () => void
     classes?: string | string[]
     model?: T
+    separator?: boolean
 }
 
 export default Vue.extend({
     props: {
         sheets: Array as () => Sheet[],
+        separator: Boolean,
         customized: Boolean
     }
 })

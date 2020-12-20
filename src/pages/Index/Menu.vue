@@ -32,7 +32,8 @@ export default Vue.extend({
             {
                 label: this.$t('common.delete').toString(),
                 action: () => this.delete(),
-                classes: 'text-negative'
+                classes: 'text-negative',
+                separator: true
             }]
         }
     },
