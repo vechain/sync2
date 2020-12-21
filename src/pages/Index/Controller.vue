@@ -17,7 +17,7 @@
                 round
                 icon="more_horiz"
             >
-                <Menu :wallet="wallet" />
+                <option-menu :wallet="wallet" />
             </q-btn>
         </PageToolbar>
         <!-- tips -->
@@ -70,11 +70,11 @@ import UpgradeTip from './UpgradeTip.vue'
 import DrawerPanel from './DrawerPanel.vue'
 import WalletList from './WalletList.vue'
 import AddressCardList from './AddressCardList.vue'
-import Menu from './Menu.vue'
+import OptionMenu from './OptionMenu.vue'
 import { scroll } from 'quasar'
 
 export default Vue.extend({
-    components: { BackupTip, UpgradeTip, DrawerPanel, WalletList, AddressCardList, Menu },
+    components: { BackupTip, UpgradeTip, DrawerPanel, WalletList, AddressCardList, OptionMenu },
     data: () => {
         return {
             drawerOpen: false
