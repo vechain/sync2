@@ -9,9 +9,6 @@ import QRCode from './QRCode.vue'
 import TokenBalanceItem from './TokenBalanceItem.vue'
 import SlideBtn from './SlideBtn.vue'
 import AddressAvatar from './AddressAvatar.vue'
-import AccountList from './AccountList.vue'
-import AccountSelector from './AccountSelector.vue'
-import BalanceList from './BalanceList.vue'
 import Delay from './Delay'
 import AddressInfo from './AddressInfo.vue'
 import InputPinCode from './InputPinCode.vue'
@@ -30,10 +27,7 @@ const components: { [name: string]: Vue.VueConstructor } = {
     TokenBalanceItem,
     SlideBtn,
     AddressAvatar,
-    AccountList,
-    AccountSelector,
     Delay,
-    BalanceList,
     AddressInfo,
     InputPinCode,
     PageToolbar,
