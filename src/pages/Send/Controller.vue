@@ -3,7 +3,7 @@
         class="column fit"
         v-if="tokenList.length"
     >
-        <page-toolbar title="Send" />
+        <page-toolbar :title="$t('send.title')" />
         <div class="col no-wrap">
             <div
                 style="max-width: 500px"
@@ -19,7 +19,7 @@
                         clearable
                         v-model="to"
                         :wallets="toWallets"
-                        label="To"
+                        :label="$t('send.label_to')"
                     />
 
                     <TokenSelector
@@ -35,7 +35,7 @@
                         type="text"
                         :rules="[balanceCheck]"
                         inputmode="decimal"
-                        label="Amount"
+                        :label="$t('send.label_amount')"
                     />
                     <Resolve
                         v-if="currentToken"
@@ -43,7 +43,7 @@
                         v-slot="{data}"
                     >
                         <div class="text-grey q-mt-sm">
-                            <span>Balance: {{data | balance(currentToken.decimals)}}</span>
+                            <span>{{$t('send.label_balance')}} {{data | balance(currentToken.decimals)}}</span>
                         </div>
                     </Resolve>
                     <div class="row justify-center q-mt-xl">
@@ -52,7 +52,7 @@
                             unelevated
                             class="col-6 col-sm-auto"
                             color="blue-9"
-                            label="Send"
+                            :label="$t('send.action_proceed')"
                         />
                     </div>
                 </q-form>
@@ -128,7 +128,7 @@ export default Vue.extend({
         toWallets(): AddressGroup[] {
             return [
                 {
-                    name: 'Recent',
+                    name: this.$t('send.label_recent_transfer').toString(),
                     list: this.recent
                 },
                 ...this.wallets.map<AddressGroup>(w => { return { name: w.meta.name, list: w.meta.addresses } })
@@ -143,7 +143,7 @@ export default Vue.extend({
         balanceCheck(): (v: string) => boolean | string {
             const regexp = new RegExp(`^(([1-9]{1}\\d*)|(0{1}))(\\.\\d{1,${this.currentToken!.decimals}})?$`)
             return (val) => {
-                return regexp.test(val) || 'Invalide balance'
+                return regexp.test(val) || this.$t('send.msg_error_invalid_balance').toString()
             }
         },
         address(): string {
@@ -155,7 +155,7 @@ export default Vue.extend({
             let msgItem!: Connex.Vendor.TxMessage[0]
             let comment = ''
             if (this.symbol === 'VET') {
-                comment = `Transferring ${this.amount} VET`
+                comment = `${this.$t('common.transferring')} ${this.amount} VET`
                 msgItem = {
                     to: this.to,
                     value: Vue.filter('toWei')(this.amount),
@@ -163,7 +163,7 @@ export default Vue.extend({
                 }
             } else {
                 const func = new abi.Function(abis.transfer)
-                comment = `Transferring ${this.amount} ${this.symbol}`
+                comment = `${this.$t('common.transferring')} ${this.amount} ${this.symbol}`
                 const data = func.encode(this.to,
                     Vue.filter('toWei')(this.amount, this.currentToken!.decimals))
                 msgItem = {

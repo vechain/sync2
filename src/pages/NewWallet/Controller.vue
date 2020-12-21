@@ -1,6 +1,6 @@
 <template>
     <div class="fit column">
-        <page-toolbar title="New Wallet">
+        <page-toolbar :title="$t('newWallet.title')">
             <q-btn
                 flat
                 icon="more_horiz"

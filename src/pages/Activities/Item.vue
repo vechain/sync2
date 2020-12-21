@@ -32,19 +32,19 @@
                         v-if="entry.status === 'reverted'"
                         color="warning"
                         text-color="white"
-                        label="Reverted"
+                        :label="$t('activities.label_reverted')"
                     />
                     <span
                         class="text-red"
                         v-if="entry.status === 'expired'"
-                    > Expired </span>
+                    > {{$t('activities.label_expired')}} </span>
                 </q-item-label>
                 <q-item-label
                     caption
                     lines="1"
                     v-if="entry.status === 'success?' || entry.status === 'sending'"
                 >
-                    <span v-if="entry.status === 'sending'"> sending </span>
+                    <span v-if="entry.status === 'sending'"> {{$t('activities.label_sending')}} </span>
                     <span v-if="entry.status === 'success?'">
                         {{entry.confirming}}
                     </span>
@@ -145,21 +145,21 @@ export default Vue.extend({
             const sheets: Sheet[] = []
             if (this.entry.txId) {
                 sheets.push({
-                    label: 'View on explorer',
+                    label: this.$t('activities.action_view_on_explorer').toString(),
                     action: () => this.viewOnExplorer()
                 }, {
-                    label: 'Copy TxID',
+                    label: this.$t('activities.action_copy_txId').toString(),
                     action: () => this.copy(this.entry.txId!)
                 })
             } else {
                 sheets.push({
-                    label: 'View signed content',
+                    label: this.$t('activities.action_view_signed_content').toString(),
                     action: () => this.viewContent()
                 })
             }
             if (this.entry.link) {
                 sheets.push({
-                    label: 'Copy dApp URL',
+                    label: this.$t('activities.action_copy_dapp_url').toString(),
                     action: () => this.copy(this.entry.link)
                 })
             }
@@ -169,7 +169,7 @@ export default Vue.extend({
     methods: {
         copy(str: string) {
             copyToClipboard(str).then(() => {
-                this.$q.notify('copied')
+                this.$q.notify(this.$t('common.copied'))
             }).catch(console.error)
         },
         viewOnExplorer() {
@@ -177,7 +177,7 @@ export default Vue.extend({
         },
         viewContent() {
             this.$q.dialog({
-                title: 'Signed Content',
+                title: this.$t('activities.title_signed_content').toString(),
                 message: this.entry.message
             })
         }

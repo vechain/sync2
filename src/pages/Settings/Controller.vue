@@ -13,7 +13,7 @@
                 :offset="[-16, 0]"
             >
                 <item
-                    icon="mdi-translate"
+                    icon="mdi-earth"
                     :title="$t('settings.action_language')"
                     :value="displayName"
                     clickable
@@ -21,14 +21,14 @@
             </language-list-popup>
             <q-separator inset="item" />
             <item
-                icon="mdi-lock"
+                icon="mdi-key"
                 :title="$t('settings.action_change_password')"
                 clickable
                 @click="onClickChangePassword()"
             />
             <q-separator inset="item" />
             <item
-                icon="mdi-shield-account"
+                icon="mdi-fingerprint"
                 :title="$t('settings.action_bio_auth')"
             >
                 <q-toggle
@@ -107,11 +107,11 @@ export default Vue.extend({
                                 .then(v => v.clone(password, newPassword))
                                 .then(v => v.encode())
                         }, () => this.$svc.config.savePasswordShadow(newShadow))
-                        this.$q.notify('Password changed.')
+                        this.$q.notify(this.$t('settings.msg_password_changed'))
                     } catch (err) {
                         this.$q.notify({
                             type: 'negative',
-                            message: `error occurred: ${err.message}`
+                            message: `${this.$t('common.error_occurred')} ${err.message}`
                         })
                     }
                 })

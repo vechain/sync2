@@ -10,7 +10,7 @@
         <div class="q-mx-sm">
             <AddressInfo :address="address"> {{wallet.meta.name + ' #' + (addressIndex + 1)}} </AddressInfo>
         </div>
-        <span class="text-h6 q-py-sm q-px-md">Transfers </span>
+        <span class="text-h6 q-py-sm q-px-md">{{$t('accountTransfer.label_transfer')}}</span>
         <div
             class="scroll"
             v-scrollDivider

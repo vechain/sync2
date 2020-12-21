@@ -6,10 +6,9 @@
     >
         <q-card class="full-width">
             <q-toolbar>
-                <q-toolbar-title class="text-center">Set New Password</q-toolbar-title>
+                <q-toolbar-title class="text-center">{{hint}}</q-toolbar-title>
             </q-toolbar>
             <q-card-section>
-                <p class="text-center">{{hint}}</p>
                 <q-form>
                     <q-input
                         autofocus
@@ -56,10 +55,10 @@ export default Vue.extend({
     },
     computed: {
         hint() {
-            return this.password ? 'Confirm the new password' : 'Enter the new password'
+            return this.password ? this.$t('newPasswordDialog.title_confirm_password') : this.$t('newPasswordDialog.title_set_new_password')
         },
         action() {
-            return this.password ? 'Confirm' : 'Next'
+            return this.password ? this.$t('common.confirm') : this.$t('common.next')
         }
     },
     watch: {
@@ -85,13 +84,13 @@ export default Vue.extend({
                     this.inputValue = ''
                     this.password = ''
                     await this.$nextTick()
-                    this.error = 'Password mismatch'
+                    this.error = this.$t('newPasswordDialog.msg_password_mismatch').toString()
                     return
                 }
                 this.ok(this.password)
             } else {
                 if (this.inputValue.length < MIN_PASSWORD_LEN) {
-                    this.error = 'Password too short (at least 6 chars)'
+                    this.error = this.$t('newPasswordDialog.msg_password_too_short').toString()
                     return
                 }
                 this.password = this.inputValue

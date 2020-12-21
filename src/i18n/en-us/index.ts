@@ -12,6 +12,9 @@ export default {
         add: 'Add',
         cancel: 'Cancel',
         finish: 'Finish',
+        next: 'Next',
+        copy: 'Copy',
+        copied: 'Copied',
 
         // network
         mainnet: 'Main Net',
@@ -21,25 +24,29 @@ export default {
         // error_message
         required_field: 'This field is required',
         something_wrong: 'Something is Wrong',
+        error_occurred: 'Error Occurred:',
 
         // notify
         wallet_updated: 'Wallet Updated',
         wallet_created: 'Wallet Created!',
 
-        lang_auto: 'Automatic'
+        lang_auto: 'Automatic',
+
+        transferring: 'Transferring'
     },
     index: {
         action_new_account: 'New Account',
         action_backup: 'Backup',
         action_rename: 'Rename Wallet',
         action_upgrade: 'Upgrade Now',
+        action_backup_now: 'Back Up Now',
         action_settings: 'Settings',
         action_activities: 'Activities',
         action_create: 'Create Now',
         msg_rename: 'Wallet name helps you quickly identify the wallet.',
         msg_upgrade: 'New version is ready :)',
         msg_delete: 'Are you sure? This cannot be undone. Unless you have backed up your wallet beforehand.',
-        msg_backup: 'Backup allows you to regain wallet access if you lose the device.',
+        msg_backup: 'Wallet not backed up! Backup your wallet keep your assets safe.',
         label_wallets: 'Wallets'
     },
     newWallet: {
@@ -66,7 +73,8 @@ export default {
         action_bio_auth: 'Biometric Authentication',
         action_token_list: 'Tokens',
         action_nodes: 'Nodes',
-        action_language: 'Language'
+        action_language: 'Language',
+        msg_password_changed: 'Password Changed'
     },
     nodes: {
         title_add_dialog: 'Add Node',
@@ -86,8 +94,49 @@ export default {
         msg_init_animation_s4: 'Encrypting wallet using your password',
         msg_init_animation_s5: 'Saving wallet to a local secure vault',
         msg_init_complete: 'Your wallet is ready!',
-        msg_feature_1: 'The brand new Sync enhanced design focuses on your experience',
+        msg_feature_1: 'The brand new Sync enhanced design focuses on your experience.',
         msg_feature_2: 'Manage assets with ease, anytime, anywhere.',
         msg_feature_3: 'Seamless user experience to sign transactions or certificates requested by the dapp.'
+    },
+    account: {
+        title: 'Account',
+        label_assets: 'Assets',
+        msg_receive: 'Share your address to receive assets',
+        action_transfer: 'Transfer',
+        action_receive: 'Receive'
+    },
+    accountTransfer: {
+        label_transfer: 'Transfers',
+        msg_not_found: 'No Transfer Found',
+        msg_no_more: 'No More Transfers'
+    },
+    send: {
+        title: 'Transfer',
+        label_to: 'To',
+        label_amount: 'Amount',
+        label_balance: 'Balance:',
+        label_recent_transfer: 'Recent Transfers',
+        msg_error_invalid_balance: 'Invalid Amount',
+        action_proceed: 'Proceed'
+    },
+    activities: {
+        title: 'Activities',
+        title_signed_content: 'Signed Content',
+        label_reverted: 'Reverted',
+        label_expired: 'Expired',
+        label_sending: 'Sending',
+        label_confirming: 'Confirming',
+        action_view_on_explorer: 'View on Explorer',
+        action_copy_txId: 'Copy TxID',
+        action_view_signed_content: 'View Signed Content',
+        action_copy_dapp_url: 'Copy DApp URL',
+        msg_not_found: 'No Activities Found',
+        msg_activities_desc: 'Activities that you’ve interacted with recently will appear here.'
+    },
+    newPasswordDialog: {
+        msg_password_mismatch: 'Password Mismatch',
+        msg_password_too_short: 'Password too short (at least 6 characters)',
+        title_set_new_password: 'Set New Password',
+        title_confirm_password: 'Confirm Your Password'
     }
 }
