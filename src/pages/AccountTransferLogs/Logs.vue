@@ -18,8 +18,8 @@
             v-if="noMore"
             class="text-center q-my-md text-grey"
         >
-            <span v-if="logs.length === 0"> No Transfer Found. </span>
-            <span v-else> No More Transfers. </span>
+            <span v-if="logs.length === 0">{{$t('accountTransfer.msg_not_found')}}</span>
+            <span v-else>{{$t('accountTransfer.msg_no_more')}}</span>
         </div>
         <template v-slot:loading>
             <div class="text-center q-my-sm">

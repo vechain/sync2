@@ -10,11 +10,11 @@
                     icon="close"
                 />
                 <q-toolbar-title class="absolute-center text-capitalize">
-                    Receive
+                    {{$t('account.action_receive')}}
                 </q-toolbar-title>
             </q-toolbar>
             <div class="text-center q-px-md q-pt-xl">
-                Share your account address to receive assets
+                {{$t('account.msg_receive')}}
 
                 <AddressAvatar
                     class="q-mx-auto q-mt-xl q-mb-lg relative-position"
@@ -36,7 +36,7 @@
                         class="col-6 col-sm-auto"
                         @click="onCopy"
                         color="blue-9"
-                    >Copy</q-btn>
+                    >{{$t('common.copy')}}</q-btn>
                 </div>
             </div>
         </q-card>
@@ -54,7 +54,7 @@ export default Vue.extend({
         onCopy() {
             copyToClipboard(Vue.filter('checksum')(this.address)).then(
                 () => {
-                    this.$q.notify('copied')
+                    this.$q.notify(this.$t('common.copied'))
                 }
             ).catch(console.error)
         }

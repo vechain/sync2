@@ -5,7 +5,7 @@
         clearable
         :rules="[val => isAddress(val) || 'Please enter a valid address', val => checkSumAddress(val) || 'Checksum incorrect' ]"
         v-model.lazy="to"
-        label="To"
+        :label="$t('send.label_to')"
     >
         <template
             v-if="isAddress(to)"

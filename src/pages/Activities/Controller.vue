@@ -1,6 +1,6 @@
 <template>
     <div class="column fit">
-        <page-toolbar title="Activities" />
+        <page-toolbar :title="$t('activities.title')" />
         <div
             v-scrollDivider
             class="col overflow-auto"
@@ -15,8 +15,8 @@
             <template v-else>
                 <div class="text-center q-px-xl column fit justify-center">
                     <div class="col-5">
-                        <h6 class="text-h6 q-my-sm text-grey-8">No Activities Found</h6>
-                        <div class="text-body1 text-grey-6">Activities that you’ve interacted with recently will appear here</div>
+                        <h6 class="text-h6 q-my-sm text-grey-8">{{$t('activities.msg_not_found')}}</h6>
+                        <div class="text-body1 text-grey-6">{{$t('activities.msg_activities_desc')}}</div>
                     </div>
                 </div>
             </template>
@@ -79,7 +79,7 @@ export default Vue.extend({
                 return ''
             }
             const confirms = this.$svc.bc(activity.gid).thor.status.head.number - receipt.meta.blockNumber
-            return `Confirming ${confirms} / 12`
+            return `${this.$t('activities.label_confirming')} ${confirms} / 12`
         },
         status(a: M.Activity): 'reverted' | 'reverted?' | 'success' | 'success?' | 'sending' | 'expired' {
             if (a.type === 'cert') {

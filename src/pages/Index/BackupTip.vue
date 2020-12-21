@@ -17,7 +17,7 @@
                         />
                         <q-btn
                             flat
-                            :label="$t('index.action_backup')"
+                            :label="$t('index.action_backup_now')"
                             :to="{name: 'backup'}"
                         />
                     </template>

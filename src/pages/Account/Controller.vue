@@ -4,14 +4,14 @@
         v-if="wallet"
     >
         <page-toolbar
-            title="Account"
+            :title="$t('account.title')"
             :gid="wallet.gid"
         />
         <div class="q-mx-sm">
             <AddressInfo :address="address"> {{wallet.meta.name + ' #' + (addressIndex + 1)}} </AddressInfo>
         </div>
         <div class="q-px-md row items-center justify-between">
-            <span class="text-h6 q-py-sm"> Assets </span>
+            <span class="text-h6 q-py-sm"> {{$t('account.label_assets')}} </span>
             <q-btn
                 :to="{name: 'tokens-setting'}"
                 flat
@@ -51,14 +51,14 @@
                 @click="onSend"
                 unelevated
                 color="blue-9"
-                label="Send"
+                :label="$t('account.action_transfer')"
             />
             <q-btn
                 outline
                 color="blue-9"
                 unelevated
                 @click="showQR = true"
-                label="Receive"
+                :label="$t('account.action_receive')"
                 class="col-5 col-sm-auto"
             />
         </div>
