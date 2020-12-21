@@ -18,7 +18,7 @@
                     :error="!!error"
                     :error-message="error"
                     no-error-icon
-                    @keydown.enter.prevent="onSubmit()"
+                    @keyup.enter.prevent="onSubmit()"
                 />
             </q-card-section>
             <q-card-actions>

@@ -24,7 +24,7 @@
                         outlined
                         type="password"
                         autocomplete="new-password"
-                        @keydown.enter.prevent="onSubmit()"
+                        @keyup.enter.prevent="onSubmit()"
                     />
                 </q-form>
             </q-card-section>
