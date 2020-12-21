@@ -19,7 +19,7 @@
                     >
                         <q-btn
                             flat
-                            icon="mdi-translate"
+                            icon="mdi-earth"
                             size="sm"
                             color="primary"
                             :label="displayName"
