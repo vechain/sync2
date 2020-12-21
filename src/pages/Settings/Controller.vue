@@ -1,56 +1,60 @@
 <template>
     <div class="column fit">
         <page-toolbar :title="$t('settings.title')" />
-        <q-list
-            padding
+        <div
             v-scrollDivider
-            class="col narrow-page q-mx-auto overflow-auto"
+            class="col overflow-auto"
         >
-            <language-list-popup
-                v-slot="{displayName}"
-                anchor="bottom right"
-                self="top right"
-                :offset="[-16, 0]"
+            <q-list
+                padding
+                class="narrow-page q-mx-auto"
             >
+                <language-list-popup
+                    v-slot="{displayName}"
+                    anchor="bottom right"
+                    self="top right"
+                    :offset="[-16, 0]"
+                >
+                    <item
+                        icon="mdi-earth"
+                        :title="$t('settings.action_language')"
+                        :value="displayName"
+                        clickable
+                    />
+                </language-list-popup>
+                <q-separator inset="item" />
                 <item
-                    icon="mdi-earth"
-                    :title="$t('settings.action_language')"
-                    :value="displayName"
+                    icon="mdi-key"
+                    :title="$t('settings.action_change_password')"
                     clickable
+                    @click="onClickChangePassword()"
                 />
-            </language-list-popup>
-            <q-separator inset="item" />
-            <item
-                icon="mdi-key"
-                :title="$t('settings.action_change_password')"
-                clickable
-                @click="onClickChangePassword()"
-            />
-            <q-separator inset="item" />
-            <item
-                icon="mdi-fingerprint"
-                :title="$t('settings.action_bio_auth')"
-            >
-                <q-toggle
-                    color="green"
-                    :value="bioPassSaved"
-                    :disable="bioPassSaved===null"
-                    @input="toggleBioPass"
+                <q-separator inset="item" />
+                <item
+                    icon="mdi-fingerprint"
+                    :title="$t('settings.action_bio_auth')"
+                >
+                    <q-toggle
+                        color="green"
+                        :value="bioPassSaved"
+                        :disable="bioPassSaved===null"
+                        @input="toggleBioPass"
+                    />
+                </item>
+                <q-separator inset="item" />
+                <item
+                    icon="mdi-plus-circle-multiple-outline"
+                    :title="$t('settings.action_token_list')"
+                    :to="{name: 'tokens-setting'}"
                 />
-            </item>
-            <q-separator inset="item" />
-            <item
-                icon="mdi-plus-circle-multiple-outline"
-                :title="$t('settings.action_token_list')"
-                :to="{name: 'tokens-setting'}"
-            />
-            <q-separator inset="item" />
-            <item
-                icon="mdi-access-point-network"
-                :title="$t('settings.action_nodes')"
-                :to="{name: 'nodes-setting'}"
-            />
-        </q-list>
+                <q-separator inset="item" />
+                <item
+                    icon="mdi-access-point-network"
+                    :title="$t('settings.action_nodes')"
+                    :to="{name: 'nodes-setting'}"
+                />
+            </q-list>
+        </div>
     </div>
 </template>
 <script lang="ts">

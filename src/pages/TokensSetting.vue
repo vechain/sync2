@@ -3,10 +3,11 @@
         <page-toolbar :title="$t('settings.action_token_list')" />
         <div
             v-scrollDivider
-            class="col overflow-auto narrow-page q-mx-auto"
+            class="col overflow-auto"
         >
             <q-list
                 v-if="tokens.length>0"
+                class="narrow-page q-mx-auto"
                 padding
             >
                 <template v-for="(item, index) in tokens">
@@ -38,16 +39,22 @@
                     </q-item>
                 </template>
             </q-list>
-            <q-inner-loading
-                v-else-if="$asyncComputed.tokens.updating"
-                showing
-            />
             <div
-                v-else-if="$asyncComputed.tokens.error"
+                v-else
                 class="fit column flex-center"
             >
-                <p>{{$t('common.something_wrong')}}</p>
-                <q-btn @click="$asyncComputed.tokens.update()">Refresh</q-btn>
+                <q-spinner-dots
+                    v-if="$asyncComputed.tokens.updating"
+                    class="text-h2"
+                />
+                <template v-else>
+                    <p>{{$t('common.something_wrong')}}</p>
+                    <q-btn
+                        unelevated
+                        color="primary"
+                        @click="$asyncComputed.tokens.update()"
+                    >Refresh</q-btn>
+                </template>
             </div>
         </div>
     </div>

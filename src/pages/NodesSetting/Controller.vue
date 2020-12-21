@@ -1,5 +1,5 @@
 <template>
-    <div class="fit column no-warp">
+    <div class="fit column">
         <page-toolbar :title="$t('settings.action_nodes')">
             <q-btn
                 class="q-ml-auto"
@@ -10,58 +10,62 @@
                 @click="onAdd"
             />
         </page-toolbar>
-        <q-list
-            padding
+        <div
             v-scrollDivider
-            class="col narrow-page q-mx-auto overflow-auto"
+            class="col overflow-auto"
         >
-            <template v-for="(group, gi) in groups">
-                <q-separator
-                    v-if="gi > 0"
-                    :key="`s-${gi}`"
-                    spaced
-                />
-                <q-item-label
-                    header
-                    :key="`h-${gi}`"
-                >{{$netDisplayName(group.list[0].genesis.id)}}</q-item-label>
-                <template v-for="(node, i) in group.list">
+            <q-list
+                padding
+                class="narrow-page q-mx-auto"
+            >
+                <template v-for="(group, gi) in groups">
                     <q-separator
-                        v-if="i > 0"
-                        :key="`s-${gi}-${i}`"
+                        v-if="gi > 0"
+                        :key="`s-${gi}`"
                         spaced
-                        inset="item"
                     />
-                    <q-item
-                        :key="`i-${gi}-${i}`"
-                        clickable
-                        @click="onSelect(node)"
-                    >
-                        <q-item-section avatar>
-                            <q-icon
-                                color="blue-7"
-                                name="check"
-                                v-show="group.selection === i"
-                            />
-                        </q-item-section>
-                        <q-item-section>
-                            <q-item-label lines="1">{{node.url | urlHost}}</q-item-label>
-                            <q-item-label caption>{{node.url}}</q-item-label>
-                        </q-item-section>
-                        <q-item-section side>
-                            <q-btn
-                                v-if="canDelete(node)"
-                                @click.prevent.stop="onDelete(node)"
-                                flat
-                                dense
-                                round
-                                icon="delete_forever"
-                            />
-                        </q-item-section>
-                    </q-item>
+                    <q-item-label
+                        header
+                        :key="`h-${gi}`"
+                    >{{$netDisplayName(group.list[0].genesis.id)}}</q-item-label>
+                    <template v-for="(node, i) in group.list">
+                        <q-separator
+                            v-if="i > 0"
+                            :key="`s-${gi}-${i}`"
+                            spaced
+                            inset="item"
+                        />
+                        <q-item
+                            :key="`i-${gi}-${i}`"
+                            clickable
+                            @click="onSelect(node)"
+                        >
+                            <q-item-section avatar>
+                                <q-icon
+                                    color="blue-7"
+                                    name="check"
+                                    v-show="group.selection === i"
+                                />
+                            </q-item-section>
+                            <q-item-section>
+                                <q-item-label lines="1">{{node.url | urlHost}}</q-item-label>
+                                <q-item-label caption>{{node.url}}</q-item-label>
+                            </q-item-section>
+                            <q-item-section side>
+                                <q-btn
+                                    v-if="canDelete(node)"
+                                    @click.prevent.stop="onDelete(node)"
+                                    flat
+                                    dense
+                                    round
+                                    icon="delete_forever"
+                                />
+                            </q-item-section>
+                        </q-item>
+                    </template>
                 </template>
-            </template>
-        </q-list>
+            </q-list>
+        </div>
     </div>
 </template>
 <script lang="ts">
