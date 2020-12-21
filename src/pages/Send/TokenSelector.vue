@@ -16,47 +16,38 @@
                 <q-icon name="unfold_more" />
             </q-item-section>
         </template>
-        <q-popup-proxy
-            v-model="showTokenList"
-            breakpoint="2000"
-            :context-menu="false"
+        <pop-sheets
+            fit
+            customized
+            :sheets="sheets"
         >
-            <q-card class="column full-width no-wrap">
-                <q-toolbar>
-                    <q-toolbar-title>Select Token</q-toolbar-title>
-                </q-toolbar>
-                <q-card-section
-                    v-scrollDivider
-                    class="col overflow-auto q-pt-none"
+            <template v-slot="{sheet: {model: token}}">
+                <Resolve
+                    :key="token.symbol"
+                    :promise="$svc.bc(token.gid).balanceOf(address, token)"
+                    v-slot="{data}"
                 >
-                    <q-list>
-                        <template v-for="token in tokens">
-                            <Resolve
-                                :key="token.symbol"
-                                :promise="$svc.bc(token.gid).balanceOf(address, token)"
-                                v-slot="{data}"
-                            >
-                                <TokenItem
-                                    clickable
-                                    @click="onSelect(token.symbol)"
-                                    :balance="data"
-                                    :token="token"
-                                />
-                            </Resolve>
-                        </template>
-                    </q-list>
-                </q-card-section>
-            </q-card>
-        </q-popup-proxy>
+                    <TokenItem
+                        clickable
+                        v-close-popup
+                        @click="onSelect(token.symbol)"
+                        :balance="data"
+                        :token="token"
+                    />
+                </Resolve>
+            </template>
+        </pop-sheets>
     </q-item>
 </template>
 <script lang="ts">
 import Vue from 'vue'
 import TokenItem from './TokenItem.vue'
+import PopSheets, { Sheet } from 'src/components/PopSheets.vue'
 
 export default Vue.extend({
     components: {
-        TokenItem
+        TokenItem,
+        PopSheets
     },
     model: {
         prop: 'symbol',
@@ -75,6 +66,15 @@ export default Vue.extend({
     computed: {
         token() {
             return this.tokens.find(t => t.symbol === this.symbol)
+        },
+        sheets(): Sheet<M.TokenSpec>[] {
+            return this.tokens.map<Sheet<M.TokenSpec>>((t: M.TokenSpec) => {
+                return {
+                    model: t,
+                    label: '',
+                    action: () => { }
+                }
+            })
         }
     },
     methods: {
