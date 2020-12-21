@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import AuthenticationDialog from 'pages/AuthenticationDialog'
-import TxSigningDialog from 'pages/TxSigningDialog'
-import CertSigningDialog from 'pages/CertSigningDialog.vue'
+import SigningDialog from 'src/pages/SigningDialog'
 import { QSpinnerIos } from 'quasar'
 
 declare module 'vue/types/vue' {
@@ -107,7 +106,8 @@ export function boot() {
                 const vm = this as Vue
                 return (gid, req) => {
                     return dialog(vm, {
-                        component: TxSigningDialog,
+                        component: SigningDialog,
+                        type: 'tx',
                         gid,
                         req
                     })
@@ -119,7 +119,8 @@ export function boot() {
                 const vm = this as Vue
                 return (gid, req) => {
                     return dialog(vm, {
-                        component: CertSigningDialog,
+                        component: SigningDialog,
+                        type: 'cert',
                         gid,
                         req
                     })
