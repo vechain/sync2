@@ -3,15 +3,18 @@
         class="overflow-auto"
         v-scrollDivider
     >
+        <!-- only to measure available width -->
         <div class="q-mx-sm">
             <q-resize-observer
                 :debounce="0"
                 @resize="availableWidth = $event.width"
             />
         </div>
+        <!-- the car list page -->
         <div
             class="q-mx-auto q-py-sm"
-            :style="{width:`${pageWidth}px`}"
+            :class="{'text-center': rows === 1}"
+            :style="pageStyles"
         >
             <Intersecting
                 :cfg="{threshold: 0.2}"
@@ -25,14 +28,15 @@
                     :promise="entry.isIntersecting? $svc.bc(wallet.gid).thor.account(address).get() : null"
                     v-slot="{data}"
                 >
-                    <AddressCard
-                        class="fit"
-                        :style="cardStyles"
-                        :index="i"
-                        :address="address"
-                        :account="data"
-                        @click="onClickCard(i)"
-                    />
+                    <q-responsive :ratio="1/0.62">
+                        <AddressCard
+                            :style="cardStyles"
+                            :index="i"
+                            :address="address"
+                            :account="data"
+                            @click="onClickCard(i)"
+                        />
+                    </q-responsive>
                 </resolve>
             </Intersecting>
         </div>
@@ -42,8 +46,9 @@
 import Vue from 'vue'
 import AddressCard from './AddressCard.vue'
 
-const CELL_WIDTH_S = 340
+const CELL_WIDTH_S = 330
 const CELL_WIDTH_L = 400
+const MAX_COL = 3
 
 export default Vue.extend({
     components: { AddressCard },
@@ -51,20 +56,22 @@ export default Vue.extend({
         wallet: Object as () => M.Wallet
     },
     data: () => {
-        return {
-            availableWidth: 0
-        }
+        return { availableWidth: 0 }
     },
     computed: {
+        cols(): number {
+            const n = Math.floor(this.availableWidth / CELL_WIDTH_S)
+            return Math.max(Math.min(n, MAX_COL), 1)
+        },
+        rows(): number {
+            return Math.ceil(this.wallet.meta.addresses.length / this.cols)
+        },
         pageWidth(): number {
-            const aWidth = this.availableWidth
-            if (aWidth >= CELL_WIDTH_S * 3) {
-                return CELL_WIDTH_S * 3
+            const cols = this.cols
+            if (cols > 1) {
+                return cols * CELL_WIDTH_S
             }
-            if (aWidth >= CELL_WIDTH_S * 2) {
-                return CELL_WIDTH_S * 2
-            }
-            return Math.min(CELL_WIDTH_L, aWidth)
+            return Math.min(CELL_WIDTH_L, this.availableWidth)
         },
         cellWidth(): number {
             if (this.pageWidth <= CELL_WIDTH_L) {
@@ -72,16 +79,14 @@ export default Vue.extend({
             }
             return CELL_WIDTH_S
         },
+        pageStyles(): object {
+            return { width: `${this.pageWidth}px` }
+        },
         cellStyles(): object {
-            return {
-                width: `${this.cellWidth}px`,
-                height: `${this.cellWidth * 0.63}px`
-            }
+            return { width: `${this.cellWidth}px` }
         },
         cardStyles(): object {
-            return {
-                borderRadius: `${this.cellWidth * 0.06}px`
-            }
+            return { borderRadius: `${this.cellWidth * 0.06}px` }
         }
     },
     methods: {
