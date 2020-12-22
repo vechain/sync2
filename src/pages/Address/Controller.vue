@@ -9,9 +9,9 @@
         />
         <div class="col column narrow-page q-mx-auto">
             <div class="q-mx-sm">
-                <Address :address="address">
+                <head-item :address="address">
                     {{wallet.meta.name}}
-                </Address>
+                </head-item>
             </div>
             <div class="q-px-md row items-center justify-between">
                 <span class="text-h6 q-py-sm"> {{$t('account.label_assets')}} </span>
@@ -55,21 +55,20 @@
 <script lang="ts">
 import Vue from 'vue'
 import TokenItem from './TokenItem.vue'
-import Address from './Address.vue'
+import HeadItem from './HeadItem.vue'
 
 export default Vue.extend({
-    name: 'Account',
     components: {
         TokenItem,
-        Address
+        HeadItem
     },
     props: {
-        wid: String,
-        i: String
+        walletId: String,
+        addressIndex: String
     },
     asyncComputed: {
         wallet(): Promise<M.Wallet | null> {
-            return this.$svc.wallet.get(parseInt(this.wid))
+            return this.$svc.wallet.get(parseInt(this.walletId))
         },
         tokenList: {
             async get(): Promise<M.TokenSpec[]> {
@@ -87,20 +86,17 @@ export default Vue.extend({
         }
     },
     computed: {
-        addressIndex(): number {
-            return parseInt(this.i, 10)
-        },
         address(): string {
-            return this.wallet ? this.wallet.meta.addresses[this.addressIndex] : ''
+            return this.wallet ? this.wallet.meta.addresses[parseInt(this.addressIndex)] : ''
         }
     },
     methods: {
         onTokenClick(sym: string) {
             this.$router.push({
-                name: 'account-transfer-logs',
-                query: {
-                    wid: this.wid,
-                    i: this.i,
+                name: 'asset',
+                params: {
+                    walletId: this.walletId,
+                    addressIndex: this.addressIndex,
                     symbol: sym
                 }
             })
@@ -109,8 +105,8 @@ export default Vue.extend({
             this.$router.push({
                 name: 'send',
                 query: {
-                    wid: this.wid,
-                    i: this.i
+                    wid: this.walletId,
+                    i: this.addressIndex
                 }
             })
         }

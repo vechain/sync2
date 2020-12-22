@@ -92,10 +92,10 @@ export default Vue.extend({
     methods: {
         onClickCard(index: number) {
             this.$router.push({
-                name: 'account',
-                query: {
-                    wid: this.wallet.id.toString(),
-                    i: index.toString()
+                name: 'address',
+                params: {
+                    walletId: this.wallet.id.toString(),
+                    addressIndex: index.toString()
                 }
             })
         }

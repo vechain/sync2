@@ -5,10 +5,10 @@ import NewWallet from 'pages/NewWallet'
 import Settings from 'pages/Settings'
 import TokensSetting from 'pages/TokensSetting.vue'
 import Backup from 'pages/Backup'
-import Account from 'pages/Account'
+import Address from 'pages/Address'
 import Activities from 'pages/Activities'
 import ResetPin from 'pages/ResetPin.vue'
-import AccountTransferLogs from 'pages/AccountTransferLogs'
+import Asset from 'pages/Asset'
 import Send from 'pages/Send'
 import Sign from 'pages/Sign'
 import SignSuccess from 'pages/SignSuccess.vue'
@@ -22,6 +22,14 @@ const routes: RouteConfig[] = [
             path: '',
             name: 'index',
             component: Index
+        }, {
+            path: 'w/:walletId(\\d+)/:addressIndex(\\d+)',
+            name: 'address',
+            component: Address
+        }, {
+            path: 'w/:walletId(\\d+)/:addressIndex(\\d+)/a/:symbol',
+            name: 'asset',
+            component: Asset
         }, {
             path: 'new-wallet',
             name: 'new-wallet',
@@ -39,10 +47,6 @@ const routes: RouteConfig[] = [
             name: 'backup',
             component: Backup
         }, {
-            path: 'account',
-            name: 'account',
-            component: Account
-        }, {
             // this entry is to handle external signing request in SPA mode only
             path: 'sign',
             name: 'sign',
@@ -55,10 +59,6 @@ const routes: RouteConfig[] = [
             path: 'reset-pin-code',
             name: 'reset-pin-code',
             component: ResetPin
-        }, {
-            path: 'account-transfer-logs',
-            name: 'account-transfer-logs',
-            component: AccountTransferLogs
         }, {
             path: 'send',
             name: 'send',

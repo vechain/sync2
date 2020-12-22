@@ -41,7 +41,7 @@
                 />
                 <q-btn
                     class="w40"
-                    :to="{name: 'send', query: { wid: wid, i: i, defaultSymbol: symbol }}"
+                    :to="{name: 'send', query: { wid: walletId, i: addressIndex, defaultSymbol: symbol }}"
                     unelevated
                     color="blue-9"
                     label="Send"
@@ -59,7 +59,6 @@ import Vue from 'vue'
 import Logs from './Logs.vue'
 import ReceiveDialog from 'src/pages/ReceiveDialog.vue'
 export default Vue.extend({
-    name: 'AccountTransferLogs',
     components: {
         Logs,
         ReceiveDialog
@@ -70,13 +69,13 @@ export default Vue.extend({
         }
     },
     props: {
-        wid: String,
-        i: String,
+        walletId: String,
+        addressIndex: String,
         symbol: String
     },
     asyncComputed: {
         wallet(): Promise<M.Wallet | null> {
-            return this.$svc.wallet.get(parseInt(this.wid))
+            return this.$svc.wallet.get(parseInt(this.walletId))
         },
         token: {
             async get(): Promise<M.TokenSpec | null> {
@@ -97,11 +96,8 @@ export default Vue.extend({
         }
     },
     computed: {
-        addressIndex(): number {
-            return parseInt(this.i, 10)
-        },
         address(): string {
-            return this.wallet ? this.wallet.meta.addresses[this.addressIndex] : ''
+            return this.wallet ? this.wallet.meta.addresses[parseInt(this.addressIndex)] : ''
         }
     }
 })
