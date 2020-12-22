@@ -16,29 +16,32 @@
             :class="{'text-center': rows === 1}"
             :style="pageStyles"
         >
-            <Intersecting
-                :cfg="{threshold: 0.2}"
+            <div
                 v-for="(address,i) in wallet.meta.addresses"
+                :key="address"
                 class="q-pa-sm inline-block"
                 :style="cellStyles"
-                :key="address"
-                v-slot="{entry}"
             >
-                <resolve
-                    :promise="entry.isIntersecting? $svc.bc(wallet.gid).thor.account(address).get() : null"
-                    v-slot="{data}"
+                <Intersecting
+                    :cfg="{threshold: 0}"
+                    v-slot="{entry}"
                 >
-                    <q-responsive :ratio="1/0.62">
-                        <AddressCard
-                            :style="cardStyles"
-                            :index="i"
-                            :address="address"
-                            :account="data"
-                            @click="onClickCard(i)"
-                        />
-                    </q-responsive>
-                </resolve>
-            </Intersecting>
+                    <resolve
+                        :promise="entry.isIntersecting? $svc.bc(wallet.gid).thor.account(address).get() : null"
+                        v-slot="{data}"
+                    >
+                        <q-responsive :ratio="1/0.62">
+                            <AddressCard
+                                :style="cardStyles"
+                                :index="i"
+                                :address="address"
+                                :account="data"
+                                @click="onClickCard(i)"
+                            />
+                        </q-responsive>
+                    </resolve>
+                </Intersecting>
+            </div>
         </div>
     </div>
 </template>
