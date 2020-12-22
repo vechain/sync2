@@ -46,6 +46,7 @@
                 <q-expansion-item
                     v-scrollIntoView="current === address"
                     v-close-popup
+                    :default-opened="current === address"
                     group="somegroup"
                     v-for="address in wallet.meta.addresses"
                     :key="`${address}-${wallet.id}`"
