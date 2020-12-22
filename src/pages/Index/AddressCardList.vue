@@ -7,10 +7,10 @@
         <div class="q-mx-sm">
             <q-resize-observer
                 :debounce="0"
-                @resize="availableWidth = $event.width"
+                @resize="onResize"
             />
         </div>
-        <!-- the car list page -->
+        <!-- the card list page -->
         <div
             class="q-mx-auto q-py-sm"
             :class="{'text-center': rows === 1}"
@@ -90,6 +90,11 @@ export default Vue.extend({
         }
     },
     methods: {
+        onResize(size: { width: number }) {
+            if (size.width > 0) {
+                this.availableWidth = size.width
+            }
+        },
         onClickCard(index: number) {
             this.$router.push({
                 name: 'address',
