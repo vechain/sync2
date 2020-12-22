@@ -41,10 +41,9 @@ export default Vue.extend({
         LogItem
     },
     props: {
-        connex: Object as () => Connex,
         pageSize: Number,
         address: String,
-        tokens: Array as () => M.TokenSpec[]
+        token: Object as () => M.TokenSpec
     },
     data() {
         return {
@@ -74,7 +73,7 @@ export default Vue.extend({
     },
     computed: {
         gid() {
-            return this.tokens && this.tokens[0].gid
+            return this.token && this.token.gid
         }
     },
     created() {
@@ -112,10 +111,10 @@ export default Vue.extend({
             if (fb >= tb) {
                 return []
             }
-            if (this.tokens && this.tokens[0].symbol !== 'VET') {
-                return await this.tokenTransfers(this.$svc.bc(this.gid).thor, this.tokens, this.address, fb, tb, offset, this.pageSize)
+            if (this.token && this.token.symbol !== 'VET') {
+                return await this.tokenTransfers(this.$svc.bc(this.gid).thor, [this.token], this.address, fb, tb, offset, this.pageSize)
             } else {
-                return await this.vetTransfers(this.$svc.bc(this.gid).thor, this.tokens[0], this.address, fb, tb, offset, this.pageSize)
+                return await this.vetTransfers(this.$svc.bc(this.gid).thor, this.token, this.address, fb, tb, offset, this.pageSize)
             }
         }
     }
