@@ -49,17 +49,17 @@ export default Vue.extend({
         background(): object {
             let str = this.svg
             let color!: Color
-            for (let i = 0; i < 2; i++) {
+            for (let i = 0; i < 4; i++) {
                 const m = /rgb\((\d+),\s*(\d+),\s*(\d+)\)/.exec(str)
                 if (m) {
-                    color = color ? color.mix(Color(m[0]), 0.4) : Color(m[0])
+                    color = color ? color.mix(Color(m[0]), 0.15) : Color(m[0])
                     str = str.slice(m.index + m[0].length)
                 } else {
                     break
                 }
             }
-            const c1 = color.saturationl(50).lightness(45)
-            const c2 = color.saturationl(50).lightness(65)
+            const c1 = color.saturationl(35).lightness(30)
+            const c2 = color.saturationl(35).lightness(40)
             return {
                 background: `linear-gradient(to bottom, ${c1.rgb().string()}, ${c2.rgb().string()})`
             }
