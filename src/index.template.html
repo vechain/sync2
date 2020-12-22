@@ -59,6 +59,16 @@
 </head>
 
 <body>
+  <script>
+      try{
+        const spaGoto = localStorage.getItem('spa-goto')
+        if(spaGoto) {
+          location.href = new URL(location.hash, spaGoto).href
+        }
+      }catch(err) {
+        console.warn('failed to handle SPA goto:', err)
+      }
+  </script>
   <!-- DO NOT touch the following DIV -->
   <div id="q-app"></div>
 </body>

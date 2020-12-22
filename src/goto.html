@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Goto</title>
+    <meta charset="utf-8">
+</head>
+
+<body>
+
+    <!-- DO NOT touch the following DIV -->
+    <div>
+        <p>The url of your local SPA wallet</p>
+        <input id="input" size="60">
+        <button onclick="saveConfig()">Save</button>
+        <button onclick="openUrl()">Open</button>
+    </div>
+    <script>
+        const input = document.getElementById('input')
+        input.value = localStorage.getItem('spa-goto')
+        function saveConfig() {
+            localStorage.setItem('spa-goto', input.value)
+            alert('Successfully set')
+        }
+        function openUrl() {
+            if (input.value) {
+                location.href = input.value
+            }
+        }
+    </script>
+</body>
+
+</html>

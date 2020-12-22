@@ -11,6 +11,7 @@
 const { configure } = require('quasar/wrappers')
 const path = require('path')
 const { execSync } = require('child_process')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 const appVersion = require('./package.json').version
 const appBuild = execSync('git --no-pager log -n 1 --date=short --pretty="%ad.%h"')
@@ -126,6 +127,9 @@ module.exports = configure(function (/* ctx */) {
           ...cfg.resolve.alias,
           core: path.resolve(__dirname, './src/core'),
         }
+        cfg.plugins.push(new CopyWebpackPlugin([{
+            from: path.resolve(__dirname, './src/goto.html'),
+        }]))
         if (process.env.NODE_ENV === 'production') {
           // linting is slow in TS projects, we execute it only for production builds
           cfg.module.rules.push({
