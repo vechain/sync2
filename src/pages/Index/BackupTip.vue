@@ -2,26 +2,28 @@
     <div>
         <q-slide-transition>
             <div v-show="!dismissed">
-                <q-banner
-                    dark
-                    dense
-                    rounded
-                    class="bg-warning text-white"
-                >
-                    {{$t('index.msg_backup')}}
-                    <template v-slot:action>
-                        <q-btn
-                            flat
-                            :label="$t('common.dismiss')"
-                            @click="dismissed=true"
-                        />
-                        <q-btn
-                            flat
-                            :label="$t('index.action_backup_now')"
-                            :to="{name: 'backup'}"
-                        />
-                    </template>
-                </q-banner>
+                <div class="q-pa-sm">
+                    <q-banner
+                        dark
+                        dense
+                        rounded
+                        class="bg-warning text-white"
+                    >
+                        {{$t('index.msg_backup')}}
+                        <template v-slot:action>
+                            <q-btn
+                                flat
+                                :label="$t('common.dismiss')"
+                                @click="dismissed=true"
+                            />
+                            <q-btn
+                                flat
+                                :label="$t('index.action_backup_now')"
+                                :to="{name: 'backup'}"
+                            />
+                        </template>
+                    </q-banner>
+                </div>
             </div>
         </q-slide-transition>
     </div>

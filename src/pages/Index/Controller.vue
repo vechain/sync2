@@ -21,7 +21,7 @@
             </q-btn>
         </PageToolbar>
         <!-- tips -->
-        <div class="narrow-page q-pa-sm q-mx-auto q-gutter-y-sm">
+        <div class="narrow-page q-mx-auto">
             <upgrade-tip v-if="$state.app.updateAvailable" />
             <backup-tip
                 v-for="w in wallets"
