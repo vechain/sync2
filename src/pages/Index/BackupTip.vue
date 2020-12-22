@@ -2,12 +2,12 @@
     <div>
         <q-slide-transition>
             <div v-show="!dismissed">
-                <div class="q-pa-sm">
+                <div class="q-pa-xs">
                     <q-banner
                         dark
                         dense
                         rounded
-                        class="bg-warning text-white"
+                        class="bg-info"
                     >
                         {{$t('index.msg_backup')}}
                         <template v-slot:action>
