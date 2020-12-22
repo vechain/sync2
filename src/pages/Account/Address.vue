@@ -4,35 +4,30 @@
         v-bind="$attrs"
     >
         <q-item-section avatar>
-            <AddressAvatar
-                class="q-mx-auto relative-position"
-                :style="isNormal ? 'width: 60px; height: 60px; border-radius: 30px;' : 'width: 40px; height: 40px; border-radius: 20px;'"
-                :addr="address"
-            />
+            <q-avatar size="xl">
+                <AddressAvatar
+                    class="fit"
+                    :addr="address"
+                />
+            </q-avatar>
         </q-item-section>
         <q-item-section>
-            <q-item-label
-                v-if="isNormal"
-                class="text-body1 reline ellipsis-2-lines"
-            >
+            <q-item-label class="text-body1 reline ellipsis-2-lines">
                 <slot />
             </q-item-label>
             <q-item-label
-                :class="isNormal ? 'text-grey' : ''"
-                class="reline monospace text-body2"
+                class="monospace text-body2 text-grey"
                 lines="2"
-            >
-                {{address | checksum}}
-                <q-btn
-                    flat
-                    padding="0px"
-                    icon="qr_code"
-                    round
-                    color="dark"
-                    size="sm"
-                    @click="showQR = true"
-                />
+            >{{address | checksum | abbrev(8, 6)}}
             </q-item-label>
+        </q-item-section>
+        <q-item-section side>
+            <q-btn
+                flat
+                round
+                @click="showQR=true"
+                icon="qr_code"
+            />
         </q-item-section>
         <receive-dialog
             v-model="showQR"
@@ -48,17 +43,11 @@ export default Vue.extend({
         ReceiveDialog
     },
     props: {
-        address: String,
-        network: String
+        address: String
     },
     data() {
         return {
             showQR: false
-        }
-    },
-    computed: {
-        isNormal(): boolean {
-            return !!this.$slots.default
         }
     }
 })
