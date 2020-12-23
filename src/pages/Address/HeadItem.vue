@@ -12,13 +12,16 @@
             </q-avatar>
         </q-item-section>
         <q-item-section>
-            <q-item-label class="text-body1 reline ellipsis-2-lines">
-                <slot />
+            <q-item-label
+                class="monospace text-body1"
+                lines="1"
+            >{{address | checksum | abbrev(8, 6)}}
             </q-item-label>
             <q-item-label
-                class="monospace text-body2 text-grey"
-                lines="2"
-            >{{address | checksum | abbrev(8, 6)}}
+                class="text-body2 text-grey"
+                lines="1"
+            >
+                {{name}}
             </q-item-label>
         </q-item-section>
         <q-item-section side>
@@ -43,7 +46,8 @@ export default Vue.extend({
         ReceiveDialog
     },
     props: {
-        address: String
+        address: String,
+        name: String
     },
     data() {
         return {
@@ -52,8 +56,3 @@ export default Vue.extend({
     }
 })
 </script>
-<style scoped>
-.reline {
-    word-break: break-all;
-}
-</style>

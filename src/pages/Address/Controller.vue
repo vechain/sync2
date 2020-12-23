@@ -1,55 +1,56 @@
 <template>
-    <div
-        class="fit column no-wrap"
-        v-if="wallet"
-    >
+    <div class="fit column no-wrap">
         <page-toolbar
             :title="$t('account.title')"
-            :gid="wallet.gid"
+            :gid="wallet && wallet.gid"
         />
-        <div class="col column narrow-page q-mx-auto">
-            <div class="q-mx-sm">
-                <head-item :address="address">
-                    {{wallet.meta.name}}
-                </head-item>
-            </div>
-            <div class="q-px-md row items-center justify-between">
-                <span class="text-h6 q-py-sm"> {{$t('account.label_assets')}} </span>
-                <q-btn
-                    :to="{name: 'tokens-setting'}"
-                    flat
-                    dense
-                    icon="add"
-                    aria-label="manage"
-                    size="md"
+        <template v-if="wallet">
+            <div class="narrow-page q-mx-auto">
+                <head-item
+                    :address="address"
+                    :name="wallet.meta.name"
                 />
+                <q-item dense>
+                    <q-item-section>
+                        <q-item-label header>
+                            {{$t('account.label_assets')}}
+                        </q-item-label>
+                    </q-item-section>
+                    <q-item-section side>
+                        <q-btn
+                            :to="{name: 'tokens-setting'}"
+                            flat
+                            round
+                            icon="add"
+                        />
+                    </q-item-section>
+                </q-item>
             </div>
             <div
-                class="q-px-xs col scroll q-pb-sm"
+                class="col overflow-auto"
                 v-scrollDivider.top
             >
-                <q-list>
-                    <template v-for="(token, index) in tokenList">
-                        <resolve
-                            tag="div"
-                            :promise="$svc.bc(token.gid).balanceOf(address, token)"
-                            v-slot="{data}"
-                            :key="token.symbol"
-                        >
-                            <q-separator
-                                v-if="index !== 0"
-                                inset="item"
-                            />
-                            <TokenItem
-                                :token="token"
-                                :balance="data"
-                                @click="onTokenClick(token.symbol)"
-                            />
-                        </resolve>
-                    </template>
+                <q-list class="narrow-page q-mx-auto">
+                    <resolve
+                        v-for="(token, index) in tokenList"
+                        tag="div"
+                        :promise="$svc.bc(token.gid).balanceOf(address, token)"
+                        v-slot="{data}"
+                        :key="token.symbol"
+                    >
+                        <q-separator
+                            v-if="index !== 0"
+                            inset="item"
+                        />
+                        <TokenItem
+                            :token="token"
+                            :balance="data"
+                            @click="onTokenClick(token.symbol)"
+                        />
+                    </resolve>
                 </q-list>
             </div>
-        </div>
+        </template>
     </div>
 </template>
 <script lang="ts">
