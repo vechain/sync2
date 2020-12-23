@@ -63,10 +63,10 @@ const loadingFunc = (() => {
             }
             return await task()
         } finally {
+            if (delayTimer) {
+                clearTimeout(delayTimer)
+            }
             if (--counter === 0) {
-                if (delayTimer) {
-                    clearTimeout(delayTimer)
-                }
                 vm.$q.loading.hide()
             }
         }
