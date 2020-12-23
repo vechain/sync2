@@ -8,8 +8,17 @@
             <q-toolbar>
                 <q-toolbar-title class="text-center">{{hint}}</q-toolbar-title>
             </q-toolbar>
-            <q-card-section>
-                <q-form>
+            <q-form
+                @submit="onSubmit()"
+                @keydown.enter.prevent
+                @keyup.enter.prevent="onSubmit()"
+            >
+                <q-card-section>
+                    <!-- prevent chrome warning -->
+                    <q-input
+                        v-show="false"
+                        autocomplete="username"
+                    />
                     <q-input
                         autofocus
                         class="q-mx-xl"
@@ -23,19 +32,18 @@
                         outlined
                         type="password"
                         autocomplete="new-password"
-                        @keyup.enter.prevent="onSubmit()"
                     />
-                </q-form>
-            </q-card-section>
-            <q-card-actions>
-                <q-btn
-                    class="w40 q-mx-auto"
-                    :label="action"
-                    unelevated
-                    color="primary"
-                    @click="onSubmit()"
-                />
-            </q-card-actions>
+                </q-card-section>
+                <q-card-actions>
+                    <q-btn
+                        class="w40 q-mx-auto"
+                        :label="action"
+                        unelevated
+                        color="primary"
+                        type="submit"
+                    />
+                </q-card-actions>
+            </q-form>
         </q-card>
     </q-dialog>
 </template>

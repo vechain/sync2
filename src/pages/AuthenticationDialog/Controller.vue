@@ -8,9 +8,18 @@
             <q-toolbar>
                 <q-toolbar-title class="text-center">{{$t('authenticationDialog.title')}}</q-toolbar-title>
             </q-toolbar>
-            <q-card-section>
-                <p class="text-center">{{$t('authenticationDialog.label_input_password')}}</p>
-                <q-form>
+            <q-form
+                @submit="onSubmit()"
+                @keydown.enter.prevent
+                @keyup.enter.prevent="onSubmit()"
+            >
+                <q-card-section>
+                    <p class="text-center">{{$t('authenticationDialog.label_input_password')}}</p>
+                    <!-- prevent chrome warning -->
+                    <q-input
+                        v-show="false"
+                        autocomplete="username"
+                    />
                     <q-input
                         autofocus
                         class="q-mx-lg"
@@ -24,26 +33,25 @@
                         outlined
                         type="password"
                         autocomplete="current-password"
-                        @keyup.enter.prevent="onSubmit()"
                     />
-                </q-form>
-            </q-card-section>
-            <q-card-actions>
-                <q-btn
-                    class="w40 q-mx-auto"
-                    :label="$t('authenticationDialog.action_unlock')"
-                    unelevated
-                    color="primary"
-                    @click="onSubmit()"
-                />
-                <!-- <q-btn
+                </q-card-section>
+                <q-card-actions>
+                    <q-btn
+                        class="w40 q-mx-auto"
+                        :label="$t('authenticationDialog.action_unlock')"
+                        unelevated
+                        color="positive"
+                        type="submit"
+                    />
+                    <!-- <q-btn
                         v-if="bioPassSaved"
                         flat
                         text-color="primary"
                         class="q-mt-lg"
                         :label="$t('authenticationDialog.action_faceID')"
                     /> -->
-            </q-card-actions>
+                </q-card-actions>
+            </q-form>
         </q-card>
     </q-dialog>
 </template>
@@ -87,8 +95,10 @@ export default Vue.extend({
             this.hide()
         },
         onSubmit() {
+            const inputEl = (this.$refs.pwd as Vue).$el.getElementsByTagName('input')[0]
             const password = this.password
             if (password.length === 0) {
+                inputEl.focus()
                 return
             }
             this.error = ''
@@ -98,7 +108,7 @@ export default Vue.extend({
                     await Vault.verifyPassword(passwordShadow, password)
                     this.ok(password)
                 } catch {
-                    void (this.$refs.pwd as Vue).$el.getElementsByTagName('input')[0].select()
+                    inputEl.select()
                     this.error = this.$t('authenticationDialog.msg_password_error').toString()
                 }
             })
