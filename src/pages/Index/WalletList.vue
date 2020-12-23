@@ -32,6 +32,7 @@
                 <q-item
                     v-for="wallet in group"
                     :key="wallet.id"
+                    :ref="wallet.id.toString()"
                     clickable
                     :inset-level="0.25"
                     :active="wallet.id === current"
@@ -70,6 +71,12 @@ export default Vue.extend({
         current(newVal: number) {
             if (this.wallets.length > 0 && !this.wallets.find(w => w.id === newVal)) {
                 this.$emit('select', this.wallets[0].id)
+                this.scrollSelectedItemIntoView()
+            }
+        },
+        wallets(newVal: M.Wallet[], oldVal: M.Wallet[]) {
+            if (newVal.length !== oldVal.length) {
+                this.$nextTick(() => this.scrollSelectedItemIntoView())
             }
         }
     },
@@ -79,6 +86,12 @@ export default Vue.extend({
                 return
             }
             this.$emit('select', id)
+        },
+        scrollSelectedItemIntoView() {
+            const item = this.$refs[this.current.toString()] as Vue[]
+            if (item) {
+                item[0].$el.scrollIntoView()
+            }
         }
     }
 })
