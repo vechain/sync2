@@ -19,7 +19,7 @@
                             <q-btn
                                 flat
                                 :label="$t('index.action_backup_now')"
-                                :to="{name: 'backup'}"
+                                @click="$emit('backup')"
                             />
                         </template>
                     </q-banner>
