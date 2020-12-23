@@ -34,24 +34,29 @@
                 </template>
             </q-input>
             <div class="col column flex-center overflow-hidden no-wrap">
-                <img src="~assets/new-wallet.svg">
+                <img
+                    src="~assets/new-wallet.svg"
+                    style="min-height:0px;"
+                >
                 <p class="text-h6">{{$t('newWallet.title_desc')}}</p>
                 <p class="text-body1">{{$t('newWallet.msg_desc')}}</p>
             </div>
-            <q-btn
-                class="self-center w40"
-                color="primary"
-                unelevated
-                :label="$t('newWallet.action_generate')"
-                @click="newWallet('generate')"
-            />
-            <q-btn
-                class="self-center w40"
-                color="primary"
-                flat
-                :label="$t('newWallet.action_import')"
-                @click="newWallet('import')"
-            />
+            <div class="row justify-around">
+                <q-btn
+                    class="w40"
+                    color="primary"
+                    outline
+                    :label="$t('newWallet.action_import')"
+                    @click="newWallet('import')"
+                />
+                <q-btn
+                    class="w40"
+                    color="primary"
+                    unelevated
+                    :label="$t('newWallet.action_generate')"
+                    @click="newWallet('generate')"
+                />
+            </div>
         </div>
     </div>
 </template>
@@ -143,13 +148,15 @@ export default Vue.extend({
     },
     methods: {
         async newWallet(type: 'generate' | 'import') {
+            // reset error
+            this.error = ''
+            await this.$nextTick()
+
             // check name
             if (!this.name) {
                 this.error = this.$t('common.required_field').toString()
                 return
             }
-            // reset error
-            this.error = ''
 
             let words: string[] | undefined
             if (type === 'import') {
