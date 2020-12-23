@@ -43,7 +43,7 @@ const routes: RouteConfig[] = [
             name: 'tokens-setting',
             component: TokensSetting
         }, {
-            path: 'backup',
+            path: 'w/:walletId(\\d+)/backup',
             name: 'backup',
             component: Backup
         }, {

@@ -126,13 +126,17 @@ export default Vue.extend({
     },
     computed: {
         toWallets(): AddressGroup[] {
-            return [
-                {
-                    name: this.$t('send.label_recent_transfer').toString(),
-                    list: this.recent
-                },
-                ...this.wallets.map<AddressGroup>(w => { return { name: w.meta.name, list: w.meta.addresses } })
-            ]
+            let list = [...this.wallets.map<AddressGroup>(w => { return { name: w.meta.name, list: w.meta.addresses } })]
+            if (this.recent.length) {
+                list = [
+                    {
+                        name: this.$t('send.label_recent_transfer').toString(),
+                        list: this.recent
+                    },
+                    ...list
+                ]
+            }
+            return list
         },
         currentToken(): M.TokenSpec | undefined {
             return this.tokenList.find(item => item.symbol === this.symbol)
