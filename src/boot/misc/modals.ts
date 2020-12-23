@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import AuthenticationDialog from 'pages/AuthenticationDialog'
 import SigningDialog from 'src/pages/SigningDialog'
-import { QSpinnerIos } from 'quasar'
+import ModalLoading from 'components/ModalLoading.vue'
 
 declare module 'vue/types/vue' {
     interface Vue {
@@ -42,32 +42,20 @@ declare module 'vue/types/vue' {
 
 const loadingFunc = (() => {
     let counter = 0
-    return async <T>(vm: Vue, task: () => Promise<T>) => {
-        let delayTimer
+    let vm: Vue
+    return async <T>(task: () => Promise<T>) => {
         try {
             if (counter++ === 0) {
                 // set 0 delay to block mouse/touch event
-                vm.$q.loading.show({
-                    spinner: undefined,
-                    delay: 0,
-                    backgroundColor: 'transparent'
-                })
-                delayTimer = setTimeout(() => {
-                    vm.$q.loading.show({
-                        spinner: QSpinnerIos as unknown as Vue,
-                        delay: 0,
-                        backgroundColor: 'transparent',
-                        spinnerColor: 'black'
-                    })
-                }, 200)
+                const node = document.createElement('div')
+                document.body.appendChild(node)
+                vm = new ModalLoading({ el: node })
             }
             return await task()
         } finally {
-            if (delayTimer) {
-                clearTimeout(delayTimer)
-            }
             if (--counter === 0) {
-                vm.$q.loading.hide()
+                vm!.$destroy()
+                vm!.$el.remove()
             }
         }
     }
@@ -85,9 +73,8 @@ export function boot() {
     Object.defineProperties(Vue.prototype, {
         $loading: {
             get(): Vue['$loading'] {
-                const root = (this as Vue).$root
                 return async (task) => {
-                    return loadingFunc(root, task)
+                    return loadingFunc(task)
                 }
             }
         },
