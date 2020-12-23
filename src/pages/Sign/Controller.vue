@@ -4,44 +4,55 @@
             title="Sign"
             :gid="request && request.gid"
         />
-        <div class="col column narrow-page q-pa-md no-wrap q-mx-auto q-gutter-y-md">
-            <!-- loading -->
-            <delay
-                v-if="$asyncComputed.request.updating"
-                :t="200"
-                tag="div"
-                class="q-my-auto text-center"
+        <!-- loading -->
+        <delay
+            v-if="$asyncComputed.request.updating"
+            :t="200"
+            tag="div"
+            class="q-my-auto q-pa-md text-center"
+        >
+            <p>
+                <q-spinner-dots class="text-h2" />
+            </p>
+            <p>Loading signing content ...</p>
+        </delay>
+        <!-- request content -->
+        <template v-else-if="request">
+            <!-- content -->
+            <div
+                class="col overflow-auto q-pa-md"
+                v-scrollDivider.both
             >
-                <p>
-                    <q-spinner-dots class="text-h2" />
-                </p>
-                <p>Loading signing content ...</p>
-            </delay>
-            <!-- summary -->
-            <template v-else-if="request">
                 <Summary
-                    class="col overflow-auto"
-                    v-scrollDivider.both
+                    class="narrow-page q-mx-auto"
                     :request="request"
+                />
+            </div>
+            <!-- actions -->
+            <div class="narrow-page q-mx-auto q-pa-sm row justify-around">
+                <q-btn
+                    outline
+                    label="Decline"
+                    color="negative"
+                    class="w40"
+                    @click="$backOrHome()"
                 />
                 <q-btn
                     unelevated
                     label="Continue"
                     color="primary"
-                    class="w40 self-center"
+                    class="w40"
                     @click="signRequest()"
                 />
-                <q-btn
-                    flat
-                    label="Decline"
-                    color="negative"
-                    class="w40 self-center"
-                    @click="$backOrHome()"
-                />
-            </template>
-            <!-- error to load -->
-            <template v-else-if="$asyncComputed.request.exception">
-                <div class="q-my-auto text-center overflow-auto">
+            </div>
+        </template>
+        <!-- error to load -->
+        <template v-else-if="$asyncComputed.request.exception">
+            <div
+                class="col overflow-auto q-pa-md flex flex-center"
+                v-scrollDivider.both
+            >
+                <div class="narrow-page text-center">
                     <p>
                         <q-icon
                             name="error"
@@ -51,22 +62,25 @@
                     <p>Failed to load content</p>
                     <p class="text-grey">{{$asyncComputed.request.exception.message}}</p>
                 </div>
+            </div>
+            <!-- actions -->
+            <div class="narrow-page q-mx-auto q-pa-sm row justify-around">
+                <q-btn
+                    outline
+                    label="Close"
+                    color="negative"
+                    class="w40"
+                    @click="$backOrHome()"
+                />
                 <q-btn
                     unelevated
                     label="Retry"
                     color="primary"
-                    class="w40 self-center"
+                    class="w40"
                     @click="$asyncComputed.request.update()"
                 />
-                <q-btn
-                    flat
-                    label="Close"
-                    color="primary"
-                    class="w40 self-center"
-                    @click="$backOrHome()"
-                />
-            </template>
-        </div>
+            </div>
+        </template>
     </div>
 </template>
 <script lang="ts">
