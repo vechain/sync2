@@ -10,9 +10,8 @@
                 <pop-sheets :sheets="optionSheets" />
             </q-btn>
         </page-toolbar>
-        <div class="narrow-page col self-center column no-wrap q-gutter-y-md q-pa-md">
+        <div class="narrow-page q-mx-auto q-px-md">
             <q-input
-                class="q-mx-md"
                 bottom-slots
                 filled
                 :label="$t('newWallet.label_wallet_name')"
@@ -33,30 +32,30 @@
                     </div>
                 </template>
             </q-input>
-            <div class="col column flex-center overflow-hidden no-wrap">
-                <img
-                    src="~assets/new-wallet.svg"
-                    style="min-height:0px;"
-                >
-                <p class="text-h6">{{$t('newWallet.title_desc')}}</p>
-                <p class="text-body1">{{$t('newWallet.msg_desc')}}</p>
-            </div>
-            <div class="row justify-around">
-                <q-btn
-                    class="w40"
-                    color="primary"
-                    outline
-                    :label="$t('newWallet.action_import')"
-                    @click="newWallet('import')"
-                />
-                <q-btn
-                    class="w40"
-                    color="primary"
-                    unelevated
-                    :label="$t('newWallet.action_generate')"
-                    @click="newWallet('generate')"
-                />
-            </div>
+        </div>
+        <div class="col column flex-center text-center q-pa-md no-wrap">
+            <img
+                src="~assets/new-wallet.svg"
+                style="min-height:0px;"
+            >
+            <p class="text-h6">{{$t('newWallet.title_desc')}}</p>
+            <p class="text-body1">{{$t('newWallet.msg_desc')}}</p>
+        </div>
+        <div class="narrow-page q-mx-auto row justify-around q-pa-sm">
+            <q-btn
+                class="w40"
+                color="primary"
+                outline
+                :label="$t('newWallet.action_import')"
+                @click="newWallet('import')"
+            />
+            <q-btn
+                class="w40"
+                color="primary"
+                unelevated
+                :label="$t('newWallet.action_generate')"
+                @click="newWallet('generate')"
+            />
         </div>
     </div>
 </template>
