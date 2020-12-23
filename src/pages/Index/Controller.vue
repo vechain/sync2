@@ -34,7 +34,7 @@
             v-if="wallet"
             ref="list"
             :wallet="wallet"
-            class="container col"
+            class="col"
         />
         <div
             v-if="wallets.length === 0 && !$asyncComputed.wallets.updating"
@@ -56,6 +56,7 @@
         >
             <drawer-panel>
                 <wallet-list
+                    v-model="selectedWalletId"
                     :wallets="wallets"
                     @select="drawerOpen=false"
                 />
@@ -73,11 +74,14 @@ import AddressCardList from './AddressCardList.vue'
 import OptionMenu from './OptionMenu.vue'
 import { scroll } from 'quasar'
 
+const SELECTED_WALLET_ID_KEY = 'selectedWalletId'
+
 export default Vue.extend({
     components: { BackupTip, UpgradeTip, DrawerPanel, WalletList, AddressCardList, OptionMenu },
     data: () => {
         return {
-            drawerOpen: false
+            drawerOpen: false,
+            selectedWalletId: parseInt(localStorage.getItem(SELECTED_WALLET_ID_KEY) || '0')
         }
     },
     computed: {
@@ -93,23 +97,33 @@ export default Vue.extend({
         wallets: {
             get() { return this.$svc.wallet.all() },
             default: []
-        },
-        selectedWalletId() {
-            return this.$svc.config.getSelectedWalletId()
         }
     },
     watch: {
-        selectedWalletId() {
+        selectedWalletId(newVal: number) {
+            // remember the selected wallet
+            localStorage.setItem(SELECTED_WALLET_ID_KEY, newVal.toString())
             const list = this.$refs.list as Vue
             list && list.$el.scrollTo({ top: 0, behavior: 'auto' })
         },
         wallet(newVal: M.Wallet | null, oldVal: M.Wallet | null) {
             if (newVal && oldVal) {
-                // new address added
                 if (newVal.id === oldVal.id &&
                     newVal.meta.addresses.length !== oldVal.meta.addresses.length) {
+                    // new address added, and scroll to the end
                     const list = this.$refs.list as Vue
                     list && scroll.setScrollPosition(list.$el, list.$el.scrollHeight, 500)
+                }
+            }
+        },
+        wallets(newVal: M.Wallet[], oldVal: M.Wallet[]) {
+            if (newVal && oldVal && newVal.length === oldVal.length + 1) {
+                // new wallet created, find out and select it
+                for (const { id } of newVal) {
+                    if (!oldVal.find(w => w.id === id)) {
+                        this.selectedWalletId = id
+                        break
+                    }
                 }
             }
         }
@@ -122,11 +136,3 @@ export default Vue.extend({
     }
 })
 </script>
-<style scoped>
-.container {
-    /* scroll-snap-type: y mandatory; */
-}
-body.q-ios-padding .container {
-    padding-bottom: env(safe-area-inset-bottom) !important;
-}
-</style>

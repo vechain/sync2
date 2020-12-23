@@ -24,8 +24,7 @@ export function build(storage: Storage) {
         m => m
     )
     type Key = 'nodes' | 'activeNodeMap' | 'passwordShadow' |
-        'tokenRegistry' | 'activeTokenSymbols' | 'recentRecipients' |
-        'selectedWalletId' | 'language'
+        'tokenRegistry' | 'activeTokenSymbols' | 'recentRecipients' | 'language'
 
     const get = async (key: Key) => {
         const row = (await t.all().where({ key, subKey: '' }).query())[0]
@@ -112,12 +111,6 @@ export function build(storage: Storage) {
         },
         saveRecentRecipients(val: string[]) {
             return set('recentRecipients', JSON.stringify(val))
-        },
-        getSelectedWalletId() {
-            return get('selectedWalletId').then(r => parseInt(r))
-        },
-        saveSelectedWalletId(id: number) {
-            return set('selectedWalletId', id.toString())
         },
         getLanguage() {
             return get('language')

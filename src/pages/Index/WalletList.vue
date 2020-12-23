@@ -34,7 +34,7 @@
                     :key="wallet.id"
                     clickable
                     :inset-level="0.25"
-                    :active="wallet.id === selectedWalletId"
+                    :active="wallet.id === current"
                     active-class="bg-blue-1"
                     @click="onClickWalletItem(wallet.id)"
                 >
@@ -53,26 +53,32 @@ import Vue from 'vue'
 import { groupBy } from 'src/utils/array'
 
 export default Vue.extend({
+    model: {
+        prop: 'current',
+        event: 'select'
+    },
     props: {
-        wallets: Array as () => M.Wallet[]
+        wallets: Array as () => M.Wallet[],
+        current: Number
     },
     computed: {
         walletGroups(): M.Wallet[][] {
             return groupBy(this.wallets, w => w.gid)
         }
     },
-    asyncComputed: {
-        selectedWalletId(): Promise<number> {
-            return this.$svc.config.getSelectedWalletId()
+    watch: {
+        current(newVal: number) {
+            if (this.wallets.length > 0 && !this.wallets.find(w => w.id === newVal)) {
+                this.$emit('select', this.wallets[0].id)
+            }
         }
     },
     methods: {
         onClickWalletItem(id: number) {
-            if (id === this.selectedWalletId) {
+            if (id === this.current) {
                 return
             }
-            this.$svc.config.saveSelectedWalletId(id)
-            this.$emit('select')
+            this.$emit('select', id)
         }
     }
 })

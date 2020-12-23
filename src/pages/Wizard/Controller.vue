@@ -121,7 +121,7 @@ export default Vue.extend({
                 const node0 = await vault.derive(0)
                 const shadow = await Vault.shadowPassword(password)
                 await this.$svc.config.savePasswordShadow(shadow)
-                const newId = await this.$svc.wallet.insert({
+                await this.$svc.wallet.insert({
                     gid: genesises.main.id,
                     vault: vault.encode(),
                     meta: {
@@ -130,7 +130,6 @@ export default Vue.extend({
                         backedUp: false
                     }
                 })
-                await this.$svc.config.saveSelectedWalletId(newId)
             })(), 0.5)
 
             this.progressStr = ''
