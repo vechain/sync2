@@ -1,8 +1,11 @@
 <template>
-    <div class="column fit">
-        <!-- <page-toolbar title="Backup" />
+    <div
+        class="column fit"
+        v-if="wallet"
+    >
+        <page-toolbar title="Backup" />
         <q-tab-panels
-            class="col column"
+            class="col column narrow-page q-mx-auto"
             animated
             v-model="panel"
             v-if="words.length"
@@ -53,63 +56,62 @@
                     />
                 </div>
             </q-tab-panel>
-        </q-tab-panels> -->
+        </q-tab-panels>
     </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
-// import Words from './Words.vue'
-// import CheckWords from './CheckWords.vue'
-// import { Vault } from '../../core/vault'
+import Words from './Words.vue'
+import CheckWords from './CheckWords.vue'
+import { Vault } from 'src/core/vault'
 export default Vue.extend({
-    // components: {
-    //     Words,
-    //     CheckWords
-    // },
-    // computed: {
-    //     wallet() {
-    //         return this.$state.wallet.current
-    //     }
-    // },
-    // data() {
-    //     return {
-    //         words: [] as string[],
-    //         panel: 'words'
-    //     }
-    // },
-    // async created() {
-    //     try {
-    //         const vault = await Vault.decode(this.wallet!.vault)
-    //         const pin = await this.$authenticate((p) => {
-    //             return Promise.resolve(p)
-    //         })
-    //         const words = await vault.decrypt(pin)
-    //         this.words = (words as string).split(' ')
-    //     } catch (error) {
-    //         console.warn(error)
-    //         this.$router.back()
-    //     }
-    // },
-    // methods: {
-    //     async onDone() {
-    //         const meta: M.Wallet.Meta = {
-    //             ...this.wallet!.meta,
-    //             backedUp: true
-    //         }
-    //         try {
-    //             await this.$loading(
-    //                 () => {
-    //                     return this.$storage.wallets.update({ id: this.wallet!.id }, {
-    //                         meta: JSON.stringify(meta)
-    //                     })
-    //                 }
-    //             )
-    //         } catch (error) {
+    props: {
+        walletId: String
+    },
+    components: {
+        Words,
+        CheckWords
+    },
+    data() {
+        return {
+            wallet: null as unknown as M.Wallet | null,
+            words: [] as string[],
+            panel: 'words'
+        }
+    },
+    async created() {
+        try {
+            this.wallet = await this.$svc.wallet.get(parseInt(this.walletId))
 
-    //         }
+            if (!this.wallet) { return }
 
-    //         this.$router.back()
-    //     }
-    // }
+            const vault = await Vault.decode(this.wallet.vault)
+            const pin = await this.$authenticate()
+            const words = await vault.decrypt(pin)
+            this.words = (words as string).split(' ')
+        } catch (error) {
+            console.warn(error)
+            this.$router.back()
+        }
+    },
+    methods: {
+        async onDone() {
+            const meta: M.Wallet.Meta = {
+                ...this.wallet!.meta,
+                backedUp: true
+            }
+            try {
+                await this.$loading(
+                    () => {
+                        return this.$svc.wallet.update(this.wallet!.id, meta)
+                    }
+                )
+            } catch (error) {
+                console.warn(error)
+            }
+
+            this.$router.back()
+        }
+    }
 })
 </script>
