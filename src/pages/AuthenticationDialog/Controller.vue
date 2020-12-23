@@ -94,7 +94,7 @@ export default Vue.extend({
             this.$emit('ok', result)
             this.hide()
         },
-        onSubmit() {
+        async onSubmit() {
             const inputEl = (this.$refs.pwd as Vue).$el.getElementsByTagName('input')[0]
             const password = this.password
             if (password.length === 0) {
@@ -102,16 +102,16 @@ export default Vue.extend({
                 return
             }
             this.error = ''
-            this.$loading(async () => {
-                try {
+            try {
+                await this.$loading(async () => {
                     const passwordShadow = await this.$svc.config.getPasswordShadow()
                     await Vault.verifyPassword(passwordShadow, password)
-                    this.ok(password)
-                } catch {
-                    inputEl.select()
-                    this.error = this.$t('authenticationDialog.msg_password_error').toString()
-                }
-            })
+                })
+                this.ok(password)
+            } catch {
+                inputEl.select()
+                this.error = this.$t('authenticationDialog.msg_password_error').toString()
+            }
         },
         async recallBioPass() {
             const bioPass = this.bioPass

@@ -98,30 +98,32 @@ export default Vue.extend({
             }
         },
         async onClickChangePassword() {
+            let password!: string
             try {
-                const password = await this.$authenticate()
-                this.$q.dialog({
-                    component: NewPasswordDialog,
-                    parent: this
-                }).onOk((newPassword: string) => {
-                    this.$loading(async () => {
-                        try {
-                            const newShadow = await Vault.shadowPassword(newPassword)
-                            await this.$svc.wallet.reEncryptAll(v => {
-                                return Vault.decode(v)
-                                    .then(v => v.clone(password, newPassword))
-                                    .then(v => v.encode())
-                            }, () => this.$svc.config.savePasswordShadow(newShadow))
-                            this.$q.notify(this.$t('settings.msg_password_changed'))
-                        } catch (err) {
-                            this.$q.notify({
-                                type: 'negative',
-                                message: `${this.$t('common.error_occurred')} ${err.message}`
-                            })
-                        }
-                    })
-                })
+                password = await this.$authenticate()
             } catch { }
+
+            this.$q.dialog({
+                component: NewPasswordDialog,
+                parent: this
+            }).onOk(async (newPassword: string) => {
+                try {
+                    await this.$loading(async () => {
+                        const newShadow = await Vault.shadowPassword(newPassword)
+                        await this.$svc.wallet.reEncryptAll(v => {
+                            return Vault.decode(v)
+                                .then(v => v.clone(password, newPassword))
+                                .then(v => v.encode())
+                        }, () => this.$svc.config.savePasswordShadow(newShadow))
+                    })
+                    this.$q.notify(this.$t('settings.msg_password_changed'))
+                } catch (err) {
+                    this.$q.notify({
+                        type: 'negative',
+                        message: `${this.$t('common.error_occurred')} ${err.message}`
+                    })
+                }
+            })
         }
     }
 })
