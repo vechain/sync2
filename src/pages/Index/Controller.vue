@@ -26,6 +26,7 @@
             <backup-tip
                 v-for="w in wallets"
                 :key="w.id"
+                @backup="$router.push({name: 'backup', params: {walletId: w.id.toString()}})"
                 v-show="w.id === selectedWalletId && !w.meta.backedUp"
             />
         </div>
