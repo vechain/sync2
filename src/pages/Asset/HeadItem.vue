@@ -12,11 +12,11 @@
             </q-avatar>
         </q-item-section>
         <q-item-section>
-            <q-item-label class="text-body1 reline ellipsis-2-lines">
+            <q-item-label class="text-body1 ellipsis">
                 {{balance | balance(token.decimals)}}
             </q-item-label>
             <q-item-label
-                class="monospace text-body2 text-grey"
+                class="text-body2 text-grey"
                 lines="2"
             >
                 {{token.name}}

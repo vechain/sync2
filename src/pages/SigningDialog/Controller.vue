@@ -98,7 +98,7 @@
                                 :disabled="isTx && !estGas.result"
                                 unelevated
                                 class="col-6 col-sm-auto"
-                                color="blue-9"
+                                color="primary"
                                 label="Sign"
                                 @click="sign"
                             />

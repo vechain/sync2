@@ -51,7 +51,7 @@
                     @click="onCheck(wordIndex)"
                     size="md"
                     outline
-                    color="blue-9"
+                    color="primary"
                     class="text-lowercase serif rounded-borders"
                     style="width: 100%"
                 >{{words[wordIndex]}}</q-btn>
