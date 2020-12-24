@@ -10,14 +10,8 @@
                 @click="onAdd"
             />
         </page-toolbar>
-        <div
-            v-scrollDivider
-            class="col overflow-auto"
-        >
-            <q-list
-                padding
-                class="narrow-page q-mx-auto"
-            >
+        <page-content class="col">
+            <q-list padding>
                 <template v-for="(group, gi) in groups">
                     <q-separator
                         v-if="gi > 0"
@@ -65,17 +59,19 @@
                     </template>
                 </template>
             </q-list>
-        </div>
+        </page-content>
     </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
 import AddDialog from './AddDialog.vue'
 import { count, groupBy } from 'src/utils/array'
+import PageContent from 'src/components/PageContent.vue'
 
 type NodeGroup = { list: M.Node[], selection: number }
 
 export default Vue.extend({
+    components: { PageContent },
     data() {
         return {
             activeMap: null as Record<string, string> | null

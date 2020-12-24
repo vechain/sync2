@@ -1,13 +1,9 @@
 <template>
     <div class="column fit">
         <page-toolbar :title="$t('settings.action_token_list')" />
-        <div
-            v-scrollDivider
-            class="col overflow-auto"
-        >
+        <page-content class="col">
             <q-list
                 v-if="tokens.length>0"
-                class="narrow-page q-mx-auto"
                 padding
             >
                 <template v-for="(item, index) in tokens">
@@ -56,13 +52,15 @@
                     >Refresh</q-btn>
                 </template>
             </div>
-        </div>
+        </page-content>
     </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
+import PageContent from 'src/components/PageContent.vue'
 
 export default Vue.extend({
+    components: { PageContent },
     data: () => {
         return {
             activeSymbols: null as string[] | null

@@ -1,14 +1,8 @@
 <template>
     <div class="column fit">
         <page-toolbar :title="$t('settings.title')" />
-        <div
-            v-scrollDivider
-            class="col overflow-auto"
-        >
-            <q-list
-                padding
-                class="narrow-page q-mx-auto"
-            >
+        <page-content class="col">
+            <q-list padding>
                 <language-list-popup
                     v-slot="{displayName}"
                     anchor="bottom right"
@@ -54,7 +48,7 @@
                     :to="{name: 'nodes-setting'}"
                 />
             </q-list>
-        </div>
+        </page-content>
     </div>
 </template>
 <script lang="ts">
@@ -65,9 +59,10 @@ import { Vault } from 'core/vault'
 import { BioPass } from 'src/utils/bio-pass'
 import LanguageListPopup from 'pages/LanguageListPopup.vue'
 import PageToolbar from 'components/PageToolbar.vue'
+import PageContent from 'src/components/PageContent.vue'
 
 export default Vue.extend({
-    components: { Item, LanguageListPopup, PageToolbar },
+    components: { Item, LanguageListPopup, PageToolbar, PageContent },
     asyncComputed: {
         bioPass() {
             return BioPass.open()
