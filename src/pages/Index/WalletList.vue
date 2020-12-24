@@ -75,6 +75,9 @@ export default Vue.extend({
             }
         },
         wallets(newVal: M.Wallet[], oldVal: M.Wallet[]) {
+            if (newVal.length > 0 && !newVal.find(w => w.id === this.current)) {
+                this.$emit('select', newVal[0].id)
+            }
             if (newVal.length !== oldVal.length) {
                 this.$nextTick(() => this.scrollSelectedItemIntoView())
             }
@@ -82,9 +85,6 @@ export default Vue.extend({
     },
     methods: {
         onClickWalletItem(id: number) {
-            if (id === this.current) {
-                return
-            }
             this.$emit('select', id)
         },
         scrollSelectedItemIntoView() {
