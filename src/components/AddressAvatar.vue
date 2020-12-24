@@ -1,9 +1,7 @@
 <template>
-    <div
-        :style="{background: `url('${svg}')  0% 0% / cover no-repeat`}"
-    >
-        <slot />
-    </div>
+    <q-avatar v-bind="$attrs">
+        <img :src="svg" />
+    </q-avatar>
 </template>
 <script lang="ts">
 import Vue from 'vue'

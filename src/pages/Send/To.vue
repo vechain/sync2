@@ -11,11 +11,7 @@
             v-if="isAddress(to)"
             v-slot:prepend
         >
-            <AddressAvatar
-                class="q-mx-auto"
-                style="width: 40px; height: 40px; border-radius: 20px;"
-                :addr="to"
-            />
+            <AddressAvatar :addr="to" />
         </template>
         <template v-slot:append>
             <q-btn
@@ -44,10 +40,12 @@ import { address } from 'thor-devkit'
 import QrScannerDialog from 'pages/QrScannerDialog'
 import { QrScanner } from 'src/utils/qr-scanner'
 import { AddressGroup } from './models'
+import AddressAvatar from 'src/components/AddressAvatar.vue'
 
 export default Vue.extend({
     components: {
-        AddressSelector
+        AddressSelector,
+        AddressAvatar
     },
     model: {
         prop: 'address',
