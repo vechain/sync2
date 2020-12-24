@@ -14,12 +14,10 @@
                     />
                     <q-item :key="item.symbol">
                         <q-item-section avatar>
-                            <q-avatar
-                                style="box-sizing: content-box; border: 1px solid #E5E5EA"
+                            <token-avatar
+                                :spec="item"
                                 size="md"
-                            >
-                                <q-img :src="item.iconSrc" />
-                            </q-avatar>
+                            />
                         </q-item-section>
                         <q-item-section>
                             <q-item-label lines="1">{{item.symbol}}</q-item-label>
@@ -58,9 +56,10 @@
 <script lang="ts">
 import Vue from 'vue'
 import PageContent from 'src/components/PageContent.vue'
+import TokenAvatar from 'src/components/TokenAvatar.vue'
 
 export default Vue.extend({
-    components: { PageContent },
+    components: { PageContent, TokenAvatar },
     data: () => {
         return {
             activeSymbols: null as string[] | null
