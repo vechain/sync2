@@ -4,12 +4,7 @@
         v-bind="$attrs"
     >
         <q-item-section avatar>
-            <q-avatar size="xl">
-                <AddressAvatar
-                    class="fit"
-                    :addr="address"
-                />
-            </q-avatar>
+            <address-avatar :addr="address" />
         </q-item-section>
         <q-item-section>
             <q-item-label
@@ -41,9 +36,11 @@
 <script lang="ts">
 import Vue from 'vue'
 import ReceiveDialog from 'src/pages/ReceiveDialog.vue'
+import AddressAvatar from 'src/components/AddressAvatar.vue'
 export default Vue.extend({
     components: {
-        ReceiveDialog
+        ReceiveDialog,
+        AddressAvatar
     },
     props: {
         address: String,

@@ -4,11 +4,7 @@
         v-if="signer"
     >
         <q-item-section avatar>
-            <AddressAvatar
-                class="q-mx-auto"
-                style="width: 40px; height: 40px; border-radius: 20px;"
-                :addr="signer"
-            />
+            <address-avatar :addr="signer" />
         </q-item-section>
         <q-item-section>
             <q-item-label class="monospace text-body2">{{ signer | checksum | abbrev(8, 6) }}</q-item-label>
@@ -59,10 +55,7 @@
                             class="q-mr-none"
                             @click="$emit('change', address)"
                         >
-                            <AddressAvatar
-                                style="width: 40px; height: 40px; border-radius: 20px;"
-                                :addr="address"
-                            />
+                            <AddressAvatar :addr="address" />
                         </q-item-section>
                         <q-item-section
                             @click="$emit('change', address)"
@@ -93,12 +86,14 @@
 <script lang="ts">
 import Vue from 'vue'
 import PopSheets, { Sheet } from 'src/components/PopSheets.vue'
+import AddressAvatar from 'src/components/AddressAvatar.vue'
 import AsyncResolve from 'components/AsyncResolve'
 
 export default Vue.extend({
     components: {
         PopSheets,
-        AsyncResolve
+        AsyncResolve,
+        AddressAvatar
     },
     model: {
         prop: 'current',

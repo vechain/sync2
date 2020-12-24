@@ -16,16 +16,15 @@
             <div class="text-center q-px-md q-pt-xl">
                 {{$t('asset.msg_receive')}}
 
-                <AddressAvatar
+                <div
                     class="q-mx-auto q-mt-xl q-mb-lg relative-position"
                     style="height: 190px; width: 280px; border-radius: 18px;"
-                    :addr="address"
                 >
                     <QRCode
                         class="absolute-center overflow-hidden"
                         style="height: 150px;width: 150px; border-radius: 10px"
                     >{{address | checksum}}</QRCode>
-                </AddressAvatar>
+                </div>
                 <div
                     class="monospace q-my-md text-center q-px-lg"
                     style="word-break: break-all; border-radius: 15px;"

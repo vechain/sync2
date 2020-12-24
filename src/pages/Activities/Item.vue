@@ -2,12 +2,9 @@
     <q-list class="q-pt-md">
         <q-item class="q-py-none q-pr-lg">
             <q-item-section avatar>
-                <AddressAvatar
-                    class="q-mx-auto relative-position"
-                    style="width: 40px; height: 40px; border-radius: 20px;"
+                <address-avatar
                     :addr="entry.signer"
-                >
-                </AddressAvatar>
+                />
             </q-item-section>
             <q-item-section>
                 <q-item-label
@@ -78,6 +75,7 @@ import Vue from 'vue'
 import { copyToClipboard, openURL } from 'quasar'
 import { urls, genesises } from 'src/consts'
 import PopSheets, { Sheet } from 'src/components/PopSheets.vue'
+import AddressAvatar from 'src/components/AddressAvatar.vue'
 
 export type Entry = {
     gid: string,
@@ -93,7 +91,7 @@ export type Entry = {
 }
 
 export default Vue.extend({
-    components: { PopSheets },
+    components: { PopSheets, AddressAvatar },
     props: {
         entry: Object as () => Entry
     },

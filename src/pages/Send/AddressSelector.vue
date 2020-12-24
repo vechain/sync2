@@ -10,7 +10,7 @@
                     {{group.name}}
                 </q-item-label>
                 <template v-for="(addr, i) in group.list">
-                    <AddressInfo
+                    <AddressItem
                         clickable
                         v-close-popup
                         dense
@@ -32,11 +32,13 @@
 <script lang="ts">
 import Vue from 'vue'
 import { AddressGroup } from './models'
+import AddressItem from './AddressItem.vue'
 import PopSheets, { Sheet } from 'src/components/PopSheets.vue'
 
 export default Vue.extend({
     components: {
-        PopSheets
+        PopSheets,
+        AddressItem
     },
     props: {
         groups: {

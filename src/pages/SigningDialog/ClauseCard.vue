@@ -14,8 +14,6 @@
                         </span>
                     </div>
                     <AddressAvatar
-                        class="q-mx-auto"
-                        style="width: 60px; height: 60px; border-radius: 30px;"
                         :addr="toAddr"
                     />
                     <div
@@ -100,11 +98,13 @@ import { BigNumber } from 'bignumber.js'
 import { abi } from 'thor-devkit'
 import { abis } from '../../consts'
 import TokenBalance from './TokenBalance.vue'
+import AddressAvatar from 'src/components/AddressAvatar.vue'
 
 export default Vue.extend({
     name: 'ClauseCard',
     components: {
-        TokenBalance
+        TokenBalance,
+        AddressAvatar
     },
     props: {
         tokens: Array as () => M.TokenSpec[],
