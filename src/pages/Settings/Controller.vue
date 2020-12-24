@@ -123,7 +123,7 @@ export default Vue.extend({
                 } catch (err) {
                     this.$q.notify({
                         type: 'negative',
-                        message: `${this.$t('common.error_occurred')} ${err.message}`
+                        message: `${this.$t('common.error_occurred')}: ${err.message}`
                     })
                 }
             })

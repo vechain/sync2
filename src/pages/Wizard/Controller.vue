@@ -31,7 +31,7 @@
                     class="w40 self-center"
                     unelevated
                     color="primary"
-                    label="Get Started"
+                    :label="$t('wizard.action_get_started')"
                     @click="onClickStart()"
                 />
             </q-carousel-slide>

@@ -39,7 +39,7 @@ export default Vue.extend({
         slides() {
             return [{
                 img: require('assets/logo-sync.svg'),
-                title: 'VeChain Sync2',
+                title: this.$t('wizard.title_feature_1'),
                 name: 's1',
                 content: this.$t('wizard.msg_feature_1').toString()
             }, {

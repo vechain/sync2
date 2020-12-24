@@ -41,7 +41,7 @@
             v-if="wallets.length === 0 && !$asyncComputed.wallets.updating"
             class="narrow-page q-my-auto text-center self-center"
         >
-            <p class="text-grey text-h5 text-center col-12">No Wallet</p>
+            <p class="text-grey text-h5 text-center col-12">{{$t('index.label_no_wallet')}}</p>
             <q-btn
                 unelevated
                 color="primary"

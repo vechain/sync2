@@ -14,7 +14,8 @@ export default {
         finish: 'Finish',
         next: 'Next',
         copy: 'Copy',
-        copied: 'Copied',
+        copied: 'Copied to clipboard',
+        default: 'Default',
 
         // network
         mainnet: 'Main Net',
@@ -24,7 +25,7 @@ export default {
         // error_message
         required_field: 'This field is required',
         something_wrong: 'Something is Wrong',
-        error_occurred: 'Error Occurred:',
+        error_occurred: 'Error Occurred',
 
         // notify
         wallet_updated: 'Wallet Updated',
@@ -35,7 +36,7 @@ export default {
         transferring: 'Transferring'
     },
     index: {
-        action_new_account: 'New Account',
+        action_new_address: 'New Address',
         action_backup: 'Backup',
         action_rename: 'Rename Wallet',
         action_upgrade: 'Upgrade Now',
@@ -47,7 +48,8 @@ export default {
         msg_upgrade: 'New version is ready :)',
         msg_delete: 'Are you sure? This cannot be undone. Unless you have backed up your wallet beforehand.',
         msg_backup: 'Wallet not backed up! Backup your wallet keep your assets safe.',
-        label_wallets: 'Wallets'
+        label_wallets: 'Wallets',
+        label_no_wallet: 'No wallet created yet'
     },
     newWallet: {
         title: 'New Wallet',
@@ -85,7 +87,8 @@ export default {
     },
     wizard: {
         title_welcome: 'Welcome',
-        title_init: 'One moment',
+        title_init: 'One Moment',
+        title_feature_1: 'VeChain Sync2',
         title_feature_2: 'Wallet Management',
         title_feature_3: 'Signing Service',
         msg_init_animation_s1: 'Initializing',
@@ -96,19 +99,20 @@ export default {
         msg_init_complete: 'Your wallet is ready!',
         msg_feature_1: 'The brand new Sync enhanced design focuses on your experience.',
         msg_feature_2: 'Manage assets with ease, anytime, anywhere.',
-        msg_feature_3: 'Seamless user experience to sign transactions or certificates requested by the dapp.'
+        msg_feature_3: 'Seamless user experience to sign transactions or certificates requested by the dapp.',
+        action_get_started: 'Get Started'
     },
-    account: {
-        title: 'Account',
+    address: {
+        title: 'Address',
         label_assets: 'Assets',
-        msg_receive: 'Share your address to receive assets',
-        action_transfer: 'Transfer',
         action_receive: 'Receive'
     },
-    accountTransfer: {
+    asset: {
         label_transfer: 'Transfers',
-        msg_not_found: 'No Transfer Found',
-        msg_no_more: 'No More Transfers'
+        msg_not_found: 'No transfer found',
+        msg_no_more: 'No more transfers',
+        action_transfer: 'Transfer',
+        msg_receive: 'Share your address to receive assets'
     },
     send: {
         title: 'Transfer',
@@ -117,6 +121,8 @@ export default {
         label_balance: 'Balance:',
         label_recent_transfer: 'Recent Transfers',
         msg_error_invalid_balance: 'Invalid Amount',
+        msg_invalid_address: 'Please enter a valid address',
+        msg_checksum_failed: 'Checksum Failed',
         action_proceed: 'Proceed'
     },
     activities: {
@@ -134,7 +140,7 @@ export default {
         msg_activities_desc: 'Activities that you’ve interacted with recently will appear here.'
     },
     newPasswordDialog: {
-        msg_password_mismatch: 'Password Mismatch',
+        msg_password_mismatch: 'Password mismatch',
         msg_password_too_short: 'Password too short (at least 6 characters)',
         title_set_new_password: 'Set New Password',
         title_confirm_password: 'Confirm Your Password'

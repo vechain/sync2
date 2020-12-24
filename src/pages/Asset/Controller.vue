@@ -20,12 +20,12 @@
                     <q-btn
                         flat
                         round
-                        label="Send"
+                        :label="$t('asset.action_transfer')"
                         :to="{name: 'send', query: { wid: walletId, i: addressIndex, defaultSymbol: symbol }}"
                     />
                 </head-item>
             </async-resolve>
-            <span class="text-h6 q-py-sm q-px-md">{{$t('accountTransfer.label_transfer')}}</span>
+            <span class="text-h6 q-py-sm q-px-md">{{$t('asset.label_transfer')}}</span>
         </div>
         <div
             class="overflow-auto"

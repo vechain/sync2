@@ -88,7 +88,7 @@ export default Vue.extend({
                     .filter(gid => gid !== this.gid)
                     .map<Sheet>(gid => {
                         return {
-                            label: this.$netDisplayName(gid) + (gid === defaultGid ? ' (default)' : ''),
+                            label: this.$netDisplayName(gid) + (gid === defaultGid ? ' (' + this.$t('common.default') + ')' : ''),
                             action: () => { this.gid = gid }
                         }
                     }),
@@ -96,7 +96,7 @@ export default Vue.extend({
                     .filter(n => n !== this.wordsCount)
                     .map<Sheet>(n => {
                         return {
-                            label: `${n}` + ' ' + this.$t('newWallet.msg_mnemonic_words').toString() + (n === defaultWordsCount ? ' (default)' : ''),
+                            label: `${n}` + ' ' + this.$t('newWallet.msg_mnemonic_words') + (n === defaultWordsCount ? ' (' + this.$t('common.default') + ')' : ''),
                             action: () => {
                                 this.wordsCount = n
                             }
@@ -110,7 +110,7 @@ export default Vue.extend({
                 hints.push(this.$netDisplayName(this.gid))
             }
             if (this.wordsCount !== defaultWordsCount) {
-                hints.push(`${this.wordsCount}` + ' ' + this.$t('newWallet.msg_mnemonic_words').toString())
+                hints.push(`${this.wordsCount}` + ' ' + this.$t('newWallet.msg_mnemonic_words'))
             }
             return hints
         }
@@ -119,7 +119,7 @@ export default Vue.extend({
         suggestedName: {
             async get(): Promise<string> {
                 const wallets = await this.$svc.wallet.all()
-                const baseName = this.$t('newWallet.title').toString()
+                const baseName = this.$t('newWallet.title')
                 for (let i = 1; ; i++) {
                     const name = `${baseName}${i}`
                     if (!wallets.find(w => w.meta.name === name)) {
@@ -200,7 +200,7 @@ export default Vue.extend({
                     })
                 })
                 this.$backOrHome()
-                this.$q.notify(this.$t('common.wallet_created').toString())
+                this.$q.notify(this.$t('common.wallet_created'))
             } catch (err) {
                 this.error = err.message
             }
