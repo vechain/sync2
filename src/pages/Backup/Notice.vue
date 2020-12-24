@@ -12,7 +12,7 @@
         <q-item>
             <q-item-section>
                 <q-item-label
-                    class="text-body-2"
+                    class="text-body2"
                     lines="3"
                 >The mnemonic words stores all the information that is needed at any point in time to recover your wallet</q-item-label>
             </q-item-section>
@@ -43,10 +43,13 @@
             </q-item-section>
 
         </q-item>
-        <q-item class="justify-end col">
+        <q-item class="col">
             <q-item-section>
                 <q-btn
                     label="Start"
+                    class="w40 q-mx-auto q-mt-auto"
+                    unelevated
+                    color="primary"
                     @click="$emit('start')"
                 />
             </q-item-section>

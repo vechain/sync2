@@ -32,10 +32,10 @@
                 >{{address | checksum}}</div>
                 <div class="row q-mt-xl justify-center">
                     <q-btn
-                        unelevated
-                        class="col-6 col-sm-auto"
                         @click="onCopy"
-                        color="blue-9"
+                        class="w40 q-mx-auto"
+                        unelevated
+                        color="primary"
                     >{{$t('common.copy')}}</q-btn>
                 </div>
             </div>

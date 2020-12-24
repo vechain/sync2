@@ -20,7 +20,7 @@
                             label="I've written it down"
                             unelevated
                             @click="panel = 'check'"
-                            color="blue-9"
+                            color="primary"
                         />
                     </div>
                 </Words>
@@ -53,7 +53,7 @@
                         label="Done"
                         unelevated
                         @click="onDone"
-                        color="blue-9"
+                        color="primary"
                     />
                 </div>
             </q-tab-panel>
