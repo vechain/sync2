@@ -3,7 +3,6 @@
         <pop-sheets
             fit
             :sheets="sheets"
-            customized
         >
             <template v-slot="{sheet: {model: group}}">
                 <q-item-label header>

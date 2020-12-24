@@ -31,7 +31,6 @@
         <pop-sheets
             fit
             :sheets="sheets"
-            customized
         >
             <template v-slot={sheet:{model:wallet}}>
                 <q-item-label

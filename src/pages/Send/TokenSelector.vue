@@ -18,7 +18,6 @@
         </template>
         <pop-sheets
             fit
-            customized
             :sheets="sheets"
         >
             <template v-slot="{sheet: {model: token}}">
