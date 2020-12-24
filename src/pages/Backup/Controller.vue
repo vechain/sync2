@@ -1,16 +1,17 @@
 <template>
     <div
         class="column fit"
-        v-if="wallet"
     >
         <page-toolbar title="Backup" />
         <q-tab-panels
             class="col column narrow-page q-mx-auto"
             animated
             v-model="panel"
-            v-if="words.length"
             transition-next="jump-up"
         >
+            <q-tab-panel name="notice">
+                <notice @start="onStart"/>
+            </q-tab-panel>
             <q-tab-panel name="words">
                 <Words :words="words">
                     <div class="row justify-center q-mt-lg">
@@ -63,6 +64,7 @@
 import Vue from 'vue'
 import Words from './Words.vue'
 import CheckWords from './CheckWords.vue'
+import Notice from './Notice.vue'
 import { Vault } from 'src/core/vault'
 export default Vue.extend({
     props: {
@@ -70,31 +72,36 @@ export default Vue.extend({
     },
     components: {
         Words,
-        CheckWords
+        CheckWords,
+        Notice
     },
     data() {
         return {
             wallet: null as unknown as M.Wallet | null,
             words: [] as string[],
-            panel: 'words'
+            panel: 'notice' as 'notice' | 'words' | 'check' | 'done'
         }
     },
-    async created() {
-        try {
-            this.wallet = await this.$svc.wallet.get(parseInt(this.walletId))
-
-            if (!this.wallet) { return }
-
-            const vault = await Vault.decode(this.wallet.vault)
-            const pin = await this.$authenticate()
-            const words = await vault.decrypt(pin)
-            this.words = (words as string).split(' ')
-        } catch (error) {
-            console.warn(error)
-            this.$router.back()
+    asyncComputed: {
+        async wallet(): Promise<M.Wallet | null> {
+            return await this.$svc.wallet.get(parseInt(this.walletId))
         }
     },
     methods: {
+        async onStart() {
+            try {
+                if (!this.wallet) { return }
+
+                const vault = await Vault.decode(this.wallet.vault)
+                const pin = await this.$authenticate()
+                const words = await vault.decrypt(pin)
+                this.words = (words as string).split(' ')
+                this.panel = 'words'
+            } catch (error) {
+                console.warn(error)
+                this.$router.back()
+            }
+        },
         async onDone() {
             const meta: M.Wallet.Meta = {
                 ...this.wallet!.meta,
