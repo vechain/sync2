@@ -59,7 +59,7 @@ export default Vue.extend({
                     walletName: this.walletNames[a.walletId] || '',
                     link: a.glob.link || '',
                     status: this.status(a),
-                    comment: a.type === 'tx' ? this.describeClauses(a.glob.encoded) : this.certComment(a.glob.encoded)
+                    comment: a.type === 'tx' ? (a.glob.comment || this.describeClauses(a.glob.encoded)) : this.certComment(a.glob.encoded)
                 }
                 if (a.type === 'tx') {
                     temp.txId = a.glob.id
