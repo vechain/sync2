@@ -4,7 +4,10 @@
         class="overflow-auto"
         :class="{'q-pa-md': padding}"
     >
-        <div class="narrow-page q-mx-auto">
+        <div
+            class="narrow-page q-mx-auto"
+            :class="innerClass"
+        >
             <slot />
         </div>
     </div>
@@ -13,7 +16,8 @@
 import Vue from 'vue'
 export default Vue.extend({
     props: {
-        padding: Boolean
+        padding: Boolean,
+        innerClass: String
     }
 })
 </script>
