@@ -1,5 +1,3 @@
-import StackedRouterView from './StackedRouterView.vue'
-import Drawer from './Drawer.vue'
 import Intersecting from './Intersecting.vue'
 import QRCode from './QRCode.vue'
 import TokenBalanceItem from './TokenBalanceItem.vue'
@@ -8,8 +6,6 @@ import AddressInfo from './AddressInfo.vue'
 import PageToolbar from './PageToolbar.vue'
 
 const components: { [name: string]: Vue.VueConstructor } = {
-    StackedRouterView,
-    Drawer,
     Intersecting,
     QRCode,
     TokenBalanceItem,

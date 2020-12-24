@@ -3,7 +3,7 @@
         v-if="mounted"
         name="q-transition--fade"
     >
-        <StackedRouterView
+        <stacked-router-view
             v-if="initialized"
             class="fit"
         />
@@ -17,11 +17,10 @@
 <script lang="ts">
 import Vue from 'vue'
 import Wizard from 'pages/Wizard'
+import StackedRouterView from 'components/StackedRouterView.vue'
 
 export default Vue.extend({
-    components: {
-        Wizard
-    },
+    components: { Wizard, StackedRouterView },
     data() {
         return {
             initialized: false,

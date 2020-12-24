@@ -51,7 +51,7 @@
             />
         </div>
         <!-- the drawer -->
-        <drawer
+        <side-drawer
             v-model="drawerOpen"
             ref="drawer"
         >
@@ -62,7 +62,7 @@
                     @select="drawerOpen=false"
                 />
             </drawer-panel>
-        </drawer>
+        </side-drawer>
     </div>
 </template>
 <script lang="ts">
@@ -73,12 +73,13 @@ import DrawerPanel from './DrawerPanel.vue'
 import WalletList from './WalletList.vue'
 import AddressCardList from './AddressCardList.vue'
 import OptionMenu from './OptionMenu.vue'
+import SideDrawer from 'components/SideDrawer.vue'
 import { scroll } from 'quasar'
 
 const SELECTED_WALLET_ID_KEY = 'selectedWalletId'
 
 export default Vue.extend({
-    components: { BackupTip, UpgradeTip, DrawerPanel, WalletList, AddressCardList, OptionMenu },
+    components: { BackupTip, UpgradeTip, DrawerPanel, WalletList, AddressCardList, OptionMenu, SideDrawer },
     data: () => {
         return {
             drawerOpen: false,
