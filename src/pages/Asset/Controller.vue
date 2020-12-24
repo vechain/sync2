@@ -7,61 +7,44 @@
             :title="symbol"
             :gid="wallet.gid"
         />
-        <div class="col column no-wrap narrow-page q-mx-auto">
+        <div class="narrow-page q-mx-auto">
             <resolve
                 v-if="token"
                 :promise="$svc.bc(token.gid).balanceOf(address, token)"
                 v-slot={data}
             >
-                <token-balance-item
+                <head-item
                     :token="token"
                     :balance="data"
-                />
+                >
+                    <q-btn flat round label="Send" :to="{name: 'send', query: { wid: walletId, i: addressIndex, defaultSymbol: symbol }}" />
+                </head-item>
             </resolve>
             <span class="text-h6 q-py-sm q-px-md">{{$t('accountTransfer.label_transfer')}}</span>
+        </div>
             <div
-                class="scroll "
+                class="overflow-auto"
                 v-scrollDivider.both
             >
                 <Logs
+                    class="narrow-page q-mx-auto"
                     v-if="token"
                     :address="address"
                     :token="token"
                     :pageSize="20"
                 />
             </div>
-            <div class="row q-mt-auto q-pa-sm justify-around">
-                <q-btn
-                    class="w40"
-                    unelevated
-                    color="blue-9"
-                    outline
-                    @click="showQR = true"
-                    label="Receive"
-                />
-                <q-btn
-                    class="w40"
-                    :to="{name: 'send', query: { wid: walletId, i: addressIndex, defaultSymbol: symbol }}"
-                    unelevated
-                    color="blue-9"
-                    label="Send"
-                />
-            </div>
         </div>
-        <ReceiveDialog
-            v-model="showQR"
-            :address="address"
-        />
-    </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
 import Logs from './Logs.vue'
-import ReceiveDialog from 'src/pages/ReceiveDialog.vue'
+import HeadItem from './HeadItem.vue'
+
 export default Vue.extend({
     components: {
         Logs,
-        ReceiveDialog
+        HeadItem
     },
     data() {
         return {
