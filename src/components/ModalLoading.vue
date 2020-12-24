@@ -3,7 +3,7 @@
         class="fixed fullscreen column flex-center z-max no-outline"
         v-nofocusout
     >
-        <delay :t="250">
+        <delay-render :t="250">
             <transition
                 name="q-transition--fade"
                 appear
@@ -13,16 +13,16 @@
                     color="black"
                 />
             </transition>
-        </delay>
+        </delay-render>
     </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
 import { QSpinnerIos } from 'quasar'
-import Delay from './Delay'
+import DelayRender from './DelayRender'
 
 export default Vue.extend({
-    components: { QSpinnerIos, Delay },
+    components: { QSpinnerIos, DelayRender },
     mounted() {
         (this.$el as HTMLElement).focus()
     }

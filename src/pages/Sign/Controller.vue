@@ -5,7 +5,7 @@
             :gid="request && request.gid"
         />
         <!-- loading -->
-        <delay
+        <delay-render
             v-if="$asyncComputed.request.updating"
             :t="200"
             tag="div"
@@ -15,7 +15,7 @@
                 <q-spinner-dots class="text-h2" />
             </p>
             <p>Loading signing content ...</p>
-        </delay>
+        </delay-render>
         <!-- request content -->
         <template v-else-if="request">
             <!-- content -->
@@ -88,9 +88,10 @@ import Vue from 'vue'
 import { RelayedRequest, RelayedResponse } from './models'
 import { blake2b256 } from 'thor-devkit'
 import Summary from './Summary.vue'
+import DelayRender from 'components/DelayRender'
 
 export default Vue.extend({
-    components: { Summary },
+    components: { Summary, DelayRender },
     props: {
         rurl: String // the url to fetch request object
     },

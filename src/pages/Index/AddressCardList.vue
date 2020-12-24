@@ -26,7 +26,7 @@
                     :cfg="{threshold: 0}"
                     v-slot="{entry}"
                 >
-                    <resolve
+                    <async-resolve
                         :promise="entry.isIntersecting? $svc.bc(wallet.gid).thor.account(address).get() : null"
                         v-slot="{data}"
                     >
@@ -39,7 +39,7 @@
                                 @click="onClickCard(i)"
                             />
                         </q-responsive>
-                    </resolve>
+                    </async-resolve>
                 </Intersecting>
             </div>
         </div>
@@ -48,13 +48,14 @@
 <script lang="ts">
 import Vue from 'vue'
 import AddressCard from './AddressCard.vue'
+import AsyncResolve from 'components/AsyncResolve'
 
 const CELL_WIDTH_S = 330
 const CELL_WIDTH_L = 400
 const MAX_COL = 3
 
 export default Vue.extend({
-    components: { AddressCard },
+    components: { AddressCard, AsyncResolve },
     props: {
         wallet: Object as () => M.Wallet
     },

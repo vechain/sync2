@@ -22,7 +22,7 @@
             :sheets="sheets"
         >
             <template v-slot="{sheet: {model: token}}">
-                <Resolve
+                <async-resolve
                     :key="token.symbol"
                     :promise="$svc.bc(token.gid).balanceOf(address, token)"
                     v-slot="{data}"
@@ -34,7 +34,7 @@
                         :balance="data"
                         :token="token"
                     />
-                </Resolve>
+                </async-resolve>
             </template>
         </pop-sheets>
     </q-item>
@@ -43,11 +43,13 @@
 import Vue from 'vue'
 import TokenItem from './TokenItem.vue'
 import PopSheets, { Sheet } from 'src/components/PopSheets.vue'
+import AsyncResolve from 'components/AsyncResolve'
 
 export default Vue.extend({
     components: {
         TokenItem,
-        PopSheets
+        PopSheets,
+        AsyncResolve
     },
     model: {
         prop: 'symbol',

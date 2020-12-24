@@ -1,9 +1,9 @@
 import Vue from 'vue'
 
 /* example:
-<delay :t="100">
+<delay-render :t="100">
   <!-- content rendering will be delayed in 100ms -->
-</delay>
+</delay-render>
 */
 export default Vue.extend({
     props: {

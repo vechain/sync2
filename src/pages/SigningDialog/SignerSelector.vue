@@ -73,7 +73,7 @@
                         </q-item-section>
                     </template>
                     <q-list>
-                        <Resolve
+                        <async-resolve
                             v-for="token in tokenList"
                             :key="token.symbol"
                             :promise="$svc.bc(token.gid).balanceOf(address, token)"
@@ -83,7 +83,7 @@
                                 :balance="data"
                                 :token="token"
                             />
-                        </Resolve>
+                        </async-resolve>
                     </q-list>
                 </q-expansion-item>
             </template>
@@ -93,9 +93,12 @@
 <script lang="ts">
 import Vue from 'vue'
 import PopSheets, { Sheet } from 'src/components/PopSheets.vue'
+import AsyncResolve from 'components/AsyncResolve'
+
 export default Vue.extend({
     components: {
-        PopSheets
+        PopSheets,
+        AsyncResolve
     },
     model: {
         prop: 'current',

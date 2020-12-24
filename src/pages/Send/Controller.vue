@@ -37,7 +37,7 @@
                         inputmode="decimal"
                         :label="$t('send.label_amount')"
                     />
-                    <Resolve
+                    <async-resolve
                         v-if="currentToken"
                         :promise="$svc.bc(currentToken.gid).balanceOf(address, currentToken)"
                         v-slot="{data}"
@@ -45,7 +45,7 @@
                         <div class="text-grey q-mt-sm">
                             <span>{{$t('send.label_balance')}} {{data | balance(currentToken.decimals)}}</span>
                         </div>
-                    </Resolve>
+                    </async-resolve>
                     <div class="row justify-center q-mt-xl">
                         <q-btn
                             type="submit"
@@ -67,11 +67,13 @@ import { abis } from 'src/consts'
 import To from './To.vue'
 import TokenSelector from './TokenSelector.vue'
 import { AddressGroup } from './models'
+import AsyncResolve from 'components/AsyncResolve'
 
 export default Vue.extend({
     components: {
         To,
-        TokenSelector
+        TokenSelector,
+        AsyncResolve
     },
     props: {
         wid: String,

@@ -8,7 +8,7 @@
             :gid="wallet.gid"
         />
         <div class="narrow-page q-mx-auto">
-            <resolve
+            <async-resolve
                 v-if="token"
                 :promise="$svc.bc(token.gid).balanceOf(address, token)"
                 v-slot={data}
@@ -17,34 +17,41 @@
                     :token="token"
                     :balance="data"
                 >
-                    <q-btn flat round label="Send" :to="{name: 'send', query: { wid: walletId, i: addressIndex, defaultSymbol: symbol }}" />
+                    <q-btn
+                        flat
+                        round
+                        label="Send"
+                        :to="{name: 'send', query: { wid: walletId, i: addressIndex, defaultSymbol: symbol }}"
+                    />
                 </head-item>
-            </resolve>
+            </async-resolve>
             <span class="text-h6 q-py-sm q-px-md">{{$t('accountTransfer.label_transfer')}}</span>
         </div>
-            <div
-                class="overflow-auto"
-                v-scrollDivider.both
-            >
-                <Logs
-                    class="narrow-page q-mx-auto"
-                    v-if="token"
-                    :address="address"
-                    :token="token"
-                    :pageSize="20"
-                />
-            </div>
+        <div
+            class="overflow-auto"
+            v-scrollDivider.both
+        >
+            <Logs
+                class="narrow-page q-mx-auto"
+                v-if="token"
+                :address="address"
+                :token="token"
+                :pageSize="20"
+            />
         </div>
+    </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
 import Logs from './Logs.vue'
 import HeadItem from './HeadItem.vue'
+import AsyncResolve from 'components/AsyncResolve'
 
 export default Vue.extend({
     components: {
         Logs,
-        HeadItem
+        HeadItem,
+        AsyncResolve
     },
     data() {
         return {

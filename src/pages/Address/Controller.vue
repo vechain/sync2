@@ -31,7 +31,7 @@
                 v-scrollDivider.top
             >
                 <q-list class="narrow-page q-mx-auto">
-                    <resolve
+                    <async-resolve
                         v-for="(token, index) in tokenList"
                         tag="div"
                         :promise="$svc.bc(token.gid).balanceOf(address, token)"
@@ -47,7 +47,7 @@
                             :balance="data"
                             @click="onTokenClick(token.symbol)"
                         />
-                    </resolve>
+                    </async-resolve>
                 </q-list>
             </div>
         </template>
@@ -57,11 +57,13 @@
 import Vue from 'vue'
 import TokenItem from './TokenItem.vue'
 import HeadItem from './HeadItem.vue'
+import AsyncResolve from 'components/AsyncResolve'
 
 export default Vue.extend({
     components: {
         TokenItem,
-        HeadItem
+        HeadItem,
+        AsyncResolve
     },
     props: {
         walletId: String,

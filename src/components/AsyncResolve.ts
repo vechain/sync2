@@ -1,9 +1,9 @@
 import Vue, { VNode } from 'vue'
 
 /*
-<resolve tag="div" :promise="promiseObject" v-slot="{data, state}">
+<async-resolve tag="div" :promise="promiseObject" v-slot="{data, state}">
     <!-- go go go -->
-</resolve>
+</async-resolve>
 */
 export default Vue.extend({
     props: {
