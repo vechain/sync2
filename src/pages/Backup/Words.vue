@@ -2,17 +2,17 @@
     <div>
         <div class="q-px-lg">
             <div class="text-subtitle2 q-py-sm">
-                {{`These ${words.length} words will be used to recover your wallet. Please write them down in the given order and keep it safe in a secure place.`}}
+                Your Mnemonic Words
             </div>
         </div>
-        <div class="row justify-around q-pt-lg ">
+        <div class="row justify-around q-py-lg ">
             <div
                 v-for="(item, index) in words"
                 :key="index"
                 class="col-4 text-center q-my-sm serif"
             >
-                <span class="text-grey">{{index + 1}}.</span>
-                <span class="text-weight-medium">{{item}}</span>
+                <span class="text-grey text-caption">{{index + 1}}.</span>
+                <span class="text-bady1">{{item}}</span>
             </div>
         </div>
         <slot />
