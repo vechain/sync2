@@ -1,7 +1,7 @@
 <template>
     <div class="fit column no-wrap">
         <page-toolbar
-            :title="$t('account.title')"
+            :title="$t('address.title')"
             :gid="wallet && wallet.gid"
         />
         <template v-if="wallet">
@@ -13,7 +13,7 @@
                 <q-item dense>
                     <q-item-section>
                         <q-item-label header>
-                            {{$t('account.label_assets')}}
+                            {{$t('address.label_assets')}}
                         </q-item-label>
                     </q-item-section>
                     <q-item-section side>
@@ -101,15 +101,6 @@ export default Vue.extend({
                     walletId: this.walletId,
                     addressIndex: this.addressIndex,
                     symbol: sym
-                }
-            })
-        },
-        onSend() {
-            this.$router.push({
-                name: 'send',
-                query: {
-                    wid: this.walletId,
-                    i: this.addressIndex
                 }
             })
         }

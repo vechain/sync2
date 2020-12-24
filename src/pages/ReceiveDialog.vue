@@ -10,11 +10,11 @@
                     icon="close"
                 />
                 <q-toolbar-title class="absolute-center text-capitalize">
-                    {{$t('account.action_receive')}}
+                    {{$t('address.action_receive')}}
                 </q-toolbar-title>
             </q-toolbar>
             <div class="text-center q-px-md q-pt-xl">
-                {{$t('account.msg_receive')}}
+                {{$t('asset.msg_receive')}}
 
                 <AddressAvatar
                     class="q-mx-auto q-mt-xl q-mb-lg relative-position"

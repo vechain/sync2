@@ -17,7 +17,7 @@ export default Vue.extend({
         sheets(): Sheet[] {
             const addressFull = this.wallet.meta.addresses.length >= MAX_ADDRESS
             return [{
-                label: this.$t('index.action_new_account').toString(),
+                label: this.$t('index.action_new_address').toString(),
                 action: () => { addressFull || this.newAccount() },
                 classes: addressFull ? 'text-grey' : ''
             },
