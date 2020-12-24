@@ -64,9 +64,10 @@ import NewPasswordDialog from 'pages/NewPasswordDialog'
 import { Vault } from 'core/vault'
 import { BioPass } from 'src/utils/bio-pass'
 import LanguageListPopup from 'pages/LanguageListPopup.vue'
+import PageToolbar from 'components/PageToolbar.vue'
 
 export default Vue.extend({
-    components: { Item, LanguageListPopup },
+    components: { Item, LanguageListPopup, PageToolbar },
     asyncComputed: {
         bioPass() {
             return BioPass.open()
@@ -101,7 +102,9 @@ export default Vue.extend({
             let password!: string
             try {
                 password = await this.$authenticate()
-            } catch { }
+            } catch {
+                return
+            }
 
             this.$q.dialog({
                 component: NewPasswordDialog,
