@@ -29,7 +29,7 @@ export default {
         lang_auto: '自动'
     },
     index: {
-        action_new_account: '新建账户',
+        action_new_address: '新建地址',
         action_backup: '备份',
         action_rename: '重命名钱包',
         action_upgrade: '立即升级',
