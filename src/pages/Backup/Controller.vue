@@ -64,6 +64,7 @@
 import Vue from 'vue'
 import Words from './Words.vue'
 import CheckWords from './CheckWords.vue'
+import PageToolbar from 'components/PageToolbar.vue'
 import Notice from './Notice.vue'
 import { Vault } from 'src/core/vault'
 export default Vue.extend({
@@ -73,7 +74,8 @@ export default Vue.extend({
     components: {
         Words,
         CheckWords,
-        Notice
+        Notice,
+        PageToolbar
     },
     data() {
         return {

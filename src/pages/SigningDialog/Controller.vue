@@ -127,13 +127,15 @@ import { Vault } from 'core/vault'
 import ClauseCard from './ClauseCard.vue'
 import Priority from './Priority.vue'
 import SignerSelector from './SignerSelector.vue'
+import PageToolbar from 'components/PageToolbar.vue'
 
 export default Vue.extend({
     name: 'TxSigningDialog',
     components: {
         ClauseCard,
         Priority,
-        SignerSelector
+        SignerSelector,
+        PageToolbar
     },
     props: {
         type: String as () => 'cert' | 'tx',

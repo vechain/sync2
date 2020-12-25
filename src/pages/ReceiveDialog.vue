@@ -20,10 +20,10 @@
                     class="q-mx-auto q-mt-xl q-mb-lg relative-position"
                     style="height: 190px; width: 280px; border-radius: 18px;"
                 >
-                    <QRCode
+                    <q-r-code
                         class="absolute-center overflow-hidden"
                         style="height: 150px;width: 150px; border-radius: 10px"
-                    >{{address | checksum}}</QRCode>
+                    >{{address | checksum}}</q-r-code>
                 </div>
                 <div
                     class="monospace q-my-md text-center q-px-lg"
@@ -45,7 +45,11 @@
 <script lang="ts">
 import Vue from 'vue'
 import { copyToClipboard } from 'quasar'
+import QRCode from 'components/QRCode.vue'
 export default Vue.extend({
+    components: {
+        QRCode
+    },
     props: {
         address: String
     },

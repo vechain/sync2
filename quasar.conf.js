@@ -26,7 +26,6 @@ module.exports = configure(function (/* ctx */) {
     boot: [
       'i18n',
       'axios',
-      'register-components',
       'misc',
       'filters',
       'directives',

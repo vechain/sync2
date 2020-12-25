@@ -22,7 +22,7 @@
                 class="q-pa-sm inline-block"
                 :style="cellStyles"
             >
-                <Intersecting
+                <intersecting
                     :cfg="{threshold: 0}"
                     v-slot="{entry}"
                 >
@@ -40,7 +40,7 @@
                             />
                         </q-responsive>
                     </async-resolve>
-                </Intersecting>
+                </intersecting>
             </div>
         </div>
     </div>
@@ -49,13 +49,14 @@
 import Vue from 'vue'
 import AddressCard from './AddressCard.vue'
 import AsyncResolve from 'components/AsyncResolve'
+import Intersecting from 'components/Intersecting.vue'
 
 const CELL_WIDTH_S = 330
 const CELL_WIDTH_L = 400
 const MAX_COL = 3
 
 export default Vue.extend({
-    components: { AddressCard, AsyncResolve },
+    components: { AddressCard, AsyncResolve, Intersecting },
     props: {
         wallet: Object as () => M.Wallet
     },

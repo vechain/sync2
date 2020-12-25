@@ -58,12 +58,14 @@ import Vue from 'vue'
 import TokenItem from './TokenItem.vue'
 import HeadItem from './HeadItem.vue'
 import AsyncResolve from 'components/AsyncResolve'
+import PageToolbar from 'components/PageToolbar.vue'
 
 export default Vue.extend({
     components: {
         TokenItem,
         HeadItem,
-        AsyncResolve
+        AsyncResolve,
+        PageToolbar
     },
     props: {
         walletId: String,
