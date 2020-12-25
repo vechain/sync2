@@ -43,6 +43,12 @@ declare namespace M {
         }
     }
 
+    type QRRequest = {
+        title?: string
+        content: string
+        message?: string
+    }
+
     type TxResponse = Connex.Vendor.TxResponse
 
     interface CertRequest {

@@ -23,32 +23,29 @@
             <q-btn
                 flat
                 round
-                @click="showQR=true"
+                @click="showQR"
                 icon="qr_code"
             />
         </q-item-section>
-        <receive-dialog
-            v-model="showQR"
-            :address="address"
-        />
     </q-item>
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import ReceiveDialog from 'src/pages/ReceiveDialog.vue'
 import AddressAvatar from 'src/components/AddressAvatar.vue'
 export default Vue.extend({
     components: {
-        ReceiveDialog,
         AddressAvatar
     },
     props: {
         address: String,
         name: String
     },
-    data() {
-        return {
-            showQR: false
+    methods: {
+        showQR() {
+            this.$qrcode({
+                title: this.$t('address.action_receive').toString(),
+                content: Vue.filter('checksum')(this.address)
+            })
         }
     }
 })
