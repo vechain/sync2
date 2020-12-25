@@ -55,8 +55,8 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import PageContent from 'src/components/PageContent.vue'
-import TokenAvatar from 'src/components/TokenAvatar.vue'
+import PageContent from 'components/PageContent.vue'
+import TokenAvatar from 'components/TokenAvatar.vue'
 
 export default Vue.extend({
     components: { PageContent, TokenAvatar },

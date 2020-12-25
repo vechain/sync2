@@ -5,12 +5,7 @@
         v-bind="$attrs"
     >
         <q-item-section avatar>
-            <q-avatar
-                style="box-sizing: content-box; border: 1px solid #E5E5EA"
-                :size="dense ? 'sm' : 'md'"
-            >
-                <img :src="token.iconSrc" />
-            </q-avatar>
+            <token-avatar :spec="token"/>
         </q-item-section>
         <q-item-section>
             <q-item-label :class="{'text-body2': dense}">{{token.symbol}}</q-item-label>
@@ -26,8 +21,12 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
+import TokenAvatar from 'components/TokenAvatar.vue'
 
 export default Vue.extend({
+    components: {
+        TokenAvatar
+    },
     props: {
         token: Object as () => M.TokenSpec,
         balance: String,

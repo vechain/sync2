@@ -1,9 +1,7 @@
 <template>
     <q-item>
         <q-item-section avatar>
-            <q-avatar square>
-                <img :src="token.iconSrc" />
-            </q-avatar>
+            <token-avatar :spec="token"/>
         </q-item-section>
         <q-item-section>
             <q-item-label>
@@ -22,9 +20,13 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
+import TokenAvatar from 'components/TokenAvatar.vue'
 
 export default Vue.extend({
     name: 'TokenBalance',
+    components: {
+        TokenAvatar
+    },
     props: {
         token: Object as () => M.TokenSpec,
         balance: String
