@@ -5,9 +5,7 @@
     >
         <template v-if="token">
             <q-item-section avatar>
-                <q-avatar square>
-                    <q-img :src="token.iconSrc" />
-                </q-avatar>
+                <token-avatar :spec="token"/>
             </q-item-section>
             <q-item-section>
                 <q-item-label>{{token.symbol}}</q-item-label>
@@ -43,12 +41,14 @@ import Vue from 'vue'
 import TokenItem from './TokenItem.vue'
 import PopSheets, { Sheet } from 'src/components/PopSheets.vue'
 import AsyncResolve from 'components/AsyncResolve'
+import TokenAvatar from 'components/TokenAvatar.vue'
 
 export default Vue.extend({
     components: {
         TokenItem,
         PopSheets,
-        AsyncResolve
+        AsyncResolve,
+        TokenAvatar
     },
     model: {
         prop: 'symbol',
