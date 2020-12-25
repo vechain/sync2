@@ -39,7 +39,7 @@
                 >{{wallet.meta.name}}</q-item-label>
 
                 <q-expansion-item
-                    v-scrollIntoView="current === address"
+                    v-scrollIntoView="currentAccountTab === address || current === address "
                     v-close-popup
                     :default-opened="current === address"
                     group="somegroup"
@@ -64,7 +64,7 @@
                             {{address | checksum | abbrev(8,6)}}
                         </q-item-section>
                     </template>
-                    <q-list>
+                    <q-list v-if="currentAccountTab === address">
                         <async-resolve
                             v-for="token in tokenList"
                             :key="token.symbol"
@@ -126,7 +126,7 @@ export default Vue.extend({
         return {
             show: false,
             signer: this.current || this.wallets[0].meta.addresses[0],
-            currentAccountTab: ''
+            currentAccountTab: this.current || this.wallets[0].meta.addresses[0]
         }
     },
     methods: {

@@ -56,10 +56,11 @@
 <script lang="ts">
 import Vue from 'vue'
 import PageContent from 'components/PageContent.vue'
+import PageToolbar from 'components/PageToolbar.vue'
 import TokenAvatar from 'components/TokenAvatar.vue'
 
 export default Vue.extend({
-    components: { PageContent, TokenAvatar },
+    components: { PageContent, TokenAvatar, PageToolbar },
     data: () => {
         return {
             activeSymbols: null as string[] | null
