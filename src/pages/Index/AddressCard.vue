@@ -7,10 +7,12 @@
     >
         <q-card-section class="text-white column no-wrap full-height overflow-hidden">
             <!-- picasso icon -->
-            <div
-                :style="{...iconStyles}"
+            <q-avatar
                 class="absolute"
-            />
+                size="3.8rem"
+            >
+                <img :src="`data:image/svg+xml;utf8,${svg}`">
+            </q-avatar>
             <!-- balances -->
             <div class="text-right">
                 <span class="text-h6 text-weight-regular">{{account && account.balance | balance}}</span>
@@ -62,14 +64,6 @@ export default Vue.extend({
             const c2 = color.saturationl(10).lightness(40)
             return {
                 background: `linear-gradient(to bottom, ${c1.rgb().string()}, ${c2.rgb().string()})`
-            }
-        },
-        iconStyles(): object {
-            return {
-                background: `url('data:image/svg+xml;utf8,${this.svg}') center / cover no-repeat`,
-                width: '4rem',
-                height: '4rem',
-                borderRadius: '50%'
             }
         }
     }
