@@ -2,6 +2,7 @@ import Vue from 'vue'
 import AuthenticationDialog from 'pages/AuthenticationDialog'
 import SigningDialog from 'src/pages/SigningDialog'
 import ModalLoading from 'components/ModalLoading.vue'
+import QRCodeDialog from 'pages/QRCodeDialog.vue'
 
 declare module 'vue/types/vue' {
     interface Vue {
@@ -37,6 +38,12 @@ declare module 'vue/types/vue' {
             gid: string,
             req: M.CertRequest
         ): Promise<M.CertResponse>
+
+        /**
+         * qr code dialog
+         * @param req
+         */
+        $qrcode(req: M.QRRequest): void
     }
 }
 
@@ -109,6 +116,17 @@ export function boot() {
                         component: SigningDialog,
                         type: 'cert',
                         gid,
+                        req
+                    })
+                }
+            }
+        },
+        $qrcode: {
+            get(): Vue['$qrcode'] {
+                const vm = this as Vue
+                return (req) => {
+                    return dialog(vm, {
+                        component: QRCodeDialog,
                         req
                     })
                 }
