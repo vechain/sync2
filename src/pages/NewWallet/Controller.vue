@@ -1,5 +1,5 @@
 <template>
-    <div class="fit column">
+    <div class="fit column no-wrap">
         <page-toolbar :title="$t('newWallet.title')">
             <q-btn
                 flat
@@ -10,7 +10,11 @@
                 <pop-sheets :sheets="optionSheets" />
             </q-btn>
         </page-toolbar>
-        <div class="narrow-page q-mx-auto q-px-md">
+        <page-content
+            padding
+            class="col"
+            innerClass="fit column"
+        >
             <q-input
                 bottom-slots
                 filled
@@ -32,31 +36,29 @@
                     </div>
                 </template>
             </q-input>
-        </div>
-        <div class="col column flex-center text-center q-pa-md no-wrap">
-            <img
-                src="~assets/new-wallet.svg"
-                style="min-height:0px;"
-            >
-            <p class="text-h6">{{$t('newWallet.title_desc')}}</p>
-            <p class="text-body1">{{$t('newWallet.msg_desc')}}</p>
-        </div>
-        <div class="narrow-page q-mx-auto row justify-around q-pa-sm">
+            <div class="col column no-wrap flex-center">
+                <img
+                    src="~assets/new-wallet.svg"
+                    style="min-height:0px;"
+                >
+                <p class="text-h6">{{$t('newWallet.title_desc')}}</p>
+                <p class="text-body1">{{$t('newWallet.msg_desc')}}</p>
+            </div>
+        </page-content>
+        <page-action>
             <q-btn
-                class="w40"
                 color="primary"
                 outline
                 :label="$t('newWallet.action_import')"
                 @click="newWallet('import')"
             />
             <q-btn
-                class="w40"
                 color="primary"
                 unelevated
                 :label="$t('newWallet.action_generate')"
                 @click="newWallet('generate')"
             />
-        </div>
+        </page-action>
     </div>
 </template>
 <script lang="ts">
@@ -67,12 +69,14 @@ import { unique } from 'src/utils/array'
 import { Vault } from 'src/core/vault'
 import MnemonicInputDialog from './MnemonicInputDialog.vue'
 import PopSheets, { Sheet } from 'src/components/PopSheets.vue'
+import PageContent from 'src/components/PageContent.vue'
+import PageAction from 'src/components/PageAction.vue'
 
 const defaultGid = genesises.main.id
 const defaultWordsCount = 12
 
 export default Vue.extend({
-    components: { PageToolbar, PopSheets },
+    components: { PageToolbar, PopSheets, PageContent, PageAction },
     data: () => {
         return {
             name: '',

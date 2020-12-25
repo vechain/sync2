@@ -1,7 +1,10 @@
 <template>
-    <div class="column fit">
+    <div class="column fit no-wrap">
         <page-toolbar title="Success" />
-        <div class="col q-pa-md column flex-center">
+        <page-content
+            class="q-my-auto text-center"
+            padding
+        >
             <p>
                 <q-icon
                     size="4rem"
@@ -10,30 +13,31 @@
                 />
             </p>
             <p class="text-h6">You've signed the {{typeText}}</p>
-        </div>
-        <div class="narrow-page row justify-around q-mx-auto q-pa-sm">
+        </page-content>
+        <page-action>
             <q-btn
                 outline
                 color="primary"
-                class="w40"
                 :to="{name:'activities'}"
-            >View Activities</q-btn>
+                label="View Activities"
+            />
             <q-btn
                 unelevated
                 color="primary"
-                class="w40"
                 @click="close()"
-            >Close</q-btn>
-        </div>
+                label="Close"
+            />
+        </page-action>
     </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
 import PageToolbar from 'components/PageToolbar.vue'
+import PageContent from 'src/components/PageContent.vue'
+import PageAction from 'src/components/PageAction.vue'
+
 export default Vue.extend({
-    components: {
-        PageToolbar
-    },
+    components: { PageToolbar, PageContent, PageAction },
     props: {
         type: String as () => 'tx' | 'cert'
     },

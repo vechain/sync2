@@ -1,18 +1,21 @@
 <template>
-    <div>
-        <q-carousel
-            class="q-mx-auto narrow-page full-height"
-            v-model="slide"
-            transition-prev="slide-down"
-            transition-next="slide-up"
-            animated
+    <q-carousel
+        v-model="slide"
+        transition-prev="slide-down"
+        transition-next="slide-up"
+        animated
+    >
+        <q-carousel-slide
+            name="welcome"
+            class="column q-pa-none no-wrap"
         >
-            <q-carousel-slide
-                name="welcome"
-                class="column q-gutter-y-md no-wrap"
+            <page-content
+                class="col"
+                padding
+                innerClass="fit column"
             >
                 <div class="row">
-                    <h4 class="q-my-none">{{$t('wizard.title_welcome')}}</h4>
+                    <h4 class="q-ma-none">{{$t('wizard.title_welcome')}}</h4>
                     <language-list-popup
                         class="q-ml-auto"
                         v-slot="{displayName}"
@@ -26,39 +29,47 @@
                         />
                     </language-list-popup>
                 </div>
-                <feature-slides class="col" />
+                <feature-slides class="col q-mt-md" />
+            </page-content>
+            <page-action>
                 <q-btn
-                    class="w40 self-center"
                     unelevated
                     color="primary"
                     :label="$t('wizard.action_get_started')"
                     @click="onClickStart()"
                 />
-            </q-carousel-slide>
-            <q-carousel-slide
-                class="column q-gutter-y-md no-wrap"
-                name="progress"
+            </page-action>
+        </q-carousel-slide>
+        <q-carousel-slide
+            name="progress"
+            class="column q-pa-none no-wrap"
+        >
+            <page-content
+                class="col"
+                padding
+                innerClass="fit column q-gutter-y-md"
             >
-                <h4 class="q-mt-md q-mb-none">{{$t('wizard.title_init')}}</h4>
+                <h4 class="q-mb-none">{{$t('wizard.title_init')}}</h4>
                 <Progress
                     :current="progressStr"
                     class="col"
                 />
                 <h5
-                    class="text-center"
+                    class="q-mb-none text-center"
                     v-if="finished"
                 >{{$t('wizard.msg_init_complete')}}</h5>
+            </page-content>
+            <page-action>
                 <q-btn
                     v-if="finished"
-                    class="w40 self-center"
                     unelevated
                     color="primary"
                     :label="$t('common.finish')"
                     @click="$emit('done')"
                 />
-            </q-carousel-slide>
-        </q-carousel>
-    </div>
+            </page-action>
+        </q-carousel-slide>
+    </q-carousel>
 </template>
 <script lang="ts">
 import Vue from 'vue'
@@ -68,6 +79,8 @@ import NewPasswordDialog from 'pages/NewPasswordDialog'
 import { Vault } from 'core/vault'
 import { genesises } from 'src/consts'
 import LanguageListPopup from 'pages/LanguageListPopup.vue'
+import PageContent from 'src/components/PageContent.vue'
+import PageAction from 'src/components/PageAction.vue'
 
 async function randomDelay<T>(p: Promise<T>, aboutSeconds: number) {
     const [r] = await Promise.all<T, unknown>([
@@ -81,7 +94,9 @@ export default Vue.extend({
     components: {
         Progress,
         FeatureSlides,
-        LanguageListPopup
+        LanguageListPopup,
+        PageContent,
+        PageAction
     },
     data: () => {
         return {
