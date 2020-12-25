@@ -71,7 +71,7 @@
                             :promise="$svc.bc(token.gid).balanceOf(address, token)"
                             v-slot="{data}"
                         >
-                            <TokenBalanceItem
+                            <token-balance-item
                                 :balance="data"
                                 :token="token"
                             />
@@ -87,12 +87,14 @@ import Vue from 'vue'
 import PopSheets, { Sheet } from 'src/components/PopSheets.vue'
 import AddressAvatar from 'src/components/AddressAvatar.vue'
 import AsyncResolve from 'components/AsyncResolve'
+import TokenBalanceItem from 'components/TokenBalanceItem.vue'
 
 export default Vue.extend({
     components: {
         PopSheets,
         AsyncResolve,
-        AddressAvatar
+        AddressAvatar,
+        TokenBalanceItem
     },
     model: {
         prop: 'current',

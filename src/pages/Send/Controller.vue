@@ -68,12 +68,14 @@ import To from './To.vue'
 import TokenSelector from './TokenSelector.vue'
 import { AddressGroup } from './models'
 import AsyncResolve from 'components/AsyncResolve'
+import PageToolbar from 'components/PageToolbar.vue'
 
 export default Vue.extend({
     components: {
         To,
         TokenSelector,
-        AsyncResolve
+        AsyncResolve,
+        PageToolbar
     },
     props: {
         wid: String,

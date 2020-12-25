@@ -66,12 +66,13 @@
 import Vue from 'vue'
 import AddDialog from './AddDialog.vue'
 import { count, groupBy } from 'src/utils/array'
-import PageContent from 'src/components/PageContent.vue'
+import PageContent from 'components/PageContent.vue'
+import PageToolbar from 'components/PageToolbar.vue'
 
 type NodeGroup = { list: M.Node[], selection: number }
 
 export default Vue.extend({
-    components: { PageContent },
+    components: { PageContent, PageToolbar },
     data() {
         return {
             activeMap: null as Record<string, string> | null

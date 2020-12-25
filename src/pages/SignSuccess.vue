@@ -29,7 +29,11 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
+import PageToolbar from 'components/PageToolbar.vue'
 export default Vue.extend({
+    components: {
+        PageToolbar
+    },
     props: {
         type: String as () => 'tx' | 'cert'
     },

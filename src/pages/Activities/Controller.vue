@@ -27,9 +27,12 @@
 import Vue from 'vue'
 import { Transaction } from 'thor-devkit'
 import Item, { Entry } from './Item.vue'
+import PageToolbar from 'components/PageToolbar.vue'
+
 export default Vue.extend({
     components: {
-        Item
+        Item,
+        PageToolbar
     },
     asyncComputed: {
         list: {

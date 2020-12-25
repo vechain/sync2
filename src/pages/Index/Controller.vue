@@ -3,7 +3,7 @@
         class="column fit"
         v-touch-pan.right.mouse.prevent="handleDrawerTouchPan"
     >
-        <PageToolbar
+        <page-toolbar
             :title="title"
             icon="menu"
             :gid="wallet && wallet.gid"
@@ -19,7 +19,7 @@
             >
                 <option-menu :wallet="wallet" />
             </q-btn>
-        </PageToolbar>
+        </page-toolbar>
         <!-- tips -->
         <div class="narrow-page q-mx-auto">
             <upgrade-tip v-if="$state.app.updateAvailable" />
@@ -74,12 +74,13 @@ import WalletList from './WalletList.vue'
 import AddressCardList from './AddressCardList.vue'
 import OptionMenu from './OptionMenu.vue'
 import SideDrawer from 'components/SideDrawer.vue'
+import PageToolbar from 'components/PageToolbar.vue'
 import { scroll } from 'quasar'
 
 const SELECTED_WALLET_ID_KEY = 'selectedWalletId'
 
 export default Vue.extend({
-    components: { BackupTip, UpgradeTip, DrawerPanel, WalletList, AddressCardList, OptionMenu, SideDrawer },
+    components: { BackupTip, UpgradeTip, DrawerPanel, WalletList, AddressCardList, OptionMenu, SideDrawer, PageToolbar },
     data: () => {
         return {
             drawerOpen: false,

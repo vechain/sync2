@@ -46,12 +46,14 @@ import Vue from 'vue'
 import Logs from './Logs.vue'
 import HeadItem from './HeadItem.vue'
 import AsyncResolve from 'components/AsyncResolve'
+import PageToolbar from 'components/PageToolbar.vue'
 
 export default Vue.extend({
     components: {
         Logs,
         HeadItem,
-        AsyncResolve
+        AsyncResolve,
+        PageToolbar
     },
     data() {
         return {

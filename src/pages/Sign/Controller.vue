@@ -89,9 +89,10 @@ import { RelayedRequest, RelayedResponse } from './models'
 import { blake2b256 } from 'thor-devkit'
 import Summary from './Summary.vue'
 import DelayRender from 'components/DelayRender'
+import PageToolbar from 'components/PageToolbar.vue'
 
 export default Vue.extend({
-    components: { Summary, DelayRender },
+    components: { Summary, DelayRender, PageToolbar },
     props: {
         rurl: String // the url to fetch request object
     },
