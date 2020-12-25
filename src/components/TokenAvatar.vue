@@ -1,7 +1,8 @@
 <template>
     <q-avatar
         v-bind="$attrs"
-        class="bg-white bordered"
+        color="white"
+        class="bordered"
     >
         <q-img :src="spec.iconSrc" />
     </q-avatar>
