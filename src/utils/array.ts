@@ -23,9 +23,9 @@ export function groupBy<T, U>(array: T[], by: (v: T) => U): T[][] {
     }, [])
 }
 
-export function count<T>(array: T[], cond: (v: T) => boolean): number {
+export function count<T>(array: T[], c: (v: T) => number): number {
     return array.reduce((prev, cur) => {
-        cond(cur) && prev++
+        prev += c(cur)
         return prev
     }, 0)
 }

@@ -106,7 +106,7 @@ export default Vue.extend({
     methods: {
         canDelete(val: M.Node) {
             return !val.preset &&
-                count(this.nodes, n => n.genesis.id === val.genesis.id) > 1
+                count(this.nodes, n => n.genesis.id === val.genesis.id ? 1 : 0) > 1
         },
         onSelect(val: M.Node) {
             if (!this.activeMap) {
