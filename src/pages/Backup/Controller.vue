@@ -1,61 +1,107 @@
 <template>
-    <div
-        class="column fit"
-    >
-        <page-toolbar title="Backup" />
+    <div class="column fit">
+        <page-toolbar :title="$t('backup.title')" />
         <q-tab-panels
-            class="col column narrow-page q-mx-auto"
+            class="col"
             animated
             v-model="panel"
             transition-next="jump-up"
         >
-            <q-tab-panel name="notice">
-                <notice @start="onStart"/>
-            </q-tab-panel>
-            <q-tab-panel name="words">
-                <Words :words="words">
-                    <div class="row justify-center q-mt-lg">
-                        <q-btn
-                            class="text-capitalize col-6"
-                            label="I've written it down"
-                            unelevated
-                            @click="panel = 'check'"
-                            color="primary"
-                        />
-                    </div>
-                </Words>
-            </q-tab-panel>
-            <q-tab-panel name="check">
-                <CheckWords
-                    :words="words"
-                    @checked="panel = 'done'"
-                />
-            </q-tab-panel>
-            <q-tab-panel name="done">
-                <div class="q-pa-lg">
-                    <div class="q-pl-sm q-pb-md">
-                        <q-icon
-                            size="50px"
-                            name="verified_user"
-                        />
-                    </div>
-                    <span class="text-h4">Your wallet is now backed up</span>
-                    <div class="text-body2 text-grey q-py-md">
-                        The mnemonic words store all the information needed at any point in time to recover your wallet.
-                    </div>
-                    <div class="text-body2 text-grey q-py-sm">
-                        The mnemonic words must be stored in a <strong class="text-black">secure place</strong>. It allows you to regain wallet access in a scenario where your device is lost, stolen, or unusable due to any reason.
-                    </div>
-                </div>
-                <div class="justify-center row q-mt-lg">
+            <q-tab-panel
+                name="notice"
+                class="column q-pa-none"
+            >
+                <page-content
+                    padding
+                    class="col"
+                    innerClass="fit column justify-evenly"
+                >
+                    <notice />
+                </page-content>
+                <page-action>
                     <q-btn
-                        class="text-capitalize col-6"
-                        label="Done"
+                        :label="$t('common.next')"
+                        unelevated
+                        color="primary"
+                        @click="onStart()"
+                    />
+                </page-action>
+            </q-tab-panel>
+            <q-tab-panel
+                name="words"
+                class="column q-pa-none no-wrap"
+            >
+                <page-content
+                    padding
+                    class="col"
+                    innerClass="fit column"
+                >
+                    <Words :words="words" />
+                </page-content>
+                <page-action>
+                    <q-btn
+                        :label="$t('backup.action_next_verify')"
+                        unelevated
+                        @click="panel = 'check'"
+                        color="primary"
+                    />
+                </page-action>
+            </q-tab-panel>
+            <q-tab-panel
+                name="check"
+                class="column q-pa-none no-wrap"
+            >
+                <page-content
+                    padding
+                    class="col q-pb-sm"
+                    innerClass="fit column"
+                >
+                    <CheckWords
+                        :words="words"
+                        @checked="panel = 'done'"
+                    />
+                </page-content>
+            </q-tab-panel>
+            <q-tab-panel
+                name="done"
+                class="column q-pa-none no-wrap"
+            >
+                <page-content
+                    class="column fit"
+                    innerClass="fit column justify-evenly"
+                >
+                    <q-list class="text-center">
+                        <q-item>
+                            <q-item-section>
+                                <q-icon
+                                    size="4rem"
+                                    class="q-mx-auto"
+                                    name="mdi-shield-check"
+                                    color="positive"
+                                />
+                            </q-item-section>
+                        </q-item>
+                        <q-item>
+                            <q-item-section>
+                                <q-item-label class="text-h6 text-dark">{{$t('backup.label_backed_up')}}</q-item-label>
+                            </q-item-section>
+                        </q-item>
+                        <q-item>
+                            <q-item-section>
+                                <q-item-label class="text-body1 text-dark">{{$t('backup.msg_backed_up')}}</q-item-label>
+                            </q-item-section>
+                        </q-item>
+
+                    </q-list>
+                </page-content>
+                <page-action>
+                    <q-btn
+                        :label="$t('common.finish')"
                         unelevated
                         @click="onDone"
                         color="primary"
                     />
-                </div>
+                </page-action>
             </q-tab-panel>
         </q-tab-panels>
     </div>
@@ -67,6 +113,8 @@ import CheckWords from './CheckWords.vue'
 import PageToolbar from 'components/PageToolbar.vue'
 import Notice from './Notice.vue'
 import { Vault } from 'src/core/vault'
+import PageContent from 'src/components/PageContent.vue'
+import PageAction from 'src/components/PageAction.vue'
 export default Vue.extend({
     props: {
         walletId: String
@@ -75,7 +123,9 @@ export default Vue.extend({
         Words,
         CheckWords,
         Notice,
-        PageToolbar
+        PageToolbar,
+        PageContent,
+        PageAction
     },
     data() {
         return {
@@ -91,11 +141,17 @@ export default Vue.extend({
     },
     methods: {
         async onStart() {
+            let pin = ''
+            try {
+                pin = await this.$authenticate()
+            } catch (error) {
+                console.warn(error)
+                return
+            }
             try {
                 if (!this.wallet) { return }
 
                 const vault = await Vault.decode(this.wallet.vault)
-                const pin = await this.$authenticate()
                 const words = await vault.decrypt(pin)
                 this.words = (words as string).split(' ')
                 this.panel = 'words'
