@@ -144,5 +144,18 @@ export default {
         msg_password_too_short: 'Password too short (at least 6 characters)',
         title_set_new_password: 'Set New Password',
         title_confirm_password: 'Confirm Your Password'
+    },
+    backup: {
+        title: 'Backup',
+        action_next_verify: 'I’ve written down',
+        label_backed_up: 'Wallet Backed Up',
+        msg_backed_up: 'Never share your mnemonic words with anyone,store it securely!',
+        msg_confirm_your_mnemonic: 'Confirm Your Mnemonic Words',
+        msg_backup_intro: 'The mnemonic words stores all the information that is needed at any point in time to recover your wallet',
+        label_backup_tips: 'Read Before Backup',
+        msg_backup_tips_1: 'Write it down in given order',
+        msg_backup_tips_2: 'Keep it in a secure place',
+        msg_backup_tips_3: 'No screenshot or screen recording',
+        label_your_mnemonic: 'Your Mnemonic Words'
     }
 }
