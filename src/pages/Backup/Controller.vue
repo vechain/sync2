@@ -88,9 +88,7 @@
                         </q-item>
                         <q-item>
                             <q-item-section>
-                                <q-item-label
-                                    class="text-body1 text-dark"
-                                >{{$t('backup.msg_backed_up')}}</q-item-label>
+                                <q-item-label class="text-body1 text-dark">{{$t('backup.msg_backed_up')}}</q-item-label>
                             </q-item-section>
                         </q-item>
 
@@ -143,11 +141,17 @@ export default Vue.extend({
     },
     methods: {
         async onStart() {
+            let pin = ''
+            try {
+                pin = await this.$authenticate()
+            } catch (error) {
+                console.warn(error)
+                return
+            }
             try {
                 if (!this.wallet) { return }
 
                 const vault = await Vault.decode(this.wallet.vault)
-                const pin = await this.$authenticate()
                 const words = await vault.decrypt(pin)
                 this.words = (words as string).split(' ')
                 this.panel = 'words'
