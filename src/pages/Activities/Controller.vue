@@ -1,10 +1,7 @@
 <template>
     <div class="column fit">
         <page-toolbar :title="$t('activities.title')" />
-        <div
-            v-scrollDivider
-            class="col overflow-auto"
-        >
+        <page-content class="col">
             <template v-if="entryList.length">
                 <Item
                     :entry="item"
@@ -20,7 +17,7 @@
                     </div>
                 </div>
             </template>
-        </div>
+        </page-content>
     </div>
 </template>
 <script lang="ts">
@@ -28,11 +25,13 @@ import Vue from 'vue'
 import { Transaction } from 'thor-devkit'
 import Item, { Entry } from './Item.vue'
 import PageToolbar from 'components/PageToolbar.vue'
+import PageContent from 'components/PageContent.vue'
 
 export default Vue.extend({
     components: {
         Item,
-        PageToolbar
+        PageToolbar,
+        PageContent
     },
     asyncComputed: {
         list: {

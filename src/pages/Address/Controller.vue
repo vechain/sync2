@@ -1,11 +1,11 @@
 <template>
-    <div class="fit column no-wrap">
+    <div class="fit column">
         <page-toolbar
             :title="$t('address.title')"
             :gid="wallet && wallet.gid"
         />
         <template v-if="wallet">
-            <div class="narrow-page q-mx-auto">
+            <page-content>
                 <head-item
                     :address="address"
                     :name="wallet.meta.name"
@@ -25,12 +25,9 @@
                         />
                     </q-item-section>
                 </q-item>
-            </div>
-            <div
-                class="col overflow-auto"
-                v-scrollDivider.top
-            >
-                <q-list class="narrow-page q-mx-auto">
+            </page-content>
+            <page-content class="col">
+                <q-list>
                     <async-resolve
                         v-for="(token, index) in tokenList"
                         tag="div"
@@ -49,7 +46,8 @@
                         />
                     </async-resolve>
                 </q-list>
-            </div>
+
+            </page-content>
         </template>
     </div>
 </template>
@@ -59,13 +57,15 @@ import TokenItem from './TokenItem.vue'
 import HeadItem from './HeadItem.vue'
 import AsyncResolve from 'components/AsyncResolve'
 import PageToolbar from 'components/PageToolbar.vue'
+import PageContent from 'components/PageContent.vue'
 
 export default Vue.extend({
     components: {
         TokenItem,
         HeadItem,
         AsyncResolve,
-        PageToolbar
+        PageToolbar,
+        PageContent
     },
     props: {
         walletId: String,

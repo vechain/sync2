@@ -7,7 +7,7 @@
             :title="symbol"
             :gid="wallet.gid"
         />
-        <div class="narrow-page q-mx-auto">
+        <page-content>
             <async-resolve
                 v-if="token"
                 :promise="$svc.bc(token.gid).balanceOf(address, token)"
@@ -25,20 +25,24 @@
                     />
                 </head-item>
             </async-resolve>
-            <span class="text-h6 q-py-sm q-px-md">{{$t('asset.label_transfer')}}</span>
-        </div>
-        <div
-            class="overflow-auto"
-            v-scrollDivider.both
-        >
+            <q-item dense>
+                <q-item-section>
+                    <q-item-label
+                        header
+                    >
+                        {{$t('asset.label_transfer')}}
+                    </q-item-label>
+                </q-item-section>
+            </q-item>
+        </page-content>
+        <page-content class="col">
             <Logs
-                class="narrow-page q-mx-auto"
                 v-if="token"
                 :address="address"
                 :token="token"
                 :pageSize="20"
             />
-        </div>
+        </page-content>
     </div>
 </template>
 <script lang="ts">
@@ -47,13 +51,15 @@ import Logs from './Logs.vue'
 import HeadItem from './HeadItem.vue'
 import AsyncResolve from 'components/AsyncResolve'
 import PageToolbar from 'components/PageToolbar.vue'
+import PageContent from 'components/PageContent.vue'
 
 export default Vue.extend({
     components: {
         Logs,
         HeadItem,
         AsyncResolve,
-        PageToolbar
+        PageToolbar,
+        PageContent
     },
     data() {
         return {
