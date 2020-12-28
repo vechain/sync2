@@ -1,30 +1,27 @@
 <template>
-    <div
-        class="fit column"
-    >
-        <div class="q-px-md">
-            <div class="text-subtitle2 q-py-sm">
-                Please select the words in order.
+    <div class="fit column">
+        <div>
+            <div class="text-h6">
+                {{$t('backup.msg_confirm_your_mnemonic')}}
             </div>
         </div>
-        <div class="col q-px-lg q-pt-sm">
+        <div class="col q-py-sm">
             <div
                 v-for="row of verifyRowNum"
                 :key="row"
-                class="row q-px-lg q-py-sm q-col-gutter-sm rounded-borders"
+                class="row"
             >
                 <div
                     class="col-4 text-center"
                     v-for="i of groupSize"
                     :key="i"
                 >
-                    <span class="text-grey">{{i + groupSize * (row - 1) }}.</span>
-                    <span class="serif">{{words[(i - 1) + groupSize * (row - 1)]}}</span>
+                    <span class="text-h6">{{words[(i - 1) + groupSize * (row - 1)]}}</span>
                 </div>
             </div>
             <div
                 v-if="verifyRowNum < words.length / groupSize"
-                class="row q-mt-sm q-px-lg q-py-sm q-col-gutter-sm rounded-borders"
+                class="row q-my-sm q-py-sm rounded-borders"
                 :class="isError ? 'bg-deep-orange-2' : 'bg-grey-2'"
             >
                 <div
@@ -32,15 +29,14 @@
                     v-for="i of groupSize"
                     :key="i"
                 >
-                    <span class="text-grey">{{i + groupSize * verifyRowNum }}.</span>
-                    <span class="serif">{{verifyingItems && words[verifyingItems[i-1]]}}</span>
+                    <span class="text-grey text-caption">{{i + groupSize * verifyRowNum }}.</span>
+                    <span class="text-h6">{{verifyingItems && words[verifyingItems[i-1]]}}</span>
                 </div>
             </div>
         </div>
         <div
             v-if="verifyRowNum < words.length / groupSize"
-            class="q-mt-auto row justify-center q-pa-md q-col-gutter-md"
-            style="bottom: 0"
+            class="q-mt-auto row justify-center q-col-gutter-sm"
         >
             <div
                 class="col-4 text-center"
