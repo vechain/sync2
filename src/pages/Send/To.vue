@@ -2,10 +2,10 @@
     <q-input
         no-error-icon
         autocomplete="off"
+        v-bind="$attrs"
         clearable
         :rules="[val => isAddress(val) || $t('send.msg_invalid_address'), val => checkSumAddress(val) || $t('send.msg_checksum_failed') ]"
         v-model.lazy="to"
-        :label="$t('send.label_to')"
     >
         <template
             v-if="isAddress(to)"

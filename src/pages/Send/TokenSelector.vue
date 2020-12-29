@@ -1,54 +1,44 @@
 <template>
-    <q-item
-        class="q-my-md"
-        clickable
-    >
-        <template v-if="token">
-            <q-item-section avatar>
-                <token-avatar :spec="token"/>
-            </q-item-section>
-            <q-item-section>
-                <q-item-label>{{token.symbol}}</q-item-label>
-            </q-item-section>
-            <q-item-section side>
-                <q-icon name="unfold_more" />
-            </q-item-section>
-        </template>
+    <div>
+        <TokenItem
+            v-if="token"
+            clickable
+            :token="token"
+            :selectIcon="true"
+        />
         <pop-sheets
             fit
             :sheets="sheets"
         >
-            <template v-slot="{sheet: {model: token}}">
+            <template v-slot="{sheet: {model: item}}">
                 <async-resolve
-                    :key="token.symbol"
-                    :promise="$svc.bc(token.gid).balanceOf(address, token)"
+                    :key="item.symbol"
+                    :promise="$svc.bc(item.gid).balanceOf(address, item)"
                     v-slot="{data}"
                 >
                     <TokenItem
                         clickable
                         v-close-popup
-                        @click="onSelect(token.symbol)"
+                        @click="onSelect(item.symbol)"
                         :balance="data"
-                        :token="token"
+                        :token="item"
                     />
                 </async-resolve>
             </template>
         </pop-sheets>
-    </q-item>
+    </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
 import TokenItem from './TokenItem.vue'
 import PopSheets, { Sheet } from 'src/components/PopSheets.vue'
 import AsyncResolve from 'components/AsyncResolve'
-import TokenAvatar from 'components/TokenAvatar.vue'
 
 export default Vue.extend({
     components: {
         TokenItem,
         PopSheets,
-        AsyncResolve,
-        TokenAvatar
+        AsyncResolve
     },
     model: {
         prop: 'symbol',
@@ -58,11 +48,6 @@ export default Vue.extend({
         address: String,
         tokens: Array as () => M.TokenSpec[],
         symbol: String
-    },
-    data() {
-        return {
-            showTokenList: false
-        }
     },
     computed: {
         token() {
@@ -81,7 +66,6 @@ export default Vue.extend({
     methods: {
         onSelect(symbol: string) {
             this.$emit('change', symbol)
-            this.showTokenList = false
         }
     }
 })
