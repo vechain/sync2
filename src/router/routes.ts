@@ -26,7 +26,7 @@ const routes: RouteConfig[] = [
             name: 'address',
             component: Address
         }, {
-            path: 'w/:walletId(\\d+)/:addressIndex(\\d+)/a/:symbol',
+            path: 'w/:walletId(\\d+)/:addressIndex(\\d+)/:symbol',
             name: 'asset',
             component: Asset
         }, {
