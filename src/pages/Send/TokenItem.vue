@@ -1,17 +1,26 @@
 <template>
     <q-item
-        :dense="dense"
         v-on="$listeners"
         v-bind="$attrs"
     >
         <q-item-section avatar>
-            <token-avatar size="md" :spec="token"/>
+            <token-avatar
+                size="md"
+                :spec="token"
+            />
         </q-item-section>
         <q-item-section>
-            <q-item-label :class="{'text-body2': dense}">{{token.symbol}}</q-item-label>
+            <q-item-label>{{token.symbol}}</q-item-label>
+        </q-item-section>
+        <q-item-section
+            v-if="selectIcon"
+            side
+        >
+            <q-icon name="unfold_more" />
         </q-item-section>
         <q-item-section
             side
+            v-else
             class="text-dark"
         >
             <span v-if="balance">{{balance | balance(token.decimals)}}</span>
@@ -30,7 +39,7 @@ export default Vue.extend({
     props: {
         token: Object as () => M.TokenSpec,
         balance: String,
-        dense: { type: Boolean, default: false }
+        selectIcon: Boolean
     }
 })
 </script>
