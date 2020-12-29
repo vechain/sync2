@@ -39,11 +39,7 @@
 import Vue from 'vue'
 import SignerItem from './SignerItem.vue'
 import { count } from 'src/utils/array'
-
-export type SignerGroup = {
-    name: string
-    addresses: string[]
-}
+import { SignerGroup } from './models'
 
 export default Vue.extend({
     components: { SignerItem },
