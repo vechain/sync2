@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import AuthenticationDialog from 'pages/AuthenticationDialog'
-import SigningDialog from 'src/pages/SigningDialog'
+import SigningDialog, { CertSigningDialog } from 'src/pages/SigningDialog'
 import ModalLoading from 'components/ModalLoading.vue'
 import QRCodeDialog from 'pages/QRCodeDialog.vue'
 
@@ -113,8 +113,7 @@ export function boot() {
                 const vm = this as Vue
                 return (gid, req) => {
                     return dialog(vm, {
-                        component: SigningDialog,
-                        type: 'cert',
+                        component: CertSigningDialog,
                         gid,
                         req
                     })

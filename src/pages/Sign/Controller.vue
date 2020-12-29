@@ -134,23 +134,31 @@ export default Vue.extend({
                 return
             }
             try {
-                const { type, gid, payload } = request
+                const { gid } = request
                 let result = null
-                if (type === 'tx') {
-                    result = await this.$signTx(gid, payload as M.TxRequest)
-                } else if (type === 'cert') {
+                if (request.type === 'tx') {
+                    const { payload } = request
+                    result = await this.$signTx(gid, {
+                        message: payload.message,
+                        options: payload.options,
+                        origin: request.origin
+                    })
+                } else if (request.type === 'cert') {
                     let host
                     try {
-                        host = new URL(this.request!.origin!).host
+                        host = new URL(request.origin!).host
                     } catch {
                     }
+                    const { payload } = request
                     result = await this.$signCert(gid, {
-                        ...(payload as M.CertRequest),
+                        message: payload.message,
+                        options: payload.options,
+                        origin: request.origin,
                         domain: host || ''
                     })
                 }
                 this.respond({ payload: result! })
-                this.$router.replace({ name: 'sign-success', query: { type } })
+                this.$router.replace({ name: 'sign-success', query: { type: request.type } })
             } catch (err) {
                 console.warn(err)
             }

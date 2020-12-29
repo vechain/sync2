@@ -1,28 +1,52 @@
 import * as V from 'validator-ts'
 
+type TxPayload = {
+    message: Connex.Vendor.TxMessage
+    options: Connex.Driver.TxOptions
+}
+
+type CertPayload = {
+    message: Connex.Vendor.CertMessage
+    options: Connex.Driver.CertOptions
+}
+
 /** request relayed by TOS */
 export type RelayedRequest = {
-    type: 'tx' | 'cert'
     gid: string // genesis id which to specify network
-    payload: {
-        message: object
-        options: object
-    }
     origin?: string
-}
+} & ({
+    type: 'tx'
+    payload: TxPayload
+} | {
+    type: 'cert'
+    payload: CertPayload
+})
 
 export namespace RelayedRequest {
     const scheme: V.Scheme<RelayedRequest> = {
-        type: v => (v === 'tx' || v === 'cert') ? '' : `unsupported type '${v}'`,
-        gid: v => /^0x[0-9a-f]{64}$/i.test(v) ? '' : `invalid gid '${v}'`,
-        payload: {
-            message: v => v instanceof Object ? '' : 'message requires object type',
-            options: v => v instanceof Object ? '' : 'options requires object type'
-        },
-        origin: () => ''
+        gid: v => /^0x[0-9a-f]{64}$/.test(v) ? '' : `invalid gid '${v}'`,
+        origin: () => '',
+        type: (v: unknown) => (v === 'tx' || v === 'cert') ? '' : `unsupported type '${v}'`,
+        payload: () => ''
     }
+    // TODO strict scheme
+    const txPayloadScheme: V.Scheme<TxPayload> = {
+        message: v => v instanceof Object ? '' : 'message requires object type',
+        options: v => v instanceof Object ? '' : 'options requires object type'
+    }
+    const certPayloadScheme: V.Scheme<CertPayload> = {
+        message: v => v instanceof Object ? '' : 'message requires object type',
+        options: v => v instanceof Object ? '' : 'options requires object type'
+    }
+
     export function validate(obj: RelayedRequest) {
-        return V.validate(obj, scheme)
+        const ret = V.validate(obj, scheme)
+        if (ret.type === 'tx') {
+            ret.payload = V.validate(ret.payload, txPayloadScheme)
+        } else {
+            ret.payload = V.validate(ret.payload, certPayloadScheme)
+        }
+        return ret
     }
 }
 

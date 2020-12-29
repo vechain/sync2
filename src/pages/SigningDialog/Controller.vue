@@ -241,7 +241,7 @@ export default Vue.extend({
             return !!(this.req.options && this.req.options.signer)
         },
         hasTheSigner(): boolean {
-            return this.addresses.includes(this.req.options!.signer!)
+            return this.addresses.includes(this.req.options.signer!)
         },
         addresses(): string[] {
             let addrList: string[] = []
@@ -272,7 +272,7 @@ export default Vue.extend({
         initData() {
             if (this.isEnforced) {
                 this.signer = this.hasTheSigner
-                    ? this.req.options!.signer!
+                    ? this.req.options.signer!
                     : ''
             }
         },
@@ -326,7 +326,9 @@ export default Vue.extend({
                 encoded: raw,
                 signer: this.signer,
                 comment: req.options?.comment || '',
-                receipt: null
+                receipt: null,
+                origin: req.origin || '',
+                link: (req.options && req.options.link) || ''
             }
             this.$svc.activity.add({
                 gid: this.gid,
@@ -365,7 +367,9 @@ export default Vue.extend({
             const certGlob: M.Activity.CertGlob = {
                 id: id,
                 encoded: JSON.stringify(req.message),
-                signer: this.signer
+                signer: this.signer,
+                origin: req.origin || '',
+                link: (req.options && req.options.link) || ''
             }
 
             this.$svc.activity.add({
