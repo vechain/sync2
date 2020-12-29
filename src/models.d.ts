@@ -33,31 +33,17 @@ declare namespace M {
 
     interface TxRequest {
         message: Connex.Vendor.TxMessage
-        options?: {
-            signer?: string
-            gas?: number
-            dependsOn?: string
-            link?: string
-            comment?: string
-            delegate?: string
-        }
-    }
-
-    type QRRequest = {
-        title?: string
-        content: string
-        message?: string
+        options: Connex.Driver.TxOptions
+        origin?: string
     }
 
     type TxResponse = Connex.Vendor.TxResponse
 
     interface CertRequest {
         message: Connex.Vendor.CertMessage,
+        options: Connex.Driver.CertOptions
         domain: string,
-        options?: {
-            signer?: string
-            link?: string
-        }
+        origin?: string,
     }
 
     type CertResponse = Connex.Vendor.CertResponse
@@ -88,13 +74,19 @@ declare namespace M {
             id: string // the tx/cert id
             encoded: string // encoded tx/cert
             signer: string // the address signed the tx/cert
-            origin?: string // the dapp url if any
-            link?: string // the url linking to dapp to reveal tx/cert if provided
+            origin: string // the dapp url which issues the request
+            link: string // the url linking to dapp to reveal tx/cert if provided
         }
         type TxGlob = Glob & {
             comment: string
             receipt: Connex.Thor.Transaction.Receipt | null
         }
         type CertGlob = Glob
+    }
+
+    type QRRequest = {
+        title?: string
+        content: string
+        message?: string
     }
 }
