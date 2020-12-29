@@ -55,3 +55,8 @@ export type RelayedResponse = {
     error?: string
     payload?: object
 }
+
+export type SignerGroup = {
+    name: string
+    addresses: string[]
+}
