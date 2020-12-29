@@ -1,12 +1,13 @@
 <template>
     <div>
         <signer-item
-            :text="text"
+            :text="signer"
             :caption="group? group.name : ''"
             :sideIcon="count > 1 ? 'unfold_more': ''"
             :clickable="count > 1"
         />
         <q-popup-proxy
+            v-if="count > 1"
             position="bottom"
             fit
             @show="onPopupShow()"
@@ -65,14 +66,6 @@ export default Vue.extend({
         },
         count(): number {
             return count(this.groups, g => g.addresses.length)
-        },
-        text(): string {
-            if (this.signer) {
-                return this.signer
-            }
-            return this.count > 0
-                ? 'select address'
-                : 'no wallet'
         }
     },
     watch: {
