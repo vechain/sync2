@@ -30,14 +30,14 @@
             </page-content>
             <page-content size="xs">
                 <q-banner
-                    v-if="!wallet"
+                    v-if="signerError"
                     dark
                     dense
                     rounded
                     class="bg-negative q-ma-sm"
-                >Required address not owned</q-banner>
+                >{{signerError}}</q-banner>
                 <simple-signer-selector
-                    :disable="!wallet"
+                    v-if="wallet"
                     v-model="signer"
                     :groups="signerGroups"
                 />
@@ -93,7 +93,7 @@ export default Vue.extend({
             if (enforcedSigner) {
                 const w = wallets.find(w => w.meta.addresses.includes(enforcedSigner))
                 return [{
-                    name: w ? w.meta.name : 'unknown wallet',
+                    name: w ? w.meta.name : '',
                     addresses: [enforcedSigner]
                 }]
             }
@@ -103,6 +103,12 @@ export default Vue.extend({
                     addresses: w.meta.addresses
                 }
             })
+        },
+        signerError(): string {
+            if (this.wallet) {
+                return ''
+            }
+            return this.signerGroups.length > 0 ? 'required address not owned' : 'no wallet available'
         }
     },
     asyncComputed: {
@@ -111,6 +117,7 @@ export default Vue.extend({
         }
     },
     watch: {
+        // select the first address if not selected
         signerGroups(groups: SignerGroup[]) {
             if (groups.length > 0 && !groups.find(g => g.addresses.includes(this.signer))) {
                 this.signer = groups[0].addresses[0]
@@ -133,31 +140,31 @@ export default Vue.extend({
                 return
             }
 
-            const password = await this.$authenticate()
-
             const req = this.req
-            const annex = {
+            // build the cert (unsigned)
+            const cert: Certificate = {
+                ...req.message,
+                // annex part
                 signer: this.signer,
                 timestamp: Math.round(Date.now() / 1000),
                 domain: req.domain
             }
-            const unsigned = Certificate.encode({
-                ...req.message,
-                ...annex
-            })
 
+            // acquire user password
+            const password = await this.$authenticate()
+
+            // sign the cert
             const signature = await this.$loading(async () => {
                 const vault = await Vault.decode(wallet.vault)
-                const node = await vault.derive(wallet.meta.addresses.indexOf(this.signer))
-                const pk = await node.unlock(password)
-                return '0x' + secp256k1.sign(blake2b256(unsigned), pk).toString('hex')
+                const node = await vault.derive(wallet.meta.addresses.indexOf(cert.signer))
+                const sk = await node.unlock(password)
+                const unsigned = Certificate.encode(cert)
+                return '0x' + secp256k1.sign(blake2b256(unsigned), sk).toString('hex')
             })
 
-            const id = '0x' + blake2b256(Certificate.encode({
-                ...req.message,
-                ...annex,
-                signature
-            })).toString('hex')
+            // here cert become signed
+            cert.signature = signature
+            const encoded = Certificate.encode(cert)
 
             this.$svc.activity.add({
                 gid: this.gid,
@@ -166,15 +173,19 @@ export default Vue.extend({
                 status: 'completed',
                 type: 'cert',
                 glob: {
-                    id: id,
-                    encoded: JSON.stringify(req.message),
-                    signer: this.signer,
-                    link: this.req.options.link || '',
-                    origin: this.req.origin || ''
+                    id: '0x' + blake2b256(encoded).toString('hex'),
+                    encoded,
+                    signer: cert.signer,
+                    link: req.options.link || '',
+                    origin: req.origin || ''
                 }
             })
             this.ok({
-                annex,
+                annex: {
+                    domain: cert.domain,
+                    signer: cert.signer,
+                    timestamp: cert.timestamp
+                },
                 signature
             })
         }
