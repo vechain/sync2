@@ -1,7 +1,7 @@
 <template>
     <div class="column fit no-wrap">
         <page-toolbar
-            title="Sign"
+            :title="$t('sign.title')"
             :gid="request && request.gid"
         />
         <page-content
@@ -26,7 +26,7 @@
                     <p>
                         <q-spinner-dots class="text-h2" />
                     </p>
-                    <p>Loading signing content ...</p>
+                    <p>{{$t('sign.msg_loading_content')}}</p>
                 </delay-render>
                 <!-- error -->
                 <template v-else-if="$asyncComputed.request.exception">
@@ -36,7 +36,7 @@
                             class="text-negative text-h2"
                         />
                     </p>
-                    <p>Failed to load content</p>
+                    <p>{{$t('sign.msg_loading_failed')}}</p>
                     <p class="text-negative">{{$asyncComputed.request.exception.message}}</p>
                 </template>
             </div>
@@ -46,13 +46,13 @@
             <template v-if="request">
                 <q-btn
                     outline
-                    label="Decline"
+                    :label="$t('common.decline')"
                     color="negative"
                     @click="$backOrHome()"
                 />
                 <q-btn
                     unelevated
-                    label="Continue"
+                    :label="$t('common.next')"
                     color="primary"
                     @click="signRequest()"
                 />
@@ -60,7 +60,7 @@
             <q-btn
                 v-else-if="$asyncComputed.request.exception"
                 unelevated
-                label="Close"
+                :label="$t('common.close')"
                 color="primary"
                 @click="$backOrHome()"
             />
@@ -91,12 +91,12 @@ export default Vue.extend({
         async request(): Promise<RelayedRequest | null> {
             const urlObject = new URL(this.rurl)
             if (!['http:', 'https:'].includes(urlObject.protocol)) {
-                throw new Error('invalid request')
+                throw new Error(this.$t('sign.msg_invalid_request').toString())
             }
 
             const rid = urlObject.pathname.split('/').pop() || ''
             if (!/^[0-9a-f]{64}$/i.test(rid)) {
-                throw new Error('invalid request')
+                throw new Error(this.$t('sign.msg_invalid_request').toString())
             }
 
             const resp = await (async () => {
@@ -113,12 +113,12 @@ export default Vue.extend({
                         await new Promise(resolve => setTimeout(resolve, 2000))
                     }
                 }
-                throw new Error('can not load request')
+                throw new Error(this.$t('sign.msg_retrieve_failed').toString())
             })()
 
             const dataHash = blake2b256(resp.data).toString('hex')
             if (dataHash !== rid) {
-                throw new Error('incorrect content hash')
+                throw new Error(this.$t('sign.msg_content_hash_mismatch').toString())
             }
             const request = RelayedRequest.validate(JSON.parse(resp.data))
             request.origin = resp.headers['x-data-origin']

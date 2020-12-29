@@ -27,15 +27,15 @@
                 </transition>
             </div>
             <p />
-            <p class="text-subtitle1">Your signature is being requested</p>
+            <p class="text-subtitle1">{{$t('sign.msg_request_signature')}}</p>
         </div>
 
         <!-- descriptions -->
-        <div class="text-caption text-grey">From DApp</div>
+        <div class="text-caption text-grey">{{$t('sign.label_request_from')}}</div>
         <p>{{request.origin}}</p>
-        <div class="text-caption text-grey">Type</div>
+        <div class="text-caption text-grey">{{$t('sign.label_request_type')}}</div>
         <p>{{type}}</p>
-        <div class="text-caption text-grey">Summary</div>
+        <div class="text-caption text-grey">{{$t('sign.label_request_summary')}}</div>
         <p>{{summary}}</p>
     </div>
 </template>
@@ -67,24 +67,24 @@ export default Vue.extend({
         },
         type(): string {
             switch (this.request.type) {
-                case 'tx': return 'Transaction'
-                case 'cert': return 'Certificate'
-                default: return 'Unknown'
+                case 'tx': return this.$t('common.transaction').toString()
+                case 'cert': return this.$t('common.certificate').toString()
+                default: return this.$t('common.unknown').toString()
             }
         },
         summary(): string {
             const req = this.request
             if (req.type === 'tx') {
-                return (req.payload as M.TxRequest).options?.comment || 'None'
+                return (req.payload as M.TxRequest).options?.comment || this.$t('common.none').toString()
             } else if (req.type === 'cert') {
                 const msg = (req.payload as M.CertRequest).message
                 switch (msg.purpose) {
-                    case 'identification': return 'Identification purpose'
-                    case 'agreement': return 'Agreement purpose'
-                    default: return 'Unknown purpose'
+                    case 'identification': return this.$t('sign.label_identification_purpose').toString()
+                    case 'agreement': return this.$t('sign.label_agreement_purpose').toString()
+                    default: return this.$t('sign.label_unknown_purpose').toString()
                 }
             }
-            return 'None'
+            return this.$t('common.none').toString()
         }
     }
 })
