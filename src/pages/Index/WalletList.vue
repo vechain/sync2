@@ -64,14 +64,21 @@ export default Vue.extend({
         }
     },
     watch: {
-        current(newVal: number) {
-            // scroll the selected wallet item into view
-            this.$nextTick(() => {
-                const item = this.$refs[newVal.toString()] as Vue[]
-                if (item) {
-                    setTimeout(() => item[0].$el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 0)
-                }
-            })
+        wallets(newVal: M.Wallet[], oldVal: M.Wallet[]) {
+            if (newVal.length !== oldVal.length) {
+                this.$nextTick(() => this.ensureCurrentInView())
+            }
+        },
+        current() {
+            this.ensureCurrentInView()
+        }
+    },
+    methods: {
+        ensureCurrentInView() {
+            const item = this.$refs[this.current.toString()] as Vue[]
+            if (item) {
+                item[0].$el.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+            }
         }
     }
 })
