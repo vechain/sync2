@@ -8,13 +8,14 @@
             </q-item-section>
             <q-item-section>
                 <q-item-label
-                    class="text-body1 ellipsis-2-lines"
+                    class="text-body1 monospace"
                     style="word-break: break-all;"
-                >{{ entry.walletName || '--' }}</q-item-label>
+                >{{ entry.signer | abbrev(8, 6) }}</q-item-label>
                 <q-item-label
                     caption
+                    class="ellipsis"
                     lines="1"
-                >{{ entry.signer | abbrev(8, 6) }}</q-item-label>
+                >{{ entry.walletName || '--' }}</q-item-label>
             </q-item-section>
             <q-item-section side>
                 <q-item-label>
