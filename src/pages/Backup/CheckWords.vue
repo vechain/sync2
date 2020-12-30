@@ -57,6 +57,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
+const GroupSize = 3
 export default Vue.extend({
     props: {
         words: {
@@ -67,25 +68,27 @@ export default Vue.extend({
     data() {
         return {
             verifyRowNum: 0,
-            groupSize: 3,
             verifyingItems: null as number[] | null,
             isError: false
         }
     },
     computed: {
+        groupSize(): number {
+            return GroupSize
+        },
         nextGroupIndex(): number[] {
-            const start = this.verifyRowNum * this.groupSize
+            const start = this.verifyRowNum * GroupSize
             const indexs = [...this.words.keys()]
-            indexs.splice(start, this.groupSize)
+            indexs.splice(start, GroupSize)
 
             const randomIndex = []
-            for (let i = 0; i < this.groupSize; i++) {
-                randomIndex.push(indexs[Math.floor(Math.random() * (this.words.length - this.groupSize))])
+            for (let i = 0; i < GroupSize; i++) {
+                randomIndex.push(indexs[Math.floor(Math.random() * (this.words.length - GroupSize))])
             }
 
             return [...this.words.map(
                 (word, index) => { return index }
-            ).slice(start, start + this.groupSize), ...randomIndex].map(wordIndex => {
+            ).slice(start, start + GroupSize), ...randomIndex].map(wordIndex => {
                 return {
                     wordIndex,
                     order: Math.random()
@@ -97,20 +100,20 @@ export default Vue.extend({
     },
     methods: {
         onCheck(index: number) {
-            if (!this.verifyingItems || this.verifyingItems.length === 3) {
+            if (!this.verifyingItems || this.verifyingItems.length === GroupSize) {
                 this.verifyingItems = []
                 this.isError = false
             }
             this.verifyingItems.push(index)
 
-            if (this.verifyingItems.length === 3) {
+            if (this.verifyingItems.length === GroupSize) {
                 const items = this.verifyingItems.map(item => this.words[item]).join('')
-                const startIndex = this.groupSize * this.verifyRowNum
-                const words = this.words.slice(startIndex, this.groupSize + startIndex).join('')
+                const startIndex = GroupSize * this.verifyRowNum
+                const words = this.words.slice(startIndex, GroupSize + startIndex).join('')
                 if (items === words) {
                     this.verifyRowNum++
                     this.verifyingItems = []
-                    this.verifyRowNum === (this.words.length / this.groupSize) && this.$emit('checked')
+                    this.verifyRowNum === (this.words.length / GroupSize) && this.$emit('checked')
                 } else {
                     this.isError = true
                 }
