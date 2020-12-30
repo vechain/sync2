@@ -104,23 +104,23 @@ export default Vue.extend({
             const tx = Transaction.decode(Buffer.from(encoded.slice(2), 'hex'))
             const clauses = tx.body.clauses
             if (clauses.length === 0) {
-                return 'Empty'
+                return this.$t('activities.msg_empty_clause').toString()
             }
             if (clauses.length === 1) {
                 if (!clauses[0].to) {
-                    return 'Create a contract'
+                    return this.$t('activities.msg_contract_creation').toString()
                 }
                 if (clauses[0].data === '0x') {
-                    return 'Transfer VET'
+                    return this.$t('activities.msg_vet_transfer').toString()
                 }
-                return 'Make contract call'
+                return this.$t('activities.msg_contract_call').toString()
             }
 
-            return 'Perform a batch of clauses'
+            return this.$t('activities.msg_multi_clauses').toString()
         },
         certComment(encoded: string) {
             const cert: Connex.Vendor.CertMessage = JSON.parse(encoded)
-            return cert.purpose === 'identification' ? 'Identification' : 'Agreement'
+            return cert.purpose === 'identification' ? this.$t('common.identification').toString() : this.$t('common.agreement').toString()
         },
         certMessage(encoded: string) {
             const cert: Connex.Vendor.CertMessage = JSON.parse(encoded)

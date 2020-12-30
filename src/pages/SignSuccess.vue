@@ -1,6 +1,6 @@
 <template>
     <div class="column fit no-wrap">
-        <page-toolbar title="Success" />
+        <page-toolbar :title="$t('sign.title_success')" />
         <page-content
             class="q-my-auto text-center"
             padding
@@ -12,20 +12,20 @@
                     color="positive"
                 />
             </p>
-            <p class="text-h6">You've signed the {{typeText}}</p>
+            <p class="text-h6">{{$t('sign.msg_signed')}} {{typeText}}</p>
         </page-content>
         <page-action>
             <q-btn
                 outline
                 color="primary"
                 :to="{name:'activities'}"
-                label="View Activities"
+                :label="$t('sign.action_view_activities')"
             />
             <q-btn
                 unelevated
                 color="primary"
                 @click="close()"
-                label="Close"
+                :label="$t('common.close')"
             />
         </page-action>
     </div>
@@ -45,9 +45,9 @@ export default Vue.extend({
         typeText() {
             switch (this.type) {
                 case 'tx':
-                    return 'Transaction'
+                    return this.$t('common.transaction')
                 case 'cert':
-                    return 'Certificate'
+                    return this.$t('common.certificate')
                 default:
                     return '??'
             }

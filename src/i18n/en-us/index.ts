@@ -13,9 +13,11 @@ export default {
         cancel: 'Cancel',
         finish: 'Finish',
         next: 'Next',
+        decline: 'Decline',
         copy: 'Copy',
         copied: 'Copied to clipboard',
         default: 'Default',
+        close: 'Close',
 
         // network
         mainnet: 'Main Net',
@@ -33,7 +35,14 @@ export default {
 
         lang_auto: 'Automatic',
 
-        transferring: 'Transferring'
+        transferring: 'Transferring',
+        transaction: 'Transaction',
+        certificate: 'Certificate',
+        identification: 'Identification',
+        agreement: 'Agreement',
+        unknown: 'Unknown',
+        none: 'None'
+
     },
     index: {
         action_new_address: 'New Address',
@@ -89,17 +98,17 @@ export default {
         title_welcome: 'Welcome',
         title_init: 'One Moment',
         title_feature_1: 'VeChain Sync2',
-        title_feature_2: 'Wallet Management',
-        title_feature_3: 'Signing Service',
+        title_feature_2: 'Asset Management with Ease',
+        title_feature_3: 'Seamless interaction with dApps',
         msg_init_animation_s1: 'Initializing',
         msg_init_animation_s2: 'Collecting entropy for random seed',
         msg_init_animation_s3: 'Generating your wallet',
         msg_init_animation_s4: 'Encrypting wallet using your password',
         msg_init_animation_s5: 'Saving wallet to a local secure vault',
         msg_init_complete: 'Your wallet is ready!',
-        msg_feature_1: 'The brand new Sync enhanced design focuses on your experience.',
-        msg_feature_2: 'Manage assets with ease, anytime, anywhere.',
-        msg_feature_3: 'Seamless user experience to sign transactions or certificates requested by the dapp.',
+        msg_feature_1: 'The latest Sync provides access to wallets and interactions with dApps.',
+        msg_feature_2: 'You can easily send and receive assets in one place.',
+        msg_feature_3: 'You can easily sign transactions and certificates.',
         action_get_started: 'Get Started'
     },
     address: {
@@ -110,13 +119,13 @@ export default {
     asset: {
         label_transfer: 'Transfers',
         msg_not_found: 'No transfer found',
-        msg_no_more: 'No more transfers',
+        msg_no_more: '- The End - ',
         action_transfer: 'Transfer',
         msg_receive: 'Share your address to receive assets'
     },
     send: {
-        title: 'Transfer',
-        label_to: 'To',
+        title: 'Send',
+        label_to: 'Recipient',
         label_amount: 'Amount',
         label_balance: 'Balance:',
         label_recent_transfer: 'Recent Transfers',
@@ -137,7 +146,12 @@ export default {
         action_view_signed_content: 'View Signed Content',
         action_copy_dapp_url: 'Copy DApp URL',
         msg_not_found: 'No Activities Found',
-        msg_activities_desc: 'Activities that you’ve interacted with recently will appear here.'
+        msg_activities_desc: 'Activities that you’ve interacted with recently will appear here.',
+        msg_contract_creation: 'Contract Creation',
+        msg_vet_transfer: 'VET Transfer',
+        msg_contract_call: 'Contract Interaction',
+        msg_multi_clauses: 'Multiple interactions with contract',
+        msg_empty_clause: 'Empty content'
     },
     newPasswordDialog: {
         msg_password_mismatch: 'Password mismatch',
@@ -157,5 +171,25 @@ export default {
         msg_backup_tips_2: 'Keep it in a secure place',
         msg_backup_tips_3: 'No screenshot or screen recording',
         label_your_mnemonic: 'Your Mnemonic Words'
+    },
+    sign: {
+        title: 'Sign',
+        msg_loading_content: 'Loading signing content ...',
+        msg_loading_failed: 'Failed to load content',
+        msg_request_signature: 'Your signature is being requested',
+        label_request_from: 'From DApp',
+        label_request_type: 'Type',
+        label_request_summary: 'Summary',
+        label_identification_purpose: 'Identification Purpose',
+        label_agreement_purpose: 'Agreement Purpose',
+        label_unknown_purpose: 'Unknown Purpose',
+        msg_invalid_request: 'Invalid Request',
+        msg_retrieve_failed: 'Unable to retrieve requested content',
+        msg_content_hash_mismatch: 'CAUTION: Requested content are not identical',
+
+        // sign success
+        title_success: 'Success',
+        msg_signed: 'You’ve signed the',
+        action_view_activities: 'View Activities'
     }
 }
