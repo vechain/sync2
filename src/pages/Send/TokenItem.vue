@@ -10,21 +10,17 @@
             />
         </q-item-section>
         <q-item-section>
-            <q-item-label>{{token.symbol}}</q-item-label>
+            <q-item-label>
+                <template v-if="balance">{{balance | balance(token.decimals)}}</template>
+                <template v-else> -- </template>
+            </q-item-label>
+            <q-item-label caption>{{token.symbol}}</q-item-label>
         </q-item-section>
         <q-item-section
             v-if="selectIcon"
             side
         >
             <q-icon name="unfold_more" />
-        </q-item-section>
-        <q-item-section
-            side
-            v-else
-            class="text-dark"
-        >
-            <span v-if="balance">{{balance | balance(token.decimals)}}</span>
-            <span v-else> -- </span>
         </q-item-section>
     </q-item>
 </template>

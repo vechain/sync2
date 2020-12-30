@@ -1,11 +1,17 @@
 <template>
     <div>
-        <TokenItem
+        <async-resolve
             v-if="token"
-            clickable
-            :token="token"
-            :selectIcon="true"
-        />
+            :promise="$svc.bc(token.gid).balanceOf(address, token)"
+            v-slot="{data}"
+            >
+            <TokenItem
+                clickable
+                :token="token"
+                :balance="data"
+                :selectIcon="true"
+            />
+        </async-resolve>
         <pop-sheets
             fit
             :sheets="sheets"
