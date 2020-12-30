@@ -10,13 +10,11 @@
             />
         </q-item-section>
         <q-item-section>
-            <slot>
-                <q-item-label>
-                    <template v-if="balance">{{balance | balance(token.decimals)}}</template>
-                    <template v-else> -- </template>
-                </q-item-label>
-                <q-item-label caption>{{token.symbol}}</q-item-label>
-            </slot>
+            <q-item-label>
+                <template v-if="balance">{{balance | balance(token.decimals)}}</template>
+                <template v-else> -- </template>
+            </q-item-label>
+            <q-item-label caption>{{token.symbol}}</q-item-label>
         </q-item-section>
         <q-item-section
             v-if="selectIcon"
