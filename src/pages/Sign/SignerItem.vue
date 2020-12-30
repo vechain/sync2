@@ -2,7 +2,6 @@
     <q-item
         v-bind="$attrs"
         v-on="$listeners"
-        active-class="bg-blue-1"
     >
         <q-item-section avatar>
             <address-avatar
