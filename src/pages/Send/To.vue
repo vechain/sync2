@@ -1,10 +1,12 @@
 <template>
     <q-input
+        outlined
         no-error-icon
         autocomplete="off"
         v-bind="$attrs"
+        dense
+        placeholder="0x"
         clearable
-        :rules="[val => isAddress(val) || $t('send.msg_invalid_address'), val => checkSumAddress(val) || $t('send.msg_checksum_failed') ]"
         v-model.lazy="to"
     >
         <template
@@ -13,39 +15,51 @@
         >
             <AddressAvatar :addr="to" />
         </template>
-        <template v-slot:append>
+        <template
+            v-if="!to"
+            v-slot:append
+        >
             <q-btn
-                v-if="hasCamera"
-                rounded
-                dense
-                flat
-                icon="qr_code_scanner"
-                @click="onClickScan"
-            />
-            <AddressSelector
                 rounded
                 dense
                 flat
                 icon="add"
-                :groups="wallets"
-                @change="onAddressChange"
             />
+            <pop-sheets
+                fit
+                :sheets="sheets"
+            >
+                <template v-slot="{sheet: {model: group}}">
+                    <q-item-label header>
+                        {{group.name}}
+                    </q-item-label>
+                    <template v-for="(addr, i) in group.list">
+                        <AddressItem
+                            clickable
+                            v-close-popup
+                            @click="onAddressChange(addr)"
+                            :key="i"
+                            :address="addr"
+                        />
+                    </template>
+                </template>
+            </pop-sheets>
         </template>
     </q-input>
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import AddressSelector from './AddressSelector.vue'
 import { address } from 'thor-devkit'
-import QrScannerDialog from 'pages/QrScannerDialog'
-import { QrScanner } from 'src/utils/qr-scanner'
-import { AddressGroup } from './models'
 import AddressAvatar from 'src/components/AddressAvatar.vue'
+import { AddressGroup } from './models'
+import AddressItem from './AddressItem.vue'
+import PopSheets, { Sheet } from 'src/components/PopSheets.vue'
 
 export default Vue.extend({
     components: {
-        AddressSelector,
-        AddressAvatar
+        AddressAvatar,
+        AddressItem,
+        PopSheets
     },
     model: {
         prop: 'address',
@@ -60,13 +74,7 @@ export default Vue.extend({
     },
     data() {
         return {
-            to: this.address,
-            hasCamera: undefined as unknown as boolean // type hack for async computed
-        }
-    },
-    asyncComputed: {
-        hasCamera() {
-            return QrScanner.hasCamera()
+            to: this.address
         }
     },
     watch: {
@@ -74,20 +82,21 @@ export default Vue.extend({
             this.$emit('change', v)
         }
     },
+    computed: {
+        sheets(): Sheet<AddressGroup>[] {
+            return this.wallets.map<Sheet<AddressGroup>>(g => {
+                return {
+                    label: '',
+                    action: () => { },
+                    model: g
+                }
+            })
+        }
+    },
     methods: {
+        isAddress: address.test,
         onAddressChange(addr: string) {
             this.to = address.toChecksumed(addr)
-        },
-        isAddress: address.test,
-        checkSumAddress(v: string) {
-            return !(v !== v.toLowerCase() && address.toChecksumed(v) !== v)
-        },
-        onClickScan() {
-            this.$q.dialog({
-                component: QrScannerDialog
-            }).onOk((addr: string) => {
-                this.to = addr
-            })
         }
     }
 })
