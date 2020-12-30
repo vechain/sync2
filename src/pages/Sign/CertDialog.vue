@@ -36,10 +36,11 @@
                     rounded
                     class="bg-negative q-ma-sm"
                 >{{signerError}}</q-banner>
-                <simple-signer-selector
+                <signer-selector
                     v-if="wallet"
-                    v-model="signer"
+                    :signer="signer"
                     :groups="signerGroups"
+                    @select="signer=$event"
                 />
             </page-content>
             <page-action class="q-mt-lg">
@@ -62,18 +63,17 @@
     </q-dialog>
 </template>
 <script lang="ts">
-// import Vue from 'vue'
+import Common from './Common'
 import { QDialog } from 'quasar'
 import PageToolbar from 'src/components/PageToolbar.vue'
 import PageContent from 'src/components/PageContent.vue'
 import PageAction from 'src/components/PageAction.vue'
-import SimpleSignerSelector from './SimpleSignerSelector.vue'
+import SignerSelector from './SignerSelector.vue'
 import { Certificate, secp256k1, blake2b256 } from 'thor-devkit'
 import { Vault } from 'core/vault'
-import Common from './Common'
 
 export default Common.extend({
-    components: { PageToolbar, PageContent, PageAction, SimpleSignerSelector },
+    components: { PageToolbar, PageContent, PageAction, SignerSelector },
     props: {
         req: Object as () => M.CertRequest
     },

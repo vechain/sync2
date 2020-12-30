@@ -27,7 +27,7 @@
                             :key="`a-${gi}-${ai}`"
                             :text="addr"
                             :active="signer === addr"
-                            @click="signer = addr"
+                            @click="$emit('select', addr)"
                         />
                     </template>
                 </q-list>
@@ -43,18 +43,9 @@ import { SignerGroup } from './models'
 
 export default Vue.extend({
     components: { SignerItem },
-    model: {
-        prop: 'value',
-        event: 'input'
-    },
     props: {
-        value: String,
+        signer: String,
         groups: Array as () => SignerGroup[]
-    },
-    data() {
-        return {
-            signer: this.value
-        }
     },
     computed: {
         group(): SignerGroup | null {
@@ -64,15 +55,11 @@ export default Vue.extend({
             return count(this.groups, g => g.addresses.length)
         }
     },
-    watch: {
-        value(val: string) { this.signer = val },
-        signer(val: string) { this.$emit('input', val) }
-    },
     methods: {
         onPopupShow() {
             const item = this.$refs[this.signer] as Vue[]
             if (item) {
-                item[0].$el.scrollIntoView({ behavior: 'smooth', block: 'end' })
+                item[0].$el.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
             }
         }
     }
