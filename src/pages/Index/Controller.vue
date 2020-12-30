@@ -57,9 +57,9 @@
         >
             <drawer-panel>
                 <wallet-list
-                    v-model="selectedWalletId"
+                    :current="selectedWalletId"
                     :wallets="wallets"
-                    @select="drawerOpen=false"
+                    @select="onSelectWallet($event)"
                 />
             </drawer-panel>
         </side-drawer>
@@ -110,16 +110,21 @@ export default Vue.extend({
             list && list.$el.scrollTo({ top: 0, behavior: 'auto' })
         },
         wallet(newVal: M.Wallet | null, oldVal: M.Wallet | null) {
-            if (newVal && oldVal) {
-                if (newVal.id === oldVal.id &&
-                    newVal.meta.addresses.length !== oldVal.meta.addresses.length) {
-                    // new address added, and scroll to the end
-                    const list = this.$refs.list as Vue
-                    list && scroll.setScrollPosition(list.$el, list.$el.scrollHeight, 500)
-                }
+            if (newVal && oldVal &&
+                newVal.id === oldVal.id &&
+                newVal.meta.addresses.length !== oldVal.meta.addresses.length) {
+                // new address added, and scroll to the end
+                const list = this.$refs.list as Vue
+                list && scroll.setScrollPosition(list.$el, list.$el.scrollHeight, 500)
             }
         },
-        wallets(newVal: M.Wallet[], oldVal: M.Wallet[]) {
+        wallets(newVal: M.Wallet[] | null, oldVal: M.Wallet[] | null) {
+            if (newVal && newVal.length > 0 && !newVal.find(w => w.id === this.selectedWalletId)) {
+                // none selected, select the first one
+                this.selectedWalletId = newVal[0].id
+                return
+            }
+
             if (newVal && oldVal && newVal.length === oldVal.length + 1) {
                 // new wallet created, find out and select it
                 for (const { id } of newVal) {
@@ -135,6 +140,10 @@ export default Vue.extend({
         handleDrawerTouchPan(ev: Record<string, unknown>) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (this.$refs.drawer as any).handleTouchPanExternal(ev)
+        },
+        onSelectWallet(id: number) {
+            this.drawerOpen = false
+            this.selectedWalletId = id
         }
     }
 })

@@ -37,7 +37,7 @@
                     :inset-level="0.25"
                     :active="wallet.id === current"
                     active-class="bg-blue-1"
-                    @click="onClickWalletItem(wallet.id)"
+                    @click="$emit('select', wallet.id)"
                 >
                     <q-item-section>
                         <q-item-label lines="1">
@@ -54,10 +54,6 @@ import Vue from 'vue'
 import { groupBy } from 'src/utils/array'
 
 export default Vue.extend({
-    model: {
-        prop: 'current',
-        event: 'select'
-    },
     props: {
         wallets: Array as () => M.Wallet[],
         current: Number
@@ -69,29 +65,13 @@ export default Vue.extend({
     },
     watch: {
         current(newVal: number) {
-            if (this.wallets.length > 0 && !this.wallets.find(w => w.id === newVal)) {
-                this.$emit('select', this.wallets[0].id)
-                this.scrollSelectedItemIntoView()
-            }
-        },
-        wallets(newVal: M.Wallet[], oldVal: M.Wallet[]) {
-            if (newVal.length > 0 && !newVal.find(w => w.id === this.current)) {
-                this.$emit('select', newVal[0].id)
-            }
-            if (newVal.length !== oldVal.length) {
-                this.$nextTick(() => this.scrollSelectedItemIntoView())
-            }
-        }
-    },
-    methods: {
-        onClickWalletItem(id: number) {
-            this.$emit('select', id)
-        },
-        scrollSelectedItemIntoView() {
-            const item = this.$refs[this.current.toString()] as Vue[]
-            if (item) {
-                item[0].$el.scrollIntoView()
-            }
+            // scroll the selected wallet item into view
+            this.$nextTick(() => {
+                const item = this.$refs[newVal.toString()] as Vue[]
+                if (item) {
+                    setTimeout(() => item[0].$el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 0)
+                }
+            })
         }
     }
 })
