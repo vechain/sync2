@@ -25,25 +25,26 @@
                 flat
                 icon="add"
             />
-            <pop-sheets
-                fit
-                :sheets="sheets"
-            >
-                <template v-slot="{sheet: {model: group}}">
-                    <q-item-label header>
-                        {{group.name}}
-                    </q-item-label>
-                    <template v-for="(addr, i) in group.list">
-                        <AddressItem
-                            clickable
-                            v-close-popup
-                            @click="onAddressChange(addr)"
-                            :key="i"
-                            :address="addr"
-                        />
-                    </template>
-                </template>
-            </pop-sheets>
+            <q-popup-proxy position="bottom" fit>
+                <q-card>
+                    <q-list padding>
+                        <template v-for="(group, gi) in wallets">
+                            <q-item-label :key="gi" header>
+                                {{group.name}}
+                            </q-item-label>
+                            <template v-for="(addr, ai) in group.list">
+                                <AddressItem
+                                    clickable
+                                    v-close-popup
+                                    @click="onAddressChange(addr)"
+                                    :key="`${gi} + ${ai}`"
+                                    :address="addr"
+                                />
+                            </template>
+                        </template>
+                    </q-list>
+                </q-card>
+            </q-popup-proxy>
         </template>
     </q-input>
 </template>
@@ -53,13 +54,11 @@ import { address } from 'thor-devkit'
 import AddressAvatar from 'src/components/AddressAvatar.vue'
 import { AddressGroup } from './models'
 import AddressItem from './AddressItem.vue'
-import PopSheets, { Sheet } from 'src/components/PopSheets.vue'
 
 export default Vue.extend({
     components: {
         AddressAvatar,
-        AddressItem,
-        PopSheets
+        AddressItem
     },
     model: {
         prop: 'address',
@@ -80,17 +79,6 @@ export default Vue.extend({
     watch: {
         to(v: string) {
             this.$emit('change', v)
-        }
-    },
-    computed: {
-        sheets(): Sheet<AddressGroup>[] {
-            return this.wallets.map<Sheet<AddressGroup>>(g => {
-                return {
-                    label: '',
-                    action: () => { },
-                    model: g
-                }
-            })
         }
     },
     methods: {
