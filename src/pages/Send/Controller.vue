@@ -181,6 +181,7 @@ export default Vue.extend({
         },
         onClickScan() {
             this.$q.dialog({
+                parent: this,
                 component: QrScannerDialog
             }).onOk((addr: string) => {
                 this.to = addr
