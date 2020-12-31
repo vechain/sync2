@@ -1,44 +1,69 @@
 <template>
-    <q-card
-        flat
+    <div
+        class="text-white column no-wrap q-py-xs"
         :style="{...background}"
-        v-bind="$attrs"
         v-on="$listeners"
     >
-        <q-card-section class="text-white column no-wrap full-height overflow-hidden">
-            <!-- picasso icon -->
-            <q-avatar
-                class="absolute"
-                size="3.8rem"
+        <q-item>
+            <q-item-section avatar>
+                <!-- picasso icon -->
+                <q-avatar size="3.6rem">
+                    <img :src="`data:image/svg+xml;utf8,${svg}`">
+                </q-avatar>
+            </q-item-section>
+            <q-item-section
+                class="text-right no-wrap"
+                no-wrap
             >
-                <img :src="`data:image/svg+xml;utf8,${svg}`">
-            </q-avatar>
-            <!-- balances -->
-            <div class="text-right">
-                <span class="text-h6 text-weight-regular">{{account && account.balance | balance}}</span>
-                <span class="monospace text-caption"> VET&nbsp;</span>
-            </div>
-            <div class="text-right">
-                <span class="text-h6 text-weight-regular">{{account && account.energy | balance}}</span>
-                <span class="monospace text-caption"> VTHO</span>
-            </div>
-            <div class="row items-baseline q-mt-auto">
-                <!-- index -->
-                <span class="index">{{index+1}}</span>
-                <!-- address -->
-                <span class="monospace text-overline">{{address | checksum | abbrev(8,6)}}</span>
+                <!-- balances -->
+                <q-item-label
+                    v-for="(bal, i) in balances"
+                    :key="i"
+                >
+                    <amount-label
+                        class="amount"
+                        :value="bal.value"
+                        :decimals="bal.decimals"
+                    >--.--</amount-label>
+                    <span
+                        class="monospace text-caption q-ml-sm"
+                        v-html="bal.symbol"
+                    />
+                </q-item-label>
+            </q-item-section>
+        </q-item>
+        <q-item class="q-mt-auto">
+            <q-item-section no-wrap>
+                <q-item-label>
+                    <!-- index -->
+                    <span class="index">{{index+1}}</span>
+                    <!-- address -->
+                    <address-label
+                        :addr="address"
+                        style="font-size: 0.85rem"
+                    />
+                </q-item-label>
+            </q-item-section>
+            <q-item-section />
+            <q-item-section avatar>
                 <!-- logo -->
-                <div class="logo inline-block q-ml-auto" />
-            </div>
-        </q-card-section>
-    </q-card>
+                <img
+                    src="~assets/vechain-logo.svg"
+                    class="logo"
+                >
+            </q-item-section>
+        </q-item>
+    </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
 import { picasso } from '@vechain/picasso'
 import Color from 'color'
+import AddressLabel from 'src/components/AddressLabel.vue'
+import AmountLabel from 'src/components/AmountLabel.vue'
 
 export default Vue.extend({
+    components: { AddressLabel, AmountLabel },
     props: {
         address: String,
         index: Number,
@@ -65,6 +90,18 @@ export default Vue.extend({
             return {
                 background: `linear-gradient(to bottom, ${c1.rgb().string()}, ${c2.rgb().string()})`
             }
+        },
+        balances() {
+            return [{
+                value: this.account && this.account.balance,
+                symbol: 'VET&nbsp;',
+                decimals: 18
+            },
+            {
+                value: this.account && this.account.energy,
+                symbol: 'VTHO',
+                decimals: 18
+            }]
         }
     }
 })
@@ -73,13 +110,18 @@ export default Vue.extend({
 .logo {
     opacity: 0.4;
     background: url(~assets/vechain-logo.svg);
-    height: 2rem;
-    width: 2rem;
+    height: 2.4rem;
+    width: 2.4rem;
 }
 .index {
+    display: inline-block;
     font-size: 4rem;
     font-weight: 100;
     line-height: 100%;
     min-width: 2.5rem;
+}
+.amount {
+    font-size: 1.25rem;
+    line-height: 1.6rem;
 }
 </style>
