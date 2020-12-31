@@ -1,0 +1,64 @@
+<template>
+    <div>
+        <q-item dense>
+            <q-item-section
+                avatar
+                style="min-width:0px"
+            >
+                <token-avatar
+                    :spec="op.token"
+                    size="sm"
+                />
+            </q-item-section>
+            <q-item-section>
+                <q-item-label
+                    class="ellipsis"
+                    style="font-size:1.2rem;"
+                >
+                    <amount-label
+                        :value="op.amount"
+                        :decimals="op.token.decimals"
+                        long
+                    />
+                </q-item-label>
+            </q-item-section>
+        </q-item>
+        <q-item dense>
+            <q-item-section avatar />
+            <q-item-section top>
+                <q-icon name="subdirectory_arrow_right" />
+            </q-item-section>
+            <q-item-section avatar>
+                <q-item-label class="ellipsis">
+                    <address-label
+                        avatar
+                        :addr="op.to"
+                    >
+                        New contract
+                    </address-label>
+                </q-item-label>
+            </q-item-section>
+        </q-item>
+    </div>
+</template>
+<script lang="ts">
+import Vue from 'vue'
+import TokenAvatar from 'src/components/TokenAvatar.vue'
+import { BigNumber } from 'bignumber.js'
+import AddressLabel from 'src/components/AddressLabel.vue'
+import AmountLabel from 'src/components/AmountLabel.vue'
+
+export type OpTransfer = {
+    type: 'transfer'
+    token: M.TokenSpec
+    amount: BigNumber
+    to: string | null
+}
+
+export default Vue.extend({
+    components: { TokenAvatar, AddressLabel, AmountLabel },
+    props: {
+        op: Object as () => OpTransfer
+    }
+})
+</script>
