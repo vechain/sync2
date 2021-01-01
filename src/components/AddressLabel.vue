@@ -33,7 +33,7 @@ export default Vue.extend({
         },
         checksumedAbbrev() {
             const a = address.toChecksumed(this.addr)
-            return a.slice(0, 8) + '⋯' + a.slice(-6)
+            return a.slice(0, 6) + '⋯' + a.slice(-6)
         }
     }
 })

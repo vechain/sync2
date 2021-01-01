@@ -17,6 +17,13 @@
                 class="col q-pa-sm bg-grey-3"
                 innerClass="q-gutter-y-sm"
             >
+                <clause-card
+                    v-for="(c, i) in req.message"
+                    :key="i"
+                    :index="i"
+                    :clause="c"
+                    :tokens="tokens"
+                />
             </page-content>
             <page-content size="xs">
                 <q-banner
@@ -68,9 +75,10 @@ import SignerSelector from './SignerSelector.vue'
 import { estimateGas, EstimateGasResult, calcFee } from './helper'
 import PrioritySelector from './PrioritySelector.vue'
 import GasFeeBar from './GasFeeBar.vue'
+import ClauseCard from './ClauseCard'
 
 export default Common.extend({
-    components: { PageToolbar, PageContent, PageAction, SignerSelector, PrioritySelector, GasFeeBar },
+    components: { PageToolbar, PageContent, PageAction, SignerSelector, PrioritySelector, GasFeeBar, ClauseCard },
     props: {
         req: Object as () => M.TxRequest
     },
@@ -86,7 +94,7 @@ export default Common.extend({
                 return null
             }
             return (coef: number) => {
-                return calcFee(est.gas, est.baseGasPrice, coef).div(1e18).toFormat(2)
+                return calcFee(est.gas, est.baseGasPrice, coef).toString()
             }
         },
         fee(): string | null {
@@ -105,6 +113,13 @@ export default Common.extend({
                 this.req.options.gas || 0,
                 this.signer,
                 this.req.options.delegator && this.req.options.delegator.signer)
+        },
+        tokens: {
+            async get(): Promise<M.TokenSpec[]> {
+                const all = await this.$svc.config.token.all()
+                return all.filter(spec => spec.gid === this.gid)
+            },
+            default: []
         }
     },
     methods: {

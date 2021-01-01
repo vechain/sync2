@@ -11,17 +11,8 @@
             />
         </q-item-section>
         <q-item-section no-wrap>
-            <q-item-label
-                v-if="isTextAddress"
-                class="monospace ellipsis"
-            >
-                {{ text | checksum | abbrev(8, 6) }}
-            </q-item-label>
-            <q-item-label
-                v-else
-                class="ellipsis"
-            >
-                {{ text }}
+            <q-item-label class="ellipsis">
+                <address-label :addr="text" />
             </q-item-label>
             <q-item-label
                 class="ellipsis"
@@ -44,9 +35,10 @@
 import Vue from 'vue'
 import AddressAvatar from 'src/components/AddressAvatar.vue'
 import { address } from 'thor-devkit'
+import AddressLabel from 'src/components/AddressLabel.vue'
 
 export default Vue.extend({
-    components: { AddressAvatar },
+    components: { AddressAvatar, AddressLabel },
     props: {
         text: String,
         caption: String,

@@ -29,6 +29,9 @@
                         <q-item-section side>
                             <q-item-label caption>
                                 Est. fee
+                                <q-avatar size="1rem">
+                                    <img src="~assets/vtho.svg">
+                                </q-avatar>
                             </q-item-label>
                         </q-item-section>
                     </q-item>
@@ -48,15 +51,12 @@
                                 {{l.label}}
                             </q-item-label>
                         </q-item-section>
-                        <q-item-section
-                            side
-                            avatar
-                        >
-                            <q-item-label class="row">
-                                <span>{{ calcFee && calcFee(l.value) }}</span>
-                                <q-avatar size="xs">
-                                    <img src="~assets/vtho.svg">
-                                </q-avatar>
+                        <q-item-section avatar>
+                            <q-item-label>
+                                <amount-label
+                                    :value="calcFee && calcFee(l.value)"
+                                    :decimals="18"
+                                />
                             </q-item-label>
                         </q-item-section>
                     </q-item>
@@ -67,6 +67,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
+import AmountLabel from 'src/components/AmountLabel.vue'
 
 type Level = {
     icon: string
@@ -75,6 +76,7 @@ type Level = {
 }
 
 export default Vue.extend({
+    components: { AmountLabel },
     model: {
         prop: 'coef',
         event: 'change'
