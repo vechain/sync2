@@ -25,14 +25,14 @@
                     :tokens="tokens"
                 />
             </page-content>
+            <page-content innerClass="q-pa-xs q-gutter-y-xs">
+                <alert-tip
+                    v-for="(a, i) in alerts"
+                    :key="i"
+                    :alert="a"
+                />
+            </page-content>
             <page-content size="xs">
-                <q-banner
-                    v-if="signerError"
-                    dark
-                    dense
-                    rounded
-                    class="bg-negative q-ma-sm"
-                >{{signerError}}</q-banner>
                 <gas-fee-bar :fee="fee">
                     <priority-selector
                         v-model="gasPriceCoef"
@@ -46,7 +46,7 @@
                     @select="signer=$event"
                 />
             </page-content>
-            <page-action class="q-mt-lg">
+            <page-action class="q-mt-md">
                 <q-btn
                     v-if="wallet"
                     unelevated
@@ -76,9 +76,14 @@ import { estimateGas, EstimateGasResult, calcFee } from './helper'
 import PrioritySelector from './PrioritySelector.vue'
 import GasFeeBar from './GasFeeBar.vue'
 import ClauseCard from './ClauseCard'
+import AlertTip, { Alert } from './AlertTip.vue'
+import { Transaction, secp256k1, blake2b256 } from 'thor-devkit'
+import { BigNumber } from 'bignumber.js'
+import { randomBytes } from 'crypto'
+import { Vault } from 'src/core/vault'
 
 export default Common.extend({
-    components: { PageToolbar, PageContent, PageAction, SignerSelector, PrioritySelector, GasFeeBar, ClauseCard },
+    components: { PageToolbar, PageContent, PageAction, SignerSelector, PrioritySelector, GasFeeBar, ClauseCard, AlertTip },
     props: {
         req: Object as () => M.TxRequest
     },
@@ -99,16 +104,38 @@ export default Common.extend({
         },
         fee(): string | null {
             return this.calcFee ? this.calcFee(this.gasPriceCoef) : null
-        }
+        },
+        alerts(): Alert[] {
+            const ret: Alert[] = []
+            if (this.signerError) {
+                ret.push({
+                    type: 'error',
+                    message: this.signerError
+                })
+            }
+            if (this.estimation) {
+                const { reverted, vmError, revertReason } = this.estimation
+                if (reverted) {
+                    ret.push({
+                        type: 'warn',
+                        caption: 'Transaction may fail/revert',
+                        message: `VM error: ${vmError}`,
+                        extra: revertReason
+                    })
+                }
+            }
+            // TODO: insufficient energy
+            return ret
+        },
+        thor(): Connex.Thor { return this.$svc.bc(this.gid).thor }
     },
     asyncComputed: {
         estimation(): Promise<EstimateGasResult | null> {
             if (!this.wallet) {
                 return Promise.resolve(null)
             }
-            const thor = this.$svc.bc(this.gid).thor
             return estimateGas(
-                thor,
+                this.thor,
                 this.req.message,
                 this.req.options.gas || 0,
                 this.signer,
@@ -128,12 +155,113 @@ export default Common.extend({
         // method is REQUIRED by $q.dialog
         hide() { (this.$refs.dialog as QDialog).hide() },
 
-        ok(result: M.CertResponse) {
+        ok(result: M.TxResponse) {
             this.$emit('ok', result)
             this.hide()
         },
-        onClickSign() {
+        async onClickSign() {
+            if (!this.estimation) {
+                return
+            }
 
+            const { reverted, gas } = this.estimation
+            if (reverted) {
+                await new Promise((resolve, reject) => {
+                    this.$q.dialog({
+                        title: 'Confirm',
+                        message: 'Transaction may fail/revert',
+                        cancel: true,
+                        persistent: true
+                    }).onOk(() => resolve())
+                        .onCancel(() => reject())
+                })
+            }
+
+            const wallet = this.wallet
+            if (!wallet) {
+                return
+            }
+            const signer = this.signer
+            const password = await this.$authenticate()
+
+            const clauses: Transaction.Clause[] = this.req.message.map(item => {
+                return {
+                    to: item.to,
+                    value: '0x' + new BigNumber(item.value).toString(16),
+                    data: item.data || '0x'
+                }
+            })
+
+            const txBody: Transaction.Body = {
+                chainTag: Number.parseInt(this.thor.genesis.id.slice(-2), 16),
+                blockRef: this.thor.status.head.id.slice(0, 18),
+                expiration: 18, // about 3 mins
+                clauses,
+                gasPriceCoef: this.gasPriceCoef,
+                gas,
+                dependsOn: this.req.options.dependsOn || null,
+                nonce: '0x' + randomBytes(8).toString('hex')
+            }
+
+            const tx = new Transaction(txBody)
+
+            tx.signature = await this.$loading(async () => {
+                const vault = await Vault.decode(wallet.vault)
+                const node = await vault.derive(wallet.meta.addresses.indexOf(signer))
+                const sk = await node.unlock(password)
+
+                return secp256k1.sign(blake2b256(tx.encode()), sk)
+            })
+
+            const encoded = '0x' + tx.encode().toString('hex')
+            this.$svc.bc(this.gid).commitTx(encoded)
+
+            this.$svc.activity.add({
+                gid: this.gid,
+                walletId: wallet.id,
+                createdTime: Date.now(),
+                status: '',
+                type: 'tx',
+                glob: {
+                    id: tx.id!,
+                    encoded,
+                    signer,
+                    comment: this.req.options.comment || '',
+                    receipt: null,
+                    origin: this.req.origin || '',
+                    link: this.req.options.link || ''
+                }
+            })
+
+            this.ok({
+                txid: tx.id!,
+                signer
+            })
+
+            // TODO vip191
+
+            // let delegator = this.req.options.delegator
+            // for (; ;) {
+            //     let tx: Transaction
+            //     if (delegator) {
+            //         tx = new Transaction({ ...txBody, reserved: { features: 1 /* VIP191 bit */ } })
+            //   //this.$axios.post(delegator.url,
+            //     } else {
+            //         tx = new Transaction({ ...txBody })
+            //     }
+
+            //     await this.$loading(async () => {
+            //         const vault = await Vault.decode(wallet.vault)
+            //         const node = await vault.derive(wallet.meta.addresses.indexOf(signer))
+            //         const sk = await node.unlock(password)
+
+            //         tx.signature = secp256k1.sign(blake2b256(tx.encode()), sk)
+            //     })
+
+            //     const encoded = '0x' + tx.encode().toString('hex')
+            //     this.$svc.bc(this.gid).commitTx(encoded)
+            //     break
+            // }
         }
     }
 })
