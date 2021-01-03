@@ -54,41 +54,47 @@ export default Vue.extend({
         ops() {
             const ret: Array<OpTransfer | OpCall | OpCreate> = []
             const { to, value, data } = this.clause
-            // contract creation
-            if (!to) {
+
+            if (to) {
+                if (data && data !== '0x') {
+                    if (data.startsWith(TRANSFER_SIG)) {
+                        // token transfer
+                        const spec = this.tokens.find(t => t.address === to)
+                        if (spec) {
+                            try {
+                                const decoded = abi.decodeParameters(abis.transfer.inputs, '0x' + data.slice(TRANSFER_SIG.length))
+                                ret.push({
+                                    type: 'transfer',
+                                    token: spec,
+                                    amount: new BigNumber(decoded._value),
+                                    to: decoded._to
+                                })
+                            } catch {
+                                ret.push({ type: 'call', to })
+                            }
+                        }
+                    } else {
+                        // contract call
+                        ret.push({ type: 'call', to })
+                    }
+                }
+            } else {
+                // contract creation
                 ret.push({ type: 'create' })
             }
 
-            const amount = new BigNumber(value)
-            if (!amount.isZero()) {
-                // vet transfer
-                const spec = this.tokens.find(t => t.symbol === 'VET')
-                spec && ret.push({
-                    type: 'transfer',
-                    token: spec,
-                    amount,
-                    to: to
-                })
-            }
-
-            if (to && data) {
-                const spec = this.tokens.find(t => t.address === to)
-                // to check if it's token transfer
-                if (data.startsWith(TRANSFER_SIG) && spec) {
-                    try {
-                        const decoded = abi.decodeParameters(abis.transfer.inputs, '0x' + data.slice(TRANSFER_SIG.length))
-                        ret.push({
-                            type: 'transfer',
-                            token: spec,
-                            amount: new BigNumber(decoded._value),
-                            to: decoded._to
-                        })
-                    } catch {
-                        ret.push({ type: 'call', to })
-                    }
-                } else if (data !== '0x') {
-                    // contract call
-                    ret.push({ type: 'call', to })
+            // vet transfer
+            const vetSpec = this.tokens.find(t => t.symbol === 'VET')
+            if (vetSpec) {
+                const amount = new BigNumber(value)
+                // when no op yet, append the VET transfer op even amount is zero
+                if (!amount.isZero() || ret.length === 0) {
+                    ret.unshift({
+                        type: 'transfer',
+                        token: vetSpec,
+                        amount,
+                        to
+                    })
                 }
             }
             return ret
