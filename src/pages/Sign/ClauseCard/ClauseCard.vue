@@ -35,12 +35,8 @@ import Vue from 'vue'
 import TransferItem, { OpTransfer } from './TransferItem.vue'
 import CallItem, { OpCall } from './CallItem.vue'
 import CreateItem, { OpCreate } from './CreateItem.vue'
-
-import { abi } from 'thor-devkit'
-import { abis } from 'src/consts'
 import BigNumber from 'bignumber.js'
-
-const TRANSFER_SIG = new abi.Function(abis.transfer).signature
+import { decodeAsTokenTransferClause } from '../helper'
 
 export default Vue.extend({
     components: { TransferItem, CallItem, CreateItem },
@@ -57,23 +53,22 @@ export default Vue.extend({
 
             if (to) {
                 if (data && data !== '0x') {
-                    if (data.startsWith(TRANSFER_SIG)) {
-                        // token transfer
-                        const spec = this.tokens.find(t => t.address === to)
-                        if (spec) {
-                            try {
-                                const decoded = abi.decodeParameters(abis.transfer.inputs, '0x' + data.slice(TRANSFER_SIG.length))
-                                ret.push({
-                                    type: 'transfer',
-                                    token: spec,
-                                    amount: new BigNumber(decoded._value),
-                                    to: decoded._to
-                                })
-                            } catch {
-                                ret.push({ type: 'call', to })
-                            }
+                    let isTokenTransfer = false
+                    for (const spec of this.tokens) {
+                        const r = decodeAsTokenTransferClause(this.clause, spec)
+                        if (r) {
+                            isTokenTransfer = true
+                            // token transfer
+                            ret.push({
+                                type: 'transfer',
+                                token: spec,
+                                amount: new BigNumber(r.amount),
+                                to: r.to
+                            })
+                            break
                         }
-                    } else {
+                    }
+                    if (!isTokenTransfer) {
                         // contract call
                         ret.push({ type: 'call', to })
                     }

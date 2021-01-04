@@ -72,7 +72,7 @@ import PageToolbar from 'src/components/PageToolbar.vue'
 import PageContent from 'src/components/PageContent.vue'
 import PageAction from 'src/components/PageAction.vue'
 import SignerSelector from './SignerSelector.vue'
-import { estimateGas, EstimateGasResult, calcFee } from './helper'
+import { estimateGas, EstimateGasResult, calcFee, decodeAsTokenTransferClause } from './helper'
 import PrioritySelector from './PrioritySelector.vue'
 import GasFeeBar from './GasFeeBar.vue'
 import ClauseCard from './ClauseCard'
@@ -119,12 +119,19 @@ export default Common.extend({
                     ret.push({
                         type: 'warn',
                         caption: 'Transaction may fail/revert',
-                        message: `VM error: ${vmError}`,
+                        message: vmError,
                         extra: revertReason
                     })
                 }
             }
-            // TODO: insufficient energy
+            const energyError = this.energyError
+            if (energyError) {
+                ret.push({
+                    type: 'warn',
+                    caption: 'Transaction may fail/revert',
+                    message: energyError.message
+                })
+            }
             return ret
         },
         thor(): Connex.Thor { return this.$svc.bc(this.gid).thor }
@@ -147,6 +154,35 @@ export default Common.extend({
                 return all.filter(spec => spec.gid === this.gid)
             },
             default: []
+        },
+        async energyError(): Promise<Error | null> {
+            const est = this.estimation
+            const fee = this.fee
+            if (!est || !fee) {
+                return null
+            }
+            const signer = this.signer
+            const gasPayer = (this.req.options.delegator && this.req.options.delegator.signer) || signer
+            const acc = await this.thor.account(gasPayer).get()
+
+            let energyBalance = new BigNumber(acc.energy)
+
+            if (gasPayer === signer) {
+                // in the case signer is the gas payer, we deduct the balance with VTHO out amount
+                const vthoSpec = this.tokens.find(t => t.symbol === 'VTHO')
+                if (vthoSpec) {
+                    for (const c of this.req.message) {
+                        const r = decodeAsTokenTransferClause(c, vthoSpec)
+                        if (r) {
+                            energyBalance = energyBalance.minus(r.amount)
+                        }
+                    }
+                }
+            }
+            if (energyBalance.isLessThan(fee)) {
+                return new Error('Insufficient energy (VTHO)')
+            }
+            return null
         }
     },
     methods: {

@@ -1,4 +1,4 @@
-import { Transaction } from 'thor-devkit'
+import { abi, Transaction } from 'thor-devkit'
 import { abis } from 'src/consts'
 import { BigNumber } from 'bignumber.js'
 
@@ -77,4 +77,23 @@ export function calcFee(gas: number, baseGasPrice: string, gasPriceCoef: number)
         .idiv(255)
         .plus(baseGasPrice)
         .times(gas)
+}
+
+const TRANSFER_SIG = new abi.Function(abis.transfer).signature
+
+export function decodeAsTokenTransferClause(clause: Connex.VM.Clause, spec: M.TokenSpec): { to: string, amount: string } | null {
+    let { data, to } = clause
+    data = data || ''
+    to = to && to.toLowerCase()
+
+    if (to === spec.address && data.startsWith(TRANSFER_SIG)) {
+        try {
+            const decoded = abi.decodeParameters(abis.transfer.inputs, '0x' + data.slice(TRANSFER_SIG.length))
+            return {
+                to: decoded._to,
+                amount: decoded._value
+            }
+        } catch { }
+    }
+    return null
 }
