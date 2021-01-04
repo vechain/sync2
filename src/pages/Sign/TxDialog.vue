@@ -25,25 +25,30 @@
                     :tokens="tokens"
                 />
             </page-content>
-            <page-content innerClass="q-pa-xs q-gutter-y-xs">
-                <alert-tip
-                    v-for="(a, i) in alerts"
-                    :key="i"
-                    :alert="a"
-                />
-            </page-content>
             <page-content size="xs">
-                <gas-fee-bar :fee="fee">
-                    <priority-selector
-                        v-model="gasPriceCoef"
-                        :calcFee="calcFee"
+                <error-tip
+                    v-if="warnings.length > 0"
+                    type="warning"
+                    :error="{name: 'Transaction may fail/revert'}"
+                    clickable
+                    @click="showWarnings()"
+                />
+                <template v-if="wallet">
+                    <gas-fee-bar :fee="fee">
+                        <priority-selector
+                            v-model="gasPriceCoef"
+                            :calcFee="calcFee"
+                        />
+                    </gas-fee-bar>
+                    <signer-selector
+                        :signer="signer"
+                        :groups="signerGroups"
+                        @select="signer=$event"
                     />
-                </gas-fee-bar>
-                <signer-selector
-                    v-if="wallet"
-                    :signer="signer"
-                    :groups="signerGroups"
-                    @select="signer=$event"
+                </template>
+                <error-tip
+                    v-else
+                    :error="{name: 'Critical Error', message:signerGroups.length > 0 ? 'Required address not owned' : 'No wallet available'}"
                 />
             </page-content>
             <page-action class="q-mt-md">
@@ -76,14 +81,15 @@ import { estimateGas, EstimateGasResult, calcFee, decodeAsTokenTransferClause } 
 import PrioritySelector from './PrioritySelector.vue'
 import GasFeeBar from './GasFeeBar.vue'
 import ClauseCard from './ClauseCard'
-import AlertTip, { Alert } from './AlertTip.vue'
 import { Transaction, secp256k1 } from 'thor-devkit'
 import { BigNumber } from 'bignumber.js'
 import { randomBytes } from 'crypto'
 import { Vault } from 'src/core/vault'
+import ErrorTip from './ErrorTip.vue'
+import WarningListDialog from './WarningListDialog.vue'
 
 export default Common.extend({
-    components: { PageToolbar, PageContent, PageAction, SignerSelector, PrioritySelector, GasFeeBar, ClauseCard, AlertTip },
+    components: { PageToolbar, PageContent, PageAction, SignerSelector, PrioritySelector, GasFeeBar, ClauseCard, ErrorTip },
     props: {
         req: Object as () => M.TxRequest
     },
@@ -105,33 +111,18 @@ export default Common.extend({
         fee(): string | null {
             return this.calcFee ? this.calcFee(this.gasPriceCoef) : null
         },
-        alerts(): Alert[] {
-            const ret: Alert[] = []
-            if (this.signerError) {
-                ret.push({
-                    type: 'error',
-                    message: this.signerError
-                })
-            }
+        warnings(): Error[] {
+            const ret: Error[] = []
             if (this.estimation) {
                 const { reverted, vmError, revertReason } = this.estimation
                 if (reverted) {
                     ret.push({
-                        type: 'warn',
-                        caption: 'Transaction may fail/revert',
-                        message: vmError,
-                        extra: revertReason
+                        name: 'VM error',
+                        message: `${vmError} ${revertReason}`
                     })
                 }
             }
-            const energyError = this.energyError
-            if (energyError) {
-                ret.push({
-                    type: 'warn',
-                    caption: 'Transaction may fail/revert',
-                    message: energyError.message
-                })
-            }
+            this.energyWarning && ret.push(this.energyWarning)
             return ret
         },
         thor(): Connex.Thor { return this.$svc.bc(this.gid).thor }
@@ -155,7 +146,7 @@ export default Common.extend({
             },
             default: []
         },
-        async energyError(): Promise<Error | null> {
+        async energyWarning(): Promise<Error | null> {
             const est = this.estimation
             const fee = this.fee
             if (!est || !fee) {
@@ -180,7 +171,7 @@ export default Common.extend({
                 }
             }
             if (energyBalance.isLessThan(fee)) {
-                return new Error('Insufficient energy (VTHO)')
+                return { name: 'Insufficient energy', message: 'VTHO balance is not enough to pay for the gas' }
             }
             return null
         }
@@ -195,6 +186,13 @@ export default Common.extend({
             this.$emit('ok', result)
             this.hide()
         },
+        showWarnings() {
+            this.$dialog({
+                component: WarningListDialog,
+                warnings: this.warnings,
+                noAction: true
+            })
+        },
         async onClickSign() {
             const est = this.estimation
             const wallet = this.wallet
@@ -205,82 +203,57 @@ export default Common.extend({
             }
 
             if (est.reverted) {
-                await new Promise((resolve, reject) => {
-                    this.$q.dialog({
-                        parent: this,
-                        title: 'Confirm',
-                        message: 'Transaction may fail/revert',
-                        cancel: true
-                    }).onOk(() => resolve())
-                        .onCancel(() => reject())
+                await this.$dialog({
+                    component: WarningListDialog,
+                    title: 'Transaction may fail/revert',
+                    warnings: this.warnings
                 })
             }
 
             const password = await this.$authenticate()
 
-            const clauses: Transaction.Clause[] = this.req.message.map(item => {
-                return {
-                    to: item.to,
-                    value: '0x' + new BigNumber(item.value).toString(16),
-                    data: item.data || '0x'
-                }
-            })
-
+            // compose the tx body
             const txBody: Transaction.Body = {
                 chainTag: Number.parseInt(this.thor.genesis.id.slice(-2), 16),
                 blockRef: this.thor.status.head.id.slice(0, 18),
                 expiration: 18, // about 3 mins
-                clauses,
+                clauses: this.req.message.map(item => {
+                    return {
+                        to: item.to,
+                        value: '0x' + new BigNumber(item.value).toString(16),
+                        data: item.data || '0x'
+                    }
+                }),
                 gasPriceCoef: this.gasPriceCoef,
                 gas: est.gas,
                 dependsOn: this.req.options.dependsOn || null,
                 nonce: '0x' + randomBytes(8).toString('hex')
             }
 
-            const delegatorSig = await (async () => {
-                const delegator = this.req.options.delegator
-                if (!delegator) {
-                    return null
-                }
-                for (; ;) {
-                    if (delegator) {
-                        const tx = new Transaction({ ...txBody, reserved: { features: 1 /* VIP191 bit */ } })
-                        try {
-                            const resp = await this.$loading(async () => {
-                                return this.$axios.post(delegator.url, {
-                                    raw: '0x' + tx.encode().toString('hex'),
-                                    origin: signer
-                                }, { transformResponse: data => JSON.parse(data), headers: { 'content-type': 'application/json' } })
-                            })
-                            return Buffer.from(resp.data.signature.slice(2), 'hex')
-                        } catch (err) {
-                            console.warn('tx delegation:', err)
-                            const retry = await new Promise<boolean>((resolve, reject) => {
-                                this.$q.dialog({
-                                    parent: this,
-                                    title: 'Confirm',
-                                    message: 'Failed to request tx fee delegation',
-                                    ok: { label: 'Retry' },
-                                    cancel: { label: 'Skip' }
-                                }).onOk(() => resolve(true))
-                                    .onCancel(() => resolve(false))
-                                    .onDismiss(() => reject())
-                            })
-                            if (!retry) {
-                                return null
-                            }
-                        }
-                    }
-                }
-            })()
-
+            const delegator = this.req.options.delegator
             const tx = await this.$loading(async () => {
-                let tx: Transaction
-                if (delegatorSig) {
+                let tx
+                let delegatorSig
+                if (delegator) {
                     tx = new Transaction({ ...txBody, reserved: { features: 1 /* VIP191 bit */ } })
+                    try {
+                        const resp = await this.$axios.post(delegator.url, {
+                            raw: '0x' + tx.encode().toString('hex'),
+                            origin: signer
+                        }, { transformResponse: data => JSON.parse(data), headers: { 'content-type': 'application/json' } })
+                        delegatorSig = Buffer.from(resp.data.signature.slice(2), 'hex')
+                    } catch (err) {
+                        this.$q.notify({
+                            type: 'negative',
+                            message: 'Failed to request tx fee delegation'
+                        })
+                        // rethrow to end the process
+                        throw err
+                    }
                 } else {
                     tx = new Transaction(txBody)
                 }
+
                 const vault = await Vault.decode(wallet.vault)
                 const node = await vault.derive(wallet.meta.addresses.indexOf(signer))
                 const sk = await node.unlock(password)

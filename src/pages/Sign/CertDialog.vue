@@ -29,18 +29,15 @@
                 </q-card>
             </page-content>
             <page-content size="xs">
-                <q-banner
-                    v-if="signerError"
-                    dark
-                    dense
-                    rounded
-                    class="bg-negative q-ma-sm"
-                >{{signerError}}</q-banner>
                 <signer-selector
                     v-if="wallet"
                     :signer="signer"
                     :groups="signerGroups"
                     @select="signer=$event"
+                />
+                <error-tip
+                    v-else
+                    :error="{name: 'Critical Error', message:signerGroups.length > 0 ? 'Required address not owned' : 'No wallet available'}"
                 />
             </page-content>
             <page-action class="q-mt-lg">
@@ -71,9 +68,10 @@ import PageAction from 'src/components/PageAction.vue'
 import SignerSelector from './SignerSelector.vue'
 import { Certificate, secp256k1, blake2b256 } from 'thor-devkit'
 import { Vault } from 'core/vault'
+import ErrorTip from './ErrorTip.vue'
 
 export default Common.extend({
-    components: { PageToolbar, PageContent, PageAction, SignerSelector },
+    components: { PageToolbar, PageContent, PageAction, SignerSelector, ErrorTip },
     props: {
         req: Object as () => M.CertRequest
     },

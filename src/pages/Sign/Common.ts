@@ -32,12 +32,6 @@ export default Vue.extend({
                     addresses: w.meta.addresses
                 }
             })
-        },
-        signerError(): string {
-            if (this.wallet) {
-                return ''
-            }
-            return this.signerGroups.length > 0 ? 'required address not owned' : 'no wallet available'
         }
     },
     asyncComputed: {
