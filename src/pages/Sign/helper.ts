@@ -37,9 +37,17 @@ export async function estimateGas(
     caller: string,
     gasPayer?: string
 ): Promise<EstimateGasResult> {
+    const intrinsicGas = Transaction.intrinsicGas(clauses.map(item => {
+        return {
+            to: item.to,
+            value: item.value || 0,
+            data: item.data || '0x'
+        }
+    }))
+    const offeredGas = suggestedGas ? Math.max(suggestedGas - intrinsicGas, 1) : 2000 * 10000
     const explainer = thor.explain(clauses)
         .caller(caller)
-        .gas(suggestedGas || 2000 * 10000)
+        .gas(offeredGas)
 
     if (gasPayer) {
         explainer.gasPayer(gasPayer)
@@ -50,13 +58,6 @@ export async function estimateGas(
     let gas = suggestedGas
     if (!gas) {
         const execGas = outputs.reduce((sum, out) => sum + out.gasUsed, 0)
-        const intrinsicGas: number = Transaction.intrinsicGas(clauses.map(item => {
-            return {
-                to: item.to,
-                value: item.value || 0,
-                data: item.data || '0x'
-            }
-        }))
         gas = intrinsicGas + (execGas ? (execGas + 15000) : 0)
     }
 
