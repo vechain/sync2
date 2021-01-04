@@ -3,9 +3,12 @@ import AuthenticationDialog from 'pages/AuthenticationDialog'
 import ModalLoading from 'components/ModalLoading.vue'
 import QRCodeDialog from 'pages/QRCodeDialog.vue'
 import { CertDialog, TxDialog } from 'pages/Sign'
+import { QDialogOptions } from 'quasar'
 
 declare module 'vue/types/vue' {
     interface Vue {
+        $dialog<T>(options: QDialogOptions): Promise<T>
+
         /**
          * pop up the authentication dialog to ask user entering password
          * @returns verified user password
@@ -68,16 +71,24 @@ const loadingFunc = (() => {
     }
 })()
 
-function dialog<T>(vm: Vue, options: object) {
+function dialog<T>(vm: Vue, options: QDialogOptions) {
     return new Promise<T>((resolve, reject) => {
-        vm.$q.dialog({ ...options, parent: vm /* always set parent */ })
+        vm.$q.dialog({ ...options, parent: options.parent || vm /* set parent if missing */ })
             .onOk(resolve)
-            .onCancel((e: Error) => reject(e || new Error('cancelled')))
+            .onCancel((err: unknown) => reject(err || new Error('cancelled')))
     })
 }
 
 export function boot() {
     Object.defineProperties(Vue.prototype, {
+        $dialog: {
+            get(): Vue['$dialog'] {
+                const vm = this as Vue
+                return (options) => {
+                    return dialog(vm, options)
+                }
+            }
+        },
         $loading: {
             get(): Vue['$loading'] {
                 return async (task) => {
