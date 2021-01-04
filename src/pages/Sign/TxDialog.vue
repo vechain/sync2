@@ -77,7 +77,7 @@ import PrioritySelector from './PrioritySelector.vue'
 import GasFeeBar from './GasFeeBar.vue'
 import ClauseCard from './ClauseCard'
 import AlertTip, { Alert } from './AlertTip.vue'
-import { Transaction, secp256k1, blake2b256 } from 'thor-devkit'
+import { Transaction, secp256k1 } from 'thor-devkit'
 import { BigNumber } from 'bignumber.js'
 import { randomBytes } from 'crypto'
 import { Vault } from 'src/core/vault'
@@ -196,28 +196,26 @@ export default Common.extend({
             this.hide()
         },
         async onClickSign() {
-            if (!this.estimation) {
+            const est = this.estimation
+            const wallet = this.wallet
+            const signer = this.signer
+
+            if (!est || !wallet) {
                 return
             }
 
-            const { reverted, gas } = this.estimation
-            if (reverted) {
+            if (est.reverted) {
                 await new Promise((resolve, reject) => {
                     this.$q.dialog({
+                        parent: this,
                         title: 'Confirm',
                         message: 'Transaction may fail/revert',
-                        cancel: true,
-                        persistent: true
+                        cancel: true
                     }).onOk(() => resolve())
                         .onCancel(() => reject())
                 })
             }
 
-            const wallet = this.wallet
-            if (!wallet) {
-                return
-            }
-            const signer = this.signer
             const password = await this.$authenticate()
 
             const clauses: Transaction.Clause[] = this.req.message.map(item => {
@@ -234,19 +232,62 @@ export default Common.extend({
                 expiration: 18, // about 3 mins
                 clauses,
                 gasPriceCoef: this.gasPriceCoef,
-                gas,
+                gas: est.gas,
                 dependsOn: this.req.options.dependsOn || null,
                 nonce: '0x' + randomBytes(8).toString('hex')
             }
 
-            const tx = new Transaction(txBody)
+            const delegatorSig = await (async () => {
+                const delegator = this.req.options.delegator
+                if (!delegator) {
+                    return null
+                }
+                for (; ;) {
+                    if (delegator) {
+                        const tx = new Transaction({ ...txBody, reserved: { features: 1 /* VIP191 bit */ } })
+                        try {
+                            const resp = await this.$loading(async () => {
+                                return this.$axios.post(delegator.url, {
+                                    raw: '0x' + tx.encode().toString('hex'),
+                                    origin: signer
+                                }, { transformResponse: data => JSON.parse(data), headers: { 'content-type': 'application/json' } })
+                            })
+                            return Buffer.from(resp.data.signature.slice(2), 'hex')
+                        } catch (err) {
+                            console.warn('tx delegation:', err)
+                            const retry = await new Promise<boolean>((resolve, reject) => {
+                                this.$q.dialog({
+                                    parent: this,
+                                    title: 'Confirm',
+                                    message: 'Failed to request tx fee delegation',
+                                    ok: { label: 'Retry' },
+                                    cancel: { label: 'Skip' }
+                                }).onOk(() => resolve(true))
+                                    .onCancel(() => resolve(false))
+                                    .onDismiss(() => reject())
+                            })
+                            if (!retry) {
+                                return null
+                            }
+                        }
+                    }
+                }
+            })()
 
-            tx.signature = await this.$loading(async () => {
+            const tx = await this.$loading(async () => {
+                let tx: Transaction
+                if (delegatorSig) {
+                    tx = new Transaction({ ...txBody, reserved: { features: 1 /* VIP191 bit */ } })
+                } else {
+                    tx = new Transaction(txBody)
+                }
                 const vault = await Vault.decode(wallet.vault)
                 const node = await vault.derive(wallet.meta.addresses.indexOf(signer))
                 const sk = await node.unlock(password)
 
-                return secp256k1.sign(blake2b256(tx.encode()), sk)
+                const originSig = secp256k1.sign(tx.signingHash(), sk)
+                tx.signature = delegatorSig ? Buffer.concat([originSig, delegatorSig]) : originSig
+                return tx
             })
 
             const encoded = '0x' + tx.encode().toString('hex')
@@ -273,31 +314,6 @@ export default Common.extend({
                 txid: tx.id!,
                 signer
             })
-
-            // TODO vip191
-
-            // let delegator = this.req.options.delegator
-            // for (; ;) {
-            //     let tx: Transaction
-            //     if (delegator) {
-            //         tx = new Transaction({ ...txBody, reserved: { features: 1 /* VIP191 bit */ } })
-            //   //this.$axios.post(delegator.url,
-            //     } else {
-            //         tx = new Transaction({ ...txBody })
-            //     }
-
-            //     await this.$loading(async () => {
-            //         const vault = await Vault.decode(wallet.vault)
-            //         const node = await vault.derive(wallet.meta.addresses.indexOf(signer))
-            //         const sk = await node.unlock(password)
-
-            //         tx.signature = secp256k1.sign(blake2b256(tx.encode()), sk)
-            //     })
-
-            //     const encoded = '0x' + tx.encode().toString('hex')
-            //     this.$svc.bc(this.gid).commitTx(encoded)
-            //     break
-            // }
         }
     }
 })
