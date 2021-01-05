@@ -7,11 +7,7 @@
             <address-avatar :addr="address" />
         </q-item-section>
         <q-item-section>
-            <q-item-label
-                class="monospace text-body1"
-                lines="1"
-            >{{address | checksum | abbrev(8, 6)}}
-            </q-item-label>
+            <address-label :addr="address"/>
             <q-item-label
                 class="text-body2 text-grey"
                 lines="1"
@@ -32,9 +28,11 @@
 <script lang="ts">
 import Vue from 'vue'
 import AddressAvatar from 'src/components/AddressAvatar.vue'
+import AddressLabel from 'src/components/AddressLabel.vue'
 export default Vue.extend({
     components: {
-        AddressAvatar
+        AddressAvatar,
+        AddressLabel
     },
     props: {
         address: String,

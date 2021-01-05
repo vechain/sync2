@@ -7,19 +7,18 @@
             <address-avatar size="md" :addr="address" />
         </q-item-section>
         <q-item-section>
-            <q-item-label
-                class="reline monospace text-body2"
-                lines="2"
-            >{{address | checksum}}</q-item-label>
+            <address-label :addr="address"/>
         </q-item-section>
     </q-item>
 </template>
 <script lang="ts">
 import Vue from 'vue'
 import AddressAvatar from 'src/components/AddressAvatar.vue'
+import AddressLabel from 'src/components/AddressLabel.vue'
 export default Vue.extend({
     components: {
-        AddressAvatar
+        AddressAvatar,
+        AddressLabel
     },
     props: {
         address: String
