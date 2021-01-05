@@ -114,12 +114,13 @@ export default Vue.extend({
             }
             this.$set(this.activeMap, val.genesis.id, val.url)
         },
-        onAdd() {
-            this.$q.dialog({
-                parent: this,
-                component: AddDialog
-            }).onOk(async (val: M.Node) => {
-                if (this.nodes.find(n => n.genesis.id === val.genesis.id && n.url === val.url)) {
+        async onAdd() {
+            try {
+                const node = await this.$dialog<M.Node>({
+                    component: AddDialog
+                })
+
+                if (this.nodes.find(n => n.genesis.id === node.genesis.id && n.url === node.url)) {
                     this.$q.notify({
                         type: 'warning',
                         message: this.$t('nodes.msg_node_existed').toString(),
@@ -128,29 +129,28 @@ export default Vue.extend({
                     })
                     return
                 }
-                await this.$svc.config.node.save([...this.nodes, val])
+                await this.$svc.config.node.save([...this.nodes, node])
                 this.$q.notify({
                     type: 'positive',
                     message: this.$t('nodes.msg_node_added').toString(),
                     timeout: 5000,
                     actions: [{ icon: 'close', color: 'white' }]
                 })
-            })
+            } catch { }
         },
-        onDelete(val: M.Node) {
-            this.$q.dialog({
-                parent: this,
-                title: this.$t('common.delete').toString(),
-                message: this.$t('nodes.msg_delete').toString(),
-                ok: {
-                    label: this.$t('common.yes'),
-                    color: 'negative',
-                    flat: true
-                },
-                cancel: {
-                    label: this.$t('common.cancel')
-                }
-            }).onOk(async () => {
+        async onDelete(val: M.Node) {
+            try {
+                await this.$dialog({
+                    focus: 'cancel',
+                    title: this.$t('common.delete').toString(),
+                    message: this.$t('nodes.msg_delete').toString(),
+                    ok: {
+                        label: this.$t('common.yes'),
+                        color: 'negative',
+                        flat: true
+                    },
+                    cancel: this.$t('common.cancel')
+                })
                 const nodes = this.nodes.filter(n => !(n.genesis.id === val.genesis.id && n.url === val.url))
                 await this.$svc.config.node.save(nodes)
                 this.$q.notify({
@@ -159,7 +159,7 @@ export default Vue.extend({
                     timeout: 5000,
                     actions: [{ icon: 'close', color: 'white' }]
                 })
-            })
+            } catch { }
         }
     },
     beforeDestroy() {

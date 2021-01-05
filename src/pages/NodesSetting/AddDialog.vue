@@ -57,7 +57,7 @@ export default Vue.extend({
         show() { (this.$refs.dialog as QDialog).show() },
         // method is REQUIRED by $q.dialog
         hide() { (this.$refs.dialog as QDialog).hide() },
-        ok(result: unknown) {
+        ok(result: M.Node) {
             this.$emit('ok', result)
             this.hide()
         },
@@ -80,8 +80,7 @@ export default Vue.extend({
                 const resp = await this.$axios.get('blocks/0', {
                     baseURL: this.url
                 })
-                const node: M.Node = { genesis: resp.data, url: this.url }
-                this.ok(node)
+                this.ok({ genesis: resp.data, url: this.url })
             } catch (err) {
                 this.error = err.message
             } finally {
