@@ -13,7 +13,6 @@ import { address } from 'thor-devkit'
 export default Vue.extend({
     props: {
         addr: String,
-        avatar: Boolean,
         full: Boolean
     },
     computed: {
