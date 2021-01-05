@@ -16,10 +16,10 @@
             <AddressAvatar :addr="to" />
         </template>
         <template
-            v-if="!to"
             v-slot:append
         >
             <q-btn
+                v-show="!to"
                 rounded
                 dense
                 flat
@@ -77,6 +77,9 @@ export default Vue.extend({
         }
     },
     watch: {
+        address(v: string) {
+            this.to = address.toChecksumed(v)
+        },
         to(v: string) {
             this.$emit('change', v)
         }
