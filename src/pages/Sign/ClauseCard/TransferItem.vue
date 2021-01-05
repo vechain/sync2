@@ -28,12 +28,18 @@
             <q-item-section top>
                 <q-icon name="subdirectory_arrow_right" />
             </q-item-section>
+            <q-item-section
+                v-if="op.to"
+                avatar
+            >
+                <address-avatar
+                    :addr="op.to"
+                    size="1em"
+                />
+            </q-item-section>
             <q-item-section avatar>
                 <q-item-label class="ellipsis">
-                    <address-label
-                        avatar
-                        :addr="op.to"
-                    >
+                    <address-label :addr="op.to">
                         New contract
                     </address-label>
                 </q-item-label>
@@ -47,6 +53,7 @@ import TokenAvatar from 'src/components/TokenAvatar.vue'
 import { BigNumber } from 'bignumber.js'
 import AddressLabel from 'src/components/AddressLabel.vue'
 import AmountLabel from 'src/components/AmountLabel.vue'
+import AddressAvatar from 'src/components/AddressAvatar.vue'
 
 export type OpTransfer = {
     type: 'transfer'
@@ -56,7 +63,7 @@ export type OpTransfer = {
 }
 
 export default Vue.extend({
-    components: { TokenAvatar, AddressLabel, AmountLabel },
+    components: { TokenAvatar, AddressLabel, AmountLabel, AddressAvatar },
     props: {
         op: Object as () => OpTransfer
     }
