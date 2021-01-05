@@ -86,7 +86,7 @@ export default Vue.extend({
     },
     data() {
         return {
-            to: '',
+            to: null as unknown as string,
             amount: '',
             symbol: this.defaultSymbol || 'VET',
             errors: {
