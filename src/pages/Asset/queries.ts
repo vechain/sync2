@@ -22,7 +22,8 @@ export async function vetTransfers(thor: Connex.Thor, token: M.TokenSpec, addres
         unit: 'block',
         from: fromBlock,
         to: toBlock
-    }).apply(offset, size)
+    }).cache([address])
+        .apply(offset, size)
     return transfers.map(item => {
         return {
             token: token,
@@ -45,7 +46,8 @@ export async function tokenTransfers(thor: Connex.Thor, tokenList: M.TokenSpec[]
         unit: 'block',
         from: fromBlock,
         to: toBlock
-    }).apply(offset, size)
+    }).cache([address])
+        .apply(offset, size)
 
     const ev = new abi.Event(abis.transferEvent)
     return event.map(item => {

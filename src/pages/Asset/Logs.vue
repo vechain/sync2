@@ -19,7 +19,10 @@
             class="text-center q-my-md text-grey"
         >
             <span v-if="logs.length === 0">{{$t('asset.msg_not_found')}}</span>
-            <span class="text-caption" v-else>{{$t('asset.msg_no_more')}}</span>
+            <span
+                class="text-caption"
+                v-else
+            >{{$t('asset.msg_no_more')}}</span>
         </div>
         <template v-slot:loading>
             <div class="text-center q-my-sm">
@@ -60,7 +63,7 @@ export default Vue.extend({
                 let on = true
                 let list: M.TransferLog[] = []
                 const from = (this.logs.length ? this.logs[0].meta.blockNumber : this.splitBlock) + 1
-                const to = this.$svc.bc(this.gid).thor.status.head.number
+                const to = 2 ** 32 - 1
                 while (on) {
                     const r = await this.query(from, to, list.length)
                     on = r.length === this.pageSize
