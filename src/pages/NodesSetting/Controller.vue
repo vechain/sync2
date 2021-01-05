@@ -146,10 +146,12 @@ export default Vue.extend({
                     message: this.$t('nodes.msg_delete').toString(),
                     ok: {
                         label: this.$t('common.yes'),
-                        color: 'negative',
-                        flat: true
+                        color: 'negative'
                     },
-                    cancel: this.$t('common.cancel')
+                    cancel: {
+                        label: this.$t('common.cancel'),
+                        flat: true
+                    }
                 })
                 const nodes = this.nodes.filter(n => !(n.genesis.id === val.genesis.id && n.url === val.url))
                 await this.$svc.config.node.save(nodes)
