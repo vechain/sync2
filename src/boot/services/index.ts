@@ -4,6 +4,7 @@ import * as Blockchain from './blockchain'
 import * as Config from './config'
 import * as Wallet from './wallet'
 import * as Activity from './activity'
+import { groupBy } from 'src/utils/array'
 
 type Service = {
     bc: ReturnType<typeof Blockchain.build>
@@ -26,17 +27,10 @@ export default boot(async ({ Vue }) => {
     const activity = Activity.build(storage)
 
     const getActiveNodes = async () => {
-        const [all, map] = await Promise.all([config.node.all(), config.node.activeMap()])
-        const added = new Set<string>()
-        return all.filter(n => {
-            if (added.has(n.genesis.id)) {
-                return false
-            }
-            if (map[n.genesis.id] === n.url || !map[n.genesis.id]) {
-                added.add(n.genesis.id)
-                return true
-            }
-            return false
+        const [all, activeMap] = await Promise.all([config.node.all(), config.node.activeMap()])
+        const grouped = groupBy(all, n => n.genesis.id)
+        return grouped.map(g => {
+            return g.find(n => activeMap[n.genesis.id] === n.url) || g[0]
         })
     }
 
