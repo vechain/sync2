@@ -4,17 +4,14 @@
         class="non-selectable full-height"
     >
         <router-view />
-        <activity-status-updater />
     </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import ActivityStatusUpdater from 'pages/ActivityStatusUpdater'
 import { listen } from 'src/utils/external-url'
 
 export default Vue.extend({
-    components: { ActivityStatusUpdater },
     asyncComputed: {
         lang(): Promise<string> {
             return this.$svc.config.getLanguage()
