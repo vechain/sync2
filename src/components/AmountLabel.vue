@@ -38,7 +38,7 @@ export default Vue.extend({
                 }
 
                 // split into integer and decimal part
-                const [int, dec] = bn.toFormat(this.fixed).split(this.decSep)
+                const [int, dec] = bn.toFormat(this.fixed, 3/* ROUND_FLOOR */).split(this.decSep)
                 if (this.long) {
                     // full precision
                     const [, fullDec] = bn.toFormat().split(this.decSep)
