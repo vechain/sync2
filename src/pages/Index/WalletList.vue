@@ -76,7 +76,7 @@ export default Vue.extend({
     methods: {
         ensureCurrentInView() {
             const item = this.$refs[this.current.toString()] as Vue[]
-            if (item) {
+            if (item && item.length > 0) {
                 item[0].$el.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
             }
         }
