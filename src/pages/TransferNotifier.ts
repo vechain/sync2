@@ -57,35 +57,47 @@ export default Vue.extend({
                 (activeSymbols.includes(token.symbol) || token.permanent))
         },
         // vet transfers
-        transfers(): Promise<Connex.Thor.Filter.Row<'transfer'>[] | null> {
-            return this.guardRange('transfer', range => {
-                const criteria = this.transferCriteria
-                if (criteria.length === 0) {
-                    return Promise.resolve([])
-                }
+        transfers: {
+            get(): Promise<Connex.Thor.Filter.Row<'transfer'>[] | null> {
+                return this.guardRange('transfer', range => {
+                    const criteria = this.transferCriteria
+                    if (criteria.length === 0) {
+                        return Promise.resolve([])
+                    }
 
-                return this.thor.filter('transfer', criteria)
-                    .cache(this.addresses)
-                    .range(range)
-                    .apply(0, 10)
-            })
+                    return this.thor.filter('transfer', criteria)
+                        .cache(this.addresses)
+                        .range(range)
+                        .apply(0, 10)
+                })
+            },
+            // no auto update, but react to headNumber change
+            shouldUpdate() { return false }
         },
         // token transfers
-        events(): Promise<Connex.Thor.Filter.Row<'event'>[] | null> {
-            return this.guardRange('event', range => {
-                const criteria = this.eventCriteria
-                if (criteria.length === 0) {
-                    return Promise.resolve([])
-                }
+        events: {
+            get(): Promise<Connex.Thor.Filter.Row<'event'>[] | null> {
+                return this.guardRange('event', range => {
+                    const criteria = this.eventCriteria
+                    if (criteria.length === 0) {
+                        return Promise.resolve([])
+                    }
 
-                return this.thor.filter('event', criteria)
-                    .cache(this.addresses)
-                    .range(range)
-                    .apply(0, 10)
-            })
+                    return this.thor.filter('event', criteria)
+                        .cache(this.addresses)
+                        .range(range)
+                        .apply(0, 10)
+                })
+            },
+            // no auto update, but react to headNumber change
+            shouldUpdate() { return false }
         }
     },
     watch: {
+        thor() {
+            this.$asyncComputed.events.update()
+            this.$asyncComputed.transfers.update()
+        },
         transfers(newVal: Connex.Thor.Filter.Row<'transfer'>[] | null) {
             newVal && newVal.forEach(() => {
             })

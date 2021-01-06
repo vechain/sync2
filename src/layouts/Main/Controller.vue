@@ -25,7 +25,7 @@ import Wizard from 'pages/Wizard'
 import StackedRouterView from 'components/StackedRouterView.vue'
 import ActivityStatusUpdater from 'pages/ActivityStatusUpdater'
 import TransferNotifier from 'pages/TransferNotifier'
-import { groupBy } from 'src/utils/array'
+import { unique } from 'src/utils/array'
 
 export default Vue.extend({
     components: { Wizard, StackedRouterView, ActivityStatusUpdater, TransferNotifier },
@@ -37,8 +37,8 @@ export default Vue.extend({
     },
     asyncComputed: {
         async gids(): Promise<string[]> {
-            const nodes = await this.$svc.config.node.all()
-            return groupBy(nodes, n => n.genesis.id).map(g => g[0].genesis.id)
+            const wallets = await this.$svc.wallet.all()
+            return unique(wallets.map(w => w.gid))
         }
     },
     async mounted() {
