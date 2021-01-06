@@ -101,7 +101,10 @@ export default Vue.extend({
         },
         recent: {
             async get(): Promise<string[]> {
-                return this.$svc.config.getRecentRecipients()
+                if (!this.wallet) {
+                    return []
+                }
+                return this.$svc.config.getRecentRecipients(this.wallet.gid)
             },
             default: []
         },
@@ -223,8 +226,9 @@ export default Vue.extend({
                     (cv && !result.includes(cv.toLowerCase())) && result.push(cv.toLowerCase())
                     return result
                 }, []).slice(0, 10)
-
-                this.$svc.config.saveRecentRecipients(temp)
+                if (this.wallet) {
+                    this.$svc.config.saveRecentRecipients(this.wallet.gid, temp)
+                }
                 this.$router.replace({ name: 'sign-success', query: { type: 'tx' } })
             })
         }

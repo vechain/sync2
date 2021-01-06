@@ -26,14 +26,16 @@ export function build(storage: Storage) {
     type Key = 'nodes' | 'activeNodeMap' | 'passwordShadow' |
         'tokenRegistry' | 'activeTokenSymbols' | 'recentRecipients' | 'language'
 
-    const get = async (key: Key) => {
-        const row = (await t.all().where({ key, subKey: '' }).query())[0]
+    const getSubKey = async (key: Key, subKey: string) => {
+        const row = (await t.all().where({ key, subKey }).query())[0]
         return row ? row.value : ''
     }
-
-    const set = (key: Key, value: string) => {
-        return t.insert({ key, subKey: '', value }, true).then(() => { })
+    const setSubKey = (key: Key, subKey: string, value: string) => {
+        return t.insert({ key, subKey, value }, true).then(() => { })
     }
+
+    const get = (key: Key) => getSubKey(key, '')
+    const set = (key: Key, value: string) => setSubKey(key, '', value)
 
     const node = {
         async all(): Promise<M.Node[]> {
@@ -106,11 +108,11 @@ export function build(storage: Storage) {
         savePasswordShadow(val: string) {
             return set('passwordShadow', val)
         },
-        getRecentRecipients() {
-            return get('recentRecipients').then(r => JSON.parse(r || '[]') as string[])
+        getRecentRecipients(gid: string) {
+            return getSubKey('recentRecipients', gid).then(r => JSON.parse(r || '[]') as string[])
         },
-        saveRecentRecipients(val: string[]) {
-            return set('recentRecipients', JSON.stringify(val))
+        saveRecentRecipients(gid: string, val: string[]) {
+            return setSubKey('recentRecipients', gid, JSON.stringify(val))
         },
         getLanguage() {
             return get('language')
