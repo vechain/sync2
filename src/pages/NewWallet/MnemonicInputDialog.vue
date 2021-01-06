@@ -11,7 +11,7 @@
             <q-card-section>
                 <q-input
                     autofocus
-                    v-model="words"
+                    v-model.trim="words"
                     :label="$t('newWallet.label_mnemonic')"
                     type="textarea"
                     outlined
