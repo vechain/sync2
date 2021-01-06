@@ -29,31 +29,32 @@
                 </q-card>
             </page-content>
             <page-content size="xs">
+                <error-tip
+                    v-if="criticalError"
+                    :error="criticalError"
+                />
                 <signer-selector
-                    v-if="wallet"
+                    v-else
                     :signer="signer"
                     :groups="signerGroups"
                     @select="signer=$event"
                 />
-                <error-tip
-                    v-else
-                    :error="{name: 'Critical Error', message:signerGroups.length > 0 ? 'Required address not owned' : 'No wallet available'}"
-                />
+
             </page-content>
             <page-action class="q-mt-lg">
                 <q-btn
-                    v-if="wallet"
-                    unelevated
-                    color="primary"
-                    label="Sign"
-                    @click="onClickSign()"
-                />
-                <q-btn
-                    v-else
+                    v-if="criticalError"
                     outline
                     color="primary"
                     label="Close"
                     @click="hide()"
+                />
+                <q-btn
+                    v-else
+                    unelevated
+                    color="primary"
+                    label="Sign"
+                    @click="onClickSign()"
                 />
             </page-action>
         </q-card>
@@ -74,6 +75,14 @@ export default Common.extend({
     components: { PageToolbar, PageContent, PageAction, SignerSelector, ErrorTip },
     props: {
         req: Object as () => M.CertRequest
+    },
+    computed: {
+        criticalError(): Error | null {
+            if (!this.wallet) {
+                return { name: 'Critical Error', message: this.signerGroups.length > 0 ? 'Required address not owned' : 'No wallet available' }
+            }
+            return null
+        }
     },
     methods: {
         // method is REQUIRED by $q.dialog

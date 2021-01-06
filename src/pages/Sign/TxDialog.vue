@@ -27,13 +27,18 @@
             </page-content>
             <page-content size="xs">
                 <error-tip
-                    v-if="warnings.length > 0"
-                    type="warning"
-                    :error="{name: 'Transaction may fail/revert'}"
-                    clickable
-                    @click="showWarnings()"
+                    v-if="criticalError"
+                    :error="criticalError"
                 />
-                <template v-if="wallet">
+                <template v-else>
+                    <error-tip
+                        v-if="warnings.length > 0"
+                        type="warning"
+                        :error="{name: 'Transaction may fail/revert'}"
+                        clickable
+                        @click="showWarnings()"
+                    />
+
                     <gas-fee-bar :fee="fee">
                         <priority-selector
                             v-model="gasPriceCoef"
@@ -46,25 +51,22 @@
                         @select="signer=$event"
                     />
                 </template>
-                <error-tip
-                    v-else
-                    :error="{name: 'Critical Error', message:signerGroups.length > 0 ? 'Required address not owned' : 'No wallet available'}"
-                />
             </page-content>
             <page-action class="q-mt-md">
                 <q-btn
-                    v-if="wallet"
-                    unelevated
-                    color="primary"
-                    label="Sign"
-                    @click="onClickSign()"
-                />
-                <q-btn
-                    v-else
+                    v-if="criticalError"
                     outline
                     color="primary"
                     label="Close"
                     @click="hide()"
+                />
+                <q-btn
+                    v-else
+                    unelevated
+                    color="primary"
+                    label="Sign"
+                    @click="onClickSign()"
+                    :loading="thor.status.head.number === 0"
                 />
             </page-action>
         </q-card>
@@ -110,6 +112,17 @@ export default Common.extend({
         },
         fee(): string | null {
             return this.calcFee ? this.calcFee(this.gasPriceCoef) : null
+        },
+        criticalError(): Error | null {
+            if (!this.wallet) {
+                return { name: 'Critical Error', message: this.signerGroups.length > 0 ? 'Required address not owned' : 'No wallet available' }
+            }
+            // test vip191 feature bit when delegator set
+            const head = this.thor.status.head
+            if (head.number > 0 && this.req.options.delegator && ((head.txsFeatures || 0) & 1)) {
+                return { name: 'Critical Error', message: 'VIP191 feature is not supported' }
+            }
+            return null
         },
         warnings(): Error[] {
             const ret: Error[] = []
