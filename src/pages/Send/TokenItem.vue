@@ -9,9 +9,10 @@
                 :spec="token"
             />
         </q-item-section>
-        <q-item-section>
+        <q-item-section v-if="!selectIcon"></q-item-section>
+        <q-item-section :side="!selectIcon" class="text-dark">
             <q-item-label>
-                <template v-if="balance">{{balance | balance(token.decimals)}}</template>
+                <amount-label v-if="balance" :value="balance" :decimals="token.decimals"/>
                 <template v-else> -- </template>
             </q-item-label>
             <q-item-label caption>{{token.symbol}}</q-item-label>
@@ -27,10 +28,12 @@
 <script lang="ts">
 import Vue from 'vue'
 import TokenAvatar from 'components/TokenAvatar.vue'
+import AmountLabel from 'components/AmountLabel.vue'
 
 export default Vue.extend({
     components: {
-        TokenAvatar
+        TokenAvatar,
+        AmountLabel
     },
     props: {
         token: Object as () => M.TokenSpec,
