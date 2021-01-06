@@ -7,8 +7,8 @@
             <token-avatar size="md" :spec="token"/>
         </q-item-section>
         <q-item-section>
-            <q-item-label class="text-body1 ellipsis">
-                {{balance | balance(token.decimals)}}
+            <q-item-label class="text-body1">
+                <amount-label :value="balance" :decimals="token.decimals" />
             </q-item-label>
             <q-item-label
                 class="text-body2 text-grey"
@@ -25,10 +25,12 @@
 <script lang="ts">
 import Vue from 'vue'
 import TokenAvatar from 'components/TokenAvatar.vue'
+import AmountLabel from 'components/AmountLabel.vue'
 
 export default Vue.extend({
     components: {
-        TokenAvatar
+        TokenAvatar,
+        AmountLabel
     },
     props: {
         token: Object as () => M.TokenSpec,

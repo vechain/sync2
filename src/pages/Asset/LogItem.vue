@@ -30,7 +30,10 @@
         </q-item-section>
         <q-item-section side>
             <span :class="'text-' + logStyle.color">
-                <span v-if="amount">{{logStyle.mark}} {{amount | balance(token.decimals)}}</span>
+                <template v-if="amount">
+                    {{logStyle.mark}}
+                    <amount-label :value="amount" :decimals="token.decimals" />
+                </template>
                 <span v-else> -- </span>
             </span>
         </q-item-section>
@@ -39,9 +42,11 @@
 <script lang="ts">
 import Vue from 'vue'
 import AddressLabel from 'src/components/AddressLabel.vue'
+import AmountLabel from 'components/AmountLabel.vue'
 export default Vue.extend({
     components: {
-        AddressLabel
+        AddressLabel,
+        AmountLabel
     },
     props: {
         log: Object as () => M.TransferLog,
