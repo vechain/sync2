@@ -86,7 +86,7 @@ export default Vue.extend({
     },
     data() {
         return {
-            to: null as unknown as string,
+            to: null as null | string,
             amount: '',
             symbol: this.defaultSymbol || 'VET',
             errors: {
@@ -219,8 +219,8 @@ export default Vue.extend({
                     comment: comment
                 }
             }).then(() => {
-                const temp = [this.to, ...this.recent].reduce((result: string[], cv: string) => {
-                    !result.includes(cv.toLowerCase()) && result.push(cv.toLowerCase())
+                const temp = [this.to, ...this.recent].reduce((result: string[], cv: string | null) => {
+                    (cv && !result.includes(cv.toLowerCase())) && result.push(cv.toLowerCase())
                     return result
                 }, []).slice(0, 10)
 

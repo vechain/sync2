@@ -17,9 +17,8 @@
         <q-item-section>
             <q-item-label
                 lines="1"
-                class="text-body2 monospace"
             >
-                {{ (address === log.recipient ? log.sender : log.recipient) | checksum | abbrev(8,6)}}
+                <address-label :addr="(address === log.recipient ? log.sender : log.recipient)" />
             </q-item-label>
             <q-item-label
                 caption
@@ -39,7 +38,11 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
+import AddressLabel from 'src/components/AddressLabel.vue'
 export default Vue.extend({
+    components: {
+        AddressLabel
+    },
     props: {
         log: Object as () => M.TransferLog,
         address: String,
