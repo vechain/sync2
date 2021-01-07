@@ -6,10 +6,10 @@
     >
         <q-item>
             <q-item-section avatar>
-                <!-- picasso icon -->
-                <q-avatar size="3.6rem">
-                    <img :src="`data:image/svg+xml;utf8,${svg}`">
-                </q-avatar>
+                <address-avatar
+                    size="3.6rem"
+                    :addr="address"
+                />
             </q-item-section>
             <q-item-section
                 class="text-right no-wrap"
@@ -61,9 +61,10 @@ import { picasso } from '@vechain/picasso'
 import Color from 'color'
 import AddressLabel from 'src/components/AddressLabel.vue'
 import AmountLabel from 'src/components/AmountLabel.vue'
+import AddressAvatar from 'src/components/AddressAvatar.vue'
 
 export default Vue.extend({
-    components: { AddressLabel, AmountLabel },
+    components: { AddressLabel, AmountLabel, AddressAvatar },
     props: {
         address: String,
         index: Number,
@@ -76,7 +77,7 @@ export default Vue.extend({
         background(): object {
             let str = this.svg
             let color!: Color
-            for (let i = 0; i < 4; i++) {
+            for (let i = 0; i < 2; i++) {
                 const m = /rgb\((\d+),\s*(\d+),\s*(\d+)\)/.exec(str)
                 if (m) {
                     color = color ? color.mix(Color(m[0]), 0.15) : Color(m[0])
@@ -85,8 +86,8 @@ export default Vue.extend({
                     break
                 }
             }
-            const c1 = color.saturationl(10).lightness(30)
-            const c2 = color.saturationl(10).lightness(40)
+            const c1 = color.saturationl(20).lightness(20)
+            const c2 = color.saturationl(30).lightness(30)
             return {
                 background: `linear-gradient(to bottom, ${c1.rgb().string()}, ${c2.rgb().string()})`
             }
