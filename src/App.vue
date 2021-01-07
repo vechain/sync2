@@ -37,11 +37,11 @@ export default Vue.extend({
                     // the incoming url looks like connex:sign?rid=xxx
                     const url = new URL(await listen())
                     if (url.pathname === 'sign' && !destroyed) {
-                        const rurl = url.searchParams.get('rurl')
+                        const src = url.searchParams.get('src')
                         if (this.$route.name === 'sign') {
-                            this.$router.replace({ name: 'sign', query: { rurl } })
+                            this.$router.replace({ name: 'sign', query: { src } })
                         } else {
-                            this.$router.push({ name: 'sign', query: { rurl } })
+                            this.$router.push({ name: 'sign', query: { src } })
                         }
                     }
                 } catch (err) {

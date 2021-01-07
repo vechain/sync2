@@ -79,7 +79,7 @@ import PageAction from 'src/components/PageAction.vue'
 export default Vue.extend({
     components: { Summary, DelayRender, PageToolbar, PageContent, PageAction },
     props: {
-        rurl: String // the url to fetch request object
+        src: String // the url to fetch request object
     },
     data: () => {
         return {
@@ -88,7 +88,7 @@ export default Vue.extend({
     },
     asyncComputed: {
         async request(): Promise<RelayedRequest | null> {
-            const urlObject = new URL(this.rurl)
+            const urlObject = new URL(this.src)
             if (!['http:', 'https:'].includes(urlObject.protocol)) {
                 throw new Error(this.$t('sign.msg_invalid_request').toString())
             }
@@ -102,7 +102,7 @@ export default Vue.extend({
                 for (let i = 0; i < 3; i++) {
                     try {
                         const resp = await this.$axios.get(
-                            `${this.rurl}?wait=1`,
+                            `${this.src}?wait=1`,
                             { transformResponse: data => data } // raw data is needed to verify hash
                         )
                         if (resp.data) {
@@ -165,7 +165,7 @@ export default Vue.extend({
         async postStatus(suffix: string, result: object) {
             for (let i = 0; i < 3; i++) {
                 try {
-                    await this.$axios.post(`${this.rurl}${suffix}`, result)
+                    await this.$axios.post(`${this.src}${suffix}`, result)
                     return
                 } catch (err) {
                     console.warn(err)
