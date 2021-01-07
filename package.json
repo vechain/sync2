@@ -51,7 +51,7 @@
     "qrious": "^4.0.2",
     "quasar": "^1.12.13",
     "sqlite": "^4.0.7",
-    "thor-devkit": "^2.0.0",
+    "thor-devkit": "^2.0.1",
     "timeago.js": "^4.0.2",
     "validator-ts": "^0.9.1",
     "vue-async-computed": "^3.8.2",
