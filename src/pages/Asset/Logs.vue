@@ -37,6 +37,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { vetTransfers, tokenTransfers } from './queries'
+import { TransferLogItem } from './models'
 import LogItem from './LogItem.vue'
 
 export default Vue.extend({
@@ -51,7 +52,7 @@ export default Vue.extend({
     data() {
         return {
             pageNum: 1,
-            logs: [] as M.TransferLog[],
+            logs: [] as TransferLogItem[],
             offset: 0,
             noMore: false,
             splitBlock: null as unknown as number
@@ -61,7 +62,7 @@ export default Vue.extend({
         recentList: {
             async get() {
                 let on = true
-                let list: M.TransferLog[] = []
+                let list: TransferLogItem[] = []
                 const from = (this.logs.length ? this.logs[0].meta.blockNumber : this.splitBlock) + 1
                 const to = 2 ** 32 - 1
                 while (on) {
@@ -83,7 +84,7 @@ export default Vue.extend({
         this.splitBlock = this.$svc.bc(this.gid).thor.status.head.number
     },
     watch: {
-        recentList(data: M.TransferLog[]) {
+        recentList(data: TransferLogItem[]) {
             if (data.length) {
                 this.logs = [...data, ...this.logs]
             }
@@ -92,7 +93,7 @@ export default Vue.extend({
     methods: {
         vetTransfers,
         tokenTransfers,
-        onNewLogs(data: M.TransferLog[]) {
+        onNewLogs(data: TransferLogItem[]) {
             if (data.length) {
                 this.logs = [...data, ...this.logs]
             }
