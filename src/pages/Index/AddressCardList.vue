@@ -30,7 +30,7 @@
                         :promise="entry.isIntersecting? $svc.bc(wallet.gid).thor.account(address).get() : null"
                         v-slot="{data}"
                     >
-                        <q-responsive :ratio="1/0.62">
+                        <q-responsive :ratio="3.370 / 2.125">
                             <AddressCard
                                 :style="cardStyles"
                                 :index="i"
