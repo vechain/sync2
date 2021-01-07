@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import { abis } from 'src/consts'
+import { BigNumber } from 'bignumber.js'
+import { abi, address } from 'thor-devkit'
 
 export default Vue.extend({
     props: {
@@ -68,7 +70,7 @@ export default Vue.extend({
                     return this.thor.filter('transfer', criteria)
                         .cache(this.addresses)
                         .range(range)
-                        .apply(0, 10)
+                        .apply(0, 5)
                 })
             },
             // no auto update, but react to headNumber change
@@ -86,7 +88,7 @@ export default Vue.extend({
                     return this.thor.filter('event', criteria)
                         .cache(this.addresses)
                         .range(range)
-                        .apply(0, 10)
+                        .apply(0, 5)
                 })
             },
             // no auto update, but react to headNumber change
@@ -99,11 +101,41 @@ export default Vue.extend({
             this.$asyncComputed.transfers.update()
         },
         transfers(newVal: Connex.Thor.Filter.Row<'transfer'>[] | null) {
-            newVal && newVal.forEach(() => {
+            const wallets = this.wallets
+            if (!wallets) {
+                return
+            }
+            newVal && newVal.forEach(t => {
+                let w = wallets.find(w => w.meta.addresses.includes(t.recipient))
+                if (w) {
+                    this.notify('in', t.sender, t.amount, 18, 'VET', w.id, w.meta.addresses.indexOf(t.recipient))
+                }
+                w = wallets.find(w => w.meta.addresses.includes(t.sender))
+                if (w) {
+                    this.notify('out', t.recipient, t.amount, 18, 'VET', w.id, w.meta.addresses.indexOf(t.sender))
+                }
             })
         },
         events(newVal: Connex.Thor.Filter.Row<'event'>[] | null) {
-            newVal && newVal.forEach(() => {
+            const wallets = this.wallets
+            const tokens = this.tokens
+            if (!wallets || !tokens) {
+                return
+            }
+            newVal && newVal.forEach(e => {
+                const token = tokens.find(t => t.address === e.address)
+                if (!token) {
+                    return
+                }
+                const { _to, _from, _value } = new abi.Event(abis.transferEvent).decode(e.data, e.topics)
+                let w = wallets.find(w => w.meta.addresses.includes(_to))
+                if (w) {
+                    this.notify('in', _from, _value, token.decimals, token.symbol, w.id, w.meta.addresses.indexOf(_to))
+                }
+                w = wallets.find(w => w.meta.addresses.includes(_from))
+                if (w) {
+                    this.notify('out', _to, _value, 18, 'VET', w.id, w.meta.addresses.indexOf(_from))
+                }
             })
         }
     },
@@ -126,6 +158,46 @@ export default Vue.extend({
                 localStorage.setItem(key, headNum.toString())
             }
             return result
+        },
+        notify(dir: 'in' | 'out', whom: string, amount: string, decimal: number, symbol: string, walletId: number, addressIndex: number) {
+            whom = this.formatAddress(whom)
+            amount = this.formatAmount(amount, decimal)
+            const message = dir === 'in'
+                ? `Received <strong>${amount}</strong> ${symbol} from ${whom}`
+                : `Sent <strong>${amount}</strong> ${symbol} to ${whom}`
+
+            this.$q.notify({
+                type: 'info',
+                message,
+                position: 'top-right',
+                html: true,
+                timeout: 0,
+                actions: [{
+                    label: 'View',
+                    color: 'white',
+                    handler: () => this.$router.push({
+                        name: 'asset',
+                        params: {
+                            walletId: walletId.toString(),
+                            addressIndex: addressIndex.toString(),
+                            symbol
+                        }
+                    })
+                }, {
+                    label: 'Dismiss',
+                    color: 'white'
+                }]
+
+            })
+        },
+        formatAmount(amount: string, decimal: number) {
+            return new BigNumber(amount)
+                .div(new BigNumber('1' + '0'.repeat(decimal)))
+                .toFormat(2)
+        },
+        formatAddress(addr: string) {
+            const c = address.toChecksumed(addr)
+            return c.slice(0, 6) + '⋯' + c.slice(-6)
         }
     },
     render(h) {
