@@ -8,7 +8,7 @@
         <div
             ref="views"
             v-for="(entry, i) in stack"
-            :key="entry.fullPath"
+            :key="entry.depth"
             class="absolute-full bg-white"
             :class="viewClasses(i)"
         >
