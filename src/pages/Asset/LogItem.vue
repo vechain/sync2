@@ -18,7 +18,7 @@
             <q-item-label
                 lines="1"
             >
-                <address-label :addr="(address === log.recipient ? log.sender : log.recipient)" />
+                <address-label :addr="addressText" />
             </q-item-label>
             <q-item-label
                 caption
@@ -43,13 +43,15 @@
 import Vue from 'vue'
 import AddressLabel from 'src/components/AddressLabel.vue'
 import AmountLabel from 'components/AmountLabel.vue'
+import { TransferLogItem } from './models'
+
 export default Vue.extend({
     components: {
         AddressLabel,
         AmountLabel
     },
     props: {
-        log: Object as () => M.TransferLog,
+        log: Object as () => TransferLogItem,
         address: String,
         dense: Boolean
     },
@@ -60,24 +62,21 @@ export default Vue.extend({
         amount(): string | number {
             return this.log.amount
         },
+        addressText(): string {
+            return this.log.direction === '+' ? this.log.sender : this.log.recipient
+        },
         logStyle(): { icon: string, color: string, mark: string } {
-            if (this.log.recipient === this.log.sender) {
-                return {
-                    icon: 'swap_horiz',
-                    color: 'grey-9',
-                    mark: ''
-                }
-            } else if (this.address === this.log.recipient) {
+            if (this.log.direction === '+') {
                 return {
                     icon: 'north_west',
                     color: 'green',
-                    mark: '+'
+                    mark: this.log.direction
                 }
             } else {
                 return {
                     icon: 'south_east',
                     color: 'red',
-                    mark: '-'
+                    mark: this.log.direction
                 }
             }
         }
