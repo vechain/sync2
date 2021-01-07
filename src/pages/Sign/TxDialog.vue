@@ -23,6 +23,7 @@
                     :index="i"
                     :clause="c"
                     :tokens="tokens"
+                    @click="onClickClause(i, c)"
                 />
             </page-content>
             <page-content size="xs">
@@ -89,6 +90,7 @@ import { randomBytes } from 'crypto'
 import { Vault } from 'src/core/vault'
 import ErrorTip from './ErrorTip.vue'
 import WarningListDialog from './WarningListDialog.vue'
+import InspectClauseDialog from './InspectClauseDialog.vue'
 
 export default Common.extend({
     components: { PageToolbar, PageContent, PageAction, SignerSelector, PrioritySelector, GasFeeBar, ClauseCard, ErrorTip },
@@ -299,6 +301,14 @@ export default Common.extend({
             this.ok({
                 txid: tx.id!,
                 signer
+            })
+        },
+        onClickClause(index: number, clause: Connex.Vendor.TxMessage[0]) {
+            this.$q.dialog({
+                parent: this,
+                component: InspectClauseDialog,
+                index,
+                clause
             })
         }
     }
