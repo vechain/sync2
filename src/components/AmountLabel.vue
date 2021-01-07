@@ -1,7 +1,10 @@
 <template>
     <span>
         <template v-if="formattedParts">
-            {{formattedParts[0]}}<span style="font-size:80%">{{`${decSep}${formattedParts[1]}`}}</span>
+            {{formattedParts[0]}}<span
+                style="font-size:80%"
+                v-if="formattedParts[1]"
+            >{{`${decSep}${formattedParts[1]}`}}</span>
         </template>
         <slot v-else>
             !!invalid amount!!
@@ -37,16 +40,21 @@ export default Vue.extend({
                     return null
                 }
 
-                // split into integer and decimal part
-                const [int, dec] = bn.toFormat(this.fixed, 3/* ROUND_FLOOR */).split(this.decSep)
                 if (this.long) {
                     // full precision
-                    const [, fullDec] = bn.toFormat().split(this.decSep)
-                    if (fullDec && fullDec.length > dec.length) {
-                        return [int, fullDec]
+                    const [int, dec] = bn.toFormat().split(this.decSep)
+                    if (dec) {
+                        if (dec.length >= this.fixed) {
+                            return [int, dec]
+                        }
+                        return [int, dec + '0'.repeat(this.fixed - dec.length)]
                     }
+                    if (this.fixed > 0) {
+                        return [int, '0'.repeat(this.fixed)]
+                    }
+                    return [int]
                 }
-                return [int, dec]
+                return bn.toFormat(this.fixed, 3/* ROUND_FLOOR */).split(this.decSep)
             } catch {
                 return null
             }
