@@ -18,6 +18,7 @@ export default {
         copied: 'Copied to clipboard',
         default: 'Default',
         close: 'Close',
+        continue: 'Continue',
 
         // network
         mainnet: 'Main Net',
@@ -32,6 +33,7 @@ export default {
         // notify
         wallet_updated: 'Wallet Updated',
         wallet_created: 'Wallet Created!',
+        wallet_deleted: ' Wallet Deleted',
 
         lang_auto: 'Automatic',
 
@@ -119,16 +121,15 @@ export default {
     asset: {
         label_transfer: 'Transfers',
         msg_not_found: 'No transfer found',
-        msg_no_more: '- The End - ',
-        action_transfer: 'Transfer',
-        msg_receive: 'Share your address to receive assets'
+        msg_no_more: '- The End - '
     },
     send: {
         title: 'Send',
         label_to: 'Recipient',
         label_amount: 'Amount',
-        label_balance: 'Balance:',
+        label_asset: 'Asset',
         label_recent_transfer: 'Recent Transfers',
+        msg_recipient_placeholder: 'Start with 0x',
         msg_error_invalid_balance: 'Invalid Amount',
         msg_invalid_address: 'Please enter a valid address',
         msg_checksum_failed: 'Checksum Failed',
@@ -190,6 +191,20 @@ export default {
         // sign success
         title_success: 'Success',
         msg_signed: 'You’ve signed the',
-        action_view_activities: 'View Activities'
+        action_view_activities: 'View Activities',
+
+        // sign tx/cert
+        label_select_priority: 'Select Priority',
+        label_estimate_fee: 'Est. Fee',
+        label_priority_regular: 'Regular',
+        label_priority_medium: 'Medium',
+        label_priority_high: 'High',
+        action_sign: 'Sign',
+        label_insufficient_energy: 'Insufficient Energy',
+        msg_insufficient_energy: 'Not enough VTHO to cover the cost of gas',
+        label_transaction_warning: 'Transaction may fail/revert',
+        msg_delegation_failed: 'Failed to request transaction fee delegation',
+        msg_address_not_owned: 'Requested address not owned',
+        msg_no_wallet: 'No wallet available'
     }
 }

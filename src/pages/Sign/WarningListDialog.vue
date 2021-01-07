@@ -25,13 +25,13 @@
                 <q-btn
                     flat
                     color="primary"
-                    label="Cancel"
+                    :label="$t('common.cancel')"
                     @click="hide()"
                 />
                 <q-btn
                     flat
                     color="primary"
-                    label="Continue"
+                    :label="$t('common.continue')"
                     @click="ok()"
                 />
             </q-card-actions>

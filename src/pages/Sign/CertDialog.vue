@@ -46,14 +46,14 @@
                     v-if="criticalError"
                     outline
                     color="primary"
-                    label="Close"
+                    :label="$t('common.close')"
                     @click="hide()"
                 />
                 <q-btn
                     v-else
                     unelevated
                     color="primary"
-                    label="Sign"
+                    :label="$t('sign.action_sign')"
                     @click="onClickSign()"
                 />
             </page-action>
@@ -79,7 +79,7 @@ export default Common.extend({
     computed: {
         criticalError(): Error | null {
             if (!this.wallet) {
-                return { name: 'Critical Error', message: this.signerGroups.length > 0 ? 'Required address not owned' : 'No wallet available' }
+                return { name: 'Critical Error', message: this.signerGroups.length > 0 ? this.$t('sign.msg_address_not_owned').toString() : this.$t('sign.msg_no_wallet').toString() }
             }
             return null
         }

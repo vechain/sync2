@@ -23,12 +23,12 @@
                     <q-item>
                         <q-item-section>
                             <q-item-label>
-                                Select Priority
+                                {{$t('sign.label_select_priority')}}
                             </q-item-label>
                         </q-item-section>
                         <q-item-section side>
                             <q-item-label caption>
-                                Est. fee
+                                {{$t('sign.label_estimate_fee')}}
                                 <q-avatar size="1rem">
                                     <img src="~assets/vtho.svg">
                                 </q-avatar>
@@ -88,9 +88,9 @@ export default Vue.extend({
     computed: {
         levels(): Level[] {
             return [
-                { icon: 'directions_walk', label: 'Regular', value: 0 },
-                { icon: 'directions_car', label: 'Medium', value: 127 },
-                { icon: 'flight', label: 'High', value: 255 }
+                { icon: 'directions_walk', label: this.$t('sign.label_priority_regular').toString(), value: 0 },
+                { icon: 'directions_car', label: this.$t('sign.label_priority_medium').toString(), value: 127 },
+                { icon: 'flight', label: this.$t('sign.label_priority_high').toString(), value: 255 }
             ]
         },
         level(): Level | null {
