@@ -1,7 +1,7 @@
 <template>
     <q-item>
         <q-item-section avatar>
-            <q-item-label caption>Est. Fee</q-item-label>
+            <q-item-label caption>{{$t('sign.label_estimate_fee')}}</q-item-label>
         </q-item-section>
         <q-item-section>
             <q-item-label>

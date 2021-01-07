@@ -52,7 +52,7 @@
                 />
                 <q-btn
                     unelevated
-                    :label="$t('common.next')"
+                    :label="$t('common.continue')"
                     color="primary"
                     @click="signRequest()"
                 />

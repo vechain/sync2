@@ -57,14 +57,14 @@
                     v-if="criticalError"
                     outline
                     color="primary"
-                    label="Close"
+                    :label="$t('common.close')"
                     @click="hide()"
                 />
                 <q-btn
                     v-else
                     unelevated
                     color="primary"
-                    label="Sign"
+                    :label="$t('sign.action_sign')"
                     @click="onClickSign()"
                     :loading="thor.status.head.number === 0"
                 />
@@ -184,7 +184,7 @@ export default Common.extend({
                 }
             }
             if (energyBalance.isLessThan(fee)) {
-                return { name: 'Insufficient energy', message: 'VTHO balance is not enough to pay for the gas' }
+                return { name: this.$t('sign.label_insufficient_energy').toString(), message: this.$t('sign.msg_insufficient_energy').toString() }
             }
             return null
         }
@@ -218,7 +218,7 @@ export default Common.extend({
             if (est.reverted) {
                 await this.$dialog({
                     component: WarningListDialog,
-                    title: 'Transaction may fail/revert',
+                    title: this.$t('sign.label_transaction_warning').toString(),
                     warnings: this.warnings
                 })
             }
@@ -258,7 +258,7 @@ export default Common.extend({
                     } catch (err) {
                         this.$q.notify({
                             type: 'negative',
-                            message: 'Failed to request tx fee delegation'
+                            message: this.$t('sign.msg_delegation_failed').toString()
                         })
                         // rethrow to end the process
                         throw err
