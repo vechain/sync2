@@ -24,7 +24,7 @@ import Vue from 'vue'
 import Wizard from 'pages/Wizard'
 import StackedRouterView from 'components/StackedRouterView.vue'
 import ActivityStatusUpdater from 'pages/ActivityStatusUpdater'
-import TransferNotifier from 'pages/TransferNotifier'
+import TransferNotifier from 'pages/TransferNotifier.vue'
 import { unique } from 'src/utils/array'
 
 export default Vue.extend({

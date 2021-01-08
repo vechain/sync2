@@ -1,7 +1,11 @@
+<template>
+    <fragment />
+</template>
+<script lang="ts">
 import Vue from 'vue'
 import { abis } from 'src/consts'
-import { BigNumber } from 'bignumber.js'
 import { abi, address } from 'thor-devkit'
+import { formatAmount } from 'src/utils/format'
 
 export default Vue.extend({
     props: {
@@ -134,7 +138,7 @@ export default Vue.extend({
                 }
                 w = wallets.find(w => w.meta.addresses.includes(_from))
                 if (w) {
-                    this.notify('out', _to, _value, 18, 'VET', w.id, w.meta.addresses.indexOf(_from))
+                    this.notify('out', _to, _value, token.decimals, token.symbol, w.id, w.meta.addresses.indexOf(_from))
                 }
             })
         }
@@ -160,18 +164,25 @@ export default Vue.extend({
             return result
         },
         notify(dir: 'in' | 'out', whom: string, amount: string, decimal: number, symbol: string, walletId: number, addressIndex: number) {
+            const amountParts = formatAmount(amount, { unit: decimal, fixed: 2, fullPrecision: true })
+            if (!amountParts) {
+                return
+            }
+            amount = `${amountParts.int}${amountParts.sep}${amountParts.dec}`
+
             whom = this.formatAddress(whom)
-            amount = this.formatAmount(amount, decimal)
             const message = dir === 'in'
-                ? `Received <strong>${amount}</strong> ${symbol} from ${whom}`
-                : `Sent <strong>${amount}</strong> ${symbol} to ${whom}`
+                ? `Received <strong>${amount}</strong> ${symbol} from <span class="transfer-notify_address inline-block monospace">${whom}</span>`
+                : `Sent <strong>${amount}</strong> ${symbol} to <span class="transfer-notify_address inline-block monospace">${whom}</span>`
 
             this.$q.notify({
-                type: 'info',
+                color: 'secondary',
                 message,
                 position: 'top-right',
                 html: true,
                 timeout: 0,
+                group: false,
+                classes: 'transfer-notify_w100',
                 actions: [{
                     label: 'View',
                     color: 'white',
@@ -190,11 +201,6 @@ export default Vue.extend({
 
             })
         },
-        formatAmount(amount: string, decimal: number) {
-            return new BigNumber(amount)
-                .div(new BigNumber('1' + '0'.repeat(decimal)))
-                .toFormat(2)
-        },
         formatAddress(addr: string) {
             const c = address.toChecksumed(addr)
             return c.slice(0, 6) + '⋯' + c.slice(-6)
@@ -204,3 +210,14 @@ export default Vue.extend({
         return h()
     }
 })
+</script>
+<style>
+.transfer-notify_w100 {
+    width: 100%;
+}
+.transfer-notify_address {
+    letter-spacing: 0.08em;
+    transform: scale(1, 0.8);
+    vertical-align: middle;
+}
+</style>
