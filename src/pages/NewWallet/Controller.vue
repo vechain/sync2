@@ -82,7 +82,8 @@ export default Vue.extend({
             name: '',
             gid: defaultGid,
             wordsCount: defaultWordsCount,
-            error: ''
+            error: '',
+            importState: { words: '' }
         }
     },
     computed: {
@@ -164,20 +165,14 @@ export default Vue.extend({
             let words: string[] | undefined
             if (type === 'import') {
                 // get user input words
-                const inputWords = await new Promise<string[] | null>(resolve => {
-                    this.$q.dialog({
+                try {
+                    words = await this.$dialog<string[]>({
                         component: MnemonicInputDialog,
-                        parent: this
-                    }).onOk((words: string[]) => {
-                        resolve(words)
-                    }).onDismiss(() => {
-                        resolve(null)
+                        state: this.importState
                     })
-                })
-                if (!inputWords) {
+                } catch {
                     return
                 }
-                words = inputWords
             }
             // authentication
             let password: string

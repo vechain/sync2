@@ -11,19 +11,18 @@
             <q-card-section>
                 <q-input
                     autofocus
-                    v-model.trim="words"
+                    v-model="state.words"
                     :label="$t('newWallet.label_mnemonic')"
                     type="textarea"
                     outlined
                     :error="!!error"
                     :error-message="error"
                     no-error-icon
-                    @keyup.enter.prevent="onSubmit()"
                 />
             </q-card-section>
             <q-card-actions>
                 <q-btn
-                    :disable="!words"
+                    :disable="!state.words"
                     class="w40 q-mx-auto"
                     unelevated
                     color="primary"
@@ -40,14 +39,16 @@ import { QDialog } from 'quasar'
 import { mnemonic } from 'thor-devkit'
 
 export default Vue.extend({
+    props: {
+        state: Object as () => { words: string }
+    },
     data: () => {
         return {
-            words: '',
             error: ''
         }
     },
     watch: {
-        words() {
+        'state.words'() {
             this.error = ''
         }
     },
@@ -61,12 +62,16 @@ export default Vue.extend({
             this.hide()
         },
         onSubmit() {
-            const wordsArray = this.words.split(' ').filter(w => !!w)
-            if (!mnemonic.validate(wordsArray)) {
+            const words = this.state.words
+                .trim()
+                .toLowerCase()
+                .split(/\s+/)
+
+            if (words.length < 12 || !mnemonic.validate(words)) {
                 this.error = this.$t('newWallet.msg_mnemonic_error').toString()
                 return
             }
-            this.ok(wordsArray)
+            this.ok(words)
         }
     }
 })
