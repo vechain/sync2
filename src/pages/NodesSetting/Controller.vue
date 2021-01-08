@@ -75,7 +75,8 @@ export default Vue.extend({
     components: { PageContent, PageToolbar },
     data() {
         return {
-            activeMap: null as Record<string, string> | null
+            activeMap: null as Record<string, string> | null,
+            addNodeState: { url: '' }
         }
     },
     asyncComputed: {
@@ -117,7 +118,8 @@ export default Vue.extend({
         async onAdd() {
             try {
                 const node = await this.$dialog<M.Node>({
-                    component: AddDialog
+                    component: AddDialog,
+                    state: this.addNodeState
                 })
 
                 if (this.nodes.find(n => n.genesis.id === node.genesis.id && n.url === node.url)) {
