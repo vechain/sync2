@@ -4,7 +4,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { abis } from 'src/consts'
-import { abi, address } from 'thor-devkit'
+import { abi } from 'thor-devkit'
 import { formatAmount } from 'src/utils/format'
 
 export default Vue.extend({
@@ -112,11 +112,11 @@ export default Vue.extend({
             newVal && newVal.forEach(t => {
                 let w = wallets.find(w => w.meta.addresses.includes(t.recipient))
                 if (w) {
-                    this.notify('in', t.sender, t.amount, 18, 'VET', w.id, w.meta.addresses.indexOf(t.recipient))
+                    this.notify('in', t.amount, 18, 'VET', w.id, w.meta.addresses.indexOf(t.recipient))
                 }
                 w = wallets.find(w => w.meta.addresses.includes(t.sender))
                 if (w) {
-                    this.notify('out', t.recipient, t.amount, 18, 'VET', w.id, w.meta.addresses.indexOf(t.sender))
+                    this.notify('out', t.amount, 18, 'VET', w.id, w.meta.addresses.indexOf(t.sender))
                 }
             })
         },
@@ -131,14 +131,14 @@ export default Vue.extend({
                 if (!token) {
                     return
                 }
-                const { _to, _from, _value } = new abi.Event(abis.transferEvent).decode(e.data, e.topics)
+                const { _to, _from, _value }: Record<string, string> = new abi.Event(abis.transferEvent).decode(e.data, e.topics)
                 let w = wallets.find(w => w.meta.addresses.includes(_to))
                 if (w) {
-                    this.notify('in', _from, _value, token.decimals, token.symbol, w.id, w.meta.addresses.indexOf(_to))
+                    this.notify('in', _value, token.decimals, token.symbol, w.id, w.meta.addresses.indexOf(_to))
                 }
                 w = wallets.find(w => w.meta.addresses.includes(_from))
                 if (w) {
-                    this.notify('out', _to, _value, token.decimals, token.symbol, w.id, w.meta.addresses.indexOf(_from))
+                    this.notify('out', _value, token.decimals, token.symbol, w.id, w.meta.addresses.indexOf(_from))
                 }
             })
         }
@@ -163,17 +163,13 @@ export default Vue.extend({
             }
             return result
         },
-        notify(dir: 'in' | 'out', whom: string, amount: string, decimal: number, symbol: string, walletId: number, addressIndex: number) {
-            const amountParts = formatAmount(amount, { unit: decimal, fixed: 2, fullPrecision: true })
-            if (!amountParts) {
-                return
-            }
-            amount = `${amountParts.int}${amountParts.sep}${amountParts.dec}`
+        notify(dir: 'in' | 'out', amount: string, decimals: number, symbol: string, walletId: number, addressIndex: number) {
+            const parts = formatAmount(amount, { unit: decimals, fixed: 2, fullPrecision: true })!
+            amount = `${parts.int}${parts.sep}${parts.dec}`
 
-            whom = this.formatAddress(whom)
             const message = dir === 'in'
-                ? `Received <strong>${amount}</strong> ${symbol} from <span class="transfer-notify_address inline-block monospace">${whom}</span>`
-                : `Sent <strong>${amount}</strong> ${symbol} to <span class="transfer-notify_address inline-block monospace">${whom}</span>`
+                ? `Received <strong>${amount}</strong> ${symbol}`
+                : `Sent <strong>${amount}</strong> ${symbol}`
 
             this.$q.notify({
                 color: 'secondary',
@@ -187,23 +183,18 @@ export default Vue.extend({
                     label: 'View',
                     color: 'white',
                     handler: () => this.$router.push({
-                        name: 'asset',
+                        name: 'address',
                         params: {
                             walletId: walletId.toString(),
-                            addressIndex: addressIndex.toString(),
-                            symbol
+                            addressIndex: addressIndex.toString()
                         }
-                    })
+                    }).catch(() => { })
                 }, {
                     label: 'Dismiss',
                     color: 'white'
                 }]
 
             })
-        },
-        formatAddress(addr: string) {
-            const c = address.toChecksumed(addr)
-            return c.slice(0, 6) + '⋯' + c.slice(-6)
         }
     },
     render(h) {
@@ -214,10 +205,5 @@ export default Vue.extend({
 <style>
 .transfer-notify_w100 {
     width: 100%;
-}
-.transfer-notify_address {
-    letter-spacing: 0.08em;
-    transform: scale(1, 0.8);
-    vertical-align: middle;
 }
 </style>
