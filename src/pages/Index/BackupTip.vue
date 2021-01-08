@@ -7,7 +7,7 @@
                         dark
                         dense
                         rounded
-                        class="bg-info"
+                        class="bg-warning"
                     >
                         {{$t('index.msg_backup')}}
                         <template v-slot:action>
