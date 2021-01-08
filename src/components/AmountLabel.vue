@@ -1,10 +1,10 @@
 <template>
     <span>
-        <template v-if="formattedParts">
-            {{formattedParts[0]}}<span
+        <template v-if="formatted">
+            {{formatted.int}}<span
                 style="font-size:80%"
-                v-if="formattedParts[1]"
-            >{{`${decSep}${formattedParts[1]}`}}</span>
+                v-if="formatted.dec"
+            >{{`${formatted.sep}${formatted.dec}`}}</span>
         </template>
         <slot v-else>
             !!invalid amount!!
@@ -14,6 +14,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { BigNumber } from 'bignumber.js'
+import { formatAmount } from 'src/utils/format'
 
 export default Vue.extend({
     props: {
@@ -26,38 +27,12 @@ export default Vue.extend({
         long: Boolean // full precision
     },
     computed: {
-        decSep() {
-            return BigNumber.config(undefined as unknown as {}).FORMAT!.decimalSeparator!
-        },
-        formattedParts(): string[] | null {
-            try {
-                // convert to human friendly unit
-                const bn = new BigNumber(this.value)
-                    .div('1' + '0'.repeat(this.decimals))
-
-                // NaN or Infinite is not valid
-                if (!bn.isFinite()) {
-                    return null
-                }
-
-                if (this.long) {
-                    // full precision
-                    const [int, dec] = bn.toFormat().split(this.decSep)
-                    if (dec) {
-                        if (dec.length >= this.fixed) {
-                            return [int, dec]
-                        }
-                        return [int, dec + '0'.repeat(this.fixed - dec.length)]
-                    }
-                    if (this.fixed > 0) {
-                        return [int, '0'.repeat(this.fixed)]
-                    }
-                    return [int]
-                }
-                return bn.toFormat(this.fixed, 3/* ROUND_FLOOR */).split(this.decSep)
-            } catch {
-                return null
-            }
+        formatted() {
+            return formatAmount(this.value, {
+                unit: this.decimals,
+                fixed: this.fixed,
+                fullPrecision: this.long
+            })
         }
     }
 })
