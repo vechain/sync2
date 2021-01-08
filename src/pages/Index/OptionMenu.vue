@@ -5,6 +5,7 @@
 import Vue from 'vue'
 import { Vault } from 'core/vault'
 import PopSheets, { Sheet } from 'src/components/PopSheets.vue'
+import PromptDialog, { PromptOptions } from './PromptDialog.vue'
 
 const MAX_ADDRESS = 10
 
@@ -58,55 +59,77 @@ export default Vue.extend({
                 await this.$svc.wallet.update(wallet.id, newMeta)
             })
         },
-        rename() {
+        async rename() {
             const wallet = this.wallet
             if (!wallet) {
                 return
             }
-            this.$q.dialog({
-                parent: this,
-                title: this.$t('index.action_rename').toString(),
-                message: this.$t('index.msg_rename').toString(),
-                prompt: {
-                    model: '',
-                    isValid: (val: string) => { return !!val && !!val.trim() },
-                    type: 'text'
-                },
-                cancel: true,
-                ok: {
-                    label: this.$t('common.confirm').toString()
-                }
-            }).onOk((data: string) => {
-                this.$svc.wallet.update(wallet.id, {
-                    ...wallet.meta,
-                    name: data
-                }).then(() => {
-                    this.$q.notify(this.$t('common.wallet_updated'))
-                })
-            })
-        },
-        delete() {
-            const wallet = this.wallet
-            if (!wallet) {
-                return
-            }
-            this.$q.dialog({
-                parent: this,
-                title: this.$t('common.delete').toString(),
-                message: this.$t('index.msg_delete').toString(),
-                ok: {
-                    label: this.$t('common.yes').toString(),
-                    color: 'negative'
-                },
-                cancel: {
-                    label: this.$t('common.no').toString(),
-                    flat: true
-                }
-            }).onOk(async () => {
+            try {
                 await this.$authenticate()
-                await this.$svc.wallet.delete(wallet.id)
-                this.$q.notify(this.$t('common.wallet_deleted').toString())
-            })
+                const opts: PromptOptions = {
+                    title: this.$t('index.action_rename').toString(),
+                    message: this.$t('index.msg_rename').toString(),
+                    modal: this.wallet.meta.name,
+                    action: {
+                        label: this.$t('common.confirm').toString(),
+                        color: 'primary'
+                    },
+                    validate: input => input.trim() ? '' : 'Input the name of wallet'
+                }
+                const newName = (await this.$dialog<string>({
+                    component: PromptDialog,
+                    opts
+                })).trim()
+                try {
+                    await this.$svc.wallet.update(wallet.id, {
+                        ...wallet.meta,
+                        name: newName
+                    })
+                    this.$q.notify(this.$t('common.wallet_updated'))
+                } catch (err) {
+                    console.warn('rename wallet:', err)
+                    this.$q.notify({
+                        type: 'negative',
+                        message: this.$t('common.something_wrong').toString()
+                    })
+                }
+            } catch { }
+        },
+        async delete() {
+            const wallet = this.wallet
+            if (!wallet) {
+                return
+            }
+
+            try {
+                await this.$authenticate()
+                const opts: PromptOptions = {
+                    title: this.$t('common.delete').toString(),
+                    message: this.$t('index.msg_delete').toString(),
+                    modal: '',
+                    action: {
+                        label: this.$t('common.delete').toString(),
+                        color: 'negative'
+                    },
+                    validate: input => input === wallet.meta.name ? '' : 'Wallet name is not matched'
+                }
+
+                await this.$dialog<string>({
+                    component: PromptDialog,
+                    opts
+                })
+
+                try {
+                    await this.$svc.wallet.delete(wallet.id)
+                    this.$q.notify(this.$t('common.wallet_deleted').toString())
+                } catch (err) {
+                    console.warn('delete wallet:', err)
+                    this.$q.notify({
+                        type: 'negative',
+                        message: this.$t('common.something_wrong').toString()
+                    })
+                }
+            } catch { }
         }
     }
 })
