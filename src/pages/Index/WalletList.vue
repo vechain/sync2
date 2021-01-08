@@ -7,7 +7,7 @@
                     flat
                     round
                     dense
-                    icon="add"
+                    icon="mdi-plus-circle-outline"
                     :to="{name:'new-wallet'}"
                 />
             </q-item-section>

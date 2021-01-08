@@ -15,7 +15,7 @@
                     caption
                     class="ellipsis"
                     lines="1"
-                >{{ entry.walletName || '--' }}</q-item-label>
+                >{{ entry.walletName || $t('common.unknown') }}</q-item-label>
             </q-item-section>
             <q-item-section side>
                 <q-item-label>

@@ -105,7 +105,7 @@ export default Vue.extend({
             }).onOk(async () => {
                 await this.$authenticate()
                 await this.$svc.wallet.delete(wallet.id)
-                this.$q.notify('Wallet delete')
+                this.$q.notify(this.$t('common.wallet_deleted').toString())
             })
         }
     }
