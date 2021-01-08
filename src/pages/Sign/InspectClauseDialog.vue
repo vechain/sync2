@@ -6,19 +6,19 @@
     >
         <q-card class="full-width">
             <q-toolbar>
-                <q-toolbar-title class="text-center">Clause · {{index+1}}</q-toolbar-title>
+                <q-toolbar-title class="text-center">{{$t('common.clause')}} · {{index+1}}</q-toolbar-title>
             </q-toolbar>
             <q-list padding>
                 <q-item>
                     <q-item-section>
-                        <q-item-label caption>Comment</q-item-label>
+                        <q-item-label caption>{{$t('common.comment')}}</q-item-label>
                         <q-item-label>{{clause.comment || 'N/A'}}</q-item-label>
                     </q-item-section>
                 </q-item>
                 <q-separator inset />
                 <q-item>
                     <q-item-section>
-                        <q-item-label caption>To</q-item-label>
+                        <q-item-label caption>{{$t('common.to')}}</q-item-label>
                         <q-item-label style="word-break:break-all">
                             <address-label
                                 :addr="clause.to"
@@ -29,7 +29,7 @@
                 </q-item>
                 <q-item>
                     <q-item-section>
-                        <q-item-label caption>Value</q-item-label>
+                        <q-item-label caption>{{$t('common.value')}} (wei)</q-item-label>
                         <q-item-label>
                             <amount-label
                                 :value="clause.value"
@@ -40,7 +40,7 @@
                 </q-item>
                 <q-item>
                     <q-item-section>
-                        <q-item-label caption>Data</q-item-label>
+                        <q-item-label caption>{{$t('common.data')}}</q-item-label>
                         <q-item-label>
                             <q-input
                                 v-if="clause.data && clause.data.length > 2"

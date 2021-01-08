@@ -27,13 +27,13 @@ export default {
 
         // error_message
         required_field: 'This field is required',
-        something_wrong: 'Something is Wrong',
+        something_wrong: 'Something is wrong',
         error_occurred: 'Error Occurred',
 
         // notify
         wallet_updated: 'Wallet Updated',
         wallet_created: 'Wallet Created!',
-        wallet_deleted: ' Wallet Deleted',
+        wallet_deleted: 'Wallet Deleted',
 
         lang_auto: 'Automatic',
 
@@ -43,7 +43,15 @@ export default {
         identification: 'Identification',
         agreement: 'Agreement',
         unknown: 'Unknown',
-        none: 'None'
+        none: 'None',
+
+        clause: 'Clause',
+        comment: 'Comment',
+        to: 'To',
+        value: 'Value',
+        data: 'Data',
+        sent: 'Sent',
+        received: 'Received'
 
     },
     index: {
