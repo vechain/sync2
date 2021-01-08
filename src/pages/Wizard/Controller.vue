@@ -106,16 +106,10 @@ export default Vue.extend({
         }
     },
     methods: {
-        onClickStart() {
-            this.$q.dialog({
-                component: NewPasswordDialog,
-                parent: this
-            }).onOk(async (password: string) => {
-                await this.init(password)
-                this.finished = true
-            })
-        },
-        async init(password: string) {
+        async onClickStart() {
+            // set new password
+            const password = await this.$dialog<string>({ component: NewPasswordDialog })
+
             this.slide = 'progress'
             await this.$nextTick()
 
@@ -148,6 +142,7 @@ export default Vue.extend({
             })(), 0.5)
 
             this.progressStr = ''
+            this.finished = true
         }
     }
 })

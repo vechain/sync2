@@ -24,18 +24,20 @@
                     @click="onClickChangePassword()"
                 />
                 <q-separator inset="item" />
-                <item
-                    icon="mdi-fingerprint"
-                    :title="$t('settings.action_bio_auth')"
-                >
-                    <q-toggle
-                        color="green"
-                        :value="bioPassSaved"
-                        :disable="bioPassSaved===null"
-                        @input="toggleBioPass"
-                    />
-                </item>
-                <q-separator inset="item" />
+                <template v-if="bioPass">
+                    <item
+                        icon="mdi-fingerprint"
+                        :title="$t('settings.action_bio_auth')"
+                    >
+                        <q-toggle
+                            color="green"
+                            :value="bioPassSaved"
+                            :disable="bioPassSaved===null"
+                            @input="toggleBioPass"
+                        />
+                    </item>
+                    <q-separator inset="item" />
+                </template>
                 <item
                     icon="mdi-plus-circle-multiple-outline"
                     :title="$t('settings.action_token_list')"
@@ -94,17 +96,9 @@ export default Vue.extend({
             }
         },
         async onClickChangePassword() {
-            let password!: string
             try {
-                password = await this.$authenticate()
-            } catch {
-                return
-            }
-
-            this.$q.dialog({
-                component: NewPasswordDialog,
-                parent: this
-            }).onOk(async (newPassword: string) => {
+                const password = await this.$authenticate()
+                const newPassword = await this.$dialog<string>({ component: NewPasswordDialog })
                 try {
                     await this.$loading(async () => {
                         const newShadow = await Vault.shadowPassword(newPassword)
@@ -121,7 +115,7 @@ export default Vue.extend({
                         message: `${this.$t('common.error_occurred')}: ${err.message}`
                     })
                 }
-            })
+            } catch { }
         }
     }
 })

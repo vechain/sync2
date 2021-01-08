@@ -17,7 +17,7 @@
             />
             <div class="text-right q-mx-md">
                 <q-btn
-                v-if="hasCamera"
+                    v-if="hasCamera"
                     rounded
                     dense
                     label="Scan QR Code"
@@ -182,13 +182,10 @@ export default Vue.extend({
 
             return (!this.errors.to && !this.errors.amount)
         },
-        onClickScan() {
-            this.$q.dialog({
-                parent: this,
-                component: QrScannerDialog
-            }).onOk((addr: string) => {
-                this.to = addr
-            })
+        async onClickScan() {
+            try {
+                this.to = await this.$dialog<string>({ component: QrScannerDialog })
+            } catch { }
         },
         onSend() {
             if (!this.validate()) {
