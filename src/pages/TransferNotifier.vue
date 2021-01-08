@@ -168,8 +168,8 @@ export default Vue.extend({
             amount = `${parts.int}${parts.sep}${parts.dec}`
 
             const message = dir === 'in'
-                ? `Received <strong>${amount}</strong> ${symbol}`
-                : `Sent <strong>${amount}</strong> ${symbol}`
+                ? `${this.$t('common.received')} <strong>${amount}</strong> ${symbol}`
+                : `${this.$t('common.sent')} <strong>${amount}</strong> ${symbol}`
 
             this.$q.notify({
                 color: 'secondary',

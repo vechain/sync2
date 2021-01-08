@@ -5,7 +5,7 @@
         autocomplete="off"
         v-bind="$attrs"
         dense
-        placeholder="0x"
+        :placeholder="$t('send.msg_recipient_placeholder')"
         clearable
         v-model.lazy="to"
     >
@@ -23,7 +23,7 @@
                 rounded
                 dense
                 flat
-                icon="add"
+                icon="mdi-plus-circle-outline"
             />
             <q-popup-proxy position="bottom" fit>
                 <q-card>

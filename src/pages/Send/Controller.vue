@@ -17,7 +17,7 @@
             />
             <div class="text-right q-mx-md">
                 <q-btn
-                    v-if="hasCamera"
+                v-if="hasCamera"
                     rounded
                     dense
                     label="Scan QR Code"
@@ -25,7 +25,7 @@
                     @click="onClickScan"
                 />
             </div>
-            <q-item-label header>Token</q-item-label>
+            <q-item-label header>{{$t('send.label_asset')}}</q-item-label>
             <TokenSelector
                 :tokens="tokenList"
                 v-model="symbol"
@@ -52,7 +52,7 @@
                 type="submit"
                 unelevated
                 class="col-6 col-sm-auto"
-                color="blue-9"
+                color="primary"
                 :label="$t('send.action_proceed')"
             />
         </page-action>

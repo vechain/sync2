@@ -20,7 +20,7 @@
                     <q-btn
                         flat
                         round
-                        :label="$t('asset.action_transfer')"
+                        icon="mdi-send"
                         :to="{name: 'send', query: { wid: walletId, i: addressIndex, defaultSymbol: symbol }}"
                     />
                 </head-item>
