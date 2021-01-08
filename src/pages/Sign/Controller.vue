@@ -5,8 +5,7 @@
             :gid="request && request.gid"
         />
         <page-content
-            class="col"
-            padding
+            class="col q-py-md"
             innerClass="fit column"
         >
             <!-- content -->

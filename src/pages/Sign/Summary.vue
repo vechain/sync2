@@ -29,19 +29,28 @@
             <p />
             <p class="text-subtitle1">{{$t('sign.msg_request_signature')}}</p>
         </div>
-
         <!-- descriptions -->
-        <div class="text-caption text-grey">{{$t('sign.label_request_from')}}</div>
-        <p>{{request.origin}}</p>
-        <div class="text-caption text-grey">{{$t('sign.label_request_type')}}</div>
-        <p>{{type}}</p>
-        <div class="text-caption text-grey">{{$t('sign.label_request_summary')}}</div>
-        <p>{{summary}}</p>
+        <q-list>
+            <q-item
+                v-for="(item, i) in items"
+                :key="i"
+            >
+                <q-item-section>
+                    <q-item-label caption>{{item.caption}}</q-item-label>
+                    <q-item-label>{{item.text}}</q-item-label>
+                </q-item-section>
+            </q-item>
+        </q-list>
     </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
 import { RelayedRequest } from './models'
+
+type Item = {
+    caption: string
+    text: string
+}
 
 export default Vue.extend({
     data: () => {
@@ -85,6 +94,18 @@ export default Vue.extend({
                 }
             }
             return this.$t('common.none').toString()
+        },
+        items(): Array<Item> {
+            return [{
+                caption: this.$t('sign.label_request_from').toString(),
+                text: this.request.origin || ''
+            }, {
+                caption: this.$t('sign.label_request_type').toString(),
+                text: this.type
+            }, {
+                caption: this.$t('sign.label_request_summary').toString(),
+                text: this.summary
+            }]
         }
     }
 })
