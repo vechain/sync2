@@ -18,11 +18,9 @@
             class="text-dark"
         >
             <amount-label
-                v-if="balance"
                 :value="balance"
                 :decimals="token.decimals"
-            />
-            <template v-else> -- </template>
+            > --.-- </amount-label>
         </q-item-section>
     </q-item>
 </template>

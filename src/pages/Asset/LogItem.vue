@@ -15,9 +15,7 @@
             </q-chip>
         </q-item-section>
         <q-item-section>
-            <q-item-label
-                lines="1"
-            >
+            <q-item-label lines="1">
                 <address-label :addr="addressText" />
             </q-item-label>
             <q-item-label
@@ -30,11 +28,11 @@
         </q-item-section>
         <q-item-section side>
             <span :class="'text-' + logStyle.color">
-                <template v-if="amount">
-                    {{logStyle.mark}}
-                    <amount-label :value="amount" :decimals="token.decimals" />
-                </template>
-                <span v-else> -- </span>
+                {{logStyle.mark}}
+                <amount-label
+                    :value="amount"
+                    :decimals="token.decimals"
+                > --.-- </amount-label>
             </span>
         </q-item-section>
     </q-item>

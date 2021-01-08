@@ -12,8 +12,7 @@
         <q-item-section v-if="!selectIcon"></q-item-section>
         <q-item-section :side="!selectIcon" class="text-dark">
             <q-item-label>
-                <amount-label v-if="balance" :value="balance" :decimals="token.decimals"/>
-                <template v-else> -- </template>
+                <amount-label :value="balance" :decimals="token.decimals" > --.-- </amount-label>
             </q-item-label>
             <q-item-label caption>{{token.symbol}}</q-item-label>
         </q-item-section>

@@ -8,7 +8,7 @@
         </q-item-section>
         <q-item-section>
             <q-item-label class="text-body1">
-                <amount-label :value="balance" :decimals="token.decimals" />
+                <amount-label :value="balance" :decimals="token.decimals" > --.-- </amount-label>
             </q-item-label>
             <q-item-label
                 class="text-body2 text-grey"
