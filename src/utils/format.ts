@@ -24,6 +24,11 @@ export function formatAmount(val: BigNumber.Value, opts?: FormatAmountOptions): 
             bn = bn.div('1' + '0'.repeat(opts.unit))
         }
 
+        // NaN or Infinite is not valid
+        if (!bn.isFinite()) {
+            return null
+        }
+
         const sep = decimalSeparator()
 
         if (opts.fullPrecision) {
