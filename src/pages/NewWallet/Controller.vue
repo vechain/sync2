@@ -1,6 +1,9 @@
 <template>
     <div class="fit column no-wrap">
-        <page-toolbar :title="$t('newWallet.title')">
+        <page-toolbar
+            :title="$t('newWallet.title')"
+            :gid="gid"
+        >
             <q-btn
                 flat
                 icon="more_horiz"
@@ -23,19 +26,7 @@
                 :error="!!error"
                 :error-message="error"
                 no-error-icon
-            >
-                <template v-slot:hint>
-                    <div class="text-right">
-                        <q-badge
-                            class="q-ml-sm"
-                            outline
-                            color="primary"
-                            v-for="(h,i) in optionHints"
-                            :key="i"
-                        >{{h}}</q-badge>
-                    </div>
-                </template>
-            </q-input>
+            />
             <div class="col column no-wrap flex-center">
                 <img
                     src="~assets/new-wallet.svg"
@@ -57,7 +48,12 @@
                 unelevated
                 :label="$t('newWallet.action_generate')"
                 @click="newWallet('generate')"
-            />
+            >
+                <pop-sheets
+                    :sheets="generationOptionSheets"
+                    context-menu
+                />
+            </q-btn>
         </page-action>
     </div>
 </template>
@@ -73,7 +69,6 @@ import PageContent from 'src/components/PageContent.vue'
 import PageAction from 'src/components/PageAction.vue'
 
 const defaultGid = genesises.main.id
-const defaultWordsCount = 12
 
 export default Vue.extend({
     components: { PageToolbar, PopSheets, PageContent, PageAction },
@@ -81,43 +76,30 @@ export default Vue.extend({
         return {
             name: '',
             gid: defaultGid,
-            wordsCount: defaultWordsCount,
             error: '',
             importState: { words: '' }
         }
     },
     computed: {
-        optionSheets() {
-            return [
-                ...this.gids
-                    .filter(gid => gid !== this.gid)
-                    .map<Sheet>(gid => {
-                        return {
-                            label: this.$netDisplayName(gid) + (gid === defaultGid ? ' (' + this.$t('common.default') + ')' : ''),
-                            action: () => { this.gid = gid }
-                        }
-                    }),
-                ...[12, 24]
-                    .filter(n => n !== this.wordsCount)
-                    .map<Sheet>(n => {
-                        return {
-                            label: `${n}` + ' ' + this.$t('newWallet.msg_mnemonic_words') + (n === defaultWordsCount ? ' (' + this.$t('common.default') + ')' : ''),
-                            action: () => {
-                                this.wordsCount = n
-                            }
-                        }
-                    })
-            ]
+        optionSheets(): Sheet[] {
+            return this.gids.map<Sheet>(gid => {
+                return {
+                    label: this.$netDisplayName(gid) + (gid === this.gid ? ' ✓' : ''),
+                    action: () => { this.gid = gid }
+                }
+            })
         },
-        optionHints() {
-            const hints = []
-            if (this.gid !== defaultGid) {
-                hints.push(this.$netDisplayName(this.gid))
-            }
-            if (this.wordsCount !== defaultWordsCount) {
-                hints.push(`${this.wordsCount}` + ' ' + this.$t('newWallet.msg_mnemonic_words'))
-            }
-            return hints
+        generationOptionSheets(): Sheet[] {
+            return [{
+                label: this.$t('newWallet.mnemonic_words_count').toString(),
+                header: true
+            },
+            ...[12, 24].map<Sheet>(n => {
+                return {
+                    label: `${n}`,
+                    action: () => this.newWallet('generate', n)
+                }
+            })]
         }
     },
     asyncComputed: {
@@ -151,7 +133,7 @@ export default Vue.extend({
         }
     },
     methods: {
-        async newWallet(type: 'generate' | 'import') {
+        async newWallet(type: 'generate' | 'import', wordsCount = 12) {
             // reset error
             this.error = ''
             await this.$nextTick()
@@ -185,7 +167,7 @@ export default Vue.extend({
                 // main process
                 await this.$loading(async () => {
                     const vault = await Vault.createHD(
-                        words || await Vault.generateMnemonic(this.wordsCount / 3 * 4),
+                        words || await Vault.generateMnemonic(wordsCount / 3 * 4),
                         password)
                     const node0 = await vault.derive(0)
                     await this.$svc.wallet.insert({

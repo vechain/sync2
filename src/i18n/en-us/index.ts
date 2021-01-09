@@ -75,7 +75,7 @@ export default {
         title_desc: 'Sync Wallet',
         msg_desc: 'Manage assets with ease, anytime, anywhere',
         msg_mnemonic_error: 'Invalid mnemonic words',
-        msg_mnemonic_words: 'words mnemonic',
+        mnemonic_words_count: 'Mnemonic words count',
         action_generate: 'Generate',
         action_import: 'Import',
         label_wallet_name: 'Wallet Name',

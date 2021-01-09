@@ -47,7 +47,7 @@ export default {
         title_desc: 'Sync 钱包',
         msg_desc: '随时随地轻松管理资产',
         msg_mnemonic_error: '助记词校验不通过',
-        msg_mnemonic_words: '个单词的助记词',
+        mnemonic_words_count: '助记词数量',
         action_generate: '生成',
         action_import: '导入',
         label_wallet_name: '钱包名称',
