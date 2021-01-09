@@ -31,7 +31,7 @@ export default Vue.extend({
             return ['', ...this.$i18n.availableLocales]
                 .map<Sheet>(lang => {
                     return {
-                        label: this.displayName(lang),
+                        label: this.displayName(lang) + (this.configLang === lang ? ' ✓' : ''),
                         action: () => { this.$svc.config.saveLanguage(lang) }
                     }
                 })
