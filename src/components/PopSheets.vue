@@ -3,6 +3,7 @@
         v-bind="$attrs"
         v-on="$listeners"
         position="bottom"
+        v-model="opened"
     >
         <q-card>
             <q-list
@@ -18,9 +19,8 @@
                         <slot :sheet="sheet">
                             <q-item
                                 clickable
-                                v-close-popup
                                 :key="i"
-                                @click="sheet.action()"
+                                @click="opened=false;sheet.action()"
                             >
                                 <q-item-section>
                                     <q-item-label
@@ -54,6 +54,9 @@ export default Vue.extend({
     props: {
         sheets: Array as () => Sheet[],
         separator: Boolean
+    },
+    data() {
+        return { opened: false }
     }
 })
 </script>
