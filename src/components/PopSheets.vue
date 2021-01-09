@@ -13,27 +13,27 @@
                 <template v-for="(sheet,i) in sheets">
                     <q-separator
                         v-if="sheet.separator"
+                        v-show="!sheet.hidden"
                         :key="`s-${i}`"
                     />
-                    <fragment :key="i">
-                        <slot :sheet="sheet">
-                            <q-item
-                                clickable
-                                :key="i"
-                                @click="opened=false;sheet.action()"
+                    <q-item
+                        v-show="!sheet.hidden"
+                        :key="i"
+                        :clickable="!!sheet.action"
+                        :dense="sheet.header && !sheet.action"
+                        @click="opened=false; sheet.action && sheet.action()"
+                    >
+                        <q-item-section>
+                            <q-item-label
+                                :lines="1"
+                                class="q-px-lg text-center"
+                                :class="sheet.classes"
+                                :header="sheet.header"
                             >
-                                <q-item-section>
-                                    <q-item-label
-                                        :lines="1"
-                                        class="q-px-lg text-center"
-                                        :class="sheet.classes"
-                                    >
-                                        {{sheet.label}}
-                                    </q-item-label>
-                                </q-item-section>
-                            </q-item>
-                        </slot>
-                    </fragment>
+                                {{sheet.label}}
+                            </q-item-label>
+                        </q-item-section>
+                    </q-item>
                 </template>
             </q-list>
         </q-card>
@@ -44,10 +44,12 @@ import Vue from 'vue'
 
 export type Sheet<T = never> = {
     label: string
-    action: () => void
+    action?: () => void
     classes?: string | string[]
     model?: T
     separator?: boolean
+    header?: boolean
+    hidden?: boolean
 }
 
 export default Vue.extend({
