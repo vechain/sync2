@@ -16,11 +16,10 @@ export default Vue.extend({
     },
     computed: {
         sheets(): Sheet[] {
-            const addressFull = this.wallet.meta.addresses.length >= MAX_ADDRESS
             return [{
                 label: this.$t('index.action_new_address').toString(),
-                action: () => { addressFull || this.newAccount() },
-                classes: addressFull ? 'text-grey' : ''
+                action: () => { this.newAccount() },
+                hidden: this.wallet.meta.addresses.length >= MAX_ADDRESS
             },
             {
                 label: this.$t('index.action_backup').toString(),
