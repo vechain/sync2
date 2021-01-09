@@ -65,7 +65,6 @@ export default Vue.extend({
                 return
             }
             try {
-                await this.$authenticate()
                 const opts: PromptOptions = {
                     title: this.$t('index.action_rename').toString(),
                     message: this.$t('index.msg_rename').toString(),
@@ -80,6 +79,7 @@ export default Vue.extend({
                     component: PromptDialog,
                     opts
                 })).trim()
+                await this.$authenticate()
                 try {
                     await this.$svc.wallet.update(wallet.id, {
                         ...wallet.meta,
@@ -102,7 +102,6 @@ export default Vue.extend({
             }
 
             try {
-                await this.$authenticate()
                 const opts: PromptOptions = {
                     title: this.$t('common.delete').toString(),
                     message: this.$t('index.msg_delete').toString(),
@@ -118,7 +117,7 @@ export default Vue.extend({
                     component: PromptDialog,
                     opts
                 })
-
+                await this.$authenticate()
                 try {
                     await this.$svc.wallet.delete(wallet.id)
                     this.$q.notify(this.$t('common.wallet_deleted').toString())
