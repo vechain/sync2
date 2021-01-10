@@ -12,7 +12,10 @@ export default Vue.extend({
     },
     asyncComputed: {
         data(): Promise<unknown> {
-            return this.promise || Promise.resolve(null)
+            if (!this.promise) {
+                return Promise.resolve(this.data)
+            }
+            return this.promise
         }
     },
     render(h): VNode {
