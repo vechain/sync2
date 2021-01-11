@@ -15,21 +15,36 @@
         >
             <AddressAvatar :addr="to" />
         </template>
-        <template
-            v-slot:append
-        >
+        <template v-slot:append>
+            <q-btn
+                v-show="hasCamera"
+                rounded
+                dense
+                class="q-mr-sm"
+                icon="mdi-qrcode-scan"
+                flat
+                @click="onClickScan"
+            />
             <q-btn
                 v-show="!to"
                 rounded
                 dense
                 flat
+                ref="addressSelect"
                 icon="mdi-plus-circle-outline"
             />
-            <q-popup-proxy position="bottom" fit>
+            <q-popup-proxy
+                position="bottom"
+                :target="$refs.addressSelect"
+                fit
+            >
                 <q-card>
                     <q-list padding>
                         <template v-for="(group, gi) in wallets">
-                            <q-item-label :key="gi" header>
+                            <q-item-label
+                                :key="gi"
+                                header
+                            >
                                 {{group.name}}
                             </q-item-label>
                             <template v-for="(addr, ai) in group.list">
@@ -54,6 +69,8 @@ import { address } from 'thor-devkit'
 import AddressAvatar from 'src/components/AddressAvatar.vue'
 import { AddressGroup } from './models'
 import AddressItem from './AddressItem.vue'
+import QrScannerDialog from 'pages/QrScannerDialog'
+import { QrScanner } from 'src/utils/qr-scanner'
 
 export default Vue.extend({
     components: {
@@ -88,6 +105,14 @@ export default Vue.extend({
         isAddress: address.test,
         onAddressChange(addr: string) {
             this.to = address.toChecksumed(addr)
+        },
+        hasCamera() {
+            return QrScanner.hasCamera()
+        },
+        async onClickScan() {
+            try {
+                this.to = await this.$dialog<string>({ component: QrScannerDialog })
+            } catch { }
         }
     }
 })
