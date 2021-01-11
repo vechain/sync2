@@ -17,6 +17,7 @@
                     <template v-for="(g, gi) in groups">
                         <q-item-label
                             header
+                            class="ellipsis"
                             :key="`g-${gi}`"
                         >{{g.name}}</q-item-label>
                         <signer-item
