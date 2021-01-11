@@ -73,16 +73,19 @@ const kdfCache: Record<string, Buffer> = {}
 
 function kdf(password: string, salt: Buffer, n: number) {
     const cacheKey = `${blake2b256(salt, password).toString('hex')}-${n}`
-    let cached = kdfCache[cacheKey]
-    if (!cached) {
-        cached = kdfCache[cacheKey] = pbkdf2Sync(password, salt, n, 32, 'sha256')
+    const key = kdfCache[cacheKey] || pbkdf2Sync(password, salt, n, 32, 'sha256')
+    return {
+        key: key,
+        cache: () => {
+            kdfCache[cacheKey] = key
+        }
     }
-    return cached
 }
 
 function kdfEncrypt(clearText: Buffer, password: string, salt: Buffer): KdfCipherGlob {
     const iterations = 5000
-    const key = kdf(password, salt, iterations)
+    const { key, cache } = kdf(password, salt, iterations)
+    cache()
     const glob = encrypt(clearText, key)
     return {
         ...glob,
@@ -95,8 +98,13 @@ function kdfEncrypt(clearText: Buffer, password: string, salt: Buffer): KdfCiphe
 
 function kdfDecrypt(glob: KdfCipherGlob, password: string): Buffer {
     const { salt, n } = glob.kdf
-    const key = kdf(password, Buffer.from(salt, 'hex'), n)
-    return decrypt(glob, key)
+    const { key, cache } = kdf(password, Buffer.from(salt, 'hex'), n)
+    try {
+        const clearText = decrypt(glob, key)
+        cache()
+        return clearText
+    } finally {
+    }
 }
 
 async function handleCommand(cmd: CommandName, arg: any) {
