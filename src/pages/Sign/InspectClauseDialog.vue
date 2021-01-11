@@ -9,13 +9,15 @@
                 <q-toolbar-title class="text-center">{{$t('common.clause')}} · {{index+1}}</q-toolbar-title>
             </q-toolbar>
             <q-list padding>
-                <q-item>
-                    <q-item-section>
-                        <q-item-label caption>{{$t('common.comment')}}</q-item-label>
-                        <q-item-label>{{clause.comment || 'N/A'}}</q-item-label>
-                    </q-item-section>
-                </q-item>
-                <q-separator inset />
+                <template v-if="clause.comment">
+                    <q-item>
+                        <q-item-section>
+                            <q-item-label caption>{{$t('common.comment')}}</q-item-label>
+                            <q-item-label>{{clause.comment}}</q-item-label>
+                        </q-item-section>
+                    </q-item>
+                    <q-separator inset />
+                </template>
                 <q-item>
                     <q-item-section>
                         <q-item-label caption>{{$t('common.to')}}</q-item-label>
