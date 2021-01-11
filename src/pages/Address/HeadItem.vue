@@ -42,7 +42,8 @@ export default Vue.extend({
         showQR() {
             this.$qrcode({
                 title: this.$t('address.action_receive').toString(),
-                content: Vue.filter('checksum')(this.address)
+                content: Vue.filter('checksum')(this.address),
+                contentClass: 'text-center'
             })
         }
     }

@@ -15,7 +15,7 @@
                 <q-responsive class="q-mx-auto" style="max-width: 240px" :ratio="1">
                     <q-r-code class="full-width">{{req.content}}</q-r-code>
                 </q-responsive>
-                <div style="word-break: break-all;">{{req.content}}</div>
+                <div :class="req.contentClass" style="word-break: break-all;">{{req.content}}</div>
             </q-card-section>
             <q-card-actions>
                 <q-btn
