@@ -88,6 +88,6 @@ declare namespace M {
         title?: string
         content: string
         message?: string
-        contentClass?: string
+        messageClass?: string
     }
 }
