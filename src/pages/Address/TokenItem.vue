@@ -1,28 +1,41 @@
 <template>
-    <q-item
-        v-on="$listeners"
+    <q-expansion-item
+        group="token"
         v-bind="$attrs"
-        clickable
+        expand-icon-class="hidden"
     >
-        <q-item-section avatar>
-            <token-avatar
-                size="md"
-                :spec="token"
-            />
-        </q-item-section>
-        <q-item-section>
-            <q-item-label>{{token.symbol}}</q-item-label>
-        </q-item-section>
-        <q-item-section
-            side
-            class="text-dark"
-        >
-            <amount-label
-                :value="balance"
-                :decimals="token.decimals"
-            > --.-- </amount-label>
-        </q-item-section>
-    </q-item>
+        <template v-slot:header>
+            <q-item-section avatar>
+                <token-avatar
+                    size="md"
+                    :spec="token"
+                />
+            </q-item-section>
+            <q-item-section>
+                <q-item-label>{{token.symbol}}</q-item-label>
+            </q-item-section>
+            <q-item-section
+                side
+                class="text-dark"
+            >
+                <amount-label
+                    :value="balance"
+                    :decimals="token.decimals"
+                > --.-- </amount-label>
+            </q-item-section>
+        </template>
+        <q-item>
+            <q-item-section/>
+            <q-item-section/>
+            <q-item-section
+                side
+            >
+                <div class="q-gutter-md">
+                    <slot />
+                </div>
+            </q-item-section>
+        </q-item>
+    </q-expansion-item>
 </template>
 <script lang="ts">
 import Vue from 'vue'

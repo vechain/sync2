@@ -39,14 +39,35 @@
                             v-if="index !== 0"
                             inset="item"
                         />
-                        <TokenItem
+                        <token-item
                             :token="token"
                             :balance="data"
-                            @click="onTokenClick(token.symbol)"
-                        />
+                        >
+                            <q-btn
+                                icon="my_location"
+                                dense
+                                flat
+                                :to="{
+                                    name: 'asset',
+                                    params: {
+                                        walletId: walletId,
+                                        addressIndex: addressIndex,
+                                        symbol: token.symbol
+                                    }
+                                }"
+                            />
+                            <q-btn
+                                icon="send"
+                                dense
+                                flat
+                                :to="{
+                                    name: 'send',
+                                    query: { wid: walletId, i: addressIndex, symbol: token.symbol }
+                                }"
+                            />
+                        </token-item>
                     </async-resolve>
                 </q-list>
-
             </page-content>
         </template>
     </div>
@@ -93,18 +114,6 @@ export default Vue.extend({
     computed: {
         address(): string {
             return this.wallet ? this.wallet.meta.addresses[parseInt(this.addressIndex)] : ''
-        }
-    },
-    methods: {
-        onTokenClick(sym: string) {
-            this.$router.push({
-                name: 'asset',
-                params: {
-                    walletId: this.walletId,
-                    addressIndex: this.addressIndex,
-                    symbol: sym
-                }
-            })
         }
     }
 })
