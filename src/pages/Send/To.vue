@@ -78,7 +78,7 @@ export default Vue.extend({
     },
     watch: {
         address(v: string) {
-            this.to = v ? address.toChecksumed(v) : ''
+            this.to = v
         },
         to(v: string) {
             this.$emit('change', v)
