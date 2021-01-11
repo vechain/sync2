@@ -84,7 +84,7 @@ function setupOpenUrlEmitter(): (url: string) => void {
     }
 
     app.on('ready', () => {
-        const basename = process.env.PROD ? 'data-store.db' : 'data-store-dev.db'
+        const basename = process.env.PROD ? 'sync2.db' : 'sync2-dev.db'
         app.openSQLite = () => SQLite.open({
             filename: Path.resolve(app.getPath('userData'), basename),
             driver: require('sqlite3').Database

@@ -48,7 +48,7 @@ export default Vue.extend({
                 if (addresses.length >= MAX_ADDRESS) {
                     return
                 }
-                const vault = await Vault.decode(wallet.vault)
+                const vault = Vault.decode(wallet.vault)
                 const newAddress = (await vault.derive(addresses.length)).address
                 const newMeta: M.Wallet.Meta = {
                     ...wallet.meta,

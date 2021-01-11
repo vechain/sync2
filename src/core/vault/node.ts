@@ -3,7 +3,7 @@ import type { Vault } from './index'
 import { hdDeriveXPub, hdDeriveMnemonic, decrypt } from 'core/worker'
 import { address } from 'thor-devkit'
 
-export async function deriveNode(salt: Buffer, entity: Entity, index: number): Promise<Vault.Node> {
+export async function deriveNode(entity: Entity, index: number): Promise<Vault.Node> {
     if (entity.type === 'static') {
         if (index !== 0) {
             // static type vault only support 0-index node
@@ -14,7 +14,7 @@ export async function deriveNode(salt: Buffer, entity: Entity, index: number): P
         return {
             get address() { return addr },
             get index() { return index },
-            unlock: password => decrypt(entity.cipherGlob!, password, salt)
+            unlock: key => decrypt(JSON.parse(entity.cipherGlob!), key)
         }
     } else {
         const node = await hdDeriveXPub(
@@ -25,12 +25,12 @@ export async function deriveNode(salt: Buffer, entity: Entity, index: number): P
         return {
             get address() { return node.address },
             get index() { return index },
-            unlock: async password => {
+            unlock: async key => {
                 if (!entity.cipherGlob) {
                     // no cipher glob, must be usb device
                     throw new Error('unsupported operation')
                 }
-                const buf = await decrypt(entity.cipherGlob, password, salt)
+                const buf = await decrypt(JSON.parse(entity.cipherGlob), key)
                 const words = buf.toString('utf8').split(' ')
                 return (await hdDeriveMnemonic(words, index)).privateKey
             }

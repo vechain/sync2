@@ -57,11 +57,11 @@
 import Vue from 'vue'
 import Item from './Item.vue'
 import NewPasswordDialog from 'pages/NewPasswordDialog'
-import { Vault } from 'core/vault'
 import { BioPass } from 'src/utils/bio-pass'
 import LanguageListPopup from 'pages/LanguageListPopup.vue'
 import PageToolbar from 'components/PageToolbar.vue'
 import PageContent from 'src/components/PageContent.vue'
+import { kdfEncrypt } from 'src/core/worker'
 
 export default Vue.extend({
     components: { Item, LanguageListPopup, PageToolbar, PageContent },
@@ -85,8 +85,8 @@ export default Vue.extend({
 
             try {
                 if (newVal) {
-                    const password = await this.$authenticate()
-                    await bioPass.save(password)
+                    const umk = await this.$authenticate()
+                    await bioPass.save(umk.toString('hex'))
                 } else {
                     await bioPass.delete()
                 }
@@ -97,16 +97,12 @@ export default Vue.extend({
         },
         async onClickChangePassword() {
             try {
-                const password = await this.$authenticate()
+                const umk = await this.$authenticate()
                 const newPassword = await this.$dialog<string>({ component: NewPasswordDialog })
                 try {
                     await this.$loading(async () => {
-                        const newShadow = await Vault.shadowPassword(newPassword)
-                        await this.$svc.wallet.reEncryptAll(v => {
-                            return Vault.decode(v)
-                                .then(v => v.clone(password, newPassword))
-                                .then(v => v.encode())
-                        }, () => this.$svc.config.savePasswordShadow(newShadow))
+                        const glob = await kdfEncrypt(umk, newPassword)
+                        await this.$svc.config.setUserMasterKeyGlob(JSON.stringify(glob))
                     })
                     this.$q.notify(this.$t('settings.msg_password_changed'))
                 } catch (err) {

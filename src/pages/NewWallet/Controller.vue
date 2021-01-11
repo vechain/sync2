@@ -157,34 +157,31 @@ export default Vue.extend({
                 }
             }
             // authentication
-            let password: string
             try {
-                password = await this.$authenticate()
-            } catch {
-                return
-            }
-            try {
-                // main process
-                await this.$loading(async () => {
-                    const vault = await Vault.createHD(
-                        words || await Vault.generateMnemonic(wordsCount / 3 * 4),
-                        password)
-                    const node0 = await vault.derive(0)
-                    await this.$svc.wallet.insert({
-                        gid: this.gid,
-                        vault: vault.encode(),
-                        meta: {
-                            name: this.name,
-                            addresses: [node0.address],
-                            backedUp: type === 'import'
-                        }
+                const umk = await this.$authenticate()
+                try {
+                    // main process
+                    await this.$loading(async () => {
+                        const vault = await Vault.createHD(
+                            words || await Vault.generateMnemonic(wordsCount / 3 * 4),
+                            umk)
+                        const node0 = await vault.derive(0)
+                        await this.$svc.wallet.insert({
+                            gid: this.gid,
+                            vault: vault.encode(),
+                            meta: {
+                                name: this.name,
+                                addresses: [node0.address],
+                                backedUp: type === 'import'
+                            }
+                        })
                     })
-                })
-                this.$backOrHome()
-                this.$q.notify(this.$t('common.wallet_created'))
-            } catch (err) {
-                this.error = err.message
-            }
+                    this.$backOrHome()
+                    this.$q.notify(this.$t('common.wallet_created'))
+                } catch (err) {
+                    this.error = err.message
+                }
+            } catch { }
         }
     }
 })

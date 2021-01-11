@@ -36,7 +36,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { QDialog } from 'quasar'
-import { mnemonic } from 'thor-devkit'
+import { hdDeriveMnemonic } from 'src/core/worker'
 
 export default Vue.extend({
     props: {
@@ -61,17 +61,20 @@ export default Vue.extend({
             this.$emit('ok', result)
             this.hide()
         },
-        onSubmit() {
-            const words = this.state.words
-                .trim()
-                .toLowerCase()
-                .split(/\s+/)
-
-            if (words.length < 12 || !mnemonic.validate(words)) {
+        async onSubmit() {
+            try {
+                const words = this.state.words
+                    .trim()
+                    .toLowerCase()
+                    .split(/\s+/)
+                if (words.length < 12) {
+                    throw new Error()
+                }
+                await hdDeriveMnemonic(words, -1)
+                this.ok(words)
+            } catch {
                 this.error = this.$t('newWallet.msg_mnemonic_error').toString()
-                return
             }
-            this.ok(words)
         }
     }
 })

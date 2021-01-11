@@ -81,10 +81,11 @@ import { genesises } from 'src/consts'
 import LanguageListPopup from 'pages/LanguageListPopup.vue'
 import PageContent from 'src/components/PageContent.vue'
 import PageAction from 'src/components/PageAction.vue'
+import { secureRNG, kdfEncrypt } from 'src/core/worker'
 
-async function randomDelay<T>(p: Promise<T>, aboutSeconds: number) {
+async function randomDelay<T>(p: () => Promise<T>, aboutSeconds: number) {
     const [r] = await Promise.all<T, unknown>([
-        p,
+        p(),
         new Promise(resolve => setTimeout(resolve, (aboutSeconds * (1 + Math.random()) * 1000)))
     ])
     return r
@@ -113,23 +114,29 @@ export default Vue.extend({
             this.slide = 'progress'
             await this.$nextTick()
 
+            // generate user master key
             this.progressStr = this.$t('wizard.msg_init_animation_s1').toString()
-            const words = await randomDelay(Vault.generateMnemonic(16), 1)
+            const umk = await randomDelay(() => secureRNG(32), 1)
 
+            // encrypt and save user master key
             this.progressStr = this.$t('wizard.msg_init_animation_s2').toString()
-            await randomDelay(Promise.resolve(), 0.5)
+            await randomDelay(async () => {
+                const glob = await kdfEncrypt(umk, password)
+                await this.$svc.config.setUserMasterKeyGlob(JSON.stringify(glob))
+            }, 1)
 
+            // generate mnemonics of the first wallet
             this.progressStr = this.$t('wizard.msg_init_animation_s3').toString()
-            await randomDelay(Promise.resolve(), 0.5)
+            const words = await randomDelay(() => Vault.generateMnemonic(16), 1)
 
+            // encrypt the wallet
             this.progressStr = this.$t('wizard.msg_init_animation_s4').toString()
-            const vault = await randomDelay(Vault.createHD(words, password), 0.5)
+            const vault = await randomDelay(() => Vault.createHD(words, umk), 0.3)
 
+            // save the wallet
             this.progressStr = this.$t('wizard.msg_init_animation_s5').toString()
-            await randomDelay((async () => {
+            await randomDelay(async () => {
                 const node0 = await vault.derive(0)
-                const shadow = await Vault.shadowPassword(password)
-                await this.$svc.config.savePasswordShadow(shadow)
                 await this.$svc.wallet.insert({
                     gid: genesises.main.id,
                     vault: vault.encode(),
@@ -139,7 +146,7 @@ export default Vue.extend({
                         backedUp: false
                     }
                 })
-            })(), 0.5)
+            }, 0.2)
 
             this.progressStr = ''
             this.finished = true

@@ -59,7 +59,7 @@
 import Vue from 'vue'
 import { QDialog } from 'quasar'
 import { BioPass } from 'src/utils/bio-pass'
-import { Vault } from 'core/vault'
+import { kdfDecrypt } from 'src/core/worker'
 
 export default Vue.extend({
     data: () => {
@@ -90,8 +90,8 @@ export default Vue.extend({
         show() { (this.$refs.dialog as QDialog).show() },
         // method is REQUIRED by $q.dialog
         hide() { (this.$refs.dialog as QDialog).hide() },
-        ok(result: string) {
-            this.$emit('ok', result)
+        ok(umk: Buffer) {
+            this.$emit('ok', umk)
             this.hide()
         },
         async onSubmit() {
@@ -103,11 +103,11 @@ export default Vue.extend({
             }
             this.error = ''
             try {
-                await this.$loading(async () => {
-                    const passwordShadow = await this.$svc.config.getPasswordShadow()
-                    await Vault.verifyPassword(passwordShadow, password)
+                const umk = await this.$loading(async () => {
+                    const glob = await this.$svc.config.getUserMasterKeyGlob()
+                    return await kdfDecrypt(JSON.parse(glob), password)
                 })
-                this.ok(password)
+                this.ok(umk)
             } catch {
                 inputEl.select()
                 this.error = this.$t('authenticationDialog.msg_password_error').toString()
@@ -120,8 +120,8 @@ export default Vue.extend({
             }
 
             try {
-                const password = await bioPass.recall('recall password')
-                this.ok(password)
+                const umkHex = await bioPass.recall('recall password')
+                this.ok(Buffer.from(umkHex, 'hex'))
             } catch (err) {
                 console.warn(err)
             }
