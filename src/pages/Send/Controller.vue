@@ -28,7 +28,7 @@
             <q-item-label header>{{$t('send.label_asset')}}</q-item-label>
             <TokenSelector
                 :tokens="tokenList"
-                v-model="symbol"
+                v-model="sym"
                 :address="address"
             />
             <q-item-label header>{{$t('send.label_amount')}}</q-item-label>
@@ -82,13 +82,13 @@ export default Vue.extend({
     props: {
         wid: String,
         i: String,
-        defaultSymbol: String
+        symbol: String
     },
     data() {
         return {
             to: null as null | string,
             amount: '',
-            symbol: this.defaultSymbol || 'VET',
+            sym: this.symbol || 'VET',
             errors: {
                 to: '',
                 amount: ''
@@ -155,7 +155,7 @@ export default Vue.extend({
             return list
         },
         currentToken(): M.TokenSpec | undefined {
-            return this.tokenList.find(item => item.symbol === this.symbol)
+            return this.tokenList.find(item => item.symbol === this.sym)
         },
         from(): string {
             return this.wallet ? this.wallet.meta.addresses[parseInt(this.i, 10)] : ''
@@ -193,7 +193,7 @@ export default Vue.extend({
             }
             let msgItem!: Connex.Vendor.TxMessage[0]
             let comment = ''
-            if (this.symbol === 'VET') {
+            if (this.sym === 'VET') {
                 comment = `${this.$t('common.transferring')} ${this.amount} VET`
                 msgItem = {
                     to: this.to,
@@ -202,7 +202,7 @@ export default Vue.extend({
                 }
             } else {
                 const func = new abi.Function(abis.transfer)
-                comment = `${this.$t('common.transferring')} ${this.amount} ${this.symbol}`
+                comment = `${this.$t('common.transferring')} ${this.amount} ${this.sym}`
                 const data = func.encode(this.to,
                     Vue.filter('toWei')(this.amount, this.currentToken!.decimals))
                 msgItem = {

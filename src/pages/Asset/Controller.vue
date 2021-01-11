@@ -21,7 +21,7 @@
                         flat
                         round
                         icon="mdi-send"
-                        :to="{name: 'send', query: { wid: walletId, i: addressIndex, defaultSymbol: symbol }}"
+                        :to="{name: 'send', query: { wid: walletId, i: addressIndex, symbol: symbol }}"
                     />
                 </head-item>
             </async-resolve>
