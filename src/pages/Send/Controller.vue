@@ -15,16 +15,6 @@
                 :error="!!errors.to"
                 @change="errors.to = ''"
             />
-            <div class="text-right q-mx-md">
-                <q-btn
-                    v-if="hasCamera"
-                    rounded
-                    dense
-                    label="Scan QR Code"
-                    flat
-                    @click="onClickScan"
-                />
-            </div>
             <q-item-label header>{{$t('send.label_asset')}}</q-item-label>
             <TokenSelector
                 :tokens="tokenList"
@@ -65,8 +55,6 @@ import { abis } from 'src/consts'
 import To from './To.vue'
 import TokenSelector from './TokenSelector.vue'
 import { AddressGroup } from './models'
-import QrScannerDialog from 'pages/QrScannerDialog'
-import { QrScanner } from 'src/utils/qr-scanner'
 import PageToolbar from 'components/PageToolbar.vue'
 import PageContent from 'components/PageContent.vue'
 import PageAction from 'components/PageAction.vue'
@@ -116,9 +104,6 @@ export default Vue.extend({
                 return await this.$svc.wallet.getByGid(this.wallet.gid)
             },
             default: []
-        },
-        hasCamera() {
-            return QrScanner.hasCamera()
         },
         tokenList: {
             async get(): Promise<M.TokenSpec[]> {
@@ -181,11 +166,6 @@ export default Vue.extend({
             this.errors.amount = this.balanceCheck(this.amount) ? '' : this.$t('send.msg_error_invalid_balance').toString()
 
             return (!this.errors.to && !this.errors.amount)
-        },
-        async onClickScan() {
-            try {
-                this.to = await this.$dialog<string>({ component: QrScannerDialog })
-            } catch { }
         },
         onSend() {
             if (!this.validate()) {
