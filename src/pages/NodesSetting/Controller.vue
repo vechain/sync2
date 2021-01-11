@@ -125,19 +125,12 @@ export default Vue.extend({
                 if (this.nodes.find(n => n.genesis.id === node.genesis.id && n.url === node.url)) {
                     this.$q.notify({
                         type: 'warning',
-                        message: this.$t('nodes.msg_node_existed').toString(),
-                        timeout: 5000,
-                        actions: [{ icon: 'close', color: 'white' }]
+                        message: this.$t('nodes.msg_node_existed').toString()
                     })
                     return
                 }
                 await this.$svc.config.node.save([...this.nodes, node])
-                this.$q.notify({
-                    type: 'positive',
-                    message: this.$t('nodes.msg_node_added').toString(),
-                    timeout: 5000,
-                    actions: [{ icon: 'close', color: 'white' }]
-                })
+                this.$q.notify(this.$t('nodes.msg_node_added').toString())
             } catch { }
         },
         async onDelete(val: M.Node) {
@@ -148,21 +141,17 @@ export default Vue.extend({
                     message: this.$t('nodes.msg_delete').toString(),
                     ok: {
                         label: this.$t('common.yes'),
-                        color: 'negative'
+                        color: 'negative',
+                        outline: true
                     },
                     cancel: {
                         label: this.$t('common.cancel'),
-                        flat: true
+                        unelevated: true
                     }
                 })
                 const nodes = this.nodes.filter(n => !(n.genesis.id === val.genesis.id && n.url === val.url))
                 await this.$svc.config.node.save(nodes)
-                this.$q.notify({
-                    type: 'info',
-                    message: this.$t('nodes.msg_node_deleted').toString(),
-                    timeout: 5000,
-                    actions: [{ icon: 'close', color: 'white' }]
-                })
+                this.$q.notify(this.$t('nodes.msg_node_deleted').toString())
             } catch { }
         }
     },

@@ -8,7 +8,10 @@
             <q-toolbar>
                 <q-toolbar-title class="text-center">{{$t('nodes.title_add_dialog')}}</q-toolbar-title>
             </q-toolbar>
-            <q-form @submit="onSubmit">
+            <q-form
+                @submit="onSubmit"
+                spellcheck="false"
+            >
                 <q-card-section>
                     <q-item-label header>URL</q-item-label>
                     <q-input
@@ -54,14 +57,7 @@ export default Vue.extend({
         }
     },
     watch: {
-        'state.url'() { this.error = '' },
-        error(newVal: string) {
-            if (newVal) {
-                this.$nextTick(() => {
-                    (this.$refs.input as Vue).$el.getElementsByTagName('input')[0].focus()
-                })
-            }
-        }
+        'state.url'() { this.error = '' }
     },
     methods: {
         // method is REQUIRED by $q.dialog
@@ -73,30 +69,27 @@ export default Vue.extend({
             this.hide()
         },
         async onSubmit() {
-            const url = this.state.url.trim()
-            if (url.length === 0) {
-                this.error = 'Input the URL of node'
-                return
-            }
             this.error = ''
+            await this.$nextTick()
+
             try {
+                const url = this.state.url.trim()
+                if (url.length === 0) {
+                    throw new Error('Input the URL of node')
+                }
+
                 const urlObj = new URL(url)
                 if (!['http:', 'https:'].includes(urlObj.protocol)) {
-                    this.error = 'Invalid URL: unsupported protocol'
-                    return
+                    throw new Error('Invalid URL: unsupported protocol')
                 }
-            } catch (err) {
-                this.error = err.message
-                return
-            }
 
-            this.loading = true
-            try {
+                this.loading = true
                 const resp = await this.$axios.get('blocks/0', {
                     baseURL: url
                 })
                 this.ok({ genesis: resp.data, url })
             } catch (err) {
+                (this.$refs.input as Vue).$el.getElementsByTagName('input')[0].focus()
                 this.error = err.message
             } finally {
                 this.loading = false

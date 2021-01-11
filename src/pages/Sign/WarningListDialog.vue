@@ -2,6 +2,7 @@
     <q-dialog
         ref="dialog"
         @hide="$emit('hide')"
+        :position="noAction? undefined:'bottom'"
     >
         <q-card class="full-width">
             <q-toolbar v-if="title">
@@ -23,14 +24,9 @@
                 align="right"
             >
                 <q-btn
-                    flat
-                    color="primary"
-                    :label="$t('common.cancel')"
-                    @click="hide()"
-                />
-                <q-btn
-                    flat
-                    color="primary"
+                    class="w40 q-mx-auto"
+                    unelevated
+                    color="warning"
                     :label="$t('common.continue')"
                     @click="ok()"
                 />

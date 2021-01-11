@@ -78,7 +78,7 @@ export default Vue.extend({
                     component: PromptDialog,
                     opts
                 })).trim()
-                await this.$authenticate()
+
                 try {
                     await this.$svc.wallet.update(wallet.id, {
                         ...wallet.meta,

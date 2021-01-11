@@ -10,6 +10,7 @@
             </q-toolbar>
             <q-card-section>
                 <q-input
+                    ref="input"
                     autofocus
                     v-model="state.words"
                     :label="$t('newWallet.label_mnemonic')"
@@ -22,7 +23,6 @@
             </q-card-section>
             <q-card-actions>
                 <q-btn
-                    :disable="!state.words"
                     class="w40 q-mx-auto"
                     unelevated
                     color="primary"
@@ -62,17 +62,25 @@ export default Vue.extend({
             this.hide()
         },
         async onSubmit() {
+            const inputEl = (this.$refs.input as Vue).$el.getElementsByTagName('textarea')[0]
+            this.error = ''
+            const words = this.state.words
+                .trim()
+                .toLowerCase()
+
+            if (words.length < 1) {
+                inputEl.focus()
+                return
+            }
             try {
-                const words = this.state.words
-                    .trim()
-                    .toLowerCase()
-                    .split(/\s+/)
-                if (words.length < 12) {
+                const array = words.split(/\s+/)
+                if (array.length < 12) {
                     throw new Error()
                 }
-                await hdDeriveMnemonic(words, -1)
-                this.ok(words)
+                await hdDeriveMnemonic(array, -1)
+                this.ok(array)
             } catch {
+                inputEl.focus()
                 this.error = this.$t('newWallet.msg_mnemonic_error').toString()
             }
         }

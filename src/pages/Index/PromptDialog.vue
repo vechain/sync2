@@ -63,14 +63,7 @@ export default Vue.extend({
         }
     },
     watch: {
-        input() { this.error = '' },
-        error(newVal: string) {
-            if (newVal) {
-                this.$nextTick(() => {
-                    (this.$refs.input as Vue).$el.getElementsByTagName('input')[0].focus()
-                })
-            }
-        }
+        input() { this.error = '' }
     },
     methods: {
         // method is REQUIRED by $q.dialog
@@ -81,9 +74,13 @@ export default Vue.extend({
             this.$emit('ok', input)
             this.hide()
         },
-        onSubmit() {
+        async onSubmit() {
+            this.error = ''
+            await this.$nextTick()
+
             const error = this.opts.validate(this.input)
             if (error) {
+                (this.$refs.input as Vue).$el.getElementsByTagName('input')[0].focus()
                 this.error = error
                 return
             }
