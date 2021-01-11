@@ -1,7 +1,7 @@
 <template>
     <div
         class="fit column no-wrap"
-        style="width: 300px !important"
+        style="width: 300px !important;max-width:80vw"
     >
         <!-- drawer content header -->
         <q-toolbar>
@@ -25,7 +25,9 @@
                         name="settings"
                     />
                 </q-item-section>
-                <q-item-section>{{$t('index.action_settings')}}</q-item-section>
+                <q-item-section>
+                    <q-item-label>{{$t('index.action_settings')}}</q-item-label>
+                </q-item-section>
             </q-item>
             <q-item :to="{name: 'activities'}">
                 <q-item-section avatar>
@@ -34,7 +36,18 @@
                         name="history"
                     />
                 </q-item-section>
-                <q-item-section>{{$t('index.action_activities')}}</q-item-section>
+                <q-item-section>
+                    <q-item-label>{{$t('index.action_activities')}}</q-item-label>
+                </q-item-section>
+                <q-item-section
+                    v-if="ongoingActivitiesCount>0"
+                    side
+                >
+                    <q-badge
+                        color="red"
+                        class="q-mr-md"
+                    >{{ongoingActivitiesCount}}</q-badge>
+                </q-item-section>
             </q-item>
         </q-list>
         <span class="full-width text-center text-grey text-caption">{{version}}</span>
@@ -47,6 +60,11 @@ export default Vue.extend({
     computed: {
         version() {
             return `v${process.env.APP_VERSION} (${process.env.APP_BUILD})`
+        }
+    },
+    asyncComputed: {
+        ongoingActivitiesCount() {
+            return this.$svc.activity.uncompleted().then(r => r.length)
         }
     }
 })
