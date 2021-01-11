@@ -42,7 +42,7 @@ export default Vue.extend({
         }
     },
     async mounted() {
-        this.initialized = await this.$svc.config.getPasswordShadow().then(r => !!r)
+        this.initialized = await this.$svc.config.getUserMasterKeyGlob().then(r => !!r)
         this.mounted = true
     }
 })

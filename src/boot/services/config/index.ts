@@ -23,7 +23,7 @@ export function build(storage: Storage) {
         e => e,
         m => m
     )
-    type Key = 'nodes' | 'activeNodeMap' | 'passwordShadow' |
+    type Key = 'nodes' | 'activeNodeMap' | 'userMasterKeyGlob' |
         'tokenRegistry' | 'activeTokenSymbols' | 'recentRecipients' | 'language'
 
     const getSubKey = async (key: Key, subKey: string) => {
@@ -102,11 +102,11 @@ export function build(storage: Storage) {
     return {
         get node() { return node },
         get token() { return token },
-        getPasswordShadow() {
-            return get('passwordShadow')
+        getUserMasterKeyGlob() {
+            return get('userMasterKeyGlob')
         },
-        savePasswordShadow(val: string) {
-            return set('passwordShadow', val)
+        setUserMasterKeyGlob(val: string) {
+            return set('userMasterKeyGlob', val)
         },
         getRecentRecipients(gid: string) {
             return getSubKey('recentRecipients', gid).then(r => JSON.parse(r || '[]') as string[])

@@ -34,7 +34,7 @@ export default Vue.extend({
             // eslint-disable-next-line no-unmodified-loop-condition
             while (!destroyed) {
                 try {
-                    // the incoming url looks like connex:sign?rid=xxx
+                    // the incoming url looks like connex:sign?src=xxx
                     const url = new URL(await listen())
                     if (url.pathname === 'sign' && !destroyed) {
                         const src = url.searchParams.get('src')

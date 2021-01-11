@@ -115,7 +115,7 @@ export default Common.extend({
 
             // sign the cert
             const signature = await this.$loading(async () => {
-                const vault = await Vault.decode(wallet.vault)
+                const vault = Vault.decode(wallet.vault)
                 const node = await vault.derive(wallet.meta.addresses.indexOf(cert.signer))
                 const sk = await node.unlock(password)
                 const unsigned = Certificate.encode(cert)

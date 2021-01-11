@@ -269,7 +269,7 @@ export default Common.extend({
                     tx = new Transaction(txBody)
                 }
 
-                const vault = await Vault.decode(wallet.vault)
+                const vault = Vault.decode(wallet.vault)
                 const node = await vault.derive(wallet.meta.addresses.indexOf(signer))
                 const sk = await node.unlock(password)
 

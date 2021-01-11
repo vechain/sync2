@@ -12,56 +12,30 @@ import {
     createDecipheriv,
     createHash
 } from 'crypto'
+import type { CommandName, KdfCipherGlob, CipherGlob } from './index'
 
-/** collect CPU based extra entropy */
-function collectEntropy() {
-    return new Promise<Int16Array>(resolve => {
+/**
+ * securely generate random bytes
+ * @param size in bytes (at most 32)
+ */
+async function secureRNG(size: number) {
+    if (size > 32) {
+        throw new Error('secureRGN size should be <= 32')
+    }
+    // collect CPU based extra entropy
+    const entropy = await new Promise<Int16Array>(resolve => {
         new m.Generator().generate(512, (entropy: number[]) => {
             resolve(Int16Array.from(entropy))
         })
     })
+    const mac = createHmac('sha256', randomBytes(32))
+    return mac.update(entropy).digest().slice(0, size)
 }
 
-const kdfCache: { [k: string]: { v: Buffer, ts: number } } = {}
-
-function kdf(password: string, salt: Buffer, n: number) {
-    const cacheKey = `${blake2b256(salt, password).toString('hex')}-${n}`
-    const now = Date.now()
-
-    let cached = kdfCache[cacheKey]
-    if (!cached) {
-        cached = {
-            v: pbkdf2Sync(password, Buffer.from(salt), n, 32, 'sha256'),
-            ts: now
-        }
-        kdfCache[cacheKey] = cached
-    }
-
-    // purge timeout cache entry
-    Object
-        .entries(kdfCache)
-        .filter(([, v]) => Date.now() > v.ts + 60 * 1000)
-        .forEach(([k]) => delete (kdfCache[k]))
-
-    return cached.v
-}
-
-type CipherGlob = {
-    cipherText: string
-    iv: string
-    kdf: {
-        n: number
-    },
-    mac: string
-}
-
-function encrypt(clearText: Buffer, password: string, salt: Buffer) {
-    const iterations = 1000
-    const key = kdf(password, salt, iterations)
+function encrypt(clearText: Buffer, key: Buffer): CipherGlob {
     const encryptKey = key.slice(0, 16)
     const macPrefix = key.slice(16)
     const iv = randomBytes(16)
-
     const enc = createCipheriv('aes-128-cbc', encryptKey, iv)
     const cipherText = Buffer.concat([enc.update(clearText), enc.final()])
     const mac = createHash('sha256')
@@ -70,20 +44,14 @@ function encrypt(clearText: Buffer, password: string, salt: Buffer) {
         .digest()
         .toString('hex')
 
-    const glob: CipherGlob = {
+    return {
         cipherText: cipherText.toString('hex'),
         iv: iv.toString('hex'),
-        kdf: {
-            n: iterations
-        },
-        mac
+        mac: mac
     }
-    return JSON.stringify(glob)
 }
 
-function decrypt(jsonGlob: string, password: string, salt: Buffer) {
-    const glob = JSON.parse(jsonGlob)
-    const key = kdf(password, salt, glob.kdf.n)
+function decrypt(glob: CipherGlob, key: Buffer) {
     const encryptKey = key.slice(0, 16)
     const macPrefix = key.slice(16)
 
@@ -95,43 +63,85 @@ function decrypt(jsonGlob: string, password: string, salt: Buffer) {
         .digest().toString('hex')
 
     if (mac !== glob.mac) {
-        throw new Error('wrong password')
+        throw new Error('decrypt failed (MAC mismatch)')
     }
     const dec = createDecipheriv('aes-128-cbc', encryptKey, Buffer.from(glob.iv, 'hex'))
     return Buffer.concat([dec.update(cipherText), dec.final()])
 }
 
-async function handleCommand(cmd: string, arg: any): Promise<any> {
-    if (cmd === 'generateSalt') {
-        const entropy = await collectEntropy()
-        const mac = createHmac('sha256', randomBytes(32))
-        return mac.update(entropy).digest()
-    } else if (cmd === 'encrypt') {
-        const [clearText, password, salt] = arg
-        return encrypt(Buffer.from(clearText), password, Buffer.from(salt))
-    } else if (cmd === 'decrypt') {
-        const [jsonGlob, password, salt] = arg
-        return decrypt(jsonGlob, password, Buffer.from(salt))
-    } else if (cmd === 'hdGenerateMnemonic') {
-        const [len] = arg
-        const entropy = await collectEntropy()
-        return mnemonic.generate(() => {
-            const mac = createHmac('sha256', randomBytes(32))
-            return mac.update(entropy).digest().slice(0, len)
-        })
-    } else if (cmd === 'hdDeriveMnemonic') {
-        const [words, index] = arg
-        const root = HDNode.fromMnemonic(words)
-        const node = index < 0 ? root : root.derive(index)
-        return [node.publicKey, node.chainCode, node.address, node.privateKey]
-    } else if (cmd === 'hdDeriveXPub') {
-        const [pub, chainCode, index] = arg
-        const node = HDNode
-            .fromPublicKey(Buffer.from(pub), Buffer.from(chainCode))
-            .derive(index)
-        return [node.publicKey, node.chainCode, node.address]
+const kdfCache: Record<string, Buffer> = {}
+
+function kdf(password: string, salt: Buffer, n: number) {
+    const cacheKey = `${blake2b256(salt, password).toString('hex')}-${n}`
+    let cached = kdfCache[cacheKey]
+    if (!cached) {
+        cached = kdfCache[cacheKey] = pbkdf2Sync(password, salt, n, 32, 'sha256')
     }
-    throw new Error(`worker: unexpected command '${cmd}'`)
+    return cached
+}
+
+function kdfEncrypt(clearText: Buffer, password: string, salt: Buffer): KdfCipherGlob {
+    const iterations = 5000
+    const key = kdf(password, salt, iterations)
+    const glob = encrypt(clearText, key)
+    return {
+        ...glob,
+        kdf: {
+            salt: salt.toString('hex'),
+            n: iterations
+        }
+    }
+}
+
+function kdfDecrypt(glob: KdfCipherGlob, password: string): Buffer {
+    const { salt, n } = glob.kdf
+    const key = kdf(password, Buffer.from(salt, 'hex'), n)
+    return decrypt(glob, key)
+}
+
+async function handleCommand(cmd: CommandName, arg: any) {
+    switch (cmd) {
+        case 'secureRNG': {
+            const [size] = arg
+            return secureRNG(size)
+        }
+        case 'kdfEncrypt': {
+            const [clearText, password] = arg
+            return kdfEncrypt(Buffer.from(clearText), password, randomBytes(32))
+        }
+        case 'kdfDecrypt': {
+            const [glob, password] = arg
+            return kdfDecrypt(glob, password)
+        }
+        case 'encrypt': {
+            const [clearText, key] = arg
+            return encrypt(Buffer.from(clearText), Buffer.from(key))
+        }
+        case 'decrypt': {
+            const [glob, key] = arg
+            return decrypt(glob, Buffer.from(key))
+        }
+        case 'hdGenerateMnemonic': {
+            const [len] = arg
+            const rn = await secureRNG(len)
+            return mnemonic.generate(() => rn)
+        }
+        case 'hdDeriveMnemonic': {
+            const [words, index] = arg
+            const root = HDNode.fromMnemonic(words)
+            const node = index < 0 ? root : root.derive(index)
+            return [node.publicKey, node.chainCode, node.address, node.privateKey]
+        }
+        case 'hdDeriveXPub': {
+            const [pub, chainCode, index] = arg
+            const node = HDNode
+                .fromPublicKey(Buffer.from(pub), Buffer.from(chainCode))
+                .derive(index)
+            return [node.publicKey, node.chainCode, node.address]
+        }
+        default:
+            throw new Error(`worker: unexpected command '${cmd}'`)
+    }
 }
 
 const ctx: Worker = self as never

@@ -1,8 +1,6 @@
 import { secp256k1 } from 'thor-devkit'
-import { init as initSalt } from './salt'
 import { newVault } from './vault'
-import { hdGenerateMnemonic, hdDeriveMnemonic, encrypt, decrypt } from 'core/worker'
-import { randomBytes } from 'crypto'
+import { hdGenerateMnemonic, hdDeriveMnemonic, encrypt } from 'core/worker'
 
 /** describes the secure container holds wallet key */
 export interface Vault {
@@ -16,19 +14,11 @@ export interface Vault {
     derive(index: number): Promise<Vault.Node>
 
     /**
-     * decrypt the vault into wallet key
-     * @param password user password
-     * @returns clear wallet key
+     * decrypt the vault
+     * @param key the cipher key
+     * @returns clear vault content
      */
-    decrypt(password: string): Promise<string | Buffer>
-
-    /**
-     * clone to a new vault with new password
-     * @param password user password
-     * @param newPassword user password for the cloned vault
-     * @returns the cloned vault
-     */
-    clone(password: string, newPassword: string): Promise<Vault>
+    decrypt(key: Buffer): Promise<string | Buffer>
 
     /** encode the vault into string */
     encode(): string
@@ -48,32 +38,10 @@ export namespace Vault {
         readonly index: number
         /**
          * unlock the node and expose its private key
-         * @param password user password
+         * @param key the cipher key
          * @returns the private key
          */
-        unlock(password: string): Promise<Buffer>
-    }
-
-    /**
-     * generate the password shadow, which is the cipher text of random bytes encrypted
-     * by user password
-     * @param password user password
-     * @returns password shadow
-     */
-    export async function shadowPassword(password: string) {
-        const salt = await initSalt()
-        const glob = await encrypt(randomBytes(32), password, salt)
-        return glob
-    }
-
-    /**
-     * verify use password against the given password shadow
-     * @param shadow the password shadow
-     * @param password use password
-     */
-    export async function verifyPassword(shadow: string, password: string) {
-        const salt = await initSalt()
-        await decrypt(shadow, password, salt)
+        unlock(key: Buffer): Promise<Buffer>
     }
 
     /**
@@ -93,43 +61,40 @@ export namespace Vault {
      * @param data encoded data
      * @returns vault instance
      */
-    export async function decode(data: string): Promise<Vault> {
-        const salt = await initSalt()
+    export function decode(data: string): Vault {
         const entity = JSON.parse(data)
-        return newVault(salt, entity)
+        return newVault(entity)
     }
 
     /**
      * create a HD vault
      * @param words mnemonic words
-     * @param password user password
+     * @param key the cipher key
      */
-    export async function createHD(words: string[], password: string): Promise<Vault> {
-        const salt = await initSalt()
+    export async function createHD(words: string[], key: Buffer): Promise<Vault> {
         const root = await hdDeriveMnemonic(words, -1)
         // be aware that hd key is utf-8 encoded
         const clearText = Buffer.from(words.join(' '), 'utf8')
-        const glob = await encrypt(clearText, password, salt)
-        return newVault(salt, {
+        const glob = await encrypt(clearText, key)
+        return newVault({
             type: 'hd',
             pub: root.pub.toString('hex'),
             chainCode: root.chainCode.toString('hex'),
-            cipherGlob: glob
+            cipherGlob: JSON.stringify(glob)
         })
     }
 
     /**
      * create static key vault
      * @param sk the private key
-     * @param password user password
+     * @param key the cipher key
      */
-    export async function createStatic(sk: Buffer, password: string): Promise<Vault> {
-        const salt = await initSalt()
-        const glob = await encrypt(sk, password, salt)
-        return newVault(salt, {
+    export async function createStatic(sk: Buffer, key: Buffer): Promise<Vault> {
+        const glob = await encrypt(sk, key)
+        return newVault({
             type: 'static',
             pub: secp256k1.derivePublicKey(sk).toString('hex'),
-            cipherGlob: glob
+            cipherGlob: JSON.stringify(glob)
         })
     }
 
@@ -139,7 +104,7 @@ export namespace Vault {
      * @param chainCode chain code
      */
     export function createUSB(pub: Buffer, chainCode: Buffer): Promise<Vault> {
-        return Promise.resolve(newVault(Buffer.from([]), {
+        return Promise.resolve(newVault({
             type: 'usb',
             pub: pub.toString('hex'),
             chainCode: chainCode.toString('hex')

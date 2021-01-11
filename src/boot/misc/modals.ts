@@ -11,9 +11,9 @@ declare module 'vue/types/vue' {
 
         /**
          * pop up the authentication dialog to ask user entering password
-         * @returns verified user password
+         * @returns user master key
          */
-        $authenticate(): Promise<string>
+        $authenticate(): Promise<Buffer>
 
         /**
          * protected the async task with a loading mask

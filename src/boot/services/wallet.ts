@@ -38,18 +38,6 @@ export function build(storage: Storage) {
         },
         delete(id: number) {
             return t.delete({ id })
-        },
-        reEncryptAll(de: (vault: string) => Promise<string>, savePasswordShadow: () => Promise<void>) {
-            return storage.transaction(async () => {
-                const wallets = await storage.wallets.all().query()
-                for (const w of wallets) {
-                    const newVault = await storage.waitFor(de(w.vault))
-                    await storage.wallets.update({ id: w.id }, {
-                        vault: newVault
-                    })
-                }
-                await savePasswordShadow()
-            })
         }
     }
 }

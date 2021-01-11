@@ -141,24 +141,19 @@ export default Vue.extend({
     },
     methods: {
         async onStart() {
-            let pin = ''
+            if (!this.wallet) { return }
             try {
-                pin = await this.$authenticate()
-            } catch (error) {
-                console.warn(error)
-                return
-            }
-            try {
-                if (!this.wallet) { return }
-
-                const vault = await Vault.decode(this.wallet.vault)
-                const words = await vault.decrypt(pin)
-                this.words = (words as string).split(' ')
-                this.panel = 'words'
-            } catch (error) {
-                console.warn(error)
-                this.$router.back()
-            }
+                const umk = await this.$authenticate()
+                try {
+                    const vault = Vault.decode(this.wallet.vault)
+                    const words = await vault.decrypt(umk)
+                    this.words = (words as string).split(' ')
+                    this.panel = 'words'
+                } catch (error) {
+                    console.warn(error)
+                    this.$router.back()
+                }
+            } catch { }
         },
         async onDone() {
             const meta: M.Wallet.Meta = {
