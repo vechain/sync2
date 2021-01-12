@@ -3,7 +3,10 @@
         v-if="mounted"
         name="q-transition--fade"
     >
-        <fragment v-if="initialized">
+        <div
+            v-if="initialized"
+            class="fit"
+        >
             <stacked-router-view class="fit" />
             <activity-status-updater />
             <transfer-notifier
@@ -11,7 +14,7 @@
                 :key="gid"
                 :gid="gid"
             />
-        </fragment>
+        </div>
         <wizard
             v-else
             class="fit"
