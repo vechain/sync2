@@ -189,7 +189,7 @@ module.exports = configure(function (/* ctx */) {
         clientsClaim: true,
         runtimeCaching: [{
           urlPattern: /^https:\/\/vechain.github.io\/token-registry\/assets\//,
-          handler: 'cacheFirst',
+          handler: 'CacheFirst',
           options: {
             cacheName: 'token-icons',
             cacheableResponse: {statuses: [0, 200]}
