@@ -3,11 +3,13 @@
         <page-toolbar :title="$t('activities.title')" />
         <page-content class="col">
             <template v-if="entryList.length">
-                <Item
-                    :entry="item"
-                    v-for="(item, i) in entryList"
-                    :key="i"
-                />
+                <template v-for="(item, i) in entryList">
+                    <q-separator :key="`s-${i}`" v-if="i !== 0" />
+                    <Item
+                        :entry="item"
+                        :key="i"
+                    />
+                </template>
             </template>
             <template v-else>
                 <div class="text-center q-px-xl column fit justify-center">
@@ -56,7 +58,8 @@ export default Vue.extend({
             return this.list.map<Entry>((a: M.Activity) => {
                 const temp: Entry = {
                     gid: a.gid,
-                    time: `${a.type === 'tx' ? 'Tx' : 'Cert'} · ${Vue.filter('dateTime')(a.createdTime)}`,
+                    type: a.type,
+                    time: `${Vue.filter('dateTime')(a.createdTime)}`,
                     signer: a.glob.signer,
                     walletName: this.walletNames[a.walletId] || '',
                     link: a.glob.link || '',

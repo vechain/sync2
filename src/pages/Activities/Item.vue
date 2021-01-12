@@ -1,23 +1,30 @@
 <template>
-    <q-list class="q-pt-md">
-        <q-item class="q-py-none q-pr-lg">
-            <q-item-section avatar>
-                <address-avatar :addr="entry.signer" />
-            </q-item-section>
+    <q-expansion-item
+        group="item"
+        expand-icon-class="hidden"
+    >
+        <template v-slot:header>
             <q-item-section>
+                <q-item-label>{{ title }}</q-item-label>
+                <q-item-label
+                    class="ellipsis"
+                    lines="1"
+                >{{ entry.walletName || $t('common.unknown') }}</q-item-label>
                 <q-item-label
                     class="text-body1 monospace"
                     style="word-break: break-all;"
                 >
+                    <q-icon name="subdirectory_arrow_right" />
                     <address-label :addr="entry.signer" />
                 </q-item-label>
-                <q-item-label
-                    caption
-                    class="ellipsis"
-                    lines="1"
-                >{{ entry.walletName || $t('common.unknown') }}</q-item-label>
+                <q-item-label caption>
+                    {{entry.time}}
+                </q-item-label>
             </q-item-section>
-            <q-item-section side>
+            <q-item-section
+                top
+                side
+            >
                 <q-item-label>
                     <q-icon
                         v-if="icon.name"
@@ -37,50 +44,86 @@
                         v-if="entry.status === 'expired'"
                     > {{$t('activities.label_expired')}} </span>
                 </q-item-label>
-                <q-item-label
-                    caption
-                    lines="1"
-                    v-if="entry.status === 'success?' || entry.status === 'sending'"
-                >
-                    <span v-if="entry.status === 'sending'"> {{$t('activities.label_sending')}} </span>
-                    <span v-if="entry.status === 'success?'">
-                        {{entry.confirming}}
-                    </span>
-                </q-item-label>
             </q-item-section>
-        </q-item>
-        <div class="q-px-md text-body2 q-pt-xs">
-            {{entry.comment}}
-        </div>
-        <div class="q-px-md text-grey q-pt-xs text-caption row justify-between items-center">
-            <span>
-                {{entry.time}}
-            </span>
-            <q-btn
-                round
-                flat
-                size="sm"
-                icon="more_horiz"
-            >
-                <pop-sheets :sheets="sheets" />
-            </q-btn>
-        </div>
-        <q-separator
-            spaced
-            inset
-        />
-    </q-list>
+        </template>
+        <template>
+            <q-item v-if="entry.status === 'success?' || entry.status === 'sending'">
+                <q-item-section />
+                <q-item-section />
+                <q-item-section
+                    side
+                >
+                    <q-item-label
+                        caption
+                        lines="1"
+                    >
+                        <span v-if="entry.status === 'sending'"> {{$t('activities.label_sending')}} </span>
+                        <span v-if="entry.status === 'success?'">
+                            <q-icon name="mdi-cube-outline" /> {{entry.confirming}}
+                        </span>
+                    </q-item-label>
+                </q-item-section>
+            </q-item>
+            <q-item v-if="entry.comment">
+                <q-item-section>
+                    <q-item-label>
+                        {{entry.comment}}
+                    </q-item-label>
+                </q-item-section>
+                <q-item-section />
+            </q-item>
+            <q-item>
+                <q-item-section />
+                <q-item-section />
+                <q-item-section side>
+                    <div class="q-gutter-md">
+                        <q-btn
+                            rounded
+                            flat
+                            dense
+                            v-if="entry.link"
+                            @click="copy(entry.link)"
+                            icon="mdi-link-variant"
+                        />
+                        <template v-if="entry.txId">
+                            <q-btn
+                                rounded
+                                @click="copy(entry.txId)"
+                                flat
+                                dense
+                                icon="mdi-content-copy"
+                            />
+                            <q-btn
+                                rounded
+                                @click="viewOnExplorer"
+                                dense
+                                flat
+                                icon="mdi-file-search-outline"
+                            />
+                        </template>
+                        <q-btn
+                            v-else
+                            flat
+                            @click="viewContent"
+                            rounded
+                            dense
+                            icon="mdi-message-text-outline"
+                        />
+                    </div>
+                </q-item-section>
+            </q-item>
+        </template>
+    </q-expansion-item>
 </template>
 <script lang="ts">
 import Vue from 'vue'
 import { copyToClipboard, openURL } from 'quasar'
 import { urls, genesises } from 'src/consts'
-import PopSheets, { Sheet } from 'src/components/PopSheets.vue'
-import AddressAvatar from 'src/components/AddressAvatar.vue'
 import AddressLabel from 'src/components/AddressLabel.vue'
 
 export type Entry = {
-    gid: string,
+    gid: string
+    type: 'tx' | 'cert'
     walletName: string
     signer: string
     comment: string
@@ -93,11 +136,14 @@ export type Entry = {
 }
 
 export default Vue.extend({
-    components: { PopSheets, AddressAvatar, AddressLabel },
+    components: { AddressLabel },
     props: {
         entry: Object as () => Entry
     },
     computed: {
+        title(): string {
+            return this.entry.type === 'tx' ? 'Transaction' : 'Certificate'
+        },
         icon(): { name: string, color: string } {
             const result: { name: string, color: string } = { name: '', color: '' }
             switch (this.entry.status) {
@@ -140,31 +186,31 @@ export default Vue.extend({
                 return ''
             }
             return net
-        },
-        sheets() {
-            const sheets: Sheet[] = []
-            if (this.entry.txId) {
-                sheets.push({
-                    label: this.$t('activities.action_view_on_explorer').toString(),
-                    action: () => this.viewOnExplorer()
-                }, {
-                    label: this.$t('activities.action_copy_txId').toString(),
-                    action: () => this.copy(this.entry.txId!)
-                })
-            } else {
-                sheets.push({
-                    label: this.$t('activities.action_view_signed_content').toString(),
-                    action: () => this.viewContent()
-                })
-            }
-            if (this.entry.link) {
-                sheets.push({
-                    label: this.$t('activities.action_copy_dapp_url').toString(),
-                    action: () => this.copy(this.entry.link)
-                })
-            }
-            return sheets
         }
+        // sheets() {
+        //     const sheets: Sheet[] = []
+        //     if (this.entry.txId) {
+        //         sheets.push({
+        //             label: this.$t('activities.action_view_on_explorer').toString(),
+        //             action: () => this.viewOnExplorer()
+        //         }, {
+        //             label: this.$t('activities.action_copy_txId').toString(),
+        //             action: () => this.copy(this.entry.txId!)
+        //         })
+        //     } else {
+        //         sheets.push({
+        //             label: this.$t('activities.action_view_signed_content').toString(),
+        //             action: () => this.viewContent()
+        //         })
+        //     }
+        //     if (this.entry.link) {
+        //         sheets.push({
+        //             label: this.$t('activities.action_copy_dapp_url').toString(),
+        //             action: () => this.copy(this.entry.link)
+        //         })
+        //     }
+        //     return sheets
+        // }
     },
     methods: {
         copy(str: string) {
