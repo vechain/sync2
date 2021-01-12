@@ -7,6 +7,7 @@
         <q-img
             :src="spec.iconSrc"
             class="fit"
+            style="border-radius:inherit"
         />
     </q-avatar>
 </template>
