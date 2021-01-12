@@ -47,12 +47,12 @@
             <page-content
                 class="col"
                 padding
-                innerClass="fit column q-gutter-y-md"
+                innerClass="fit column q-gutter-y-md no-wrap"
             >
                 <h4 class="q-mb-none">{{$t('wizard.title_init')}}</h4>
                 <Progress
                     :current="progressStr"
-                    class="col"
+                    class="col overflow-auto"
                 />
                 <h5
                     class="q-mb-none text-center"

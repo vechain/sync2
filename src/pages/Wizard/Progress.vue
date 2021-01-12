@@ -2,7 +2,7 @@
     <transition-group
         tag="div"
         name="q-transition--jump-down"
-        class="column q-gutter-y-md"
+        class="column q-gutter-y-md no-wrap"
     >
         <div
             v-for="(_, i) in history"
