@@ -6,7 +6,6 @@ export default {
     common: {
         confirm: '确认',
         yes: '是',
-        no: '否',
         dismiss: '关闭',
         delete: '删除',
         add: '添加',
@@ -44,8 +43,6 @@ export default {
     },
     newWallet: {
         title: '新建钱包',
-        title_desc: 'Sync 钱包',
-        msg_desc: '随时随地轻松管理资产',
         msg_mnemonic_error: '助记词校验不通过',
         mnemonic_words_count: '助记词数量',
         action_generate: '生成',

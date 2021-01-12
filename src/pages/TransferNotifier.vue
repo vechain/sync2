@@ -180,7 +180,7 @@ export default Vue.extend({
                 group: false,
                 classes: 'transfer-notify_w100',
                 actions: [{
-                    label: 'View',
+                    label: this.$t('common.view'),
                     color: 'white',
                     handler: () => this.$router.push({
                         name: 'address',
@@ -190,7 +190,7 @@ export default Vue.extend({
                         }
                     }).catch(() => { })
                 }, {
-                    label: 'Dismiss',
+                    label: this.$t('common.dismiss'),
                     color: 'white'
                 }]
 

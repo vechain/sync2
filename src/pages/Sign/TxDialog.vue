@@ -8,7 +8,7 @@
     >
         <q-card class="column no-wrap">
             <page-toolbar
-                title="Transaction"
+                :title="$t('common.transaction')"
                 icon="mdi-close"
                 :gid="gid"
                 @action="hide()"
@@ -117,12 +117,12 @@ export default Common.extend({
         },
         criticalError(): Error | null {
             if (!this.wallet) {
-                return { name: 'Critical Error', message: this.signerGroups.length > 0 ? 'Required address not owned' : 'No wallet available' }
+                return { name: this.$t('common.no_wallet').toString(), message: this.signerGroups.length > 0 ? this.$t('sign.msg_address_not_owned').toString() : this.$t('common.no_wallet').toString() }
             }
             // test vip191 feature bit when delegator set
             const head = this.thor.status.head
             if (head.number > 0 && this.req.options.delegator && ((head.txsFeatures || 0) & 1)) {
-                return { name: 'Critical Error', message: 'VIP191 feature is not supported' }
+                return { name: this.$t('sign.label_critical_error').toString(), message: this.$t('sign.msg_vip191_not_supported').toString() }
             }
             return null
         },
@@ -132,7 +132,7 @@ export default Common.extend({
                 const { reverted, vmError, revertReason } = this.estimation
                 if (reverted) {
                     ret.push({
-                        name: 'VM error',
+                        name: this.$t('sign.label_vm_error').toString(),
                         message: `${vmError} ${revertReason}`
                     })
                 }

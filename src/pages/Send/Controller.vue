@@ -174,7 +174,7 @@ export default Vue.extend({
             let msgItem!: Connex.Vendor.TxMessage[0]
             let comment = ''
             if (this.sym === 'VET') {
-                comment = `${this.$t('common.transferring')} ${this.amount} VET`
+                comment = `${this.$t('send.title')} ${this.amount} VET`
                 msgItem = {
                     to: this.to,
                     value: Vue.filter('toWei')(this.amount),
@@ -182,7 +182,7 @@ export default Vue.extend({
                 }
             } else {
                 const func = new abi.Function(abis.transfer)
-                comment = `${this.$t('common.transferring')} ${this.amount} ${this.sym}`
+                comment = `${this.$t('send.title')} ${this.amount} ${this.sym}`
                 const data = func.encode(this.to,
                     Vue.filter('toWei')(this.amount, this.currentToken!.decimals))
                 msgItem = {
