@@ -52,7 +52,7 @@
                                     flat
                                     dense
                                     round
-                                    icon="mdi-delete_forever"
+                                    icon="mdi-delete-forever"
                                 />
                             </q-item-section>
                         </q-item>

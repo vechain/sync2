@@ -30,8 +30,8 @@ export default Vue.extend({
     computed: {
         icon() {
             switch (this.type) {
-                case 'warning': return 'warning'
-                default: return 'error'
+                case 'warning': return 'mdi-alert'
+                default: return 'mdi-alert-circle'
             }
         },
         classes() {
