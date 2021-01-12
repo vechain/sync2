@@ -65,6 +65,14 @@ const directives: Record<string, Vue.DirectiveOptions> = {
                 delete _el._needFocusout
             }
         }
+    },
+    // this directive helps to remove focus helper in q-btn component.
+    // the focus helper may cause focus problem in form input.
+    disableFocusHelper: {
+        inserted: el => {
+            const r = el.getElementsByClassName('q-focus-helper')
+            r && r.length > 0 && r[0].remove()
+        }
     }
 }
 
