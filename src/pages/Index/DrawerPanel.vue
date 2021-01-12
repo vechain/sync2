@@ -17,7 +17,7 @@
             <slot />
         </div>
         <!-- drawer content footer -->
-        <q-list>
+        <q-list padding>
             <q-item :to="{name: 'settings'}">
                 <q-item-section avatar>
                     <q-icon
@@ -49,8 +49,15 @@
                     >{{ongoingActivitiesCount}}</q-badge>
                 </q-item-section>
             </q-item>
+            <q-item dense>
+                <q-item-section class="text-center ">
+                    <q-item-label
+                        caption
+                        class="ellipsis"
+                    >{{version}}</q-item-label>
+                </q-item-section>
+            </q-item>
         </q-list>
-        <span class="full-width text-center text-grey text-caption">{{version}}</span>
     </div>
 </template>
 <script lang="ts">
