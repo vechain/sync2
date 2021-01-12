@@ -54,7 +54,7 @@ export default Vue.extend({
                 views[views.length - 1],
                 views[views.length - 2],
                 this.$refs.backdrop as HTMLElement
-            ]
+            ].filter(v => !!v)
         }
     },
     created() {
@@ -107,7 +107,9 @@ export default Vue.extend({
         testTouchPan(ev: TouchEvent & MouseEvent) {
             const rect = this.$el.getBoundingClientRect()
             const x = (ev.targetTouches ? ev.targetTouches[0].clientX : ev.clientX) - rect.x
-            this.shouldHandlePan = x >= 0 && x < rect.width /* / 2 */ && this.stack.length > 1
+            const stack = this.stack
+            this.shouldHandlePan = x >= 0 && x < rect.width /* / 2 */ &&
+                (stack.length > 1 || (stack[0] && stack[0].depth > 0))
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         handleTouchPan(ev: any) {
