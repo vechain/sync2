@@ -109,7 +109,8 @@ export default Vue.extend({
                         label: this.$t('common.delete').toString(),
                         color: 'negative'
                     },
-                    validate: input => input === wallet.meta.name ? '' : 'Wallet name is not matched'
+                    // ask user to type 'ok' to confirm
+                    validate: input => input.toLowerCase() === 'ok' ? '' : 'invalid input'
                 }
 
                 await this.$dialog<string>({
