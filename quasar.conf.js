@@ -164,8 +164,12 @@ module.exports = configure(function (/* ctx */) {
         skipWaiting: true,
         clientsClaim: true,
         runtimeCaching: [{
-          urlPattern: /^https:\/\/vechain.github.io\/token-registry\//,
-          handler: 'cacheFirst'
+          urlPattern: /^https:\/\/vechain.github.io\/token-registry\/assets\//,
+          handler: 'cacheFirst',
+          options: {
+            cacheName: 'token-icons',
+            cacheableResponse: {statuses: [0, 200]}
+          }
         }]
       }, // only for GenerateSW
       manifest: {
