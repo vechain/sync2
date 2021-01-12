@@ -59,16 +59,20 @@
 </head>
 
 <body>
+  <% if (htmlWebpackPlugin.options.ctx.mode.spa || htmlWebpackPlugin.options.ctx.mode.pwa) { %>
   <script>
       try{
-        const spaGoto = localStorage.getItem('spa-goto')
-        if(spaGoto) {
-          location.href = new URL(location.hash, spaGoto).href
+        if((location.hash||'').startsWith('#/sign?')) {
+          const redirect = localStorage.getItem('redirect')
+          if(redirect) {
+            location.href = new URL(location.hash, redirect).href
+          }
         }
-      }catch(err) {
-        console.warn('failed to handle SPA goto:', err)
+      } catch(err) {
+        console.warn('failed to handle redirect:', err)
       }
   </script>
+  <% } %>
   <!-- DO NOT touch the following DIV -->
   <div id="q-app"></div>
 </body>
