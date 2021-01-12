@@ -86,10 +86,24 @@ export default Vue.extend({
             responded: false
         }
     },
+    computed: {
+        urlObject(): URL | null {
+            try {
+                const obj = new URL(this.src)
+                if (['http:', 'https:'].includes(obj.protocol)) {
+                    return obj
+                }
+                return null
+            } catch (err) {
+                console.warn(err)
+                return null
+            }
+        }
+    },
     asyncComputed: {
         async request(): Promise<RelayedRequest | null> {
-            const urlObject = new URL(this.src)
-            if (!['http:', 'https:'].includes(urlObject.protocol)) {
+            const urlObject = this.urlObject
+            if (!urlObject) {
                 throw new Error(this.$t('sign.msg_invalid_request').toString())
             }
 
