@@ -1,5 +1,5 @@
 <template>
-    <div class="fit column">
+    <div class="fit column no-wrap">
         <page-toolbar
             :title="$t('address.title')"
             :gid="wallet && wallet.gid"

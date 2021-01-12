@@ -4,13 +4,18 @@
         v-bind="$attrs"
     >
         <q-item-section avatar>
-            <address-avatar :addr="address" />
+            <address-avatar
+                :addr="address"
+                size="xl"
+            />
         </q-item-section>
         <q-item-section>
-            <address-label :addr="address"/>
+            <q-item-label>
+                <address-label :addr="address" />
+            </q-item-label>
             <q-item-label
-                class="text-body2 text-grey"
-                lines="1"
+                caption
+                class="ellipsis"
             >
                 {{name}}
             </q-item-label>
