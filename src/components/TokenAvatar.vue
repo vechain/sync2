@@ -4,7 +4,10 @@
         color="white"
         class="bordered"
     >
-        <q-img :src="spec.iconSrc" />
+        <q-img
+            :src="spec.iconSrc"
+            class="fit"
+        />
     </q-avatar>
 </template>
 <script lang="ts">
