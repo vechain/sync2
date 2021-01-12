@@ -8,12 +8,12 @@ const presetNodes: M.Node[] = [
     { // mainnet
         genesis: genesises.main,
         preset: true,
-        url: 'https://mainnet.veblocks.net'
+        url: 'https://sync-mainnet.veblocks.net'
     },
     { // testnet
         genesis: genesises.test,
         preset: true,
-        url: 'https://testnet.veblocks.net'
+        url: 'https://sync-testnet.veblocks.net'
     }
 ]
 
