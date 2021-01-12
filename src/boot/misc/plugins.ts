@@ -4,6 +4,6 @@ import AsyncComputed from 'vue-async-computed'
 const Fragment = require('vue-fragment')
 
 export function boot() {
-    Vue.use(AsyncComputed)
+    Vue.use(AsyncComputed, { errorHandler: false } as never)
     Vue.use(Fragment.Plugin)
 }
