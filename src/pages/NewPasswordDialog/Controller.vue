@@ -8,11 +8,7 @@
             <q-toolbar>
                 <q-toolbar-title class="text-center">{{hint}}</q-toolbar-title>
             </q-toolbar>
-            <q-form
-                @submit="onSubmit()"
-                @keydown.enter.prevent
-                @keyup.enter.prevent="onSubmit()"
-            >
+            <q-form @submit="onSubmit()">
                 <q-card-section>
                     <!-- prevent chrome warning -->
                     <q-input
@@ -36,6 +32,7 @@
                 </q-card-section>
                 <q-card-actions>
                     <q-btn
+                        v-disableFocusHelper
                         class="w40 q-mx-auto"
                         :label="action"
                         unelevated
@@ -82,6 +79,8 @@ export default Vue.extend({
             this.hide()
         },
         async onSubmit() {
+            (this.$refs.pwd as Vue).$el.getElementsByTagName('input')[0].focus()
+
             if (this.inputValue.length === 0) {
                 return
             }
@@ -103,7 +102,6 @@ export default Vue.extend({
                 }
                 this.password = this.inputValue
                 this.inputValue = ''
-                void (this.$refs.pwd as Vue).$el.getElementsByTagName('input')[0].focus()
             }
         }
     }

@@ -8,11 +8,7 @@
             <q-toolbar>
                 <q-toolbar-title class="text-center">{{$t('authenticationDialog.title')}}</q-toolbar-title>
             </q-toolbar>
-            <q-form
-                @submit="onSubmit()"
-                @keydown.enter.prevent
-                @keyup.enter.prevent="onSubmit()"
-            >
+            <q-form @submit="onSubmit()">
                 <q-card-section>
                     <p class="text-center">{{$t('authenticationDialog.label_input_password')}}</p>
                     <!-- prevent chrome warning -->
@@ -21,6 +17,7 @@
                         autocomplete="username"
                     />
                     <q-input
+                        :disable="loading"
                         autofocus
                         class="q-mx-lg"
                         ref="pwd"
@@ -37,6 +34,8 @@
                 </q-card-section>
                 <q-card-actions>
                     <q-btn
+                        v-disableFocusHelper
+                        :loading="loading"
                         class="w40 q-mx-auto"
                         :label="$t('authenticationDialog.action_unlock')"
                         unelevated
@@ -65,7 +64,8 @@ export default Vue.extend({
     data: () => {
         return {
             password: '',
-            error: ''
+            error: '',
+            loading: false
         }
     },
     computed: {
@@ -96,21 +96,23 @@ export default Vue.extend({
         },
         async onSubmit() {
             const inputEl = (this.$refs.pwd as Vue).$el.getElementsByTagName('input')[0]
+            inputEl.focus()
+
             const password = this.password
             if (password.length === 0) {
-                inputEl.focus()
                 return
             }
             this.error = ''
             try {
-                const umk = await this.$loading(async () => {
-                    const glob = await this.$svc.config.getUserMasterKeyGlob()
-                    return await kdfDecrypt(JSON.parse(glob), password)
-                })
+                this.loading = true
+                const glob = await this.$svc.config.getUserMasterKeyGlob()
+                const umk = await kdfDecrypt(JSON.parse(glob), password)
                 this.ok(umk)
             } catch {
-                inputEl.select()
+                this.loading = false
                 this.error = this.$t('authenticationDialog.msg_password_error').toString()
+                await this.$nextTick()
+                inputEl.focus()
             }
         },
         async recallBioPass() {

@@ -23,6 +23,7 @@
             </q-card-section>
             <q-card-actions>
                 <q-btn
+                    v-disableFocusHelper
                     class="w40 q-mx-auto"
                     unelevated
                     color="primary"
@@ -63,15 +64,19 @@ export default Vue.extend({
         },
         async onSubmit() {
             const inputEl = (this.$refs.input as Vue).$el.getElementsByTagName('textarea')[0]
-            this.error = ''
+            inputEl.focus()
+
             const words = this.state.words
                 .trim()
                 .toLowerCase()
 
             if (words.length < 1) {
-                inputEl.focus()
                 return
             }
+
+            this.error = ''
+            await this.$nextTick()
+
             try {
                 const array = words.split(/\s+/)
                 if (array.length < 12) {
@@ -80,7 +85,6 @@ export default Vue.extend({
                 await hdDeriveMnemonic(array, -1)
                 this.ok(array)
             } catch {
-                inputEl.focus()
                 this.error = this.$t('newWallet.msg_mnemonic_error').toString()
             }
         }

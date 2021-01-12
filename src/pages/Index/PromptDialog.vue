@@ -26,6 +26,7 @@
                 </q-card-section>
                 <q-card-actions>
                     <q-btn
+                        v-disableFocusHelper
                         class="w40 q-mx-auto"
                         unelevated
                         :color="opts.action.color"
@@ -75,16 +76,22 @@ export default Vue.extend({
             this.hide()
         },
         async onSubmit() {
+            (this.$refs.input as Vue).$el.getElementsByTagName('input')[0].focus()
+
+            const input = this.input
+            if (input.length === 0) {
+                return
+            }
+
             this.error = ''
             await this.$nextTick()
 
-            const error = this.opts.validate(this.input)
+            const error = this.opts.validate(input)
             if (error) {
-                (this.$refs.input as Vue).$el.getElementsByTagName('input')[0].focus()
                 this.error = error
                 return
             }
-            this.ok(this.input)
+            this.ok(input)
         }
     }
 })

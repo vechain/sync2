@@ -30,6 +30,7 @@
                 </q-card-section>
                 <q-card-actions>
                     <q-btn
+                        v-disableFocusHelper
                         class="w40 q-mx-auto"
                         unelevated
                         color="primary"
@@ -69,15 +70,18 @@ export default Vue.extend({
             this.hide()
         },
         async onSubmit() {
+            const inputEl = (this.$refs.input as Vue).$el.getElementsByTagName('input')[0]
+            inputEl.focus()
+
+            const url = this.state.url.trim()
+            if (url.length === 0) {
+                return
+            }
+
             this.error = ''
             await this.$nextTick()
 
             try {
-                const url = this.state.url.trim()
-                if (url.length === 0) {
-                    throw new Error('Input the URL of node')
-                }
-
                 const urlObj = new URL(url)
                 if (!['http:', 'https:'].includes(urlObj.protocol)) {
                     throw new Error('Invalid URL: unsupported protocol')
@@ -89,10 +93,10 @@ export default Vue.extend({
                 })
                 this.ok({ genesis: resp.data, url })
             } catch (err) {
-                (this.$refs.input as Vue).$el.getElementsByTagName('input')[0].focus()
                 this.error = err.message
-            } finally {
                 this.loading = false
+                await this.$nextTick()
+                inputEl.focus()
             }
         }
     }
