@@ -47,7 +47,7 @@
     "file-loader": "^6.2.0",
     "more-entropy": "0.0.7",
     "qr-scanner": "^1.2.0",
-    "qrious": "^4.0.2",
+    "qrcode-svg": "^1.1.0",
     "quasar": "^1.15.0",
     "sqlite": "^4.0.7",
     "thor-devkit": "^2.0.1",

@@ -1,32 +1,14 @@
-
 <template>
-    <div
-        :style="{width:size+'px',height:size+'px'}"
-        v-html="html"
-    ></div>
+    <div v-html="svg"></div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const QRious = require('qrious')
-
-const qr = new QRious()
-function generateQRHtml(content: string, size: number) {
-    qr.value = content
-    qr.size = size * 2
-
-    const img = qr.image as HTMLElement
-    img.style.width = '100%'
-    img.style.height = '100%'
-    return img.outerHTML
-}
+const QRCode = require('qrcode-svg')
 
 export default Vue.extend({
     data() {
         return { content: '' }
-    },
-    props: {
-        size: Number
     },
     methods: {
         extractSlot() {
@@ -34,8 +16,12 @@ export default Vue.extend({
         }
     },
     computed: {
-        html(): string {
-            return generateQRHtml(this.content, this.size || 100)
+        svg(): string {
+            return new QRCode({
+                content: this.content,
+                container: 'svg-viewbox',
+                join: true
+            }).svg()
         }
     },
     created() {
