@@ -84,7 +84,7 @@ export default Vue.extend({
                 return ''
             }
             const confirms = this.$svc.bc(activity.gid).thor.status.head.number - receipt.meta.blockNumber
-            return `${this.$t('activities.label_confirming')} ${confirms} / 12`
+            return `${confirms} / 12`
         },
         status(a: M.Activity): 'reverted' | 'reverted?' | 'success' | 'success?' | 'sending' | 'expired' {
             if (a.type === 'cert') {

@@ -7,12 +7,12 @@
             <q-item-section>
                 <q-item-label>{{ title }}</q-item-label>
                 <q-item-label
+                    caption
                     class="ellipsis"
                     lines="1"
                 >{{ entry.walletName || $t('common.unknown') }}</q-item-label>
                 <q-item-label
-                    class="text-body1 monospace"
-                    style="word-break: break-all;"
+                    caption
                 >
                     <q-icon name="subdirectory_arrow_right" />
                     <address-label :addr="entry.signer" />
@@ -44,15 +44,22 @@
                         v-if="entry.status === 'expired'"
                     > {{$t('activities.label_expired')}} </span>
                 </q-item-label>
+                <q-item-label>
+                    <q-badge
+                        v-if="networkBadgeText"
+                        color="negative"
+                        class="no-pointer-events text-bold"
+                    >
+                        {{networkBadgeText}}
+                    </q-badge>
+                </q-item-label>
             </q-item-section>
         </template>
         <template>
             <q-item v-if="entry.status === 'success?' || entry.status === 'sending'">
                 <q-item-section />
                 <q-item-section />
-                <q-item-section
-                    side
-                >
+                <q-item-section side>
                     <q-item-label
                         caption
                         lines="1"
@@ -66,7 +73,7 @@
             </q-item>
             <q-item v-if="entry.comment">
                 <q-item-section>
-                    <q-item-label>
+                    <q-item-label class="text-body2">
                         {{entry.comment}}
                     </q-item-label>
                 </q-item-section>
@@ -142,7 +149,7 @@ export default Vue.extend({
     },
     computed: {
         title(): string {
-            return this.entry.type === 'tx' ? 'Transaction' : 'Certificate'
+            return this.entry.type === 'tx' ? this.$t('common.transaction').toString() : this.$t('common.certificate').toString()
         },
         icon(): { name: string, color: string } {
             const result: { name: string, color: string } = { name: '', color: '' }
@@ -185,32 +192,8 @@ export default Vue.extend({
             if (net === 'main') {
                 return ''
             }
-            return net
+            return this.$netDisplayName(this.entry.gid)
         }
-        // sheets() {
-        //     const sheets: Sheet[] = []
-        //     if (this.entry.txId) {
-        //         sheets.push({
-        //             label: this.$t('activities.action_view_on_explorer').toString(),
-        //             action: () => this.viewOnExplorer()
-        //         }, {
-        //             label: this.$t('activities.action_copy_txId').toString(),
-        //             action: () => this.copy(this.entry.txId!)
-        //         })
-        //     } else {
-        //         sheets.push({
-        //             label: this.$t('activities.action_view_signed_content').toString(),
-        //             action: () => this.viewContent()
-        //         })
-        //     }
-        //     if (this.entry.link) {
-        //         sheets.push({
-        //             label: this.$t('activities.action_copy_dapp_url').toString(),
-        //             action: () => this.copy(this.entry.link)
-        //         })
-        //     }
-        //     return sheets
-        // }
     },
     methods: {
         copy(str: string) {
@@ -224,7 +207,8 @@ export default Vue.extend({
         viewContent() {
             this.$q.dialog({
                 title: this.$t('activities.title_signed_content').toString(),
-                message: this.entry.message
+                message: this.entry.message,
+                ok: false
             })
         }
     }
