@@ -6,7 +6,7 @@
         <!-- drawer content header -->
         <q-toolbar>
             <q-avatar square>
-                <img src="~assets/logo-sync.svg">
+                <img src="~assets/sync-logo.svg">
             </q-avatar>
             <q-toolbar-title>
                 Sync2
@@ -22,7 +22,7 @@
                 <q-item-section avatar>
                     <q-icon
                         size="sm"
-                        name="settings"
+                        name="mdi-settings"
                     />
                 </q-item-section>
                 <q-item-section>
@@ -33,7 +33,7 @@
                 <q-item-section avatar>
                     <q-icon
                         size="sm"
-                        name="history"
+                        name="mdi-history"
                     />
                 </q-item-section>
                 <q-item-section>

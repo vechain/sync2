@@ -6,7 +6,7 @@
         >
             <q-btn
                 flat
-                icon="more_horiz"
+                icon="mdi-dots-horizontal"
                 dense
                 round
             >
@@ -29,11 +29,9 @@
             />
             <div class="col column no-wrap flex-center">
                 <img
-                    src="~assets/new-wallet.svg"
-                    style="min-height:0px;"
+                    src="~assets/vechain-logo-tint.svg"
+                    style="min-height:0px;max-height:300px"
                 >
-                <p class="text-h6">{{$t('newWallet.title_desc')}}</p>
-                <p class="text-body1">{{$t('newWallet.msg_desc')}}</p>
             </div>
         </page-content>
         <page-action>

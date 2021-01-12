@@ -15,7 +15,7 @@
         <q-item-section side>
             <q-icon
                 v-if="!$slots.default"
-                name="keyboard_arrow_right"
+                name="mdi-chevron-right"
             ></q-icon>
             <slot />
         </q-item-section>

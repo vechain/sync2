@@ -9,7 +9,7 @@
         <q-card class="column no-wrap">
             <page-toolbar
                 title="Transaction"
-                icon="close"
+                icon="mdi-close"
                 :gid="gid"
                 @action="hide()"
             />

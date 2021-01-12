@@ -13,7 +13,7 @@
                 top
                 class="items-center"
             >
-                <q-icon name="subdirectory_arrow_right" />
+                <q-icon name="mdi-subdirectory-arrow-right" />
             </q-item-section>
             <q-item-section avatar>
                 <address-avatar

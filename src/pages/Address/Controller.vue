@@ -44,7 +44,7 @@
                             :balance="data"
                         >
                             <q-btn
-                                icon="my_location"
+                                icon="mdi-file-eye-outline"
                                 dense
                                 flat
                                 :to="{

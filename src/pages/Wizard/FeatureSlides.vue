@@ -38,17 +38,17 @@ export default Vue.extend({
     computed: {
         slides() {
             return [{
-                img: require('assets/logo-sync.svg'),
+                img: require('assets/sync-logo.svg'),
                 title: this.$t('wizard.title_feature_1'),
                 name: 's1',
                 content: this.$t('wizard.msg_feature_1').toString()
             }, {
-                img: require('assets/wallet-cards.svg'),
+                img: require('assets/feature-2.svg'),
                 title: this.$t('wizard.title_feature_2'),
                 name: 's2',
                 content: this.$t('wizard.msg_feature_2').toString()
             }, {
-                img: require('assets/signing.svg'),
+                img: require('assets/feature-3.svg'),
                 title: this.$t('wizard.title_feature_3'),
                 name: 's3',
                 content: this.$t('wizard.msg_feature_3').toString()

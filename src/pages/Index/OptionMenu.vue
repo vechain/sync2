@@ -110,7 +110,7 @@ export default Vue.extend({
                         color: 'negative'
                     },
                     // ask user to type 'ok' to confirm
-                    validate: input => input.toLowerCase() === 'ok' ? '' : 'invalid input'
+                    validate: input => input.toLowerCase() === 'ok' ? '' : this.$t('index.msg_delete_error').toString()
                 }
 
                 await this.$dialog<string>({

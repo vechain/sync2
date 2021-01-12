@@ -17,21 +17,21 @@
         </template>
         <template v-slot:append>
             <q-btn
-                v-show="hasCamera"
-                rounded
-                dense
-                class="q-mr-sm"
-                icon="mdi-qrcode-scan"
-                flat
-                @click="onClickScan"
-            />
-            <q-btn
                 v-show="!to"
                 rounded
                 dense
+                class="q-mr-sm"
                 flat
                 ref="addressSelect"
                 icon="mdi-plus-circle-outline"
+            />
+            <q-btn
+                v-show="hasCamera && !to"
+                rounded
+                dense
+                icon="mdi-qrcode-scan"
+                flat
+                @click="onClickScan"
             />
             <q-popup-proxy
                 position="bottom"

@@ -6,7 +6,6 @@ export default {
     common: {
         confirm: 'Confirm',
         yes: 'Yes',
-        no: 'No',
         dismiss: 'Dismiss',
         delete: 'Delete',
         add: 'Add',
@@ -16,7 +15,6 @@ export default {
         decline: 'Decline',
         copy: 'Copy',
         copied: 'Copied to clipboard',
-        default: 'Default',
         close: 'Close',
         continue: 'Continue',
 
@@ -32,7 +30,7 @@ export default {
 
         // notify
         wallet_updated: 'Wallet Updated',
-        wallet_created: 'Wallet Created!',
+        wallet_created: 'Wallet Created',
         wallet_deleted: 'Wallet Deleted',
 
         lang_auto: 'Automatic',
@@ -65,7 +63,9 @@ export default {
         action_create: 'Create Now',
         msg_rename: 'Wallet name helps you quickly identify the wallet.',
         msg_upgrade: 'New version is ready :)',
-        msg_delete: 'Are you sure? This cannot be undone. Unless you have backed up your wallet beforehand.',
+        // request user to enter "ok" to confirm
+        msg_delete: 'Please enter "ok" to delete wallet. This cannot be undone. Unless you have backed up your wallet beforehand.',
+        msg_delete_error: 'Invalid input',
         msg_backup: 'Wallet not backed up! Backup your wallet keep your assets safe.',
         label_wallets: 'Wallets',
         label_no_wallet: 'No wallet created yet'
@@ -108,17 +108,17 @@ export default {
         title_welcome: 'Welcome',
         title_init: 'One Moment',
         title_feature_1: 'VeChain Sync2',
-        title_feature_2: 'Asset Management with Ease',
-        title_feature_3: 'Seamless interaction with dApps',
-        msg_init_animation_s1: 'Initializing',
-        msg_init_animation_s2: 'Collecting entropy for random seed',
-        msg_init_animation_s3: 'Generating your wallet',
-        msg_init_animation_s4: 'Encrypting wallet using your password',
-        msg_init_animation_s5: 'Saving wallet to a local secure vault',
-        msg_init_complete: 'Your wallet is ready!',
+        title_feature_2: 'Asset Management',
+        title_feature_3: 'DApps Interaction',
         msg_feature_1: 'The latest Sync provides access to wallets and interactions with dApps.',
-        msg_feature_2: 'You can easily send and receive assets in one place.',
-        msg_feature_3: 'You can easily sign transactions and certificates.',
+        msg_feature_2: 'Send and receive assets in one place.',
+        msg_feature_3: 'Sign transactions and certificates anytime, anywhere.',
+        msg_init_animation_s1: 'Preparing your master key',
+        msg_init_animation_s2: 'Initializing & encrypting',
+        msg_init_animation_s3: 'Generating mnemonic words of wallet',
+        msg_init_animation_s4: 'Encrypting wallet using the master key',
+        msg_init_animation_s5: 'Saving encrypted wallet to local vault',
+        msg_init_complete: 'Your wallet is ready!',
         action_get_started: 'Get Started'
     },
     address: {
@@ -127,6 +127,7 @@ export default {
         action_receive: 'Receive'
     },
     asset: {
+        title: 'Asset',
         label_transfer: 'Transfers',
         msg_not_found: 'No transfer found',
         msg_no_more: '- The End - '
@@ -170,16 +171,16 @@ export default {
     },
     backup: {
         title: 'Backup',
-        action_next_verify: 'I’ve written down',
+        action_next_verify: 'Let’s Verify',
         label_backed_up: 'Wallet Backed Up',
         msg_backed_up: 'Never share your mnemonic words with anyone,store it securely!',
-        msg_confirm_your_mnemonic: 'Confirm Your Mnemonic Words',
+        msg_confirm_your_mnemonic: 'Verify Your Mnemonic Words',
         msg_backup_intro: 'The mnemonic words stores all the information that is needed at any point in time to recover your wallet',
         label_backup_tips: 'Read Before Backup',
         msg_backup_tips_1: 'Write it down in given order',
         msg_backup_tips_2: 'Keep it in a secure place',
         msg_backup_tips_3: 'No screenshot or screen recording',
-        label_your_mnemonic: 'Your Mnemonic Words'
+        label_your_mnemonic: 'Write Down Your Mnemonic Words'
     },
     sign: {
         title: 'Sign',
