@@ -68,29 +68,53 @@ module.exports = configure(function (/* ctx */) {
       //            (fastest compile time; minimum bundle size; most tedious)
       // * true   - Import everything from Quasar
       //            (not treeshaking Quasar; biggest bundle size; convenient)
-      all: true,
+      all: false,
 
-      // components: [
-      //   "QLayout",
-      //   "QHeader",
-      //   "QToolbar",
-      //   "QToolbarTitle",
-      //   "QDrawer",
-      //   "QList",
-      //   "QPageContainer",
-      //   "QPage",
-      //   "QItem",
-      //   "QItemSection",
-      //   "QIcon",
-      //   "QBtn",
-      //   "QItemLabel"
-      // ],
+      components: [
+        "QAvatar",
+        "QBadge",
+        "QBtn",
+        "QItem",
+        "QItemSection",
+        "QItemLabel",
+        "QExpansionItem",
+        "QImg",
+        "QIcon",
+        "QToolbar",
+        "QToolbarTitle",
+        "QList",
+        "QResizeObserver",
+        "QSeparator",
+        "QCard",
+        "QCardSection",
+        "QCardActions",
+        "QPopupProxy",
+        "QBanner",
+        "QSlideTransition",
+        "QResponsive",
+        "QDialog",
+        "QInput",
+        "QForm",
+        "QTabPanels",
+        "QTabPanel",
+        "QToggle",
+        "QSpinnerDots",
+        "QInfiniteScroll",
+        "QChip",
+        "QCarousel",
+        "QCarouselSlide"
+      ],
       directives: [
-        "TouchPan"
+        "TouchPan",
+        "Intersection",
+        "ClosePopup"
       ],
 
       // Quasar plugins
-      plugins: []
+      plugins: [
+          "Dialog",
+          "Notify"
+      ]
     },
 
     // https://quasar.dev/quasar-cli/cli-documentation/supporting-ie
@@ -112,7 +136,7 @@ module.exports = configure(function (/* ctx */) {
       // rtl: false, // https://quasar.dev/options/rtl-support
       // showProgress: false,
       // gzip: true,
-      // analyze: true,
+      analyze: true,
 
       // Options below are automatically set depending on the env, set them if you want to override
       // preloadChunks: false,
