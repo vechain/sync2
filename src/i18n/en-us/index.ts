@@ -17,6 +17,7 @@ export default {
         copied: 'Copied to clipboard',
         close: 'Close',
         continue: 'Continue',
+        view: 'View',
 
         // network
         mainnet: 'Main Net',
@@ -27,6 +28,7 @@ export default {
         required_field: 'This field is required',
         something_wrong: 'Something is wrong',
         error_occurred: 'Error Occurred',
+        no_wallet: 'No wallet created yet',
 
         // notify
         wallet_updated: 'Wallet Updated',
@@ -35,8 +37,11 @@ export default {
 
         lang_auto: 'Automatic',
 
-        transferring: 'Transferring',
         transaction: 'Transaction',
+        transfer_asset: 'Transfer',
+        contract_call: 'Contract Call',
+        contract_creation: 'Contract Creation',
+        new_contract: 'New Contract',
         certificate: 'Certificate',
         identification: 'Identification',
         agreement: 'Agreement',
@@ -67,13 +72,10 @@ export default {
         msg_delete: 'Please enter "ok" to delete wallet. This cannot be undone. Unless you have backed up your wallet beforehand.',
         msg_delete_error: 'Invalid input',
         msg_backup: 'Wallet not backed up! Backup your wallet keep your assets safe.',
-        label_wallets: 'Wallets',
-        label_no_wallet: 'No wallet created yet'
+        label_wallets: 'Wallets'
     },
     newWallet: {
         title: 'New Wallet',
-        title_desc: 'Sync Wallet',
-        msg_desc: 'Manage assets with ease, anytime, anywhere',
         msg_mnemonic_error: 'Invalid mnemonic words',
         mnemonic_words_count: 'Mnemonic words count',
         action_generate: 'Generate',
@@ -151,10 +153,6 @@ export default {
         label_expired: 'Expired',
         label_sending: 'Sending',
         label_confirming: 'Confirming',
-        action_view_on_explorer: 'View on Explorer',
-        action_copy_txId: 'Copy TxID',
-        action_view_signed_content: 'View Signed Content',
-        action_copy_dapp_url: 'Copy DApp URL',
         msg_not_found: 'No Activities Found',
         msg_activities_desc: 'Activities that you’ve interacted with recently will appear here.',
         msg_contract_creation: 'Contract Creation',
@@ -210,10 +208,12 @@ export default {
         label_priority_high: 'High',
         action_sign: 'Sign',
         label_insufficient_energy: 'Insufficient Energy',
-        msg_insufficient_energy: 'Not enough VTHO to cover the cost of gas',
+        msg_insufficient_energy: 'Not enough VTHO to send transaction',
         label_transaction_warning: 'Transaction may fail/revert',
+        label_critical_error: 'Critical Error',
+        label_vm_error: 'VM Error',
         msg_delegation_failed: 'Failed to request transaction fee delegation',
         msg_address_not_owned: 'Requested address not owned',
-        msg_no_wallet: 'No wallet available'
+        msg_vip191_not_supported: 'VIP191 feature is not supported'
     }
 }

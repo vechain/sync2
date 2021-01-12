@@ -99,9 +99,9 @@ export default Vue.extend({
     methods: {
         opLabel(op: OpTransfer | OpCall | OpCreate) {
             switch (op.type) {
-                case 'transfer': return 'Transfer'
-                case 'call': return 'Contract call'
-                case 'create': return 'Contract creation'
+                case 'transfer': return this.$t('common.transfer_asset')
+                case 'call': return this.$t('common.contract_call')
+                case 'create': return this.$t('common.contract_creation')
             }
         }
     }

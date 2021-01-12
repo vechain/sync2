@@ -20,7 +20,7 @@
             <span
                 class="absolute-center text-grey"
                 v-if="walletGroups.length === 0"
-            >{{$t('index.label_no_wallet')}}</span>
+            >{{$t('common.no_wallet')}}</span>
             <template v-for="(group, gi) in walletGroups">
                 <q-item-label
                     header

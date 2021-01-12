@@ -25,7 +25,7 @@
                         </q-item-section>
                         <q-item-section side>
                             <q-toggle
-                                color="green"
+                                color="positive"
                                 v-model="activeSymbols"
                                 :val="item.symbol"
                             />

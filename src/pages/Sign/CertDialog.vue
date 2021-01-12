@@ -8,7 +8,7 @@
     >
         <q-card class="column no-wrap">
             <page-toolbar
-                title="Certificate"
+                :title="$t('common.certificate')"
                 icon="mdi-close"
                 :gid="gid"
                 @action="hide()"
@@ -79,7 +79,7 @@ export default Common.extend({
     computed: {
         criticalError(): Error | null {
             if (!this.wallet) {
-                return { name: 'Critical Error', message: this.signerGroups.length > 0 ? this.$t('sign.msg_address_not_owned').toString() : this.$t('sign.msg_no_wallet').toString() }
+                return { name: this.$t('sign.label_critical_error').toString(), message: this.signerGroups.length > 0 ? this.$t('sign.msg_address_not_owned').toString() : this.$t('common.no_wallet').toString() }
             }
             return null
         }

@@ -88,9 +88,9 @@ export default Vue.extend({
     computed: {
         levels(): Level[] {
             return [
-                { icon: 'directions_walk', label: this.$t('sign.label_priority_regular').toString(), value: 0 },
-                { icon: 'directions_car', label: this.$t('sign.label_priority_medium').toString(), value: 127 },
-                { icon: 'flight', label: this.$t('sign.label_priority_high').toString(), value: 255 }
+                { icon: 'mdi-walk', label: this.$t('sign.label_priority_regular').toString(), value: 0 },
+                { icon: 'mdi-car', label: this.$t('sign.label_priority_medium').toString(), value: 127 },
+                { icon: 'mdi-airplane', label: this.$t('sign.label_priority_high').toString(), value: 255 }
             ]
         },
         level(): Level | null {
