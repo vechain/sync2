@@ -4,7 +4,7 @@
         v-if="wallet"
     >
         <page-toolbar
-            :title="symbol"
+            :title="$t('asset.title')"
             :gid="wallet.gid"
         />
         <page-content>

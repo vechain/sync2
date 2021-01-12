@@ -31,7 +31,7 @@
                 <template v-else-if="$asyncComputed.request.exception">
                     <p>
                         <q-icon
-                            name="error"
+                            name="mdi-alert-circle"
                             class="text-negative text-h2"
                         />
                     </p>

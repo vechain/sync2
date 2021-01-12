@@ -5,7 +5,7 @@
     >
         <page-toolbar
             :title="title"
-            icon="menu"
+            icon="mdi-menu"
             :gid="wallet && wallet.gid"
             @action="drawerOpen=true"
         >
@@ -15,7 +15,7 @@
                 flat
                 dense
                 round
-                icon="more_horiz"
+                icon="mdi-dots-horizontal"
             >
                 <option-menu :wallet="wallet" />
             </q-btn>

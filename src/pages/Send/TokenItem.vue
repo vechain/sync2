@@ -22,7 +22,7 @@
             v-if="selectIcon"
             side
         >
-            <q-icon name="unfold_more" />
+            <q-icon name="mdi-unfold-more-horizontal" />
         </q-item-section>
     </q-item>
 </template>

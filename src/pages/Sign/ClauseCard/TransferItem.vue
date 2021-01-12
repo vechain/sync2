@@ -26,7 +26,7 @@
         <q-item dense>
             <q-item-section avatar />
             <q-item-section top>
-                <q-icon name="subdirectory_arrow_right" />
+                <q-icon name="mdi-subdirectory-arrow-right" />
             </q-item-section>
             <q-item-section
                 v-if="op.to"

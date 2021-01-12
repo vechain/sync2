@@ -16,7 +16,7 @@
                 flat
                 dense
                 round
-                icon="close"
+                icon="mdi-close"
                 text-color="white"
                 class="absolute-top-left"
                 @click="hide()"
