@@ -11,9 +11,7 @@
                     class="ellipsis"
                     lines="1"
                 >{{ entry.walletName || $t('common.unknown') }}</q-item-label>
-                <q-item-label
-                    caption
-                >
+                <q-item-label caption>
                     <q-icon name="subdirectory_arrow_right" />
                     <address-label :addr="entry.signer" />
                 </q-item-label>
@@ -206,6 +204,7 @@ export default Vue.extend({
         },
         viewContent() {
             this.$q.dialog({
+                parent: this,
                 title: this.$t('activities.title_signed_content').toString(),
                 message: this.entry.message,
                 ok: false

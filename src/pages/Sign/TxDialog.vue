@@ -202,8 +202,9 @@ export default Common.extend({
             this.hide()
         },
         showWarnings() {
-            this.$dialog({
+            this.$q.dialog({
                 component: WarningListDialog,
+                parent: this,
                 warnings: this.warnings,
                 noAction: true
             })
