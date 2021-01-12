@@ -162,7 +162,11 @@ module.exports = configure(function (/* ctx */) {
       workboxPluginMode: 'GenerateSW', // 'GenerateSW' or 'InjectManifest'
       workboxOptions: {
         skipWaiting: true,
-        clientsClaim: true
+        clientsClaim: true,
+        runtimeCaching: [{
+          urlPattern: /^https:\/\/vechain.github.io\/token-registry\//,
+          handler: 'cacheFirst'
+        }]
       }, // only for GenerateSW
       manifest: {
         name: 'Sync2',
