@@ -63,7 +63,7 @@
                         lines="1"
                     >
                         <span v-if="entry.status === 'sending'"> {{$t('activities.label_sending')}} </span>
-                        <span v-if="entry.status === 'success?'">
+                        <span v-if="['success?', 'reverted?'].includes(entry.status)">
                             <q-icon name="mdi-cube-outline" /> {{entry.confirming}}
                         </span>
                     </q-item-label>

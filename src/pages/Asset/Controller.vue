@@ -17,21 +17,33 @@
                     :token="token"
                     :balance="data"
                 >
+                    <q-item-label class="row">
+                        {{token.symbol}}
+                        <amount-label class="q-ml-auto" :value="data" :decimals="token.decimals" > --.-- </amount-label>
+                    </q-item-label>
+                    <q-item-label
+                        caption
+                        v-if="wallet"
+                    >{{wallet.meta.name}}</q-item-label>
+                    <q-item-label caption>
+                        <q-icon name="subdirectory_arrow_right" />
+                        <address-label :addr="address" />
+                    </q-item-label>
+                </head-item>
+            </async-resolve>
+            <q-item dense>
+                <q-item-section>
+                    <q-item-label header>
+                        {{$t('asset.label_transfer')}}
+                    </q-item-label>
+                </q-item-section>
+                <q-item-section side>
                     <q-btn
                         flat
                         round
                         icon="mdi-send"
                         :to="{name: 'send', query: { wid: walletId, i: addressIndex, symbol: symbol }}"
                     />
-                </head-item>
-            </async-resolve>
-            <q-item dense>
-                <q-item-section>
-                    <q-item-label
-                        header
-                    >
-                        {{$t('asset.label_transfer')}}
-                    </q-item-label>
                 </q-item-section>
             </q-item>
         </page-content>
@@ -52,14 +64,17 @@ import HeadItem from './HeadItem.vue'
 import AsyncResolve from 'components/AsyncResolve'
 import PageToolbar from 'components/PageToolbar.vue'
 import PageContent from 'components/PageContent.vue'
-
+import AddressLabel from 'components/AddressLabel.vue'
+import AmountLabel from 'components/AmountLabel.vue'
 export default Vue.extend({
     components: {
         Logs,
         HeadItem,
         AsyncResolve,
         PageToolbar,
-        PageContent
+        PageContent,
+        AddressLabel,
+        AmountLabel
     },
     data() {
         return {

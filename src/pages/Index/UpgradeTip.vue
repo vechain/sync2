@@ -8,7 +8,7 @@
             class="bg-positive"
         >
             <template v-slot:avatar>
-                <q-icon name="mdi-downlaod" />
+                <q-icon name="mdi-download" />
             </template>
             {{$t('index.msg_upgrade')}}
             <template v-slot:action>
