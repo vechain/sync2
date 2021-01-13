@@ -8,7 +8,6 @@
                 <q-item-label>{{ title }}</q-item-label>
                 <q-item-label
                     caption
-                    class="ellipsis"
                     lines="1"
                 >{{ entry.walletName || $t('common.unknown') }}</q-item-label>
                 <q-item-label caption>
