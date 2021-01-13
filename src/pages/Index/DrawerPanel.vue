@@ -10,6 +10,12 @@
             </q-avatar>
             <q-toolbar-title>
                 Sync2
+                <q-badge
+                    v-if="distTag"
+                    outline
+                    color="warning"
+                    align="top"
+                >{{distTag}} </q-badge>
             </q-toolbar-title>
         </q-toolbar>
         <!-- content slot -->
@@ -50,11 +56,11 @@
                 </q-item-section>
             </q-item>
             <q-item dense>
-                <q-item-section class="text-center ">
+                <q-item-section class="text-center">
                     <q-item-label
                         caption
                         class="ellipsis"
-                    >{{version}}</q-item-label>
+                    >v{{version}} ({{build}})</q-item-label>
                 </q-item-section>
             </q-item>
         </q-list>
@@ -65,8 +71,18 @@ import Vue from 'vue'
 
 export default Vue.extend({
     computed: {
-        version() {
-            return `v${process.env.APP_VERSION} (${process.env.APP_BUILD})`
+        distTag(): string {
+            switch (process.env.DIST_TAG) {
+                case 'preview': return 'Preview'
+                case 'unstable': return 'Unstable'
+                default: return ''
+            }
+        },
+        version(): string {
+            return process.env.APP_VERSION!
+        },
+        build(): string {
+            return process.env.APP_BUILD!
         }
     },
     asyncComputed: {

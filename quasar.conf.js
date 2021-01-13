@@ -15,6 +15,7 @@ const { execSync } = require('child_process')
 const appVersion = require('./package.json').version
 const appBuild = execSync('git --no-pager log -n 1 --date=short --pretty="%ad.%h"')
   .toString('utf8')
+  .replace(/-/g, '.')
   .trim()
 
 module.exports = configure(function (/* ctx */) {
@@ -128,7 +129,8 @@ module.exports = configure(function (/* ctx */) {
     build: {
       env: {
           APP_VERSION: JSON.stringify(appVersion),
-          APP_BUILD: JSON.stringify(appBuild)
+          APP_BUILD: JSON.stringify(appBuild),
+          DIST_TAG: JSON.stringify(process.env.DIST_TAG)
       },
       vueRouterMode: 'hash', // available values: 'hash', 'history'
 
