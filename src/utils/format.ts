@@ -46,9 +46,15 @@ export function formatAmount(val: BigNumber.Value, opts?: FormatAmountOptions): 
             return { int, dec: '0'.repeat(opts.fixed), sep }
         }
 
-        const [int, dec] = (typeof opts.fixed === 'number' ? bn.toFormat(opts.fixed, 3/* ROUND_FLOOR */) : bn.toFormat()).split(sep)
+        const [int, dec] = (typeof opts.fixed === 'number' ? bn.toFormat(opts.fixed, BigNumber.ROUND_FLOOR) : bn.toFormat()).split(sep)
         return { int, dec, sep }
     } catch {
         return null
     }
+}
+
+export function toWei(v: string, decimals: number) {
+    return new BigNumber(v)
+        .times(`1${'0'.repeat(decimals)}`)
+        .toFixed(0, BigNumber.ROUND_FLOOR)
 }

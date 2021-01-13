@@ -58,6 +58,7 @@ import { AddressGroup } from './models'
 import PageToolbar from 'components/PageToolbar.vue'
 import PageContent from 'components/PageContent.vue'
 import PageAction from 'components/PageAction.vue'
+import { toWei } from 'src/utils/format'
 
 export default Vue.extend({
     components: {
@@ -177,14 +178,13 @@ export default Vue.extend({
                 comment = `${this.$t('send.title')} ${this.amount} VET`
                 msgItem = {
                     to: this.to,
-                    value: Vue.filter('toWei')(this.amount),
+                    value: toWei(this.amount, this.currentToken!.decimals),
                     comment
                 }
             } else {
                 const func = new abi.Function(abis.transfer)
                 comment = `${this.$t('send.title')} ${this.amount} ${this.sym}`
-                const data = func.encode(this.to,
-                    Vue.filter('toWei')(this.amount, this.currentToken!.decimals))
+                const data = func.encode(this.to, toWei(this.amount, this.currentToken!.decimals))
                 msgItem = {
                     to: this.currentToken!.address,
                     value: 0,
