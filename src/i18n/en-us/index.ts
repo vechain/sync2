@@ -47,12 +47,6 @@ export default {
         agreement: 'Agreement',
         unknown: 'Unknown',
         none: 'None',
-
-        clause: 'Clause',
-        comment: 'Comment',
-        to: 'To',
-        value: 'Value',
-        data: 'Data',
         sent: 'Sent',
         received: 'Received'
 
@@ -152,7 +146,6 @@ export default {
         label_reverted: 'Reverted',
         label_expired: 'Expired',
         label_sending: 'Sending',
-        label_confirming: 'Confirming',
         msg_not_found: 'No Activities Found',
         msg_activities_desc: 'Activities that you’ve interacted with recently will appear here.',
         msg_contract_creation: 'Contract Creation',
@@ -201,7 +194,7 @@ export default {
         action_view_activities: 'View Activities',
 
         // sign tx/cert
-        label_select_priority: 'Select Priority',
+        label_select_priority: 'Priority',
         label_estimate_fee: 'Est. Fee',
         label_priority_regular: 'Regular',
         label_priority_medium: 'Medium',

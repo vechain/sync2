@@ -35,7 +35,7 @@
                     <error-tip
                         v-if="warnings.length > 0"
                         type="warning"
-                        :error="{name: 'Transaction may fail/revert'}"
+                        :error="{name: this.$t('sign.label_transaction_warning')}"
                         clickable
                         @click="showWarnings()"
                     />
