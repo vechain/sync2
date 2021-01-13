@@ -24,7 +24,6 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import { Transaction } from 'thor-devkit'
 import Item, { Entry } from './Item.vue'
 import PageToolbar from 'components/PageToolbar.vue'
 import PageContent from 'components/PageContent.vue'
