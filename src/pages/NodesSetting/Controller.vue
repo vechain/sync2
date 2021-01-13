@@ -1,5 +1,5 @@
 <template>
-    <div class="fit column">
+    <div class="fit column no-wrap">
         <page-toolbar :title="$t('settings.action_nodes')">
             <q-btn
                 class="q-ml-auto"
@@ -42,12 +42,17 @@
                                 />
                             </q-item-section>
                             <q-item-section>
-                                <q-item-label lines="1">{{node.url | urlHost}}</q-item-label>
-                                <q-item-label caption>{{node.url}}</q-item-label>
+                                <q-item-label lines="1">{{nodeName(node)}}</q-item-label>
+                                <q-item-label
+                                    lines="1"
+                                    caption
+                                >{{node.url}}</q-item-label>
                             </q-item-section>
-                            <q-item-section side>
+                            <q-item-section
+                                v-if="canDelete(node)"
+                                side
+                            >
                                 <q-btn
-                                    v-if="canDelete(node)"
                                     @click.prevent.stop="onDelete(node)"
                                     flat
                                     dense
@@ -105,6 +110,14 @@ export default Vue.extend({
         }
     },
     methods: {
+        nodeName(node: M.Node) {
+            try {
+                const url = new URL(node.url)
+                return url.hostname.split('.').slice(-2).join('.')
+            } catch {
+                return node.url
+            }
+        },
         canDelete(val: M.Node) {
             return !val.preset &&
                 count(this.nodes, n => n.genesis.id === val.genesis.id ? 1 : 0) > 1
