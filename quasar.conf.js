@@ -11,7 +11,6 @@
 const { configure } = require('quasar/wrappers')
 const path = require('path')
 const { execSync } = require('child_process')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 const appVersion = require('./package.json').version
 const appBuild = execSync('git --no-pager log -n 1 --date=short --pretty="%ad.%h"')
