@@ -23,6 +23,7 @@
                     </q-item-label>
                     <q-item-label
                         caption
+                        lines="1"
                         v-if="wallet"
                     >{{wallet.meta.name}}</q-item-label>
                     <q-item-label caption>

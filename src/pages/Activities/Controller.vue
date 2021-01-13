@@ -1,5 +1,5 @@
 <template>
-    <div class="column fit">
+    <div class="column fit no-wrap">
         <page-toolbar :title="$t('activities.title')" />
         <page-content class="col">
             <template v-if="entryList.length">
