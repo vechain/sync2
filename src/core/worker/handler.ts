@@ -11,7 +11,7 @@ import {
     createHash
 } from 'crypto'
 import type { CommandName, KdfCipherGlob, CipherGlob } from './index'
-import { Pbkdf2HmacSha256 } from 'asmcrypto.js'
+import { Pbkdf2HmacSha256 } from 'asmcrypto.js/dist_es8/pbkdf2/pbkdf2-hmac-sha256'
 
 /**
  * securely generate random bytes
@@ -27,8 +27,11 @@ async function secureRNG(size: number) {
             resolve(Int16Array.from(entropy))
         })
     })
-    const mac = createHash('sha256')
-    return mac.update(randomBytes(32)).update(entropy).digest().slice(0, size)
+    return createHash('sha256')
+        .update(randomBytes(32))
+        .update(entropy)
+        .digest()
+        .slice(0, size)
 }
 
 function encrypt(clearText: Buffer, key: Buffer): CipherGlob {
