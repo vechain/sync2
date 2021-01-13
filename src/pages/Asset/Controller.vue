@@ -34,7 +34,7 @@
             <q-item dense>
                 <q-item-section>
                     <q-item-label header>
-                        {{$t('asset.label_transfer')}}
+                        {{$t('asset.label_history')}}
                     </q-item-label>
                 </q-item-section>
                 <q-item-section side>

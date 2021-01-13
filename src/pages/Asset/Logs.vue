@@ -18,7 +18,7 @@
             v-if="noMore"
             class="text-center q-my-md text-grey"
         >
-            <span v-if="logs.length === 0">{{$t('asset.msg_not_found')}}</span>
+            <span v-if="logs.length === 0">{{$t('asset.msg_no_history')}}</span>
             <span
                 class="text-caption"
                 v-else

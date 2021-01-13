@@ -66,7 +66,7 @@ export default Vue.extend({
             try {
                 const opts: PromptOptions = {
                     title: this.$t('index.action_rename').toString(),
-                    message: this.$t('index.msg_rename').toString(),
+                    message: '',
                     modal: this.wallet.meta.name,
                     action: {
                         label: this.$t('common.confirm').toString(),
@@ -110,7 +110,7 @@ export default Vue.extend({
                         color: 'negative'
                     },
                     // ask user to type 'ok' to confirm
-                    validate: input => input.toLowerCase() === 'ok' ? '' : this.$t('index.msg_delete_error').toString()
+                    validate: input => input.toLowerCase() === 'ok' ? '' : this.$t('common.invalid_input').toString()
                 }
 
                 await this.$dialog<string>({

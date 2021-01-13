@@ -29,6 +29,7 @@ export default {
         something_wrong: 'Something is wrong',
         error_occurred: 'Error Occurred',
         no_wallet: 'No wallet created yet',
+        invalid_input: 'Invalid input',
 
         // notify
         wallet_updated: 'Wallet Updated',
@@ -56,15 +57,13 @@ export default {
         action_backup: 'Backup',
         action_rename: 'Rename Wallet',
         action_upgrade: 'Upgrade Now',
-        action_backup_now: 'Back Up Now',
+        action_backup_now: 'Backup Now',
         action_settings: 'Settings',
         action_activities: 'Activities',
         action_create: 'Create Now',
-        msg_rename: 'Wallet name helps you quickly identify the wallet.',
         msg_upgrade: 'New version is ready :)',
         // request user to enter "ok" to confirm
         msg_delete: 'Please enter "ok" to delete wallet. This cannot be undone. Unless you have backed up your wallet beforehand.',
-        msg_delete_error: 'Invalid input',
         msg_backup: 'Wallet not backed up! Backup your wallet keep your assets safe.',
         label_wallets: 'Wallets'
     },
@@ -124,8 +123,8 @@ export default {
     },
     asset: {
         title: 'Asset',
-        label_transfer: 'Transfers',
-        msg_not_found: 'No transfer found',
+        label_history: 'History',
+        msg_no_history: 'No transfer history',
         msg_no_more: '- The End - '
     },
     send: {

@@ -29,6 +29,7 @@ export default {
         something_wrong: '出错了',
         error_occurred: '发生错误',
         no_wallet: '钱包未创建',
+        invalid_input: '无效输入',
 
         // notify
         wallet_updated: '钱包已更新',
@@ -59,10 +60,8 @@ export default {
         action_settings: '设置',
         action_activities: '近期活动',
         action_create: '现在创建',
-        msg_rename: '钱包名称能帮助您快速区分钱包',
         msg_upgrade: '有新的版本',
         msg_delete: '请输入"ok"繼續。请确认您已备份该钱包，该行为无法撤销。',
-        msg_delete_error: '无效输入',
         msg_backup: '备份能让您即使丢失设备也能恢复钱包',
         label_wallets: '钱包'
     },
@@ -122,8 +121,8 @@ export default {
     },
     asset: {
         title: '资产',
-        label_transfer: '转账',
-        msg_not_found: '无转账',
+        label_history: '转账记录',
+        msg_no_history: '无记录',
         msg_no_more: '- 完 - '
     },
     send: {
