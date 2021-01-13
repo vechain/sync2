@@ -5,14 +5,13 @@
 const m = require('more-entropy')
 import { HDNode, blake2b256, mnemonic } from 'thor-devkit'
 import {
-    pbkdf2Sync,
-    createHmac,
     randomBytes,
     createCipheriv,
     createDecipheriv,
     createHash
 } from 'crypto'
 import type { CommandName, KdfCipherGlob, CipherGlob } from './index'
+import { Pbkdf2HmacSha256 } from 'asmcrypto.js'
 
 /**
  * securely generate random bytes
@@ -28,8 +27,8 @@ async function secureRNG(size: number) {
             resolve(Int16Array.from(entropy))
         })
     })
-    const mac = createHmac('sha256', randomBytes(32))
-    return mac.update(entropy).digest().slice(0, size)
+    const mac = createHash('sha256')
+    return mac.update(randomBytes(32)).update(entropy).digest().slice(0, size)
 }
 
 function encrypt(clearText: Buffer, key: Buffer): CipherGlob {
@@ -71,9 +70,28 @@ function decrypt(glob: CipherGlob, key: Buffer) {
 
 const kdfCache: Record<string, Buffer> = {}
 
+function kdfEstimateIterations() {
+    let iterations = 100000
+    const pass = Buffer.from('password', 'utf8')
+    const salt = randomBytes(32)
+
+    for (; ;) {
+        const startTime = Date.now()
+        Pbkdf2HmacSha256(pass, salt, iterations, 32)
+        const elapse = Date.now() - startTime
+        if (elapse < 400) {
+            iterations *= 2
+        } else if (elapse < 1000) {
+            return iterations * 2
+        } else {
+            return iterations
+        }
+    }
+}
+
 function kdf(password: string, salt: Buffer, n: number) {
     const cacheKey = `${blake2b256(salt, password).toString('hex')}-${n}`
-    const key = kdfCache[cacheKey] || pbkdf2Sync(password, salt, n, 32, 'sha256')
+    const key = kdfCache[cacheKey] || Buffer.from(Pbkdf2HmacSha256(Buffer.from(password, 'utf8'), salt, n, 32))
     return {
         key: key,
         cache: () => {
@@ -82,8 +100,9 @@ function kdf(password: string, salt: Buffer, n: number) {
     }
 }
 
-function kdfEncrypt(clearText: Buffer, password: string, salt: Buffer): KdfCipherGlob {
-    const iterations = 5000
+function kdfEncrypt(clearText: Buffer, password: string): KdfCipherGlob {
+    const iterations = kdfEstimateIterations()
+    const salt = randomBytes(32)
     const { key, cache } = kdf(password, salt, iterations)
     cache()
     const glob = encrypt(clearText, key)
@@ -115,7 +134,7 @@ async function handleCommand(cmd: CommandName, arg: any) {
         }
         case 'kdfEncrypt': {
             const [clearText, password] = arg
-            return kdfEncrypt(Buffer.from(clearText), password, randomBytes(32))
+            return kdfEncrypt(Buffer.from(clearText), password)
         }
         case 'kdfDecrypt': {
             const [glob, password] = arg
