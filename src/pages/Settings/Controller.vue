@@ -106,10 +106,8 @@ export default Vue.extend({
                     })
                     this.$q.notify(this.$t('settings.msg_password_changed'))
                 } catch (err) {
-                    this.$q.notify({
-                        type: 'negative',
-                        message: `${this.$t('common.error_occurred')}: ${err.message}`
-                    })
+                    // fatal error
+                    console.error(err)
                 }
             } catch { }
         }

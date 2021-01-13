@@ -81,31 +81,39 @@ export default Vue.extend({
                 default: return this.$t('common.unknown').toString()
             }
         },
-        summary(): string {
+        summary(): Item | null {
             const req = this.request
             if (req.type === 'tx') {
-                return (req.payload as M.TxRequest).options?.comment || this.$t('common.none').toString()
+                return {
+                    caption: this.$t('sign.label_request_summary').toString(),
+                    text: (req.payload as M.TxRequest).options?.comment || this.$t('common.none').toString()
+                }
             } else if (req.type === 'cert') {
                 const msg = (req.payload as M.CertRequest).message
                 switch (msg.purpose) {
-                    case 'identification': return this.$t('sign.label_identification_purpose').toString()
-                    case 'agreement': return this.$t('sign.label_agreement_purpose').toString()
-                    default: return this.$t('sign.label_unknown_purpose').toString()
+                    case 'identification': return {
+                        caption: 'Purpose',
+                        text: this.$t('sign.label_identification_purpose').toString()
+                    }
+                    case 'agreement': return {
+                        caption: 'Purpose',
+                        text: this.$t('sign.label_agreement_purpose').toString()
+                    }
+                    default: return null
                 }
             }
-            return this.$t('common.none').toString()
+            return null
         },
         items(): Array<Item> {
-            return [{
+            const items = [{
                 caption: this.$t('sign.label_request_from').toString(),
                 text: this.request.origin || ''
             }, {
                 caption: this.$t('sign.label_request_type').toString(),
                 text: this.type
-            }, {
-                caption: this.$t('sign.label_request_summary').toString(),
-                text: this.summary
             }]
+            this.summary && items.push(this.summary)
+            return items
         }
     }
 })
