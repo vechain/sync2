@@ -64,7 +64,7 @@ export default Vue.extend({
                     walletName: this.walletNames[a.walletId] || '',
                     link: a.glob.link || '',
                     status: this.status(a),
-                    comment: a.type === 'tx' ? (a.glob.comment || this.describeClauses(a.glob.encoded)) : this.certComment(a.glob.encoded)
+                    comment: a.type === 'tx' ? a.glob.comment : this.certComment(a.glob.encoded)
                 }
                 if (a.type === 'tx') {
                     temp.txId = a.glob.id
@@ -102,24 +102,6 @@ export default Vue.extend({
                     return 'sending'
                 }
             }
-        },
-        describeClauses(encoded: string) {
-            const tx = Transaction.decode(Buffer.from(encoded.slice(2), 'hex'))
-            const clauses = tx.body.clauses
-            if (clauses.length === 0) {
-                return this.$t('activities.msg_empty_clause').toString()
-            }
-            if (clauses.length === 1) {
-                if (!clauses[0].to) {
-                    return this.$t('activities.msg_contract_creation').toString()
-                }
-                if (clauses[0].data === '0x') {
-                    return this.$t('activities.msg_vet_transfer').toString()
-                }
-                return this.$t('activities.msg_contract_call').toString()
-            }
-
-            return this.$t('activities.msg_multi_clauses').toString()
         },
         certComment(encoded: string) {
             const cert: Connex.Vendor.CertMessage = JSON.parse(encoded)
