@@ -12,8 +12,7 @@
                     lines="1"
                 >{{ entry.walletName || $t('common.unknown') }}</q-item-label>
                 <q-item-label caption>
-                    <q-icon name="subdirectory_arrow_right" />
-                    <address-label :addr="entry.signer" />
+                    ┗ <address-label :addr="entry.signer" />
                 </q-item-label>
                 <q-item-label caption>
                     {{entry.time}}
