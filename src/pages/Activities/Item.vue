@@ -11,10 +11,11 @@
                     lines="1"
                 >{{ entry.walletName || $t('common.unknown') }}</q-item-label>
                 <q-item-label caption>
-                    ┗ <address-label :addr="entry.signer" />
+                    ┗
+                    <address-label :addr="entry.signer" />
                 </q-item-label>
                 <q-item-label caption>
-                    {{entry.time}}
+                    {{formatDate(entry.time)}}
                 </q-item-label>
             </q-item-section>
             <q-item-section
@@ -91,7 +92,7 @@
                         <template v-if="entry.txId">
                             <q-btn
                                 rounded
-                                @click="copy(entry.txId)"
+                                @click="entry.txId && copy(entry.txId)"
                                 flat
                                 dense
                                 icon="mdi-content-copy"
@@ -123,6 +124,7 @@ import Vue from 'vue'
 import { copyToClipboard, openURL } from 'quasar'
 import { urls, genesises } from 'src/consts'
 import AddressLabel from 'src/components/AddressLabel.vue'
+import { formatDate } from 'src/utils/format'
 
 export type Entry = {
     gid: string
@@ -130,7 +132,7 @@ export type Entry = {
     walletName: string
     signer: string
     comment: string
-    time: string
+    time: number
     link: string
     status: 'reverted' | 'reverted?' | 'success' | 'success?' | 'sending' | 'expired'
     message?: string
@@ -184,8 +186,7 @@ export default Vue.extend({
             }
         },
         networkBadgeText(): string {
-            const net = Vue.filter('net')(this.entry.gid)
-            if (net === 'main') {
+            if (this.entry.gid === genesises.main.id) {
                 return ''
             }
             return this.$netDisplayName(this.entry.gid)
@@ -207,6 +208,9 @@ export default Vue.extend({
                 message: this.entry.message,
                 ok: false
             })
+        },
+        formatDate(date: number) {
+            return formatDate(date, { relative: true })
         }
     }
 })

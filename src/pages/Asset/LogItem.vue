@@ -23,7 +23,7 @@
                 lines="2"
                 v-if="!dense"
             >
-                {{log.meta.blockTimestamp * 1000 | dateTime}}
+                {{formatDate(log.meta.blockTimestamp)}}
             </q-item-label>
         </q-item-section>
         <q-item-section side>
@@ -42,6 +42,7 @@ import Vue from 'vue'
 import AddressLabel from 'src/components/AddressLabel.vue'
 import AmountLabel from 'components/AmountLabel.vue'
 import { TransferLogItem } from './models'
+import { formatDate } from 'src/utils/format'
 
 export default Vue.extend({
     components: {
@@ -77,6 +78,11 @@ export default Vue.extend({
                     mark: this.log.direction
                 }
             }
+        }
+    },
+    methods: {
+        formatDate(timestamp: number) {
+            return formatDate(timestamp * 1000, { relative: true })
         }
     }
 })

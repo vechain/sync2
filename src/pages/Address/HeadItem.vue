@@ -34,6 +34,8 @@
 import Vue from 'vue'
 import AddressAvatar from 'src/components/AddressAvatar.vue'
 import AddressLabel from 'src/components/AddressLabel.vue'
+import { address } from 'thor-devkit'
+
 export default Vue.extend({
     components: {
         AddressAvatar,
@@ -45,10 +47,11 @@ export default Vue.extend({
     },
     methods: {
         showQR() {
+            const content = address.toChecksumed(this.address)
             this.$qrcode({
                 title: this.$t('address.action_receive').toString(),
-                content: Vue.filter('checksum')(this.address),
-                message: Vue.filter('checksum')(this.address),
+                content,
+                message: content,
                 messageClass: 'text-center'
             })
         }

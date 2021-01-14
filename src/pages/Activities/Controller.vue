@@ -4,7 +4,10 @@
         <page-content class="col">
             <template v-if="entryList.length">
                 <template v-for="(item, i) in entryList">
-                    <q-separator :key="`s-${i}`" v-if="i !== 0" />
+                    <q-separator
+                        :key="`s-${i}`"
+                        v-if="i !== 0"
+                    />
                     <Item
                         :entry="item"
                         :key="i"
@@ -58,7 +61,7 @@ export default Vue.extend({
                 const temp: Entry = {
                     gid: a.gid,
                     type: a.type,
-                    time: `${Vue.filter('dateTime')(a.createdTime)}`,
+                    time: a.createdTime,
                     signer: a.glob.signer,
                     walletName: this.walletNames[a.walletId] || '',
                     link: a.glob.link || '',

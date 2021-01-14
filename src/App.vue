@@ -10,6 +10,9 @@
 <script lang="ts">
 import Vue from 'vue'
 import { listen } from 'src/utils/external-url'
+import dayjs from 'dayjs'
+// import more locales here
+import 'dayjs/locale/zh-cn'
 
 export default Vue.extend({
     asyncComputed: {
@@ -21,7 +24,12 @@ export default Vue.extend({
         // watch the language setting change
         lang(newVal: string) {
             // if language not set (auto), use the navigator lang
-            this.$i18n.locale = (newVal || navigator.language).toLowerCase()
+            const lang = (newVal || navigator.language).toLowerCase()
+            this.$i18n.locale = lang
+
+            // should set to default first
+            dayjs.locale('en')
+            dayjs.locale(lang)
         }
     },
     methods: {

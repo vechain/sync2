@@ -27,7 +27,6 @@ module.exports = configure(function (/* ctx */) {
       'i18n',
       'axios',
       'misc',
-      'filters',
       'directives',
       'services'
     ],
@@ -137,7 +136,7 @@ module.exports = configure(function (/* ctx */) {
       // rtl: false, // https://quasar.dev/options/rtl-support
       // showProgress: false,
       // gzip: true,
-      // analyze: true,
+      analyze: true,
 
       // Options below are automatically set depending on the env, set them if you want to override
       // preloadChunks: false,

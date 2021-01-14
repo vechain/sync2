@@ -1,4 +1,10 @@
 import { BigNumber } from 'bignumber.js'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import localizedFormat from 'dayjs/plugin/localizedFormat'
+
+dayjs.extend(relativeTime)
+dayjs.extend(localizedFormat)
 
 export function decimalSeparator() {
     return BigNumber.config(undefined as unknown as {}).FORMAT!.decimalSeparator!
@@ -57,4 +63,18 @@ export function toWei(v: string, decimals: number) {
     return new BigNumber(v)
         .times(`1${'0'.repeat(decimals)}`)
         .toFixed(0, BigNumber.ROUND_FLOOR)
+}
+
+export type FormatDateOptions = {
+    relative?: boolean
+}
+
+export function formatDate(date: number, opts?: FormatDateOptions) {
+    opts = opts || {}
+    const relativeBreak = 3600 * 1000 // in 1hours
+    if (opts.relative && Date.now() < date + relativeBreak) {
+        return dayjs(date).toNow()
+    } else {
+        return dayjs(date).format('L HH:mm:ss')
+    }
 }
