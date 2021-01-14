@@ -86,18 +86,18 @@ export default Vue.extend({
             if (req.type === 'tx') {
                 return {
                     caption: this.$t('sign.label_request_summary').toString(),
-                    text: (req.payload as M.TxRequest).options?.comment || this.$t('common.none').toString()
+                    text: (req.payload as M.TxRequest).options?.comment || 'N/A'
                 }
             } else if (req.type === 'cert') {
                 const msg = (req.payload as M.CertRequest).message
                 switch (msg.purpose) {
                     case 'identification': return {
-                        caption: 'Purpose',
-                        text: this.$t('sign.label_identification_purpose').toString()
+                        caption: this.$t('sign.label_purpose').toString(),
+                        text: this.$t('common.identification').toString()
                     }
                     case 'agreement': return {
-                        caption: 'Purpose',
-                        text: this.$t('sign.label_agreement_purpose').toString()
+                        caption: this.$t('sign.label_purpose').toString(),
+                        text: this.$t('common.agreement').toString()
                     }
                     default: return null
                 }

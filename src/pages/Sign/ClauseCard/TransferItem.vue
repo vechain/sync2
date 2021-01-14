@@ -40,7 +40,7 @@
             <q-item-section avatar>
                 <q-item-label class="ellipsis">
                     <address-label :addr="op.to">
-                        {{$t('common.new_contract')}}
+                        New Contract
                     </address-label>
                 </q-item-label>
             </q-item-section>

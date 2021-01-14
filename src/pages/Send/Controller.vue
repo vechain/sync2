@@ -43,7 +43,7 @@
                 unelevated
                 class="col-6 col-sm-auto"
                 color="primary"
-                :label="$t('send.action_proceed')"
+                :label="$t('send.action_send')"
             />
         </page-action>
     </q-form>
@@ -161,10 +161,10 @@ export default Vue.extend({
         },
         validate(): boolean {
             this.errors.to = this.isAddress(this.to)
-                ? this.checkSumAddress(this.to) ? '' : this.$t('send.msg_checksum_failed').toString()
+                ? this.checkSumAddress(this.to) ? '' : this.$t('send.msg_invalid_address_checksum').toString()
                 : this.$t('send.msg_invalid_address').toString()
 
-            this.errors.amount = this.balanceCheck(this.amount) ? '' : this.$t('send.msg_error_invalid_balance').toString()
+            this.errors.amount = this.balanceCheck(this.amount) ? '' : this.$t('send.msg_invalid_amount').toString()
 
             return (!this.errors.to && !this.errors.amount)
         },

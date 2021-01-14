@@ -153,7 +153,7 @@ export default Vue.extend({
                     title: this.$t('common.delete').toString(),
                     message: this.$t('nodes.msg_delete').toString(),
                     ok: {
-                        label: this.$t('common.yes'),
+                        label: this.$t('common.delete'),
                         color: 'negative',
                         outline: true
                     },

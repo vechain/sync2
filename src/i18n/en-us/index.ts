@@ -5,7 +5,6 @@
 export default {
     common: {
         confirm: 'Confirm',
-        yes: 'Yes',
         dismiss: 'Dismiss',
         delete: 'Delete',
         add: 'Add',
@@ -19,7 +18,7 @@ export default {
         continue: 'Continue',
         view: 'View',
 
-        // network
+        // networks
         mainnet: 'Main Net',
         testnet: 'Test Net',
         private: 'Private',
@@ -27,30 +26,40 @@ export default {
         // error_message
         required_field: 'This field is required',
         something_wrong: 'Something is wrong',
-        error_occurred: 'Error Occurred',
         no_wallet: 'No wallet created yet',
         invalid_input: 'Invalid input',
 
         // notify
-        wallet_updated: 'Wallet Updated',
-        wallet_created: 'Wallet Created',
-        wallet_deleted: 'Wallet Deleted',
+        wallet_updated: 'Wallet updated',
+        wallet_created: 'Wallet created',
+        wallet_deleted: 'Wallet deleted',
 
         lang_auto: 'Automatic',
 
         transaction: 'Transaction',
-        transfer_asset: 'Transfer',
-        contract_call: 'Contract Call',
-        contract_creation: 'Contract Creation',
-        new_contract: 'New Contract',
         certificate: 'Certificate',
         identification: 'Identification',
         agreement: 'Agreement',
         unknown: 'Unknown',
-        none: 'None',
         sent: 'Sent',
         received: 'Received'
-
+    },
+    wizard: {
+        title_welcome: 'Welcome',
+        title_init: 'One Moment',
+        title_feature_1: 'VeChain Sync2',
+        title_feature_2: 'Asset Management',
+        title_feature_3: 'DApps Interaction',
+        msg_feature_1: 'The latest Sync provides access to wallets and interactions with dApps.',
+        msg_feature_2: 'Send and receive assets in one place.',
+        msg_feature_3: 'Sign transactions and certificates anytime, anywhere.',
+        msg_init_animation_s1: 'Preparing your master key',
+        msg_init_animation_s2: 'Initializing & encrypting',
+        msg_init_animation_s3: 'Generating mnemonic words of wallet',
+        msg_init_animation_s4: 'Encrypting wallet using the master key',
+        msg_init_animation_s5: 'Saving encrypted wallet to local vault',
+        msg_init_complete: 'Your wallet is ready!',
+        action_get_started: 'Get Started'
     },
     index: {
         action_new_address: 'New Address',
@@ -90,31 +99,14 @@ export default {
         action_token_list: 'Tokens',
         action_nodes: 'Nodes',
         action_language: 'Language',
-        msg_password_changed: 'Password Changed'
+        msg_password_changed: 'Password changed'
     },
     nodes: {
         title_add_dialog: 'Add Node',
-        msg_node_added: 'Node Added',
-        msg_node_deleted: 'Node Deleted',
+        msg_node_added: 'Node added',
+        msg_node_deleted: 'Node deleted',
         msg_node_existed: 'Node already exists!',
         msg_delete: 'Are you sure you want to delete the node?'
-    },
-    wizard: {
-        title_welcome: 'Welcome',
-        title_init: 'One Moment',
-        title_feature_1: 'VeChain Sync2',
-        title_feature_2: 'Asset Management',
-        title_feature_3: 'DApps Interaction',
-        msg_feature_1: 'The latest Sync provides access to wallets and interactions with dApps.',
-        msg_feature_2: 'Send and receive assets in one place.',
-        msg_feature_3: 'Sign transactions and certificates anytime, anywhere.',
-        msg_init_animation_s1: 'Preparing your master key',
-        msg_init_animation_s2: 'Initializing & encrypting',
-        msg_init_animation_s3: 'Generating mnemonic words of wallet',
-        msg_init_animation_s4: 'Encrypting wallet using the master key',
-        msg_init_animation_s5: 'Saving encrypted wallet to local vault',
-        msg_init_complete: 'Your wallet is ready!',
-        action_get_started: 'Get Started'
     },
     address: {
         title: 'Address',
@@ -132,12 +124,11 @@ export default {
         label_to: 'Recipient',
         label_amount: 'Amount',
         label_asset: 'Asset',
-        label_recent_transfer: 'Recent Transfers',
-        msg_recipient_placeholder: 'Start with 0x',
-        msg_error_invalid_balance: 'Invalid Amount',
+        label_recent_transfer: 'Recent Recipients',
+        msg_invalid_amount: 'Invalid amount',
         msg_invalid_address: 'Please enter a valid address',
-        msg_checksum_failed: 'Checksum Failed',
-        action_proceed: 'Proceed'
+        msg_invalid_address_checksum: 'Checksum failed',
+        action_send: 'Send'
     },
     activities: {
         title: 'Activities',
@@ -145,13 +136,7 @@ export default {
         label_reverted: 'Reverted',
         label_expired: 'Expired',
         label_sending: 'Sending',
-        msg_not_found: 'No Activities Found',
-        msg_activities_desc: 'Activities that you’ve interacted with recently will appear here.',
-        msg_contract_creation: 'Contract Creation',
-        msg_vet_transfer: 'VET Transfer',
-        msg_contract_call: 'Contract Interaction',
-        msg_multi_clauses: 'Multiple interactions with contract',
-        msg_empty_clause: 'Empty content'
+        msg_not_found: 'No activities'
     },
     newPasswordDialog: {
         msg_password_mismatch: 'Password mismatch',
@@ -180,16 +165,14 @@ export default {
         label_request_from: 'From DApp',
         label_request_type: 'Type',
         label_request_summary: 'Summary',
-        label_identification_purpose: 'Identification Purpose',
-        label_agreement_purpose: 'Agreement Purpose',
-        label_unknown_purpose: 'Unknown Purpose',
-        msg_invalid_request: 'Invalid Request',
-        msg_retrieve_failed: 'Unable to retrieve requested content',
+        label_purpose: 'Purpose',
+        msg_invalid_request: 'Invalid request',
+        msg_fetch_request_failed: 'Unable to retrieve requested content',
         msg_content_hash_mismatch: 'CAUTION: Requested content are not identical',
 
         // sign success
         title_success: 'Success',
-        msg_signed: 'You’ve signed the',
+        msg_signed: 'You’ve signed the {content_type}',
         action_view_activities: 'View Activities',
 
         // sign tx/cert
@@ -199,6 +182,8 @@ export default {
         label_priority_medium: 'Medium',
         label_priority_high: 'High',
         action_sign: 'Sign',
+
+        // error occurred
         label_insufficient_energy: 'Insufficient Energy',
         msg_insufficient_energy: 'Not enough VTHO to send transaction',
         label_transaction_warning: 'Transaction may fail/revert',
@@ -206,6 +191,11 @@ export default {
         label_vm_error: 'VM Error',
         msg_delegation_failed: 'Failed to request transaction fee delegation',
         msg_address_not_owned: 'Requested address not owned',
-        msg_vip191_not_supported: 'VIP191 feature is not supported'
+        msg_vip191_not_supported: 'VIP191 feature is not supported',
+
+        // clause op type
+        op_transfer_asset: 'Transfer',
+        op_contract_call: 'Contract Call',
+        op_contract_creation: 'Contract Creation'
     }
 }
