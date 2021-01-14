@@ -126,11 +126,11 @@ export namespace Storage {
         if (!cachedInstance) {
             cachedInstance = (async () => {
                 if (process.env.MODE === 'electron') {
-                    return (await import('./electron')).open()
+                    return (await import(/* webpackIgnore: true */ './electron')).open()
                 } else if (process.env.MODE === 'cordova') {
-                    return (await import('./cordova')).open()
+                    return (await import(/* webpackIgnore: true */ './cordova')).open()
                 } else {
-                    return (await import('./indexdb')).open()
+                    return (await import(/* webpackIgnore: true */ './indexdb')).open()
                 }
             })()
         }
