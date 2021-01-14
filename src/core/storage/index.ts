@@ -1,4 +1,3 @@
-
 /**
  * Storage allows to persistently store local data.
  */
@@ -126,11 +125,11 @@ export namespace Storage {
         if (!cachedInstance) {
             cachedInstance = (async () => {
                 if (process.env.MODE === 'electron') {
-                    return (await import(/* webpackIgnore: true */ './electron')).open()
+                    return (await import(/* webpackMode: "eager" */ './electron')).open()
                 } else if (process.env.MODE === 'cordova') {
-                    return (await import(/* webpackIgnore: true */ './cordova')).open()
+                    return (await import(/* webpackMode: "eager" */ './cordova')).open()
                 } else {
-                    return (await import(/* webpackIgnore: true */ './indexdb')).open()
+                    return (await import(/* webpackMode: "eager" */ './indexdb')).open()
                 }
             })()
         }
