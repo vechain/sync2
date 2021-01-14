@@ -12,7 +12,7 @@
                     color="positive"
                 />
             </p>
-            <p class="text-h6">{{$t('sign.msg_signed')}} {{typeText}}</p>
+            <p class="text-h6">{{ $t('sign.msg_signed', { content_type: typeText }) }}</p>
         </page-content>
         <page-action>
             <q-btn

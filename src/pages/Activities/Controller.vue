@@ -17,8 +17,7 @@
             <template v-else>
                 <div class="text-center q-px-xl column fit justify-center">
                     <div class="col-5">
-                        <h6 class="text-h6 q-my-sm text-grey-8">{{$t('activities.msg_not_found')}}</h6>
-                        <div class="text-body1 text-grey-6">{{$t('activities.msg_activities_desc')}}</div>
+                        <p class="q-my-sm text-grey">{{$t('activities.msg_not_found')}}</p>
                     </div>
                 </div>
             </template>

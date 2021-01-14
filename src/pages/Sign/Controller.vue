@@ -126,7 +126,7 @@ export default Vue.extend({
                         await new Promise(resolve => setTimeout(resolve, 2000))
                     }
                 }
-                throw new Error(this.$t('sign.msg_retrieve_failed').toString())
+                throw new Error(this.$t('sign.msg_fetch_request_failed').toString())
             })()
 
             const dataHash = blake2b256(resp.data).toString('hex')

@@ -5,7 +5,7 @@
         autocomplete="off"
         v-bind="$attrs"
         dense
-        :placeholder="$t('send.msg_recipient_placeholder')"
+        placeholder="0x"
         clearable
         v-model.lazy="to"
     >
