@@ -111,16 +111,16 @@ export default Common.extend({
             }
 
             // acquire user password
-            const password = await this.$authenticate()
+            const umk = await this.$authenticate()
 
             // sign the cert
-            const signature = await this.$loading(async () => {
+            const signature = (() => {
                 const vault = Vault.decode(wallet.vault)
-                const node = await vault.derive(wallet.meta.addresses.indexOf(cert.signer))
-                const sk = await node.unlock(password)
+                const node = vault.derive(wallet.meta.addresses.indexOf(cert.signer))
+                const sk = node.unlock(umk)
                 const unsigned = Certificate.encode(cert)
                 return '0x' + secp256k1.sign(blake2b256(unsigned), sk).toString('hex')
-            })
+            })()
 
             // here cert become signed
             cert.signature = signature

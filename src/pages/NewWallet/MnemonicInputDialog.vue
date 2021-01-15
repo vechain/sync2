@@ -37,7 +37,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { QDialog } from 'quasar'
-import { hdDeriveMnemonic } from 'src/core/worker'
+import { mnemonic } from 'thor-devkit'
 
 export default Vue.extend({
     props: {
@@ -79,10 +79,9 @@ export default Vue.extend({
 
             try {
                 const array = words.split(/\s+/)
-                if (array.length < 12) {
+                if (array.length < 12 || !mnemonic.validate(array)) {
                     throw new Error()
                 }
-                await hdDeriveMnemonic(array, -1)
                 this.ok(array)
             } catch {
                 this.error = this.$t('newWallet.msg_mnemonic_error').toString()

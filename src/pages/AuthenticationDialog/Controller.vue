@@ -58,7 +58,7 @@
 import Vue from 'vue'
 import { QDialog } from 'quasar'
 import { BioPass } from 'src/utils/bio-pass'
-import { kdfDecrypt } from 'src/core/worker'
+import { kdfDecrypt } from 'src/core/vault'
 
 export default Vue.extend({
     data: () => {

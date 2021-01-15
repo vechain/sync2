@@ -226,7 +226,7 @@ export default Common.extend({
                 })
             }
 
-            const password = await this.$authenticate()
+            const umk = await this.$authenticate()
 
             // compose the tx body
             const txBody: Transaction.Body = {
@@ -271,8 +271,8 @@ export default Common.extend({
                 }
 
                 const vault = Vault.decode(wallet.vault)
-                const node = await vault.derive(wallet.meta.addresses.indexOf(signer))
-                const sk = await node.unlock(password)
+                const node = vault.derive(wallet.meta.addresses.indexOf(signer))
+                const sk = node.unlock(umk)
 
                 const originSig = secp256k1.sign(tx.signingHash(), sk)
                 tx.signature = delegatorSig ? Buffer.concat([originSig, delegatorSig]) : originSig

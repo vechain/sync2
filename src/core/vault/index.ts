@@ -1,6 +1,8 @@
-import { secp256k1 } from 'thor-devkit'
+import { HDNode, mnemonic, secp256k1 } from 'thor-devkit'
 import { newVault } from './vault'
-import { hdGenerateMnemonic, hdDeriveMnemonic, encrypt } from 'core/worker'
+import { encrypt, secureRNG } from './cipher'
+
+export * from './cipher'
 
 /** describes the secure container holds wallet key */
 export interface Vault {
@@ -11,14 +13,14 @@ export interface Vault {
      * @param index node index start from 0
      * @returns derived node instance
      */
-    derive(index: number): Promise<Vault.Node>
+    derive(index: number): Vault.Node
 
     /**
      * decrypt the vault
      * @param key the cipher key
      * @returns clear vault content
      */
-    decrypt(key: Buffer): Promise<string | Buffer>
+    decrypt(key: Buffer): Buffer
 
     /** encode the vault into string */
     encode(): string
@@ -41,7 +43,7 @@ export namespace Vault {
          * @param key the cipher key
          * @returns the private key
          */
-        unlock(key: Buffer): Promise<Buffer>
+        unlock(key: Buffer): Buffer
     }
 
     /**
@@ -49,11 +51,12 @@ export namespace Vault {
      * @param len entropy length in bytes. every 4 bytes produce 3 words.
      * @returns generated mnemonic words
      */
-    export function generateMnemonic(len = 32): Promise<string[]> {
+    export async function generateMnemonic(len = 32): Promise<string[]> {
         if (len < 16 || len > 32 || len % 4 !== 0) {
             throw new Error('invalid arg')
         }
-        return hdGenerateMnemonic(len)
+        const rnd = await secureRNG(32)
+        return mnemonic.generate(() => rnd)
     }
 
     /**
@@ -71,14 +74,14 @@ export namespace Vault {
      * @param words mnemonic words
      * @param key the cipher key
      */
-    export async function createHD(words: string[], key: Buffer): Promise<Vault> {
-        const root = await hdDeriveMnemonic(words, -1)
+    export function createHD(words: string[], key: Buffer): Vault {
+        const root = HDNode.fromMnemonic(words)
         // be aware that hd key is utf-8 encoded
         const clearText = Buffer.from(words.join(' '), 'utf8')
-        const glob = await encrypt(clearText, key)
+        const glob = encrypt(clearText, key)
         return newVault({
             type: 'hd',
-            pub: root.pub.toString('hex'),
+            pub: root.publicKey.toString('hex'),
             chainCode: root.chainCode.toString('hex'),
             cipherGlob: JSON.stringify(glob)
         })
@@ -89,8 +92,8 @@ export namespace Vault {
      * @param sk the private key
      * @param key the cipher key
      */
-    export async function createStatic(sk: Buffer, key: Buffer): Promise<Vault> {
-        const glob = await encrypt(sk, key)
+    export function createStatic(sk: Buffer, key: Buffer): Vault {
+        const glob = encrypt(sk, key)
         return newVault({
             type: 'static',
             pub: secp256k1.derivePublicKey(sk).toString('hex'),

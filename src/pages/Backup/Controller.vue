@@ -146,8 +146,9 @@ export default Vue.extend({
                 const umk = await this.$authenticate()
                 try {
                     const vault = Vault.decode(this.wallet.vault)
-                    const words = await vault.decrypt(umk)
-                    this.words = (words as string).split(' ')
+                    this.words = vault.decrypt(umk)
+                        .toString('utf8')
+                        .split(' ')
                     this.panel = 'words'
                 } catch (error) {
                     console.warn(error)

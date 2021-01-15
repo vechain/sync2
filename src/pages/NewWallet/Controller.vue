@@ -160,10 +160,10 @@ export default Vue.extend({
                 try {
                     // main process
                     await this.$loading(async () => {
-                        const vault = await Vault.createHD(
+                        const vault = Vault.createHD(
                             words || await Vault.generateMnemonic(wordsCount / 3 * 4),
                             umk)
-                        const node0 = await vault.derive(0)
+                        const node0 = vault.derive(0)
                         await this.$svc.wallet.insert({
                             gid: this.gid,
                             vault: vault.encode(),

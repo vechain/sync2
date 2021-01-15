@@ -61,7 +61,7 @@ import { BioPass } from 'src/utils/bio-pass'
 import LanguageListPopup from 'pages/LanguageListPopup.vue'
 import PageToolbar from 'components/PageToolbar.vue'
 import PageContent from 'src/components/PageContent.vue'
-import { kdfEncrypt } from 'src/core/worker'
+import { kdfEncrypt } from 'src/core/vault'
 
 export default Vue.extend({
     components: { Item, LanguageListPopup, PageToolbar, PageContent },

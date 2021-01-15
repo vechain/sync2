@@ -18,7 +18,7 @@ export default Vue.extend({
         sheets(): Sheet[] {
             return [{
                 label: this.$t('index.action_new_address').toString(),
-                action: () => { this.newAccount() },
+                action: () => this.newAddress(),
                 hidden: this.wallet.meta.addresses.length >= MAX_ADDRESS
             },
             {
@@ -38,25 +38,23 @@ export default Vue.extend({
         }
     },
     methods: {
-        newAccount() {
+        newAddress() {
             const wallet = this.wallet
             if (!wallet) {
                 return
             }
-            this.$loading(async () => {
-                const addresses = wallet.meta.addresses
-                if (addresses.length >= MAX_ADDRESS) {
-                    return
-                }
-                const vault = Vault.decode(wallet.vault)
-                const newAddress = (await vault.derive(addresses.length)).address
-                const newMeta: M.Wallet.Meta = {
-                    ...wallet.meta,
-                    addresses: [...addresses, newAddress]
-                }
+            const addresses = wallet.meta.addresses
+            if (addresses.length >= MAX_ADDRESS) {
+                return
+            }
+            const vault = Vault.decode(wallet.vault)
+            const newAddress = vault.derive(addresses.length).address
+            const newMeta: M.Wallet.Meta = {
+                ...wallet.meta,
+                addresses: [...addresses, newAddress]
+            }
 
-                await this.$svc.wallet.update(wallet.id, newMeta)
-            })
+            this.$svc.wallet.update(wallet.id, newMeta)
         },
         async rename() {
             const wallet = this.wallet

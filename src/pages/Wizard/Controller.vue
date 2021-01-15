@@ -81,7 +81,7 @@ import { genesises } from 'src/consts'
 import LanguageListPopup from 'pages/LanguageListPopup.vue'
 import PageContent from 'src/components/PageContent.vue'
 import PageAction from 'src/components/PageAction.vue'
-import { secureRNG, kdfEncrypt } from 'src/core/worker'
+import { secureRNG, kdfEncrypt } from 'src/core/vault'
 
 async function randomDelay<T>(p: () => Promise<T>, aboutSeconds: number) {
     const [r] = await Promise.all<T, unknown>([
@@ -131,12 +131,12 @@ export default Vue.extend({
 
             // encrypt the wallet
             this.progressStr = this.$t('wizard.msg_init_animation_s4').toString()
-            const vault = await randomDelay(() => Vault.createHD(words, umk), 0.3)
+            const vault = await randomDelay(() => Promise.resolve(Vault.createHD(words, umk)), 0.3)
 
             // save the wallet
             this.progressStr = this.$t('wizard.msg_init_animation_s5').toString()
             await randomDelay(async () => {
-                const node0 = await vault.derive(0)
+                const node0 = vault.derive(0)
                 await this.$svc.wallet.insert({
                     gid: genesises.main.id,
                     vault: vault.encode(),
