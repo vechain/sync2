@@ -131,7 +131,7 @@ export default Vue.extend({
 
             const dataHash = blake2b256(resp.data).toString('hex')
             if (dataHash !== rid) {
-                throw new Error(this.$t('sign.msg_content_hash_mismatch').toString())
+                throw new Error(this.$t('sign.msg_request_hash_mismatch').toString())
             }
             const request = RelayedRequest.validate(JSON.parse(resp.data))
             request.origin = resp.headers['x-data-origin']

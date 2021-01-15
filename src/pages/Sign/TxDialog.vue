@@ -186,7 +186,7 @@ export default Common.extend({
                 }
             }
             if (energyBalance.isLessThan(fee)) {
-                return { name: this.$t('sign.label_insufficient_energy').toString(), message: this.$t('sign.msg_insufficient_energy').toString() }
+                return { name: this.$t('sign.label_insufficient_vtho').toString(), message: this.$t('sign.msg_insufficient_vtho').toString() }
             }
             return null
         }

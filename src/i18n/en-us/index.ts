@@ -127,7 +127,7 @@ export default {
         label_recent_transfer: 'Recent Recipients',
         msg_invalid_amount: 'Invalid amount',
         msg_invalid_address: 'Please enter a valid address',
-        msg_invalid_address_checksum: 'Checksum failed',
+        msg_invalid_address_checksum: 'Address checksum failed',
         action_send: 'Send'
     },
     activities: {
@@ -167,8 +167,8 @@ export default {
         label_request_summary: 'Summary',
         label_purpose: 'Purpose',
         msg_invalid_request: 'Invalid request',
-        msg_fetch_request_failed: 'Unable to retrieve requested content',
-        msg_content_hash_mismatch: 'CAUTION: Requested content are not identical',
+        msg_fetch_request_failed: 'Unable to fetch request content',
+        msg_request_hash_mismatch: 'CAUTION: the request content is corrupted or tampered',
 
         // sign success
         title_success: 'Success',
@@ -184,8 +184,8 @@ export default {
         action_sign: 'Sign',
 
         // error occurred
-        label_insufficient_energy: 'Insufficient Energy',
-        msg_insufficient_energy: 'Not enough VTHO to send transaction',
+        label_insufficient_vtho: 'Insufficient VTHO',
+        msg_insufficient_vtho: 'Not enough VTHO to send transaction',
         label_transaction_warning: 'Transaction may fail/revert',
         label_critical_error: 'Critical Error',
         label_vm_error: 'VM Error',

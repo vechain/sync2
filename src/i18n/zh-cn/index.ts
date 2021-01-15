@@ -13,7 +13,7 @@ export default {
         next: '下一步',
         decline: '拒绝',
         copy: '复制',
-        copied: '复制到剪切板',
+        copied: '已复制到剪贴板',
         close: '关闭',
         continue: '继续',
         view: '查看',
@@ -26,7 +26,7 @@ export default {
         // error_message
         required_field: '该选项必填',
         something_wrong: '出错了',
-        no_wallet: '钱包未创建',
+        no_wallet: '还未创建钱包',
         invalid_input: '无效输入',
 
         // notify
@@ -38,7 +38,7 @@ export default {
 
         transaction: '交易',
         certificate: '证书',
-        identification: '身份信息',
+        identification: '身份认证',
         agreement: '协议',
         unknown: '未知',
         sent: '已发送',
@@ -47,17 +47,17 @@ export default {
     wizard: {
         title_welcome: '欢迎',
         title_init: '稍等片刻',
-        title_feature_1: '唯链 Sync2',
+        title_feature_1: 'VeChain Sync2',
         title_feature_2: '资产管理',
-        title_feature_3: 'DApp交互',
+        title_feature_3: '与DApp交互',
         msg_feature_1: '最新的 Sync 提供钱包管理和应用交互',
-        msg_feature_2: '在应用中发送和接收资产',
+        msg_feature_2: '发送和接收资产',
         msg_feature_3: '随时随地签署交易或证书',
         msg_init_animation_s1: '准备您的主密钥',
         msg_init_animation_s2: '初始化&加密',
         msg_init_animation_s3: '生成钱包助记词',
         msg_init_animation_s4: '使用主密钥加密钱包',
-        msg_init_animation_s5: '将已加密的钱包安全地另存到本地',
+        msg_init_animation_s5: '妥善地保存已加密的钱包',
         msg_init_complete: '您的钱包已经就绪！',
         action_get_started: '开始使用'
     },
@@ -70,14 +70,14 @@ export default {
         action_settings: '设置',
         action_activities: '操作记录',
         action_create: '现在创建',
-        msg_upgrade: '有新的版本',
-        msg_delete: '请输入"ok"继续。请确认您已备份该钱包，该行为无法撤销。',
-        msg_backup: '备份能让您即使丢失设备也能恢复钱包',
+        msg_upgrade: '新版本已经就绪',
+        msg_delete: '请输入"ok"继续。请确认此钱包已经备份，该操作无法撤销。',
+        msg_backup: '钱包尚未备份！备份钱包以保障资产安全。',
         label_wallets: '钱包'
     },
     newWallet: {
         title: '新建钱包',
-        msg_mnemonic_error: '助记词校验不通过',
+        msg_mnemonic_error: '无效的助记词',
         mnemonic_words_count: '助记词数量',
         action_generate: '生成',
         action_import: '导入',
@@ -96,9 +96,9 @@ export default {
         action_change_password: '更改密码',
         action_bio_auth: '生物识别解锁',
         action_token_list: '代币管理',
-        action_nodes: '节点连接',
+        action_nodes: '节点设置',
         action_language: '语言偏好',
-        msg_password_changed: '密码修改成功'
+        msg_password_changed: '密码已修改'
     },
     nodes: {
         title_add_dialog: '添加节点',
@@ -120,13 +120,13 @@ export default {
     },
     send: {
         title: '发送',
-        label_to: '收款人',
-        label_amount: '数量',
+        label_to: '接收人',
+        label_amount: '数额',
         label_asset: '资产',
-        label_recent_transfer: '近期收款人',
-        msg_invalid_amount: '无效数量',
+        label_recent_transfer: '近期接收人',
+        msg_invalid_amount: '无效数额',
         msg_invalid_address: '请输入有效地址',
-        msg_invalid_address_checksum: '检验失败',
+        msg_invalid_address_checksum: '地址检验失败',
         action_send: '发送'
     },
     activities: {
@@ -145,7 +145,7 @@ export default {
     },
     backup: {
         title: '备份',
-        action_next_verify: '开始验证',
+        action_next_verify: '开始校验',
         label_backed_up: '钱包已备份',
         msg_backed_up: '请将助记词安全地存放，切勿将您的助记词与他人分享',
         msg_confirm_your_mnemonic: '验证您的助记词',
@@ -166,35 +166,35 @@ export default {
         label_request_summary: '概要',
         label_purpose: '用途',
         msg_invalid_request: '无效请求',
-        msg_fetch_request_failed: '未找到请求内容',
-        msg_content_hash_mismatch: '注意:请求内容不一致',
+        msg_fetch_request_failed: '无法获取请求内容',
+        msg_request_hash_mismatch: '注意: 请求内容已损坏或者被篡改',
 
         // sign success
         title_success: '成功',
         msg_signed: '您已签署 {content_type}',
-        action_view_activities: '查看活动',
+        action_view_activities: '查看操作记录',
 
         // sign tx/cert
         label_select_priority: '优先级',
         label_estimate_fee: '预估手续费',
-        label_priority_regular: '低',
+        label_priority_regular: '普通',
         label_priority_medium: '中',
         label_priority_high: '高',
         action_sign: '签名',
 
         // error occurred
-        label_insufficient_energy: '手续费不足',
-        msg_insufficient_energy: 'VTHO不足以发送交易',
+        label_insufficient_vtho: 'VTHO不足',
+        msg_insufficient_vtho: 'VTHO余额不足以发送交易',
         label_transaction_warning: '交易可能会失败',
         label_critical_error: '严重错误',
-        label_vm_error: 'VM 错误',
+        label_vm_error: '虚拟机错误',
         msg_delegation_failed: '请求代付手续费失败',
         msg_address_not_owned: '未拥有请求的钱包地址',
         msg_vip191_not_supported: '不支持VIP191功能',
 
         // clause op type
         op_transfer_asset: '转账',
-        op_contract_call: '合约交互',
-        op_contract_creation: '创建合约'
+        op_contract_call: '合约调用',
+        op_contract_creation: '合约创建'
     }
 }
