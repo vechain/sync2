@@ -4,7 +4,10 @@
         v-if="tokenList.length"
         @submit="onSend"
     >
-        <page-toolbar :title="$t('send.title')" />
+        <page-toolbar
+            :title="$t('send.title')"
+            :gid="wallet && wallet.gid"
+        />
         <page-content class="col no-wrap">
             <q-item-label header>{{$t('send.label_to')}}</q-item-label>
             <To

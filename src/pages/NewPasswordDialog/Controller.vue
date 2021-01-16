@@ -3,11 +3,10 @@
         ref="dialog"
         @hide="$emit('hide')"
         :position="$q.screen.xs ? 'bottom': 'standard'"
+        :no-backdrop-dismiss="!$q.screen.xs"
     >
         <q-card class="full-width">
-            <q-toolbar>
-                <q-toolbar-title class="text-center">{{hint}}</q-toolbar-title>
-            </q-toolbar>
+            <prompt-dialog-toolbar>{{hint}}</prompt-dialog-toolbar>
             <q-form @submit="onSubmit()">
                 <q-card-section>
                     <!-- prevent chrome warning -->
@@ -47,10 +46,12 @@
 <script lang="ts">
 import Vue from 'vue'
 import { QDialog } from 'quasar'
+import PromptDialogToolbar from 'src/components/PromptDialogToolbar.vue'
 
 const MIN_PASSWORD_LEN = 6
 
 export default Vue.extend({
+    components: { PromptDialogToolbar },
     data: () => {
         return {
             password: '',
@@ -59,11 +60,15 @@ export default Vue.extend({
         }
     },
     computed: {
-        hint() {
-            return this.password ? this.$t('newPasswordDialog.title_confirm_password') : this.$t('newPasswordDialog.title_set_new_password')
+        hint(): string {
+            return this.password
+                ? this.$t('newPasswordDialog.title_confirm_password').toString()
+                : this.$t('newPasswordDialog.title_set_new_password').toString()
         },
-        action() {
-            return this.password ? this.$t('common.confirm') : this.$t('common.next')
+        action(): string {
+            return this.password
+                ? this.$t('common.confirm').toString()
+                : this.$t('common.next').toString()
         }
     },
     watch: {

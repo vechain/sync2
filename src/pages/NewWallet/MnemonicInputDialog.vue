@@ -3,11 +3,10 @@
         ref="dialog"
         @hide="$emit('hide')"
         :position="$q.screen.xs ? 'bottom': 'standard'"
+        :no-backdrop-dismiss="!$q.screen.xs"
     >
         <q-card class="full-width">
-            <q-toolbar>
-                <q-toolbar-title class="text-center">{{$t('newWallet.action_import')}}</q-toolbar-title>
-            </q-toolbar>
+            <prompt-dialog-toolbar>{{$t('newWallet.action_import')}}</prompt-dialog-toolbar>
             <q-card-section>
                 <q-input
                     ref="input"
@@ -38,8 +37,10 @@
 import Vue from 'vue'
 import { QDialog } from 'quasar'
 import { mnemonic } from 'thor-devkit'
+import PromptDialogToolbar from 'src/components/PromptDialogToolbar.vue'
 
 export default Vue.extend({
+    components: { PromptDialogToolbar },
     props: {
         state: Object as () => { words: string }
     },

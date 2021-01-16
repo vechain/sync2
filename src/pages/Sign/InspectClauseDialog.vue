@@ -2,7 +2,7 @@
     <q-dialog
         ref="dialog"
         @hide="$emit('hide')"
-        :position="$q.screen.xs ? 'bottom': 'standard'"
+        position="bottom"
     >
         <q-card class="full-width">
             <q-toolbar>

@@ -3,11 +3,10 @@
         ref="dialog"
         @hide="$emit('hide')"
         :position="$q.screen.xs ? 'bottom': 'standard'"
+        :no-backdrop-dismiss="!$q.screen.xs"
     >
         <q-card class="full-width">
-            <q-toolbar>
-                <q-toolbar-title class="text-center">{{opts.title}}</q-toolbar-title>
-            </q-toolbar>
+            <prompt-dialog-toolbar>{{opts.title}}</prompt-dialog-toolbar>
             <q-form @submit="onSubmit">
                 <q-card-section>
                     <q-item-label header>{{opts.message}}</q-item-label>
@@ -41,6 +40,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { QDialog } from 'quasar'
+import PromptDialogToolbar from 'src/components/PromptDialogToolbar.vue'
 
 export type PromptOptions = {
     title: string
@@ -54,6 +54,7 @@ export type PromptOptions = {
 }
 
 export default Vue.extend({
+    components: { PromptDialogToolbar },
     props: {
         opts: Object as () => PromptOptions
     },

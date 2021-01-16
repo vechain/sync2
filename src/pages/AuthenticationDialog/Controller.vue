@@ -3,11 +3,10 @@
         ref="dialog"
         @hide="$emit('hide')"
         :position="$q.screen.xs ? 'bottom': 'standard'"
+        :no-backdrop-dismiss="!$q.screen.xs"
     >
         <q-card class="full-width">
-            <q-toolbar>
-                <q-toolbar-title class="text-center">{{$t('authenticationDialog.title')}}</q-toolbar-title>
-            </q-toolbar>
+            <prompt-dialog-toolbar>{{$t('authenticationDialog.title')}}</prompt-dialog-toolbar>
             <q-form @submit="onSubmit()">
                 <q-card-section>
                     <p class="text-center">{{$t('authenticationDialog.label_input_password')}}</p>
@@ -59,8 +58,10 @@ import Vue from 'vue'
 import { QDialog } from 'quasar'
 import { BioPass } from 'src/utils/bio-pass'
 import { kdfDecrypt } from 'src/core/vault'
+import PromptDialogToolbar from 'src/components/PromptDialogToolbar.vue'
 
 export default Vue.extend({
+    components: { PromptDialogToolbar },
     data: () => {
         return {
             password: '',

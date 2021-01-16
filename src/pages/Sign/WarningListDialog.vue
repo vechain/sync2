@@ -2,11 +2,11 @@
     <q-dialog
         ref="dialog"
         @hide="$emit('hide')"
-        :position="noAction? undefined:'bottom'"
+        :position="noAction? 'standard' : 'bottom'"
     >
         <q-card class="full-width">
             <q-toolbar v-if="title">
-                <q-toolbar-title>
+                <q-toolbar-title class="text-center">
                     {{title}}
                 </q-toolbar-title>
             </q-toolbar>

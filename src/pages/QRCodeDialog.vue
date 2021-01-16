@@ -2,11 +2,11 @@
     <q-dialog
         @hide="$emit('hide')"
         ref="dialog"
-        :position="$q.screen.xs ? 'bottom': 'standard'"
+        position="bottom"
     >
         <q-card class="full-width">
             <q-toolbar>
-                <q-toolbar-title class="absolute-center text-capitalize">
+                <q-toolbar-title class="text-center">
                     {{req.title}}
                 </q-toolbar-title>
             </q-toolbar>
