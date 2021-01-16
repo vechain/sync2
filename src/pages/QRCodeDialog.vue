@@ -1,9 +1,8 @@
 <template>
     <q-dialog
-        position="bottom"
+        @hide="$emit('hide')"
         ref="dialog"
-        transition-show="slide-up"
-        transition-hide="slide-down"
+        :position="$q.screen.xs ? 'bottom': 'standard'"
     >
         <q-card class="full-width">
             <q-toolbar>
@@ -12,10 +11,18 @@
                 </q-toolbar-title>
             </q-toolbar>
             <q-card-section>
-                <q-responsive class="q-mx-auto" style="max-width: 240px" :ratio="1">
+                <q-responsive
+                    class="q-mx-auto"
+                    style="max-width: 240px"
+                    :ratio="1"
+                >
                     <q-r-code class="full-width">{{req.content}}</q-r-code>
                 </q-responsive>
-                <div v-if="req.message" :class="req.messageClass" style="word-break: break-all;">{{req.message}}</div>
+                <div
+                    v-if="req.message"
+                    :class="req.messageClass"
+                    style="word-break: break-all;"
+                >{{req.message}}</div>
             </q-card-section>
             <q-card-actions>
                 <q-btn

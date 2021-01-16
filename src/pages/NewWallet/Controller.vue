@@ -30,7 +30,7 @@
             <div class="col column no-wrap flex-center">
                 <img
                     src="~assets/vechain-logo-tint.svg"
-                    style="min-height:0px;max-height:300px"
+                    style="min-height:0px;max-height:300px;max-width:100%"
                 >
             </div>
         </page-content>
