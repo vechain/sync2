@@ -63,13 +63,13 @@
   <script>
       try{
         if((location.hash||'').startsWith('#/sign?')) {
-          const redirect = localStorage.getItem('redirect')
-          if(redirect) {
-            location.href = new URL(location.hash, redirect).href
+          const forward = localStorage.getItem('connex-forward')
+          if(forward) {
+            location.href = new URL(location.hash, forward).href
           }
         }
       } catch(err) {
-        console.warn('failed to handle redirect:', err)
+        console.warn('failed to handle forward:', err)
       }
   </script>
   <% } %>
