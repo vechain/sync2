@@ -37,7 +37,7 @@
         </div>
         <div
             v-if="verifyRowNum < words.length / groupSize"
-            class="row q-col-gutter-sm"
+            class="row q-col-gutter-sm q-pa-sm"
         >
             <div
                 v-for="(wordIndex, index) in nextGroupIndex"

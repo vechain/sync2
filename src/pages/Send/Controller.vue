@@ -1,6 +1,6 @@
 <template>
     <q-form
-        class="column fit"
+        class="column fit no-wrap"
         v-if="tokenList.length"
         @submit="onSend"
     >

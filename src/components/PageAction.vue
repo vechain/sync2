@@ -1,5 +1,5 @@
 <template>
-    <div class="q-pa-sm">
+    <div class="q-pa-sm q-pb-md">
         <div class="bar narrow-page q-mx-auto row justify-around">
             <slot />
         </div>
