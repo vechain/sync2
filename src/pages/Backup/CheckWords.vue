@@ -1,55 +1,54 @@
 <template>
-    <div class="fit column">
-        <div>
-            <div class="text-h6">
-                {{$t('backup.msg_confirm_your_mnemonic')}}
-            </div>
-        </div>
-        <div class="col q-py-sm">
-            <div
-                v-for="row of verifyRowNum"
-                :key="row"
-                class="row"
-            >
+    <div class="fit column no-wrap">
+        <p>{{$t('backup.msg_confirm_your_mnemonic')}}</p>
+        <div class="col overflow-auto">
+            <div class="bg-yellow-1 q-px-sm">
                 <div
-                    class="col-4 text-center"
-                    v-for="i of groupSize"
-                    :key="i"
+                    v-for="row of verifyRowNum"
+                    :key="row"
+                    class="row"
                 >
-                    <span class="text-h6">{{words[(i - 1) + groupSize * (row - 1)]}}</span>
+                    <div
+                        class="col-4 row q-py-sm"
+                        v-for="i of groupSize"
+                        :key="i"
+                    >
+                        <div class="col-2 text-caption text-grey text-right q-pr-sm">{{groupSize * (row - 1) + i}}.</div>
+                        <div class="col-10 text-h6 serif">{{words[(i - 1) + groupSize * (row - 1)]}}</div>
+                    </div>
                 </div>
-            </div>
-            <div
-                v-if="verifyRowNum < words.length / groupSize"
-                class="row q-my-sm q-py-sm rounded-borders"
-                :class="isError ? 'bg-deep-orange-2' : 'bg-grey-2'"
-            >
                 <div
-                    class="col-4 text-center"
-                    v-for="i of groupSize"
-                    :key="i"
+                    v-if="verifyRowNum < words.length / groupSize"
+                    class="row"
                 >
-                    <span class="text-grey text-caption">{{i + groupSize * verifyRowNum }}.</span>
-                    <span class="text-h6">{{verifyingItems && words[verifyingItems[i-1]]}}</span>
+                    <div
+                        class="col-4 row q-py-sm"
+                        v-for="i of groupSize"
+                        :key="i"
+                    >
+                        <div class="col-2 text-caption text-grey text-right q-pr-sm">{{i + groupSize * verifyRowNum }}.</div>
+                        <div
+                            class="col-10 text-h6 serif"
+                            :class="{'text-negative' :isError,' text-grey': !isError}"
+                        >{{verifyingItems && words[verifyingItems[i-1]]}}</div>
+                    </div>
                 </div>
             </div>
         </div>
         <div
             v-if="verifyRowNum < words.length / groupSize"
-            class="q-mt-auto row justify-center q-col-gutter-sm"
+            class="row q-col-gutter-sm"
         >
             <div
-                class="col-4 text-center"
                 v-for="(wordIndex, index) in nextGroupIndex"
                 :key="index"
+                class="col-4"
             >
                 <q-btn
+                    class="full-width serif"
                     @click="onCheck(wordIndex)"
-                    size="md"
                     outline
                     color="primary"
-                    class="text-lowercase serif rounded-borders"
-                    style="width: 100%"
                 >{{words[wordIndex]}}</q-btn>
             </div>
         </div>

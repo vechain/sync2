@@ -9,7 +9,7 @@
         >
             <q-tab-panel
                 name="notice"
-                class="column q-pa-none"
+                class="column q-pa-none no-wrap"
             >
                 <page-content
                     padding
@@ -31,11 +31,7 @@
                 name="words"
                 class="column q-pa-none no-wrap"
             >
-                <page-content
-                    padding
-                    class="col"
-                    innerClass="fit column"
-                >
+                <page-content class="col q-pa-sm">
                     <Words :words="words" />
                 </page-content>
                 <page-action>
@@ -52,9 +48,8 @@
                 class="column q-pa-none no-wrap"
             >
                 <page-content
-                    padding
-                    class="col q-pb-sm"
-                    innerClass="fit column"
+                    class="col q-pa-sm"
+                    innerClass="fit"
                 >
                     <CheckWords
                         :words="words"
