@@ -11,15 +11,14 @@
                 />
             </q-item-section>
             <q-item-section>
-                <q-item-label
-                    class="ellipsis"
-                    style="font-size:1.2rem;"
-                >
+                <q-item-label class="ellipsis">
                     <amount-label
+                        style="font-size:1.2rem;"
                         :value="op.amount"
                         :decimals="op.token.decimals"
                         long
                     />
+                    {{op.token.symbol}}
                 </q-item-label>
             </q-item-section>
         </q-item>
