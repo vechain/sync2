@@ -55,7 +55,7 @@ export namespace Vault {
         if (len < 16 || len > 32 || len % 4 !== 0) {
             throw new Error('invalid arg')
         }
-        const rnd = await secureRNG(32)
+        const rnd = await secureRNG(len)
         return mnemonic.generate(() => rnd)
     }
 
