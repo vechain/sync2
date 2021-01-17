@@ -47,7 +47,7 @@ module.exports = configure(function (/* ctx */) {
       // 'roboto-font-latin-ext', // this or either 'roboto-font', NEVER both!
 
       // 'roboto-font', // optional, you are not bound to it
-      'material-icons' // optional, you are not bound to it
+      // 'material-icons' // optional, you are not bound to it
     ],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-framework
@@ -272,7 +272,12 @@ module.exports = configure(function (/* ctx */) {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: 'org.vechain.sync2'
+        appId: 'org.vechain.sync2',
+        files: [
+            "!node_modules/sqlite3/{deps,src,tools}",
+            "!node_modules/sqlite3/lib/binding/node-*",
+            "!node_modules/nan/{doc,*.h}"
+          ]
       },
 
        // Requires: @quasar/app v1.4.2+
@@ -290,9 +295,7 @@ module.exports = configure(function (/* ctx */) {
         // chainWebpack also available besides this extendWebpack
 
         // to avoid warning like 'Critical dependency: the request of a dependency is an expression'
-        cfg.externals.push({
-          'electron-debug': 'electron-debug'
-        })
+        cfg.externals.push('electron-debug')
 
         cfg.resolve.extensions.push('.ts')         
         cfg.module.rules.push({
