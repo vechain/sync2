@@ -7,6 +7,7 @@ declare global {
 }
 
 import 'electron'
+import * as SQLite from 'sqlite'
 declare module 'electron' {
     interface App {
         openSQLite: () => Promise<SQLite.Database>
