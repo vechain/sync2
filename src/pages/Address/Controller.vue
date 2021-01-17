@@ -57,7 +57,7 @@
                                 }"
                             />
                             <q-btn
-                                icon="send"
+                                icon="mdi-send"
                                 dense
                                 flat
                                 :to="{

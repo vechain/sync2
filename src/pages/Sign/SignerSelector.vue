@@ -3,7 +3,7 @@
         <signer-item
             :text="signer"
             :caption="group? group.name : ''"
-            :sideIcon="count > 1 ? 'unfold_more': ''"
+            :sideIcon="count > 1 ? 'mdi-unfold-more-horizontal': ''"
             :clickable="count > 1"
         />
         <q-popup-proxy

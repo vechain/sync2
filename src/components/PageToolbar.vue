@@ -4,7 +4,7 @@
             flat
             dense
             round
-            :icon="icon || 'navigate_before'"
+            :icon="icon || 'mdi-chevron-left'"
             @click="onClickNavButton()"
         />
         <q-toolbar-title class="text-center">
