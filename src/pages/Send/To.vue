@@ -7,7 +7,6 @@
         dense
         placeholder="0x"
         clearable
-        clear-icon="close"
         v-model.lazy="to"
     >
         <template
