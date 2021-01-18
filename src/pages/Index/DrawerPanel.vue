@@ -15,6 +15,7 @@
                     outline
                     color="warning"
                     align="top"
+                    class="text-capitalize"
                 >{{distTag}} </q-badge>
             </q-toolbar-title>
         </q-toolbar>
@@ -55,7 +56,10 @@
                     >{{ongoingActivitiesCount}}</q-badge>
                 </q-item-section>
             </q-item>
-            <q-item dense>
+            <q-item
+                dense
+                v-if="version && build"
+            >
                 <q-item-section class="text-center">
                     <q-item-label
                         caption
@@ -71,19 +75,9 @@ import Vue from 'vue'
 
 export default Vue.extend({
     computed: {
-        distTag(): string {
-            switch (process.env.DIST_TAG) {
-                case 'preview': return 'Preview'
-                case 'unstable': return 'Unstable'
-                default: return ''
-            }
-        },
-        version(): string {
-            return process.env.APP_VERSION!
-        },
-        build(): string {
-            return process.env.APP_BUILD!
-        }
+        distTag(): string { return process.env.DIST_TAG || '' },
+        version(): string { return process.env.APP_VERSION || '' },
+        build(): string { return process.env.APP_BUILD || '' }
     },
     asyncComputed: {
         ongoingActivitiesCount() {
