@@ -4,7 +4,6 @@
             <q-btn
                 class="q-ml-auto"
                 flat
-                dense
                 round
                 icon="add"
                 @click="onAdd"

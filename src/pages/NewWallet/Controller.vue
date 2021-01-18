@@ -7,7 +7,6 @@
             <q-btn
                 flat
                 icon="more_horiz"
-                dense
                 round
             >
                 <pop-sheets :sheets="optionSheets" />

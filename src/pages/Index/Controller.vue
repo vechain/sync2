@@ -13,7 +13,6 @@
                 v-if="wallet"
                 class="q-ml-auto"
                 flat
-                dense
                 round
                 icon="more_horiz"
             >

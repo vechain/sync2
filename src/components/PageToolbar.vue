@@ -1,8 +1,7 @@
 <template>
-    <q-toolbar>
+    <q-toolbar class="q-px-xs">
         <q-btn
             flat
-            dense
             round
             :icon="icon || 'chevron_left'"
             @click="onClickNavButton()"
