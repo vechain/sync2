@@ -1,0 +1,36 @@
+name: Deploy PWA(Preview)
+
+on:
+  schedule:
+    - cron:  '30 1 * * *' # builds nightly  
+
+  workflow_dispatch:
+
+env:
+  DIST_TAG: preview
+
+jobs:
+  BuildAndDeploy:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '12'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Application
+        run: npx quasar build -m pwa
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: dist/pwa
+          external_repository: vechain/lite.sync.vecha.in
+          cname: lite.sync.vecha.in
+          force_orphan: true
