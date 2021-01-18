@@ -76,6 +76,9 @@ import PageToolbar from 'components/PageToolbar.vue'
 import PageContent from 'src/components/PageContent.vue'
 import PageAction from 'src/components/PageAction.vue'
 
+const ACCEPTED_SUFFIX = '.accepted'
+const RESP_SUFFIX = '.resp'
+
 export default Vue.extend({
     components: { Summary, DelayRender, PageToolbar, PageContent, PageAction },
     props: {
@@ -135,7 +138,7 @@ export default Vue.extend({
             }
             const request = RelayedRequest.validate(JSON.parse(resp.data))
             request.origin = resp.headers['x-data-origin']
-            this.postStatus('-accepted', {})
+            this.postStatus(ACCEPTED_SUFFIX, {})
             // TODO validate body
             return request
         }
@@ -190,7 +193,7 @@ export default Vue.extend({
         respond(resp?: RelayedResponse) {
             if (!this.responded) {
                 this.responded = true
-                this.postStatus('-resp', resp || {
+                this.postStatus(RESP_SUFFIX, resp || {
                     error: 'user decline'
                 })
             }
