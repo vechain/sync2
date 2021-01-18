@@ -8,7 +8,7 @@ export function boot() {
     Vue.use(AsyncComputed, { errorHandler: false } as never)
     Vue.use(Fragment.Plugin)
     Vue.use(VueGtag, {
-        config: { id: '259251618' },
+        config: { id: 'G-6QEHC6TLQV' },
         enabled: process.env.NODE_ENV === 'production',
         disableScriptLoad: process.env.NODE_ENV !== 'production'
     })
