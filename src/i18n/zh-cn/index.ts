@@ -104,7 +104,7 @@ export default {
         title_add_dialog: '添加节点',
         msg_node_added: '节点已添加',
         msg_node_deleted: '节点已删除',
-        msg_node_existed: '节点已存在！',
+        msg_node_existed: '节点已存在',
         msg_delete: '确认删除该节点?'
     },
     address: {

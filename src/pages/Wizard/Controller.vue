@@ -22,7 +22,7 @@
                     >
                         <q-btn
                             flat
-                            icon="mdi-earth"
+                            icon="language"
                             size="sm"
                             color="primary"
                             :label="displayName"

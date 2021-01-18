@@ -5,7 +5,7 @@
             flat
             dense
             round
-            icon="mdi-close"
+            icon="close"
             v-close-popup
         />
         <q-toolbar-title class="text-center">

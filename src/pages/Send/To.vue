@@ -7,7 +7,6 @@
         dense
         placeholder="0x"
         clearable
-        clear-icon="mdi-close"
         v-model.lazy="to"
     >
         <template
@@ -24,13 +23,13 @@
                 class="q-mr-sm"
                 flat
                 ref="addressSelect"
-                icon="mdi-plus-circle-outline"
+                icon="add_circle_outline"
             />
             <q-btn
                 v-show="hasCamera && !to"
                 rounded
                 dense
-                icon="mdi-qrcode-scan"
+                icon="qr_code_scanner"
                 flat
                 @click="onClickScan"
             />

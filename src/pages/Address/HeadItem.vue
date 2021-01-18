@@ -25,7 +25,7 @@
                 flat
                 round
                 @click="showQR"
-                icon="mdi-qrcode"
+                icon="qr_code_2"
             />
         </q-item-section>
     </q-item>

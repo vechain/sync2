@@ -6,7 +6,7 @@
                 flat
                 dense
                 round
-                icon="mdi-plus"
+                icon="add"
                 @click="onAdd"
             />
         </page-toolbar>
@@ -37,7 +37,7 @@
                             <q-item-section avatar>
                                 <q-icon
                                     color="primary"
-                                    name="mdi-check"
+                                    name="done"
                                     v-show="group.selection === i"
                                 />
                             </q-item-section>
@@ -57,7 +57,7 @@
                                     flat
                                     dense
                                     round
-                                    icon="mdi-delete-forever"
+                                    icon="delete_forever"
                                 />
                             </q-item-section>
                         </q-item>

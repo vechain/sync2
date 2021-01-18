@@ -8,7 +8,6 @@
         transition-next="slide-left"
         control-color="primary"
         padding
-        navigation-icon="mdi-circle"
     >
         <q-carousel-slide
             v-for="item in slides"

@@ -63,7 +63,7 @@
                     >
                         <span v-if="entry.status === 'sending'"> {{$t('activities.label_sending')}} </span>
                         <span v-if="['success?', 'reverted?'].includes(entry.status)">
-                            <q-icon name="mdi-cube-outline" /> {{entry.confirming}}
+                            <q-icon name="hourglass_top" /> {{entry.confirming}}
                         </span>
                     </q-item-label>
                 </q-item-section>
@@ -87,7 +87,7 @@
                             dense
                             v-if="entry.link"
                             @click="copy(entry.link)"
-                            icon="mdi-link-variant"
+                            icon="link"
                         />
                         <template v-if="entry.txId">
                             <q-btn
@@ -95,14 +95,14 @@
                                 @click="entry.txId && copy(entry.txId)"
                                 flat
                                 dense
-                                icon="mdi-content-copy"
+                                icon="content_copy"
                             />
                             <q-btn
                                 rounded
                                 @click="viewOnExplorer"
                                 dense
                                 flat
-                                icon="mdi-file-search-outline"
+                                icon="search"
                             />
                         </template>
                         <q-btn
@@ -111,7 +111,7 @@
                             @click="viewContent"
                             rounded
                             dense
-                            icon="mdi-message-text-outline"
+                            icon="message"
                         />
                     </div>
                 </q-item-section>
@@ -153,22 +153,22 @@ export default Vue.extend({
             const result: { name: string, color: string } = { name: '', color: '' }
             switch (this.entry.status) {
                 case 'success': {
-                    result.name = 'mdi-check-circle-outline'
+                    result.name = 'done_all'
                     result.color = 'positive'
                     break
                 }
                 case 'success?': {
-                    result.name = 'mdi-progress-check'
+                    result.name = 'done'
                     result.color = 'info'
                     break
                 }
                 case 'reverted?': {
-                    result.name = 'mdi-progress-check'
+                    result.name = 'published_with_changes'
                     result.color = 'warning'
                     break
                 }
                 case 'sending': {
-                    result.name = 'mdi-progress-upload'
+                    result.name = 'query_builder'
                     result.color = 'info'
                     break
                 }

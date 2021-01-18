@@ -10,7 +10,7 @@
                     :offset="[-16, 0]"
                 >
                     <item
-                        icon="mdi-earth"
+                        icon="language"
                         :title="$t('settings.action_language')"
                         :value="displayName"
                         clickable
@@ -18,7 +18,7 @@
                 </language-list-popup>
                 <q-separator inset="item" />
                 <item
-                    icon="mdi-key"
+                    icon="lock"
                     :title="$t('settings.action_change_password')"
                     clickable
                     @click="onClickChangePassword()"
@@ -26,7 +26,7 @@
                 <q-separator inset="item" />
                 <template v-if="bioPass">
                     <item
-                        icon="mdi-fingerprint"
+                        icon="fingerprint"
                         :title="$t('settings.action_bio_auth')"
                     >
                         <q-toggle
@@ -39,13 +39,13 @@
                     <q-separator inset="item" />
                 </template>
                 <item
-                    icon="mdi-plus-circle-multiple-outline"
+                    icon="control_point_duplicate"
                     :title="$t('settings.action_token_list')"
                     :to="{name: 'tokens-setting'}"
                 />
                 <q-separator inset="item" />
                 <item
-                    icon="mdi-access-point-network"
+                    icon="perm_data_setting"
                     :title="$t('settings.action_nodes')"
                     :to="{name: 'nodes-setting'}"
                 />

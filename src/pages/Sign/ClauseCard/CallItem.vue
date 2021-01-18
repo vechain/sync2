@@ -1,11 +1,8 @@
 <template>
     <div>
         <q-item dense>
-            <q-item-section avatar>
-                <q-icon
-                    name="mdi-function-variant"
-                    size="sm"
-                />
+            <q-item-section>
+                ⨏(𝑥)
             </q-item-section>
         </q-item>
         <q-item dense>
@@ -13,7 +10,7 @@
                 top
                 class="items-center"
             >
-                <q-icon name="mdi-subdirectory-arrow-right" />
+                <q-icon name="subdirectory_arrow_right" />
             </q-item-section>
             <q-item-section avatar>
                 <address-avatar

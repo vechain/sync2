@@ -8,7 +8,7 @@
             <p>
                 <q-icon
                     size="4rem"
-                    name="mdi-check-circle-outline"
+                    name="check_circle_outline"
                     color="positive"
                 />
             </p>

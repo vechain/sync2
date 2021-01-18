@@ -29,7 +29,7 @@
                 <q-item-section avatar>
                     <q-icon
                         size="sm"
-                        name="mdi-settings"
+                        name="settings"
                     />
                 </q-item-section>
                 <q-item-section>
@@ -40,7 +40,7 @@
                 <q-item-section avatar>
                     <q-icon
                         size="sm"
-                        name="mdi-history"
+                        name="history"
                     />
                 </q-item-section>
                 <q-item-section>
