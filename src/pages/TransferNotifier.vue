@@ -146,11 +146,11 @@ export default Vue.extend({
     methods: {
         // provides stored range for the query
         async guardRange<T extends Connex.Thor.Filter.WithMeta>(kind: string, query: (range: Connex.Thor.Filter.Range) => Promise<T[]>): Promise<T[]> {
-            const key = `notifier-query-range-start_${kind}`
+            const key = `${this.gid}-notifier-filter-range-start_${kind}`
 
             const headNum = this.thor.status.head.number
             const savedRange = localStorage.getItem(key)
-            const rangeStart = parseInt(savedRange!) || headNum
+            const rangeStart = Math.max(parseInt(savedRange!) || headNum, headNum - 8640) // span no longer than a day
             if (rangeStart === 0) {
                 return []
             }
