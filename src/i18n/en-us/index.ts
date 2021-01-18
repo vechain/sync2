@@ -105,7 +105,7 @@ export default {
         title_add_dialog: 'Add Node',
         msg_node_added: 'Node added',
         msg_node_deleted: 'Node deleted',
-        msg_node_existed: 'Node already exists!',
+        msg_node_existed: 'Node already exists',
         msg_delete: 'Are you sure you want to delete the node?'
     },
     address: {

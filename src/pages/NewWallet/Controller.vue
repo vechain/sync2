@@ -6,7 +6,7 @@
         >
             <q-btn
                 flat
-                icon="mdi-dots-horizontal"
+                icon="more_horiz"
                 dense
                 round
             >

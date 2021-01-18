@@ -21,7 +21,7 @@
                             :to="{name: 'tokens-setting'}"
                             flat
                             round
-                            icon="mdi-segment"
+                            icon="control_point_duplicate"
                         />
                     </q-item-section>
                 </q-item>
@@ -44,7 +44,7 @@
                             :balance="data"
                         >
                             <q-btn
-                                icon="mdi-file-eye-outline"
+                                icon="preview"
                                 dense
                                 flat
                                 :to="{
@@ -57,7 +57,7 @@
                                 }"
                             />
                             <q-btn
-                                icon="mdi-send"
+                                icon="send"
                                 dense
                                 flat
                                 :to="{

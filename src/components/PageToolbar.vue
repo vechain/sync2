@@ -4,7 +4,7 @@
             flat
             dense
             round
-            :icon="icon || 'mdi-chevron-left'"
+            :icon="icon || 'chevron_left'"
             @click="onClickNavButton()"
         />
         <q-toolbar-title class="text-center">

@@ -67,13 +67,13 @@ export default Vue.extend({
         logStyle(): { icon: string, color: string, mark: string } {
             if (this.log.direction === '+') {
                 return {
-                    icon: 'mdi-arrow-down',
+                    icon: 'arrow_downward',
                     color: 'positive',
                     mark: this.log.direction
                 }
             } else {
                 return {
-                    icon: 'mdi-arrow-up',
+                    icon: 'arrow_upward',
                     color: 'negative',
                     mark: this.log.direction
                 }

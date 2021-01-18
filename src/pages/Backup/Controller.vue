@@ -71,7 +71,7 @@
                                 <q-icon
                                     size="4rem"
                                     class="q-mx-auto"
-                                    name="mdi-shield-check"
+                                    name="verified_user"
                                     color="positive"
                                 />
                             </q-item-section>

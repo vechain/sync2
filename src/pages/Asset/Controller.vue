@@ -41,7 +41,7 @@
                     <q-btn
                         flat
                         round
-                        icon="mdi-send"
+                        icon="send"
                         :to="{name: 'send', query: { wid: walletId, i: addressIndex, symbol: symbol }}"
                     />
                 </q-item-section>
