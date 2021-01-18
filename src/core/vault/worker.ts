@@ -26,6 +26,7 @@ async function secureRNG(size: number) {
         .process(self.crypto.getRandomValues(new Uint8Array(32)))
         .finish()
         .result!
+        .slice(0, size)
 }
 
 /** to estimate suitable iterations */
