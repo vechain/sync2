@@ -8,6 +8,7 @@
             :src="spec.iconSrc"
             class="fit"
             style="border-radius:inherit"
+            spinner-size="100%"
         />
     </q-avatar>
 </template>
