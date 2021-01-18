@@ -1,8 +1,23 @@
-# Sync (sync2)
+# Sync2
 
-VeChain Sync
+The next generation VeChain wallet for all platforms.
 
-## Install the dependencies
+## Quick start
+
+| Platform | | Link |
+| --- | --- | --- |
+| Browser (nightly/unstable) | | https://lite.sync.vecha.in |
+| Desktop | | |
+| | Windows | WIP |
+| | macOS | WIP |
+| | Linux | WIP |
+| Mobile | | |
+| | Android | WIP |
+| | iOS | WIP |
+
+## Build from source 
+
+### Install the dependencies
 ```bash
 npm install
 ```
@@ -35,6 +50,3 @@ npm run lint
 ```bash
 quasar build
 ```
-
-### Customize the configuration
-See [Configuring quasar.conf.js](https://quasar.dev/quasar-cli/quasar-conf-js).
