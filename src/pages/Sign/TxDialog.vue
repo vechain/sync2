@@ -121,7 +121,7 @@ export default Common.extend({
             }
             // test vip191 feature bit when delegator set
             const head = this.thor.status.head
-            if (head.number > 0 && this.req.options.delegator && ((head.txsFeatures || 0) & 1)) {
+            if (head.number > 0 && this.req.options.delegator && !((head.txsFeatures || 0) & 1)) {
                 return { name: this.$t('sign.label_critical_error').toString(), message: this.$t('sign.msg_vip191_not_supported').toString() }
             }
             return null
