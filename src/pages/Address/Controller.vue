@@ -21,7 +21,7 @@
                             :to="{name: 'tokens-setting'}"
                             flat
                             round
-                            icon="mdi-plus-circle-outline"
+                            icon="mdi-segment"
                         />
                     </q-item-section>
                 </q-item>

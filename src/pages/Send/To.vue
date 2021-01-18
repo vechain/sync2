@@ -7,6 +7,7 @@
         dense
         placeholder="0x"
         clearable
+        clear-icon="mdi-close"
         v-model.lazy="to"
     >
         <template
