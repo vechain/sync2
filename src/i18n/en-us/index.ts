@@ -4,6 +4,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
 export default {
     common: {
+        ok: 'OK',
         confirm: 'Confirm',
         dismiss: 'Dismiss',
         delete: 'Delete',
@@ -196,6 +197,9 @@ export default {
         // clause op type
         op_transfer_asset: 'Transfer',
         op_contract_call: 'Contract Call',
-        op_contract_creation: 'Contract Creation'
+        op_contract_creation: 'Contract Creation',
+
+        title_ask_create_wallet: 'No wallet',
+        message_ask_create_wallet: 'Create now?'
     }
 }

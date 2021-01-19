@@ -151,35 +151,54 @@ export default Vue.extend({
             if (!request) {
                 return
             }
-            try {
-                const { gid } = request
-                let result = null
-                if (request.type === 'tx') {
-                    const { payload } = request
-                    result = await this.$signTx(gid, {
-                        message: payload.message,
-                        options: payload.options,
-                        origin: request.origin
+            const { gid } = request
+            const wallets = await this.$svc.wallet.getByGid(gid)
+
+            // if no suitable wallet, ask to create one
+            if (wallets.length === 0) {
+                try {
+                    await this.$dialog({
+                        title: this.$t('sign.title_ask_create_wallet').toString(),
+                        message: this.$t('sign.message_ask_create_wallet').toString(),
+                        ok: {
+                            label: this.$t('common.ok'),
+                            unelevated: true,
+                            color: 'primary'
+                        },
+                        cancel: this.$t('common.cancel').toString()
                     })
-                } else if (request.type === 'cert') {
-                    let host
-                    try {
-                        host = new URL(request.origin!).host
-                    } catch {
-                    }
-                    const { payload } = request
-                    result = await this.$signCert(gid, {
-                        message: payload.message,
-                        options: payload.options,
-                        origin: request.origin,
-                        domain: host || ''
+                    this.$router.push({
+                        name: 'new-wallet',
+                        query: { defaultGid: gid }
                     })
-                }
-                this.respond({ payload: result! })
-                this.$router.replace({ name: 'sign-success', query: { type: request.type } })
-            } catch (err) {
-                console.warn(err)
+                } catch { }
+                return
             }
+
+            let result = null
+            if (request.type === 'tx') {
+                const { payload } = request
+                result = await this.$signTx(gid, {
+                    message: payload.message,
+                    options: payload.options,
+                    origin: request.origin
+                })
+            } else if (request.type === 'cert') {
+                let host
+                try {
+                    host = new URL(request.origin!).host
+                } catch {
+                }
+                const { payload } = request
+                result = await this.$signCert(gid, {
+                    message: payload.message,
+                    options: payload.options,
+                    origin: request.origin,
+                    domain: host || ''
+                })
+            }
+            this.respond({ payload: result! })
+            this.$router.replace({ name: 'sign-success', query: { type: request.type } })
         },
         async postStatus(suffix: string, result: object) {
             for (let i = 0; i < 3; i++) {

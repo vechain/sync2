@@ -69,10 +69,13 @@ const defaultGid = genesises.main.id
 
 export default Vue.extend({
     components: { PageToolbar, PopSheets, PageContent, PageAction },
-    data: () => {
+    props: {
+        defaultGid: String
+    },
+    data() {
         return {
             name: '',
-            gid: defaultGid,
+            gid: this.defaultGid || defaultGid,
             error: '',
             importState: { words: '' }
         }

@@ -4,6 +4,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
 export default {
     common: {
+        ok: '确定',
         confirm: '确认',
         dismiss: '忽略',
         delete: '删除',
@@ -195,6 +196,9 @@ export default {
         // clause op type
         op_transfer_asset: '转账',
         op_contract_call: '合约调用',
-        op_contract_creation: '合约创建'
+        op_contract_creation: '合约创建',
+
+        title_ask_create_wallet: '尚无可用钱包',
+        message_ask_create_wallet: '现在创建吗?'
     }
 }

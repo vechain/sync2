@@ -67,7 +67,7 @@ export default Vue.extend({
                     message: '',
                     modal: this.wallet.meta.name,
                     action: {
-                        label: this.$t('common.confirm').toString(),
+                        label: this.$t('common.ok').toString(),
                         color: 'primary'
                     },
                     validate: input => input.trim() ? '' : 'Input the name of wallet'

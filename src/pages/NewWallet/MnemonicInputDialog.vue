@@ -26,7 +26,7 @@
                     class="w40 q-mx-auto"
                     unelevated
                     color="primary"
-                    :label="$t('common.confirm')"
+                    :label="$t('common.ok')"
                     @click="onSubmit()"
                 />
             </q-card-actions>
