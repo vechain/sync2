@@ -1,11 +1,11 @@
 {
   "name": "org.vechain.sync2",
-  "version": "0.0.1",
+  "version": "0.9.0",
   "description": "VeChain Sync2",
   "productName": "Sync2",
   "cordovaId": "org.vechain.sync2",
   "capacitorId": "",
-  "author": "qianbin <cola.tin.com@gmail.com>",
+  "author": "vechain.org",
   "private": true,
   "scripts": {
     "lint": "eslint --ext .js,.ts,.vue ./",
