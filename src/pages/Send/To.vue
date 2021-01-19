@@ -23,7 +23,7 @@
                 dense
                 icon="qr_code_scanner"
                 flat
-                @click="onClickScan"
+                @click.stop="onClickScan"
             />
         </template>
         <q-popup-proxy
