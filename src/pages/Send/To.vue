@@ -8,6 +8,7 @@
         placeholder="0x"
         clearable
         v-model.lazy="to"
+        spellcheck="false"
     >
         <template
             v-if="isAddress(to)"
@@ -17,15 +18,6 @@
         </template>
         <template v-slot:append>
             <q-btn
-                v-show="!to"
-                rounded
-                dense
-                class="q-mr-sm"
-                flat
-                ref="addressSelect"
-                icon="add_circle_outline"
-            />
-            <q-btn
                 v-show="hasCamera && !to"
                 rounded
                 dense
@@ -33,34 +25,33 @@
                 flat
                 @click="onClickScan"
             />
-            <q-popup-proxy
-                position="bottom"
-                :target="$refs.addressSelect"
-                fit
-            >
-                <q-card>
-                    <q-list padding>
-                        <template v-for="(group, gi) in wallets">
-                            <q-item-label
-                                :key="gi"
-                                header
-                            >
-                                {{group.name}}
-                            </q-item-label>
-                            <template v-for="(addr, ai) in group.list">
-                                <AddressItem
-                                    clickable
-                                    v-close-popup
-                                    @click="onAddressChange(addr)"
-                                    :key="`${gi} + ${ai}`"
-                                    :address="addr"
-                                />
-                            </template>
-                        </template>
-                    </q-list>
-                </q-card>
-            </q-popup-proxy>
         </template>
+        <q-popup-proxy
+            position="bottom"
+            fit
+        >
+            <q-card>
+                <q-list padding>
+                    <template v-for="(group, gi) in wallets">
+                        <q-item-label
+                            :key="gi"
+                            header
+                        >
+                            {{group.name}}
+                        </q-item-label>
+                        <template v-for="(addr, ai) in group.list">
+                            <AddressItem
+                                clickable
+                                v-close-popup
+                                @click="onSelectAddress(addr)"
+                                :key="`${gi} + ${ai}`"
+                                :address="addr"
+                            />
+                        </template>
+                    </template>
+                </q-list>
+            </q-card>
+        </q-popup-proxy>
     </q-input>
 </template>
 <script lang="ts">
@@ -93,6 +84,9 @@ export default Vue.extend({
             to: this.address
         }
     },
+    asyncComputed: {
+        hasCamera() { return QrScanner.hasCamera() }
+    },
     watch: {
         address(v: string) {
             this.to = v
@@ -103,11 +97,8 @@ export default Vue.extend({
     },
     methods: {
         isAddress: address.test,
-        onAddressChange(addr: string) {
+        onSelectAddress(addr: string) {
             this.to = address.toChecksumed(addr)
-        },
-        hasCamera() {
-            return QrScanner.hasCamera()
         },
         async onClickScan() {
             try {

@@ -38,6 +38,7 @@
                 inputmode="decimal"
                 placeholder="0.00"
                 outlined
+                spellcheck="false"
             />
         </page-content>
         <page-action>
