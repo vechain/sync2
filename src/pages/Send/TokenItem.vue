@@ -9,14 +9,16 @@
                 :spec="token"
             />
         </q-item-section>
-        <q-item-section v-if="!selectIcon">
+        <q-item-section>
             <q-item-label>{{token.symbol}}</q-item-label>
         </q-item-section>
-        <q-item-section :side="!selectIcon" class="text-dark">
+        <q-item-section side>
             <q-item-label>
-                <amount-label :value="balance" :decimals="token.decimals" > --.-- </amount-label>
+                <amount-label
+                    :value="balance"
+                    :decimals="token.decimals"
+                >--.--</amount-label>
             </q-item-label>
-            <q-item-label v-if="selectIcon" caption>{{token.symbol}}</q-item-label>
         </q-item-section>
         <q-item-section
             v-if="selectIcon"
