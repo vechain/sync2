@@ -86,7 +86,8 @@
                             flat
                             dense
                             v-if="entry.link"
-                            @click="copy(entry.link)"
+                            :href="entry.link"
+                            target="_blank"
                             icon="link"
                         />
                         <template v-if="entry.txId">
