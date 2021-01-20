@@ -1,46 +1,73 @@
 <template>
-    <q-item
-        :dense="dense"
-        v-on="$listeners"
+    <q-expansion-item
         v-bind="$attrs"
+        expand-icon-class="hidden"
     >
-        <q-item-section avatar>
-            <q-chip
-                square
-                dense
-                :class=" 'bg-' + logStyle.color"
-                class="text-white truncate-chip-labels"
-            >
-                <q-icon :name="logStyle.icon" />
-            </q-chip>
-        </q-item-section>
-        <q-item-section>
-            <q-item-label lines="1">
-                <address-label :addr="addressText" />
-            </q-item-label>
-            <q-item-label
-                caption
-                lines="2"
-                v-if="!dense"
-            >
-                {{formatDate(log.meta.blockTimestamp)}}
-            </q-item-label>
-        </q-item-section>
-        <q-item-section side>
-            <span :class="'text-' + logStyle.color">
-                {{logStyle.mark}}
-                <amount-label
-                    :value="amount"
-                    :decimals="token.decimals"
-                > --.-- </amount-label>
-            </span>
-        </q-item-section>
-    </q-item>
+        <template v-slot:header>
+            <q-item-section avatar>
+                <q-chip
+                    square
+                    dense
+                    :class=" 'bg-' + logStyle.color"
+                    class="text-white truncate-chip-labels"
+                >
+                    <q-icon :name="logStyle.icon" />
+                </q-chip>
+            </q-item-section>
+            <q-item-section>
+                <q-item-label lines="1">
+                    <address-label :addr="addressText" />
+                </q-item-label>
+                <q-item-label
+                    caption
+                    lines="2"
+                    v-if="!dense"
+                >
+                    {{formatDate(log.meta.blockTimestamp)}}
+                </q-item-label>
+            </q-item-section>
+            <q-item-section side>
+                <span :class="'text-' + logStyle.color">
+                    {{logStyle.mark}}
+                    <amount-label
+                        :value="amount"
+                        :decimals="token.decimals"
+                    > --.-- </amount-label>
+                </span>
+            </q-item-section>
+        </template>
+        <template>
+            <q-item>
+                <q-item-section />
+                <q-item-section />
+                <q-item-section side>
+                    <div class="q-gutter-md">
+                        <q-btn
+                            rounded
+                            @click="copy(log.meta.txID)"
+                            flat
+                            dense
+                            icon="content_copy"
+                        />
+                        <q-btn
+                            rounded
+                            @click="viewOnExplorer"
+                            dense
+                            flat
+                            icon="search"
+                        />
+                    </div>
+                </q-item-section>
+            </q-item>
+        </template>
+    </q-expansion-item>
 </template>
 <script lang="ts">
 import Vue from 'vue'
 import AddressLabel from 'src/components/AddressLabel.vue'
+import { copyToClipboard, openURL } from 'quasar'
 import AmountLabel from 'components/AmountLabel.vue'
+import { urls, genesises } from 'src/consts'
 import { TransferLogItem } from './models'
 import { formatDate } from 'src/utils/format'
 
@@ -78,11 +105,29 @@ export default Vue.extend({
                     mark: this.log.direction
                 }
             }
+        },
+        txDetailUrl(): string {
+            switch (genesises.which(this.log.token.gid)) {
+                case 'main':
+                    return `${urls.explorerMain}transactions/`
+                case 'test':
+                    return `${urls.explorerTest}transactions/`
+                default:
+                    return ''
+            }
         }
     },
     methods: {
         formatDate(timestamp: number) {
             return formatDate(timestamp * 1000, { relative: true })
+        },
+        viewOnExplorer() {
+            openURL(`${this.txDetailUrl}${this.log.meta.txID}`)
+        },
+        copy(str: string) {
+            copyToClipboard(str).then(() => {
+                this.$q.notify(this.$t('common.copied'))
+            }).catch(console.error)
         }
     }
 })
