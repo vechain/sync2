@@ -1,5 +1,6 @@
 <template>
     <q-expansion-item
+        group="log-item"
         v-bind="$attrs"
         expand-icon-class="hidden"
     >

@@ -81,7 +81,7 @@ export default Vue.extend({
     methods: {
         confirmText(activity: M.Activity): string {
             const receipt = activity.type === 'tx' ? activity.glob.receipt : null
-            if (!receipt) {
+            if (!receipt || activity.status === 'completed') {
                 return ''
             }
             const confirms = this.$svc.bc(activity.gid).thor.status.head.number - receipt.meta.blockNumber

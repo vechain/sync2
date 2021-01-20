@@ -53,7 +53,7 @@
             </q-item-section>
         </template>
         <template>
-            <q-item v-if="entry.status === 'success?' || entry.status === 'sending'">
+            <q-item v-if="['success?', 'reverted?', 'sending'].includes(entry.status)">
                 <q-item-section />
                 <q-item-section />
                 <q-item-section side>
