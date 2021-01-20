@@ -65,10 +65,10 @@ export default Vue.extend({
                     walletName: this.walletNames[a.walletId] || '',
                     link: a.glob.link || '',
                     status: this.status(a),
-                    comment: a.type === 'tx' ? a.glob.comment : this.certComment(a.glob.encoded)
+                    comment: a.type === 'tx' ? a.glob.comment : this.certComment(a.glob.encoded),
+                    id: a.glob.id
                 }
                 if (a.type === 'tx') {
-                    temp.txId = a.glob.id
                     temp.confirming = this.confirmText(a)
                 } else {
                     temp.message = this.certMessage(a.glob.encoded)
