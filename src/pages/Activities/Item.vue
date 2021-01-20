@@ -86,14 +86,13 @@
                             flat
                             dense
                             v-if="entry.link"
-                            :href="entry.link"
-                            target="_blank"
+                            @click="openLink(entry.link)"
                             icon="link"
                         />
-                        <template v-if="entry.txId">
+                        <template v-if="entry.type === 'tx' && entry.id">
                             <q-btn
                                 rounded
-                                @click="entry.txId && copy(entry.txId)"
+                                @click="entry.id && copy(entry.id)"
                                 flat
                                 dense
                                 icon="content_copy"
@@ -137,7 +136,7 @@ export type Entry = {
     link: string
     status: 'reverted' | 'reverted?' | 'success' | 'success?' | 'sending' | 'expired'
     message?: string
-    txId?: string
+    id: string
     confirming?: string
 }
 
@@ -199,8 +198,12 @@ export default Vue.extend({
                 this.$q.notify(this.$t('common.copied'))
             }).catch(console.error)
         },
+        openLink(link: string) {
+            const regexp = this.entry.type === 'tx' ? /{txid}/g : /{certid}/g
+            openURL(link.replace(regexp, this.entry.id))
+        },
         viewOnExplorer() {
-            openURL(`${this.txDetailUrl}${this.entry.txId}`)
+            openURL(`${this.txDetailUrl}${this.entry.id}`)
         },
         viewContent() {
             this.$q.dialog({
