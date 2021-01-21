@@ -2,6 +2,8 @@ import { app, BrowserWindow, nativeTheme, webContents } from 'electron'
 import * as SQLite from 'sqlite'
 import * as Path from 'path'
 
+app.allowRendererProcessReuse = false
+
 declare const QUASAR_NODE_INTEGRATION: boolean
 
 let mainWindow: BrowserWindow | null
