@@ -2,7 +2,11 @@
 
 The next generation VeChain wallet for all platforms.
 
-## Quick start
+## What's New
+
+Compared to Sync v1, the most significant change is that the built-in dApp browser is abandoned. That means now dApps can freely run in your favorite web browser.
+
+## Supported Platforms
 
 | Platform | | Link |
 | --- | --- | --- |
@@ -14,6 +18,10 @@ The next generation VeChain wallet for all platforms.
 | Mobile | | |
 | | Android | WIP |
 | | iOS | WIP |
+
+## Port dApps to Sync2
+
+You can easily port your dApp by integrating [Connex v2](https://github.com/vechain/connex).
 
 ## Build from source 
 
@@ -50,3 +58,9 @@ npm run lint
 ```bash
 quasar build
 ```
+
+## License
+
+This package is licensed under the
+[GNU Lesser General Public License v3.0](https://www.gnu.org/licenses/lgpl-3.0.html), also included
+in *LICENSE* file in the repository.
