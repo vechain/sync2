@@ -1,4 +1,10 @@
-import { app, BrowserWindow, nativeTheme, webContents } from 'electron'
+import {
+    app,
+    BrowserWindow,
+    nativeTheme,
+    webContents,
+    dialog
+} from 'electron'
 import * as SQLite from 'sqlite'
 import * as Path from 'path'
 
@@ -90,6 +96,18 @@ function setupOpenUrlEmitter(): (url: string) => void {
     }
 
     app.on('ready', () => {
+        if (process.env.PROD && process.platform === 'darwin') {
+            if (!app.isInApplicationsFolder()) {
+                if (dialog.showMessageBoxSync({
+                    message: `${app.name} is not in Application folder, move there?`,
+                    type: 'question',
+                    buttons: ['OK', 'Cancel']
+                }) === 0) {
+                    app.moveToApplicationsFolder()
+                }
+            }
+        }
+
         const basename = process.env.PROD ? 'sync2.db' : 'sync2-dev.db'
         app.openSQLite = () => SQLite.open({
             filename: Path.resolve(app.getPath('userData'), basename),
