@@ -27,6 +27,7 @@
             />
         </template>
         <q-popup-proxy
+            :no-parent-event="!!to"
             position="bottom"
             fit
         >
