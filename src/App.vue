@@ -3,7 +3,7 @@
         id="q-app"
         class="full-height"
     >
-        <router-view />
+        <router-view class="fit" />
     </div>
 </template>
 

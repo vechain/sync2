@@ -1,26 +1,29 @@
 <template>
-    <transition
-        v-if="mounted"
-        name="q-transition--fade"
-    >
-        <div
-            v-if="initialized"
-            class="fit"
+    <div>
+        <transition
+            v-if="mounted"
+            appear
+            name="q-transition--fade"
         >
-            <stacked-router-view class="fit" />
+            <stacked-router-view
+                v-if="initialized"
+                class="fit"
+            />
+            <wizard
+                v-else
+                class="fit"
+                @done="initialized=true"
+            />
+        </transition>
+        <template v-if="initialized">
             <activity-status-updater />
             <transfer-notifier
                 v-for="gid in gids"
                 :key="gid"
                 :gid="gid"
             />
-        </div>
-        <wizard
-            v-else
-            class="fit"
-            @done="initialized=true"
-        />
-    </transition>
+        </template>
+    </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
