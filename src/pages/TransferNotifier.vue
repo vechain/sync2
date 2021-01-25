@@ -1,6 +1,3 @@
-<template>
-    <fragment />
-</template>
 <script lang="ts">
 import Vue from 'vue'
 import { abis } from 'src/consts'
