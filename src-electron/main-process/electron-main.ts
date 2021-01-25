@@ -103,7 +103,10 @@ function setupOpenUrlEmitter(): (url: string) => void {
                     type: 'question',
                     buttons: ['OK', 'Cancel']
                 }) === 0) {
-                    app.moveToApplicationsFolder()
+                    try {
+                        app.moveToApplicationsFolder()
+                        return
+                    } catch { }
                 }
             }
         }
