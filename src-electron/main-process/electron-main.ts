@@ -7,6 +7,7 @@ import {
 } from 'electron'
 import * as SQLite from 'sqlite'
 import * as Path from 'path'
+import { setupMenu } from './menu'
 
 app.allowRendererProcessReuse = false
 
@@ -95,6 +96,7 @@ function setupOpenUrlEmitter(): (url: string) => void {
         global.__statics = require('path').join(__dirname, 'statics').replace(/\\/g, '\\\\')
     }
 
+    setupMenu()
     app.on('ready', () => {
         if (process.env.PROD && process.platform === 'darwin') {
             if (!app.isInApplicationsFolder()) {
