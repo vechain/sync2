@@ -9,7 +9,7 @@ export function boot() {
     Vue.use(Fragment.Plugin)
     Vue.use(VueGtag, {
         config: { id: 'G-6QEHC6TLQV' },
-        enabled: process.env.NODE_ENV === 'production',
-        disableScriptLoad: process.env.NODE_ENV !== 'production'
+        enabled: process.env.PROD,
+        disableScriptLoad: !process.env.PROD
     })
 }
