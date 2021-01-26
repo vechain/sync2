@@ -24,5 +24,8 @@ export default Vue.extend({
             })
             localStorage.setItem(KEY_ASSET_RISK_ACCEPTED, 't')
         }
+    },
+    render(h) {
+        return h()
     }
 })
