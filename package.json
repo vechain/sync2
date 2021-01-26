@@ -5,7 +5,7 @@
   "productName": "Sync2",
   "cordovaId": "org.vechain.sync2",
   "capacitorId": "",
-  "author": "vechain.org",
+  "author": "VeChain Community",
   "private": true,
   "scripts": {
     "lint": "eslint --ext .js,.ts,.vue ./",
