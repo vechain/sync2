@@ -23,6 +23,7 @@
                 :gid="gid"
             />
         </template>
+        <disclaimer />
     </div>
 </template>
 <script lang="ts">
@@ -32,9 +33,10 @@ import StackedRouterView from 'components/StackedRouterView.vue'
 import ActivityStatusUpdater from 'pages/ActivityStatusUpdater'
 import TransferNotifier from 'pages/TransferNotifier.vue'
 import { unique } from 'src/utils/array'
+import Disclaimer from './Disclaimer'
 
 export default Vue.extend({
-    components: { Wizard, StackedRouterView, ActivityStatusUpdater, TransferNotifier },
+    components: { Wizard, StackedRouterView, ActivityStatusUpdater, TransferNotifier, Disclaimer },
     data() {
         return {
             initialized: false,
