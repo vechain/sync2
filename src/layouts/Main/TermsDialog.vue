@@ -5,15 +5,15 @@
         :position="$q.screen.xs ? 'bottom': 'standard'"
         persistent
     >
-        <q-card class="full-width">
-            <q-card-section>
-                {{terms}}
+        <q-card class="full-width column no-wrap">
+            <q-card-section class="overflow-auto col">
+                {{terms.msg()}}
             </q-card-section>
             <q-card-section>
                 <q-checkbox
                     dense
                     v-model="accepted"
-                    :label="acceptLabel"
+                    :label="terms.label()"
                 />
             </q-card-section>
             <q-card-actions>
@@ -33,10 +33,14 @@
 import Vue from 'vue'
 import { QDialog } from 'quasar'
 
+export type Terms = {
+    msg: () => string,
+    label: () => string
+}
+
 export default Vue.extend({
     props: {
-        terms: String,
-        acceptLabel: String
+        terms: Object as () => Terms
     },
     data() {
         return { accepted: false }

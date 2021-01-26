@@ -2,7 +2,7 @@ import Vue from 'vue'
 import TermsDialog from './TermsDialog.vue'
 
 const KEY_UNSTABLE_ACCEPTED = 'unstable-accepted'
-const KEY_ASSET_RISK_ACCEPTED = 'asset-risk-accepted'
+const KEY_DISCLAIMER_ACCEPTED = 'disclaimer-accepted'
 
 export default Vue.extend({
     async mounted() {
@@ -10,19 +10,23 @@ export default Vue.extend({
             !localStorage.getItem(KEY_UNSTABLE_ACCEPTED)) {
             await this.$dialog({
                 component: TermsDialog,
-                terms: 'Warning for UNSTABLE', // TODO
-                acceptLabel: 'I know and still want to try it out' // TODO
+                terms: {
+                    msg: () => this.$t('disclaimer.msg_unstable_terms').toString(),
+                    label: () => this.$t('disclaimer.msg_unstable_terms').toString()
+                }
             })
             localStorage.setItem(KEY_UNSTABLE_ACCEPTED, 't')
         }
 
-        if (!localStorage.getItem(KEY_ASSET_RISK_ACCEPTED)) {
+        if (!localStorage.getItem(KEY_DISCLAIMER_ACCEPTED)) {
             await this.$dialog({
                 component: TermsDialog,
-                terms: 'Warning', // TODO
-                acceptLabel: 'I...' // TODO
+                terms: {
+                    msg: () => this.$t('disclaimer.msg_disclaimer_terms').toString(),
+                    label: () => this.$t('disclaimer.label_disclaimer_terms_accept').toString()
+                }
             })
-            localStorage.setItem(KEY_ASSET_RISK_ACCEPTED, 't')
+            localStorage.setItem(KEY_DISCLAIMER_ACCEPTED, 't')
         }
     },
     render(h) {
