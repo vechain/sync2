@@ -45,6 +45,12 @@ export default {
         sent: 'Sent',
         received: 'Received'
     },
+    disclaimer: {
+        title_dist_tag: 'UNSTABLE version intended for development usage ONLY',
+        msg_dist_tag: 'I understand and still want to try',
+        title_terms: 'Please manage your wallet carefully. If you accidentally lose access, we will not be able to recover it for you.',
+        msg_terms: 'I understand and accept the risk'
+    },
     wizard: {
         title_welcome: 'Welcome',
         title_init: 'One Moment',

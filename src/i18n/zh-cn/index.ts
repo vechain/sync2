@@ -45,6 +45,12 @@ export default {
         sent: '已发送',
         received: '已接收'
     },
+    disclaimer: {
+        title_dist_tag: '预览版本，仅供开发使用。',
+        msg_dist_tag: '我了解并仍想尝试',
+        title_terms: '请妥善保管好您的钱包，若您不慎遗失，我们将无法帮您恢复。',
+        msg_terms: '我了解并知晓风险'
+    },
     wizard: {
         title_welcome: '欢迎',
         title_init: '稍等片刻',

@@ -10,8 +10,8 @@ export default Vue.extend({
             !localStorage.getItem(KEY_UNSTABLE_ACCEPTED)) {
             await this.$dialog({
                 component: TermsDialog,
-                terms: 'Warning for UNSTABLE', // TODO
-                acceptLabel: 'I know and still want to try it out' // TODO
+                terms: this.$t('disclaimer.title_dist_tag'),
+                acceptLabel: this.$t('disclaimer.msg_dist_tag')
             })
             localStorage.setItem(KEY_UNSTABLE_ACCEPTED, 't')
         }
@@ -19,8 +19,8 @@ export default Vue.extend({
         if (!localStorage.getItem(KEY_ASSET_RISK_ACCEPTED)) {
             await this.$dialog({
                 component: TermsDialog,
-                terms: 'Warning', // TODO
-                acceptLabel: 'I...' // TODO
+                terms: this.$t('disclaimer.title_terms'),
+                acceptLabel: this.$t('disclaimer.msg_terms')
             })
             localStorage.setItem(KEY_ASSET_RISK_ACCEPTED, 't')
         }
