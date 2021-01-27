@@ -12,7 +12,7 @@ export default Vue.extend({
                 component: TermsDialog,
                 terms: {
                     msg: () => this.$t('disclaimer.msg_unstable_terms').toString(),
-                    label: () => this.$t('disclaimer.msg_unstable_terms').toString()
+                    label: () => this.$t('disclaimer.label_unstable_terms_accept').toString()
                 }
             })
             localStorage.setItem(KEY_UNSTABLE_ACCEPTED, 't')
