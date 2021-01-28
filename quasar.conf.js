@@ -275,7 +275,7 @@ module.exports = configure(function (/* ctx */) {
 
         appId: 'org.vechain.sync2',
         files: [
-            "!node_modules/sqlite3/{deps,src,tools}",
+            "!node_modules/sqlite3/{deps,src,tools,build}",
             "!node_modules/sqlite3/lib/binding/node-*",
             "!node_modules/nan/{doc,*.h}"
           ]
@@ -294,9 +294,6 @@ module.exports = configure(function (/* ctx */) {
       extendWebpack (cfg) {
         // do something with Electron main process Webpack cfg
         // chainWebpack also available besides this extendWebpack
-
-        // to avoid warning like 'Critical dependency: the request of a dependency is an expression'
-        cfg.externals.push('electron-debug')
 
         cfg.resolve.extensions.push('.ts')         
         cfg.module.rules.push({
