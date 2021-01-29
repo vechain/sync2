@@ -3,65 +3,68 @@
         class="column fit"
         v-touch-pan.right.mouse.prevent="handleDrawerTouchPan"
     >
-        <page-toolbar
-            :title="title"
-            icon="menu"
-            :gid="wallet && wallet.gid"
-            @action="drawerOpen=true"
-        >
-            <q-btn
-                v-if="wallet"
-                class="q-ml-auto"
-                flat
-                round
-                icon="more_horiz"
+        <!-- ensure wallets is loaded -->
+        <template v-if="wallets">
+            <page-toolbar
+                :title="title"
+                icon="menu"
+                :gid="wallet && wallet.gid"
+                @action="drawerOpen=true"
             >
-                <option-menu :wallet="wallet" />
-            </q-btn>
-        </page-toolbar>
-        <!-- tips -->
-        <div class="narrow-page q-mx-auto">
-            <upgrade-tip v-if="$state.app.updateAvailable" />
-            <backup-tip
-                v-for="w in wallets"
-                :key="w.id"
-                @backup="$router.push({name: 'backup', params: {walletId: w.id.toString()}})"
-                v-show="w.id === selectedWalletId && !w.meta.backedUp"
-            />
-        </div>
-        <!-- address list -->
-        <address-card-list
-            v-if="wallet"
-            ref="list"
-            :wallet="wallet"
-            class="col"
-        />
-        <div
-            v-if="wallets.length === 0 && !$asyncComputed.wallets.updating"
-            class="narrow-page q-my-auto text-center self-center"
-        >
-            <p class="text-grey text-h5 text-center col-12">{{$t('common.no_wallet')}}</p>
-            <q-btn
-                unelevated
-                color="primary"
-                class="w40"
-                :label="$t('index.action_create')"
-                :to="{name: 'new-wallet'}"
-            />
-        </div>
-        <!-- the drawer -->
-        <side-drawer
-            v-model="drawerOpen"
-            ref="drawer"
-        >
-            <drawer-panel>
-                <wallet-list
-                    :current="selectedWalletId"
-                    :wallets="wallets"
-                    @select="onSelectWallet($event)"
+                <q-btn
+                    v-if="wallet"
+                    class="q-ml-auto"
+                    flat
+                    round
+                    icon="more_horiz"
+                >
+                    <option-menu :wallet="wallet" />
+                </q-btn>
+            </page-toolbar>
+            <!-- tips -->
+            <div class="narrow-page q-mx-auto">
+                <upgrade-tip v-if="$state.app.updateAvailable" />
+                <backup-tip
+                    v-for="w in wallets"
+                    :key="w.id"
+                    @backup="$router.push({name: 'backup', params: {walletId: w.id.toString()}})"
+                    v-show="w.id === selectedWalletId && !w.meta.backedUp"
                 />
-            </drawer-panel>
-        </side-drawer>
+            </div>
+            <!-- address list -->
+            <address-card-list
+                v-if="wallet"
+                ref="list"
+                :wallet="wallet"
+                class="col"
+            />
+            <div
+                v-else
+                class="narrow-page q-my-auto text-center self-center"
+            >
+                <p class="text-grey text-h5 text-center col-12">{{$t('common.no_wallet')}}</p>
+                <q-btn
+                    unelevated
+                    color="primary"
+                    class="w40"
+                    :label="$t('index.action_create')"
+                    :to="{name: 'new-wallet'}"
+                />
+            </div>
+            <!-- the drawer -->
+            <side-drawer
+                v-model="drawerOpen"
+                ref="drawer"
+            >
+                <drawer-panel>
+                    <wallet-list
+                        :current="selectedWalletId"
+                        :wallets="wallets"
+                        @select="onSelectWallet($event)"
+                    />
+                </drawer-panel>
+            </side-drawer>
+        </template>
     </div>
 </template>
 <script lang="ts">
@@ -92,13 +95,12 @@ export default Vue.extend({
                 : null
         },
         title(): string {
-            return (this.wallet && this.wallet.meta.name) || 'Sync'
+            return (this.wallet && this.wallet.meta.name) || 'Sync2'
         }
     },
     asyncComputed: {
-        wallets: {
-            get() { return this.$svc.wallet.all() },
-            default: []
+        wallets(): Promise<M.Wallet[] | null> {
+            return this.$svc.wallet.all()
         }
     },
     watch: {

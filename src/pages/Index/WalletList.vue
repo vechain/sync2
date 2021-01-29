@@ -1,5 +1,5 @@
 <template>
-    <div class="column fit">
+    <div class="column fit no-wrap">
         <q-item>
             <q-item-section>{{$t('index.label_wallets')}}</q-item-section>
             <q-item-section side>
@@ -14,13 +14,13 @@
         </q-item>
         <!-- the grouped wallet list -->
         <q-list
-            class="col overflow-auto full-width"
+            class="col overflow-auto"
             v-scrollDivider.both
         >
-            <span
-                class="absolute-center text-grey"
+            <div
                 v-if="wallets.length === 0"
-            >{{$t('common.no_wallet')}}</span>
+                class="text-grey fit row flex-center"
+            >{{$t('common.no_wallet')}}</div>
             <q-item
                 v-for="wallet in wallets"
                 :key="wallet.id"
