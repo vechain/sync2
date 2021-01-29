@@ -273,12 +273,7 @@ module.exports = configure(function (/* ctx */) {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: 'org.vechain.sync2',
-        files: [
-            "!node_modules/sqlite3/{deps,src,tools,build}",
-            "!node_modules/sqlite3/lib/binding/node-*",
-            "!node_modules/nan/{doc,*.h}"
-          ]
+        appId: 'org.vechain.sync2'
       },
 
        // Requires: @quasar/app v1.4.2+

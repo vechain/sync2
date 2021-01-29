@@ -12,9 +12,7 @@
     "test": "echo \"No test specified\" && exit 0",
     "install": "electron-rebuild"
   },
-  "dependencies": {
-    "sqlite3": "^4.2.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@quasar/app": "^1.9.6",
     "@quasar/extras": "^1.9.13",
@@ -51,7 +49,6 @@
     "qr-scanner": "^1.2.0",
     "qrcode-svg": "^1.1.0",
     "quasar": "^1.15.0",
-    "sqlite": "^4.0.7",
     "thor-devkit": "^2.0.1",
     "validator-ts": "^0.9.1",
     "vue-async-computed": "^3.8.2",

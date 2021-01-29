@@ -5,8 +5,6 @@ import {
     webContents,
     dialog
 } from 'electron'
-import * as SQLite from 'sqlite'
-import * as Path from 'path'
 import { setupMenu } from './menu'
 
 app.allowRendererProcessReuse = false
@@ -112,13 +110,6 @@ function setupOpenUrlEmitter(): (url: string) => void {
                 }
             }
         }
-
-        const basename = process.env.PROD ? 'sync2.db' : 'sync2-dev.db'
-        app.openSQLite = () => SQLite.open({
-            filename: Path.resolve(app.getPath('userData'), basename),
-            driver: require('sqlite3').Database
-        })
-
         createWindow()
     })
 

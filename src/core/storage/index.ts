@@ -124,9 +124,7 @@ export namespace Storage {
     export async function init(): Promise<Storage> {
         if (!cachedInstance) {
             cachedInstance = (async () => {
-                if (process.env.MODE === 'electron') {
-                    return (await import(/* webpackMode: "eager" */ './electron')).open()
-                } else if (process.env.MODE === 'cordova') {
+                if (process.env.MODE === 'cordova') {
                     return (await import(/* webpackMode: "eager" */ './cordova')).open()
                 } else {
                     return (await import(/* webpackMode: "eager" */ './indexdb')).open()
