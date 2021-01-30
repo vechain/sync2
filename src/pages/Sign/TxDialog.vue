@@ -140,10 +140,17 @@ export default Common.extend({
             this.energyWarning && ret.push(this.energyWarning)
             return ret
         },
-        thor(): Connex.Thor { return this.$svc.bc(this.gid).thor }
+        thor(): Connex.Thor { return this.$svc.bc(this.gid).thor },
+        estimation(): EstimateGasResult | null {
+            if (this.delayedEstimation && this.delayedEstimation.caller === this.signer) {
+                return this.delayedEstimation
+            }
+            return null
+        }
     },
     asyncComputed: {
-        estimation(): Promise<EstimateGasResult | null> {
+        // the result may not match the current signer
+        delayedEstimation(): Promise<EstimateGasResult | null> {
             if (!this.wallet) {
                 return Promise.resolve(null)
             }

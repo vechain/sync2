@@ -23,7 +23,8 @@ async function getBaseGasPrice(thor: Connex.Thor) {
 }
 
 export type EstimateGasResult = {
-    gas: number,
+    caller: string
+    gas: number
     reverted: boolean
     revertReason: string
     vmError: string
@@ -64,6 +65,7 @@ export async function estimateGas(
     const bgp = await getBaseGasPrice(thor)
     const lastOutput = outputs.slice().pop()
     return {
+        caller,
         gas,
         reverted: lastOutput ? lastOutput.reverted : false,
         revertReason: lastOutput ? (lastOutput.revertReason || '') : '',
