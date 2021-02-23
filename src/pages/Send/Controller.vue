@@ -203,6 +203,8 @@ export default Vue.extend({
                     comment: comment
                 }
             }).then(() => {
+                // eslint-disable-next-line @typescript-eslint/camelcase
+                this.$gtag.event('token-send', { event_label: this.sym })
                 const temp = [this.to, ...this.recent].reduce((result: string[], cv: string | null) => {
                     (cv && !result.includes(cv.toLowerCase())) && result.push(cv.toLowerCase())
                     return result
