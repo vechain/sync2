@@ -71,7 +71,7 @@ function setupOpenUrlEmitter(): (url: string) => void {
     }
 }
 
-(() => {
+(async () => {
     if (process.env.PROD) {
         if (!app.requestSingleInstanceLock()) {
             app.quit()
@@ -95,32 +95,7 @@ function setupOpenUrlEmitter(): (url: string) => void {
         global.__statics = require('path').join(__dirname, 'statics').replace(/\\/g, '\\\\')
     }
 
-    setupMenu()
-    app.on('ready', () => {
-        if (process.env.PROD && process.platform === 'darwin') {
-            if (!app.isInApplicationsFolder()) {
-                if (dialog.showMessageBoxSync({
-                    message: `${app.name} is not in Application folder, move there?`,
-                    type: 'question',
-                    buttons: ['OK', 'Cancel']
-                }) === 0) {
-                    try {
-                        app.moveToApplicationsFolder()
-                        return
-                    } catch { }
-                }
-            }
-        }
-        app.updater = newUpdater()
-        if (process.env.PROD) {
-            app.updater.check()
-            setInterval(() => {
-                app.updater.check()
-            }, 24 * 3600 * 1000)
-        }
-        createWindow()
-    })
-
+    app.updater = newUpdater()
     const emit = setupOpenUrlEmitter()
     app.on('open-url', (ev, url) => {
         emit(url)
@@ -140,4 +115,31 @@ function setupOpenUrlEmitter(): (url: string) => void {
             createWindow()
         }
     })
+
+    await app.whenReady()
+
+    setupMenu()
+    if (process.env.PROD && process.platform === 'darwin') {
+        if (!app.isInApplicationsFolder()) {
+            if (dialog.showMessageBoxSync({
+                message: `${app.name} is not in Application folder, move there?`,
+                type: 'question',
+                buttons: ['OK', 'Cancel']
+            }) === 0) {
+                try {
+                    app.moveToApplicationsFolder()
+                    return
+                } catch { }
+            }
+        }
+    }
+
+    createWindow()
+
+    if (process.env.PROD) {
+        app.updater.check()
+        setInterval(() => {
+            app.updater.check()
+        }, 24 * 3600 * 1000)
+    }
 })()
