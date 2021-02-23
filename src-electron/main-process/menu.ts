@@ -1,4 +1,5 @@
 import { Menu } from 'electron'
+import contextMenu from 'electron-context-menu'
 
 export function setupMenu() {
     if (process.platform === 'darwin') {
@@ -9,4 +10,5 @@ export function setupMenu() {
             { role: 'windowMenu' }
         ]))
     }
+    contextMenu()
 }
