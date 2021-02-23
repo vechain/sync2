@@ -7,9 +7,11 @@ declare global {
 }
 
 import 'electron'
-import * as SQLite from 'sqlite'
+import type { newUpdater } from './updater'
+
 declare module 'electron' {
     interface App {
         listenOpenUrl: (webContentId: number) => Promise<string>
+        updater: ReturnType<typeof newUpdater>
     }
 }

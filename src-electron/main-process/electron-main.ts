@@ -6,6 +6,7 @@ import {
     dialog
 } from 'electron'
 import { setupMenu } from './menu'
+import { newUpdater } from './updater'
 
 app.allowRendererProcessReuse = false
 
@@ -109,6 +110,13 @@ function setupOpenUrlEmitter(): (url: string) => void {
                     } catch { }
                 }
             }
+        }
+        app.updater = newUpdater()
+        if (process.env.PROD) {
+            app.updater.check()
+            setInterval(() => {
+                app.updater.check()
+            }, 24 * 3600 * 1000)
         }
         createWindow()
     })

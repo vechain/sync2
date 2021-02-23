@@ -26,7 +26,12 @@ import Vue from 'vue'
 export default Vue.extend({
     methods: {
         reloadApp() {
-            window.location.reload(true)
+            if (process.env.MODE === 'electron') {
+                const remote = require('electron').remote
+                remote.app.updater.quitAndInstall()
+            } else {
+                window.location.reload(true)
+            }
         }
     }
 })

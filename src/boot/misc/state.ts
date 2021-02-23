@@ -32,4 +32,12 @@ export function boot() {
     Object.defineProperty(window, 'AppState', {
         get() { return state.app }
     })
+
+    // to watch available update for electron build only
+    if (process.env.MODE === 'electron') {
+        const remote = require('electron').remote
+        remote.app.updater.newVersion.then(() => {
+            state.app.updateAvailable = true
+        })
+    }
 }
