@@ -9,6 +9,8 @@ export function setupMenu() {
             { role: 'viewMenu' },
             { role: 'windowMenu' }
         ]))
+    } else {
+        Menu.setApplicationMenu(null)
     }
     contextMenu()
 }
