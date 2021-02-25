@@ -5,6 +5,11 @@ on:
     tags:
     - 'v*'
 
+  workflow_dispatch:
+
+env:
+  DIST_TAG: preview
+
 jobs:
   release:
     runs-on: ${{ matrix.os }}

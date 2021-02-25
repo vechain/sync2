@@ -1,8 +1,8 @@
 name: Deploy PWA(Preview)
 
 on:
-  schedule:
-    - cron:  '30 1 * * *' # builds nightly  
+#  schedule:
+#    - cron:  '30 1 * * *' # builds nightly  
 
   workflow_dispatch:
 
