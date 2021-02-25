@@ -59,6 +59,19 @@ npm run lint
 quasar build
 ```
 
+## Release new version
+
+### Browser
+
+Browser version will be updated automatically by [Action](./.github/workflows/deploy-pwa-preview.yaml)
+
+### Desktop
+
++ Bump `<version>` in [package.json](./package.json)
++ `git tag v<version>`
++ `git push origin v<version>`
++ See [Action](./.github/workflows/release-desktop.yaml) for more detailed info.
+
 ## License
 
 This package is licensed under the
