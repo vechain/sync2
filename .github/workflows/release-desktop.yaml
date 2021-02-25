@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Create Release 
-        if: matrix.os == 'ubuntu-latest'
+        if: startsWith(matrix.os, 'ubuntu')
         # as electron-builder needs draft to upload artifacts, create once on linux
         uses: actions/create-release@v1
         env:
