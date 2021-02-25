@@ -96,16 +96,16 @@ function setupOpenUrlEmitter(): (url: string) => void {
     app.updater = newUpdater()
     const emitUrl = setupOpenUrlEmitter()
     app.on('open-url', (ev, url) => {
-        ev.preventDefault()
-        emitUrl(url)
-        mainWindow || createWindow()
-    }).on('second-instance', (ev, argv) => {
-        const url = argv[1]
-        if (url) {
+        if (url.startsWith('connex:')) {
+            ev.preventDefault()
             emitUrl(url)
             mainWindow || createWindow()
-            mainWindow && mainWindow.focus()
         }
+    }).on('second-instance', (ev, argv) => {
+        const url = argv[argv.length - 1]
+        url && url.startsWith('connex:') && emitUrl(url)
+        mainWindow || createWindow()
+        mainWindow && mainWindow.focus()
     }).on('window-all-closed', () => {
         if (process.platform !== 'darwin') {
             app.quit()
@@ -134,8 +134,8 @@ function setupOpenUrlEmitter(): (url: string) => void {
                 app.updater.check()
             }, 24 * 3600 * 1000)
 
-            const initUrl = process.argv[1]
-            initUrl && emitUrl(initUrl)
+            const initUrl = process.argv[process.argv.length - 1]
+            initUrl && initUrl.startsWith('connex:') && emitUrl(initUrl)
         }
 
         createWindow()
