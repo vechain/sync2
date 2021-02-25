@@ -94,15 +94,15 @@ function setupOpenUrlEmitter(): (url: string) => void {
     }
 
     app.updater = newUpdater()
-    const emit = setupOpenUrlEmitter()
+    const emitUrl = setupOpenUrlEmitter()
     app.on('open-url', (ev, url) => {
         ev.preventDefault()
-        emit(url)
+        emitUrl(url)
         mainWindow || createWindow()
     }).on('second-instance', (ev, argv) => {
         const url = argv[1]
         if (url) {
-            emit(url)
+            emitUrl(url)
             mainWindow || createWindow()
             mainWindow && mainWindow.focus()
         }
@@ -133,6 +133,9 @@ function setupOpenUrlEmitter(): (url: string) => void {
             setInterval(() => {
                 app.updater.check()
             }, 24 * 3600 * 1000)
+
+            const initUrl = process.argv[1]
+            initUrl && emitUrl(initUrl)
         }
 
         createWindow()
