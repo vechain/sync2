@@ -71,7 +71,7 @@ function setupOpenUrlEmitter(): (url: string) => void {
     }
 }
 
-(async () => {
+(() => {
     if (process.env.PROD) {
         if (!app.requestSingleInstanceLock()) {
             app.quit()
@@ -98,48 +98,45 @@ function setupOpenUrlEmitter(): (url: string) => void {
     app.updater = newUpdater()
     const emit = setupOpenUrlEmitter()
     app.on('open-url', (ev, url) => {
+        ev.preventDefault()
         emit(url)
-        if (mainWindow === null) {
-            createWindow()
+        mainWindow || createWindow()
+    }).on('second-instance', (ev, argv) => {
+        const url = argv[1]
+        if (url) {
+            emit(url)
+            mainWindow || createWindow()
+            mainWindow && mainWindow.focus()
         }
-    })
-
-    app.on('window-all-closed', () => {
+    }).on('window-all-closed', () => {
         if (process.platform !== 'darwin') {
             app.quit()
         }
-    })
-
-    app.on('activate', () => {
-        if (mainWindow === null) {
-            createWindow()
-        }
-    })
-
-    await app.whenReady()
-
-    setupMenu()
-    if (process.env.PROD && process.platform === 'darwin') {
-        if (!app.isInApplicationsFolder()) {
-            if (dialog.showMessageBoxSync({
-                message: `${app.name} is not in Application folder, move there?`,
-                type: 'question',
-                buttons: ['OK', 'Cancel']
-            }) === 0) {
-                try {
-                    app.moveToApplicationsFolder()
-                    return
-                } catch { }
+    }).on('activate', () => {
+        mainWindow || createWindow()
+    }).on('ready', () => {
+        setupMenu()
+        if (process.env.PROD) {
+            if (process.platform === 'darwin') {
+                if (!app.isInApplicationsFolder()) {
+                    if (dialog.showMessageBoxSync({
+                        message: `${app.name} is not in Application folder, move there?`,
+                        type: 'question',
+                        buttons: ['OK', 'Cancel']
+                    }) === 0) {
+                        try {
+                            app.moveToApplicationsFolder()
+                            return
+                        } catch { }
+                    }
+                }
             }
-        }
-    }
-
-    createWindow()
-
-    if (process.env.PROD) {
-        app.updater.check()
-        setInterval(() => {
             app.updater.check()
-        }, 24 * 3600 * 1000)
-    }
+            setInterval(() => {
+                app.updater.check()
+            }, 24 * 3600 * 1000)
+        }
+
+        createWindow()
+    })
 })()
