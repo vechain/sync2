@@ -44,6 +44,10 @@ function createWindow() {
     })
 }
 
+function extractConnexUrl(argv: string[]) {
+    return argv.find(a => a && a.startsWith('connex:'))
+}
+
 function setupOpenUrlEmitter(): (url: string) => void {
     // works for cold/hot start up
     let pendingUrl = ''
@@ -102,8 +106,8 @@ function setupOpenUrlEmitter(): (url: string) => void {
             mainWindow || createWindow()
         }
     }).on('second-instance', (ev, argv) => {
-        const url = argv[argv.length - 1]
-        url && url.startsWith('connex:') && emitUrl(url)
+        const url = extractConnexUrl(argv)
+        url && emitUrl(url)
         mainWindow || createWindow()
         mainWindow && mainWindow.focus()
     }).on('window-all-closed', () => {
@@ -134,8 +138,8 @@ function setupOpenUrlEmitter(): (url: string) => void {
                 app.updater.check()
             }, 24 * 3600 * 1000)
 
-            const initUrl = process.argv[process.argv.length - 1]
-            initUrl && initUrl.startsWith('connex:') && emitUrl(initUrl)
+            const initUrl = extractConnexUrl(process.argv)
+            initUrl && emitUrl(initUrl)
         }
 
         createWindow()

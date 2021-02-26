@@ -272,9 +272,13 @@ module.exports = configure(function (/* ctx */) {
 
       builder: {
         // https://www.electron.build/configuration/configuration
-
+        productName: 'Sync2',
         appId: 'org.vechain.sync2',
-        artifactName: '${productName}-${os}-${arch}-${version}.${ext}'
+        artifactName: '${productName}-${os}-${arch}-${version}.${ext}',
+        protocols: {
+            name: 'VeChain Connex',
+            schemes: ['connex']
+        }
       },
 
        // Requires: @quasar/app v1.4.2+
