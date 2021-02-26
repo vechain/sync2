@@ -103,7 +103,9 @@ function setupOpenUrlEmitter(): (url: string) => void {
         if (url.startsWith('connex:')) {
             ev.preventDefault()
             emitUrl(url)
-            mainWindow || createWindow()
+            if (app.isReady()) {
+                mainWindow || createWindow()
+            }
         }
     }).on('second-instance', (ev, argv) => {
         const url = extractConnexUrl(argv)
