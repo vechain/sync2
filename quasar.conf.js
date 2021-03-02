@@ -278,6 +278,9 @@ module.exports = configure(function (/* ctx */) {
         protocols: {
             name: 'VeChain Connex',
             schemes: ['connex']
+        },
+        linux: {
+          target: 'AppImage'
         }
       },
 
