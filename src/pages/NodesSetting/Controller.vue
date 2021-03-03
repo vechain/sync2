@@ -143,6 +143,7 @@ export default Vue.extend({
                 }
                 await this.$svc.config.node.save([...this.nodes, node])
                 this.$q.notify(this.$t('nodes.msg_node_added').toString())
+                this.addNodeState.url = ''
             } catch { }
         },
         async onDelete(val: M.Node) {
