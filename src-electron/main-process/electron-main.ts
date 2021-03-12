@@ -30,7 +30,8 @@ function createWindow() {
             // eslint-disable-next-line no-undef
             nodeIntegration: QUASAR_NODE_INTEGRATION,
             nodeIntegrationInWorker: true,
-            enableRemoteModule: true
+            enableRemoteModule: true,
+            contextIsolation: false
 
             // More info: /quasar-cli/developing-electron-apps/electron-preload-script
             // preload: path.resolve(__dirname, 'electron-preload.js')
