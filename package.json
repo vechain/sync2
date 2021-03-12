@@ -17,6 +17,7 @@
     "electron-updater": "^4.3.5"
   },
   "devDependencies": {
+    "@electron/remote": "^1.0.4",
     "@quasar/app": "^1.9.6",
     "@quasar/extras": "^1.9.13",
     "@types/color": "^3.0.1",

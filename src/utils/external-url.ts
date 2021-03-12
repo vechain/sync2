@@ -30,8 +30,9 @@ if (process.env.MODE === 'cordova') {
  */
 export async function listen(): Promise<string> {
     if (process.env.MODE === 'electron') {
-        const remote = require('electron').remote
-        return remote.app.listenOpenUrl(remote.getCurrentWebContents().id)
+        return require('@electron/remote')
+            .app
+            .listenOpenUrl(require('@electron/remote').getCurrentWebContents().id)
     } else if (process.env.MODE === 'cordova') {
         return cordovaListenOpenUrl()
     } else {

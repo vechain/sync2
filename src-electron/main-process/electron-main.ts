@@ -7,6 +7,7 @@ import {
 } from 'electron'
 import { setupMenu } from './menu'
 import { newUpdater } from './updater'
+require('@electron/remote/main').initialize()
 
 app.allowRendererProcessReuse = false
 

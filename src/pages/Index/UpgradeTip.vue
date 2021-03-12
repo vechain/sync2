@@ -27,8 +27,10 @@ export default Vue.extend({
     methods: {
         reloadApp() {
             if (process.env.MODE === 'electron') {
-                const remote = require('electron').remote
-                remote.app.updater.quitAndInstall()
+                require('@electron/remote')
+                    .app
+                    .updater
+                    .quitAndInstall()
             } else {
                 window.location.reload(true)
             }
