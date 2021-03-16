@@ -2,7 +2,7 @@
 import Worker from 'worker-loader!./worker'
 import { Deferred } from 'src/utils/deferred'
 import type { CommandName } from './worker'
-import { blake2b256 } from 'thor-devkit'
+// import { blake2b256 } from 'thor-devkit'
 
 const worker = new Worker()
 
@@ -129,18 +129,18 @@ export function decrypt(glob: CipherGlob, key: Buffer): Buffer {
     return Buffer.concat([dec.update(cipherText), dec.final()])
 }
 
-const kdfCache: Record<string, Buffer> = {}
+// const kdfCache: Record<string, Buffer> = {}
 
-async function cachedKdf(password: string, salt: Buffer, n: number) {
-    const cacheKey = `${blake2b256(salt, password).toString('hex')}-${n}`
-    const key = kdfCache[cacheKey] || await kdf(password, salt, n)
-    return {
-        key: key,
-        cache: () => {
-            kdfCache[cacheKey] = key
-        }
-    }
-}
+// async function cachedKdf(password: string, salt: Buffer, n: number) {
+//     const cacheKey = `${blake2b256(salt, password).toString('hex')}-${n}`
+//     const key = kdfCache[cacheKey] || await kdf(password, salt, n)
+//     return {
+//         key: key,
+//         cache: () => {
+//             kdfCache[cacheKey] = key
+//         }
+//     }
+// }
 
 /**
  * encrypt data using password
@@ -150,8 +150,9 @@ async function cachedKdf(password: string, salt: Buffer, n: number) {
 export async function kdfEncrypt(clearText: Buffer, password: string): Promise<KdfCipherGlob> {
     const n = await kdfEstimateN()
     const salt = randomBytes(32)
-    const { key, cache } = await cachedKdf(password, salt, n)
-    cache()
+    // const { key, cache } = await cachedKdf(password, salt, n)
+    // cache()
+    const key = await kdf(password, salt, n)
     const glob = encrypt(clearText, key)
     return {
         ...glob,
@@ -170,9 +171,10 @@ export async function kdfEncrypt(clearText: Buffer, password: string): Promise<K
  */
 export async function kdfDecrypt(glob: KdfCipherGlob, password: string): Promise<Buffer> {
     const { salt, n } = glob.kdf
-    const { key, cache } = await cachedKdf(password, Buffer.from(salt, 'hex'), n)
+    // const { key, cache } = await cachedKdf(password, Buffer.from(salt, 'hex'), n)
+    const key = await kdf(password, Buffer.from(salt, 'hex'), n)
 
     const clearText = decrypt(glob, key)
-    cache()
+    // cache()
     return clearText
 }
