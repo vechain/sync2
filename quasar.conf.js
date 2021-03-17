@@ -280,12 +280,15 @@ module.exports = configure(function (/* ctx */) {
             schemes: ['connex']
         },
         linux: {
-          target: 'AppImage'
+          target: {
+            arch: ['x64', 'arm64'],
+            target: 'AppImage'
+          }
         },
         mac: {
           target: {
-              arch: ['x64', 'arm64'],
-              target: 'dmg'
+            arch: ['x64', 'arm64'],
+            target: 'dmg'
           }
         }
       },
