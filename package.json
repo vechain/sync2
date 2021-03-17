@@ -35,7 +35,7 @@
     "dayjs": "^1.10.3",
     "devtron": "^1.4.0",
     "dexie": "^2.0.4",
-    "electron": "^12.0.0",
+    "electron": "^12.0.1",
     "electron-builder": "^22.10.5",
     "electron-debug": "^3.0.1",
     "electron-devtools-installer": "^2.2.4",
