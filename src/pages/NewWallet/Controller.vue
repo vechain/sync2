@@ -51,6 +51,12 @@
                     context-menu
                 />
             </q-btn>
+            <q-btn
+                v-if="isSupport"
+                unelevated
+                flat
+                @click="newWallet('ledger')"
+            >Ledger user? Import now</q-btn>
         </page-action>
     </div>
 </template>
@@ -61,9 +67,11 @@ import { genesises } from 'src/consts'
 import { unique } from 'src/utils/array'
 import { Vault } from 'src/core/vault'
 import MnemonicInputDialog from './MnemonicInputDialog.vue'
+import LedgerImportDialog from './LedgerImportDialog.vue'
 import PopSheets, { Sheet } from 'src/components/PopSheets.vue'
 import PageContent from 'src/components/PageContent.vue'
 import PageAction from 'src/components/PageAction.vue'
+import { Account } from '@vechain/hw-app-vet'
 
 const defaultGid = genesises.main.id
 
@@ -81,6 +89,9 @@ export default Vue.extend({
         }
     },
     computed: {
+        isSupport(): boolean {
+            return !this.$q.platform.is.electron && !!(window.navigator && 'hid' in window.navigator)
+        },
         optionSheets(): Sheet[] {
             return this.gids.map<Sheet>(gid => {
                 return {
@@ -133,7 +144,33 @@ export default Vue.extend({
         }
     },
     methods: {
-        async newWallet(type: 'generate' | 'import', wordsCount = 12) {
+        async importLedger() {
+            try {
+                const account = await this.$dialog<Account>({
+                    component: LedgerImportDialog
+                })
+                try {
+                    await this.$loading(async () => {
+                        const vault = await Vault.createUSB(Buffer.from(account.publicKey, 'hex'), Buffer.from(account.chainCode!, 'hex'))
+                        const node0 = vault.derive(0)
+                        await this.$svc.wallet.insert({
+                            gid: this.gid,
+                            vault: vault.encode(),
+                            meta: {
+                                name: this.name,
+                                addresses: [node0.address],
+                                backedUp: true
+                            }
+                        })
+                        this.$backOrHome()
+                        this.$q.notify(this.$t('common.wallet_created'))
+                    })
+                } catch (err) {
+                    this.error = err.message
+                }
+            } catch { }
+        },
+        async newWallet(type: 'generate' | 'import' | 'ledger', wordsCount = 12) {
             // reset error
             this.error = ''
             await this.$nextTick()
@@ -156,30 +193,33 @@ export default Vue.extend({
                     return
                 }
             }
-            // authentication
             try {
-                const umk = await this.$authenticate()
-                try {
-                    // main process
-                    await this.$loading(async () => {
-                        const vault = Vault.createHD(
-                            words || await Vault.generateMnemonic(wordsCount / 3 * 4),
-                            umk)
-                        const node0 = vault.derive(0)
-                        await this.$svc.wallet.insert({
-                            gid: this.gid,
-                            vault: vault.encode(),
-                            meta: {
-                                name: this.name,
-                                addresses: [node0.address],
-                                backedUp: type === 'import'
-                            }
+                if (type === 'ledger') {
+                    await this.importLedger()
+                } else {
+                    const umk = await this.$authenticate()
+                    try {
+                        // main process
+                        await this.$loading(async () => {
+                            const vault = Vault.createHD(
+                                words || await Vault.generateMnemonic(wordsCount / 3 * 4),
+                                umk)
+                            const node0 = vault.derive(0)
+                            await this.$svc.wallet.insert({
+                                gid: this.gid,
+                                vault: vault.encode(),
+                                meta: {
+                                    name: this.name,
+                                    addresses: [node0.address],
+                                    backedUp: type === 'import'
+                                }
+                            })
                         })
-                    })
-                    this.$backOrHome()
-                    this.$q.notify(this.$t('common.wallet_created'))
-                } catch (err) {
-                    this.error = err.message
+                        this.$backOrHome()
+                        this.$q.notify(this.$t('common.wallet_created'))
+                    } catch (err) {
+                        this.error = err.message
+                    }
                 }
             } catch { }
         }
