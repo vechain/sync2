@@ -17,6 +17,9 @@
     "electron-updater": "^4.3.5"
   },
   "devDependencies": {
+    "@ledgerhq/hw-transport-webhid": "^5.45.0",
+    "@types/ledgerhq__hw-transport": "^4.21.3",
+    "@vechain/hw-app-vet": "^0.2.0",
     "@electron/remote": "^1.0.4",
     "@quasar/app": "^1.9.6",
     "@quasar/extras": "^1.9.13",
