@@ -13,6 +13,9 @@
     "install": "electron-rebuild"
   },
   "dependencies": {
+    "@ledgerhq/hw-transport-webhid": "^5.45.0",
+    "@types/ledgerhq__hw-transport": "^4.21.3",
+    "@vechain/hw-app-vet": "^0.2.0",
     "electron-context-menu": "^2.5.0",
     "electron-updater": "^4.3.5"
   },
