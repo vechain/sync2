@@ -279,6 +279,12 @@ module.exports = configure(function (/* ctx */) {
             name: 'VeChain Connex',
             schemes: ['connex']
         },
+        win: {
+          target: {
+            arch: ['x64', 'arm64'],
+            target: 'nsis'
+          }
+        },
         linux: {
           target: {
             arch: ['x64', 'arm64'],
