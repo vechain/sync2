@@ -51,6 +51,7 @@
                     context-menu
                 />
             </q-btn>
+            <div>Ledger user? <a @click="newWallet('ledger')"> Import now</a></div>
         </page-action>
     </div>
 </template>
@@ -61,9 +62,11 @@ import { genesises } from 'src/consts'
 import { unique } from 'src/utils/array'
 import { Vault } from 'src/core/vault'
 import MnemonicInputDialog from './MnemonicInputDialog.vue'
+import LedgerImportDialog from './LedgerImportDialog.vue'
 import PopSheets, { Sheet } from 'src/components/PopSheets.vue'
 import PageContent from 'src/components/PageContent.vue'
 import PageAction from 'src/components/PageAction.vue'
+import { Account } from '@vechain/hw-app-vet'
 
 const defaultGid = genesises.main.id
 
@@ -133,7 +136,7 @@ export default Vue.extend({
         }
     },
     methods: {
-        async newWallet(type: 'generate' | 'import', wordsCount = 12) {
+        async newWallet(type: 'generate' | 'import' | 'ledger', wordsCount = 12) {
             // reset error
             this.error = ''
             await this.$nextTick()
@@ -156,15 +159,34 @@ export default Vue.extend({
                     return
                 }
             }
+
+            let account: Account | undefined
+            if (type === 'ledger') {
+                try {
+                    account = await this.$dialog<Account>({
+                        component: LedgerImportDialog
+                    })
+                } catch {
+                    return
+                }
+            }
             // authentication
             try {
-                const umk = await this.$authenticate()
+                let umk: Buffer
+                if (type !== 'ledger') {
+                    umk = await this.$authenticate()
+                }
                 try {
                     // main process
                     await this.$loading(async () => {
-                        const vault = Vault.createHD(
-                            words || await Vault.generateMnemonic(wordsCount / 3 * 4),
-                            umk)
+                        let vault: Vault | undefined
+                        if (type === 'ledger') {
+                            vault = await Vault.createUSB(Buffer.from(account?.publicKey!, 'hex'), Buffer.from(account?.chainCode!, 'hex'))
+                        } else {
+                            vault = Vault.createHD(
+                                words || await Vault.generateMnemonic(wordsCount / 3 * 4),
+                                umk)
+                        }
                         const node0 = vault.derive(0)
                         await this.$svc.wallet.insert({
                             gid: this.gid,
@@ -172,7 +194,7 @@ export default Vue.extend({
                             meta: {
                                 name: this.name,
                                 addresses: [node0.address],
-                                backedUp: type === 'import'
+                                backedUp: ['import', 'ledger'].includes(type)
                             }
                         })
                     })
