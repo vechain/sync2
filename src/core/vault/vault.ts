@@ -3,7 +3,6 @@ import { address, HDNode } from 'thor-devkit'
 import { decrypt } from './cipher'
 
 export type Entity = {
-    type: Vault.Type
     pub: string
     chainCode?: string
     cipherGlob?: string
@@ -11,24 +10,11 @@ export type Entity = {
 
 export function newVault(entity: Entity): Vault {
     const vault: Vault = {
-        get type() { return entity.type },
         derive: index => {
-            if (entity.type === 'static') {
-                if (index !== 0) {
-                    // static type vault only support 0-index node
-                    throw new Error('invalid node index')
-                }
-                const addr = address.fromPublicKey(Buffer.from(entity.pub, 'hex'))
-
-                return {
-                    get address() { return addr },
-                    get index() { return index },
-                    unlock: key => vault.decrypt(key)
-                }
-            } else {
+            if (entity.chainCode) {
                 const node = HDNode.fromPublicKey(
                     Buffer.from(entity.pub, 'hex'),
-                    Buffer.from(entity.chainCode!, 'hex')
+                    Buffer.from(entity.chainCode, 'hex')
                 ).derive(index)
 
                 return {
@@ -39,6 +25,19 @@ export function newVault(entity: Entity): Vault {
                         const words = clearText.toString('utf8').split(' ')
                         return HDNode.fromMnemonic(words).derive(index).privateKey!
                     }
+                }
+            } else {
+                // non-HD
+                if (index !== 0) {
+                    // only support 0-index node
+                    throw new Error('invalid node index')
+                }
+                const addr = address.fromPublicKey(Buffer.from(entity.pub, 'hex'))
+
+                return {
+                    get address() { return addr },
+                    get index() { return index },
+                    unlock: key => vault.decrypt(key)
                 }
             }
         },

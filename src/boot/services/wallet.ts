@@ -4,12 +4,15 @@ import { delegateTable } from './utils'
 export function build(storage: Storage) {
     const t = delegateTable<Storage.WalletEntity, M.Wallet>(
         storage.wallets,
-        e => ({
-            id: e.id,
-            gid: e.gid,
-            vault: e.vault,
-            meta: JSON.parse(e.meta)
-        }),
+        e => {
+            const meta = JSON.parse(e.meta)
+            return {
+                id: e.id,
+                gid: e.gid,
+                vault: e.vault,
+                meta: { ...meta, type: meta.type || 'hd' } // backward compat, defaults to 'hd' type
+            }
+        },
         m => ({
             id: m.id,
             gid: m.gid,
