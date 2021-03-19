@@ -11,17 +11,11 @@ env:
   DIST_TAG: preview
 
 jobs:
-  release:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
-
+  create-gh-release:
+    runs-on: ubuntu-latest
     steps:
       - name: Create Release 
-        if: startsWith(matrix.os, 'ubuntu')
-        # as electron-builder needs draft to upload artifacts, create once on linux
+        # as electron-builder needs draft to upload artifacts, create once
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
@@ -30,6 +24,13 @@ jobs:
           release_name: ${{ github.ref }}
           draft: true
 
+  release:
+    needs: create-gh-release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    steps:
       - uses: actions/checkout@v2
 
       - uses: actions/setup-node@v2
@@ -46,8 +47,23 @@ jobs:
       
       - name: Install Dependencies
         run: npm ci
-      
+
+      - name: Setup macOS Notarization env
+        if: startsWith(matrix.os, 'macos')
+        run: |
+          rm -fr ~/private_keys && mkdir ~/private_keys
+          echo $APPLE_AUTH_PRIVATE_KEY | base64 -D > ~/private_keys/AuthKey_${APPLE_API_KEY}.p8
+        env:
+          APPLE_AUTH_PRIVATE_KEY: ${{secrets.APPLE_AUTH_PRIVATE_KEY}}
+          APPLE_API_KEY: ${{secrets.APPLE_API_KEY}}
+
       - name: Build and Release
         run: npx quasar build -m electron
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CSC_LINK: ${{ secrets.CSC_LINK }} 
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }} 
+          WIN_CSC_LINK: ${{ secrets.WIN_CSC_LINK }} 
+          WIN_CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }} 
+          APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }} 
+          APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
