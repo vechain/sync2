@@ -142,6 +142,7 @@ export default Vue.extend({
                     vault: vault.encode(),
                     meta: {
                         name: 'My Wallet',
+                        type: 'hd',
                         addresses: [node0.address],
                         backedUp: false
                     }

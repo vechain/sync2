@@ -55,7 +55,7 @@
                 v-if="isSupport"
                 unelevated
                 flat
-                @click="newWallet('ledger')"
+                @click="newWallet('importLedger')"
             >Ledger user? Import now</q-btn>
         </page-action>
     </div>
@@ -151,13 +151,14 @@ export default Vue.extend({
                 })
                 try {
                     await this.$loading(async () => {
-                        const vault = await Vault.createUSB(Buffer.from(account.publicKey, 'hex'), Buffer.from(account.chainCode!, 'hex'))
+                        const vault = Vault.createUSB(Buffer.from(account.publicKey, 'hex'), Buffer.from(account.chainCode!, 'hex'))
                         const node0 = vault.derive(0)
                         await this.$svc.wallet.insert({
                             gid: this.gid,
                             vault: vault.encode(),
                             meta: {
                                 name: this.name,
+                                type: 'ledger',
                                 addresses: [node0.address],
                                 backedUp: true
                             }
@@ -170,7 +171,7 @@ export default Vue.extend({
                 }
             } catch { }
         },
-        async newWallet(type: 'generate' | 'import' | 'ledger', wordsCount = 12) {
+        async newWallet(type: 'generate' | 'import' | 'importLedger', wordsCount = 12) {
             // reset error
             this.error = ''
             await this.$nextTick()
@@ -178,6 +179,13 @@ export default Vue.extend({
             // check name
             if (!this.name) {
                 this.error = this.$t('common.required_field').toString()
+                return
+            }
+
+            if (type === 'importLedger') {
+                try {
+                    await this.importLedger()
+                } catch { }
                 return
             }
 
@@ -194,32 +202,29 @@ export default Vue.extend({
                 }
             }
             try {
-                if (type === 'ledger') {
-                    await this.importLedger()
-                } else {
-                    const umk = await this.$authenticate()
-                    try {
-                        // main process
-                        await this.$loading(async () => {
-                            const vault = Vault.createHD(
-                                words || await Vault.generateMnemonic(wordsCount / 3 * 4),
-                                umk)
-                            const node0 = vault.derive(0)
-                            await this.$svc.wallet.insert({
-                                gid: this.gid,
-                                vault: vault.encode(),
-                                meta: {
-                                    name: this.name,
-                                    addresses: [node0.address],
-                                    backedUp: type === 'import'
-                                }
-                            })
+                const umk = await this.$authenticate()
+                try {
+                    // main process
+                    await this.$loading(async () => {
+                        const vault = Vault.createHD(
+                            words || await Vault.generateMnemonic(wordsCount / 3 * 4),
+                            umk)
+                        const node0 = vault.derive(0)
+                        await this.$svc.wallet.insert({
+                            gid: this.gid,
+                            vault: vault.encode(),
+                            meta: {
+                                name: this.name,
+                                type: 'hd',
+                                addresses: [node0.address],
+                                backedUp: type === 'import'
+                            }
                         })
-                        this.$backOrHome()
-                        this.$q.notify(this.$t('common.wallet_created'))
-                    } catch (err) {
-                        this.error = err.message
-                    }
+                    })
+                    this.$backOrHome()
+                    this.$q.notify(this.$t('common.wallet_created'))
+                } catch (err) {
+                    this.error = err.message
                 }
             } catch { }
         }

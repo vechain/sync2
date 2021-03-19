@@ -6,8 +6,6 @@ export * from './cipher'
 
 /** describes the secure container holds wallet key */
 export interface Vault {
-    readonly type: Vault.Type
-
     /**
      * derives a new vault node, which corresponds to an address.
      * @param index node index start from 0
@@ -27,13 +25,6 @@ export interface Vault {
 }
 
 export namespace Vault {
-    /**
-     * hd: hierarchical deterministic
-     * static: non-HD, static private key
-     * usb: external USB device
-     */
-    export type Type = 'hd' | 'static' | 'usb'
-
     /** the vault node corresponds to an address */
     export interface Node {
         readonly address: string
@@ -80,7 +71,6 @@ export namespace Vault {
         const clearText = Buffer.from(words.join(' '), 'utf8')
         const glob = encrypt(clearText, key)
         return newVault({
-            type: 'hd',
             pub: root.publicKey.toString('hex'),
             chainCode: root.chainCode.toString('hex'),
             cipherGlob: JSON.stringify(glob)
@@ -95,7 +85,6 @@ export namespace Vault {
     export function createStatic(sk: Buffer, key: Buffer): Vault {
         const glob = encrypt(sk, key)
         return newVault({
-            type: 'static',
             pub: secp256k1.derivePublicKey(sk).toString('hex'),
             cipherGlob: JSON.stringify(glob)
         })
@@ -106,11 +95,10 @@ export namespace Vault {
      * @param pub public key
      * @param chainCode chain code
      */
-    export function createUSB(pub: Buffer, chainCode: Buffer): Promise<Vault> {
-        return Promise.resolve(newVault({
-            type: 'usb',
+    export function createUSB(pub: Buffer, chainCode: Buffer): Vault {
+        return newVault({
             pub: pub.toString('hex'),
             chainCode: chainCode.toString('hex')
-        }))
+        })
     }
 }
