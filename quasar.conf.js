@@ -291,7 +291,10 @@ module.exports = configure(function (/* ctx */) {
             target: 'AppImage'
           }
         },
+        afterSign: "build/notarize.js",
         mac: {
+          entitlements: "build/entitlements.mac.plist",
+          entitlementsInherit: "build/entitlements.mac.plist",
           target: {
             arch: ['x64', 'arm64'],
             target: 'dmg'
