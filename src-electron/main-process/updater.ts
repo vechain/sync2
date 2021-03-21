@@ -1,16 +1,19 @@
 import { autoUpdater, UpdateInfo } from 'electron-updater'
-import { Deferred } from '../../src/utils/deferred'
+import Deferred from '../../src/utils/deferred'
 
 export function newUpdater() {
     let downloadProgress = 0
     let error: { name: string, message: string } | null = null
-    const newVersion = new Deferred<UpdateInfo>()
-    let status: 'idle' | 'checking' | 'downloading' | 'downloaded' = 'idle'
+    let available: UpdateInfo | null = null
+    let status: 'none' | 'checking' | 'downloading' | 'downloaded' = 'none'
+    let downloaded = new Deferred<UpdateInfo>()
 
     autoUpdater.on('error', err => {
         error = err
-        status = 'idle'
+        status = 'none'
         downloadProgress = 0
+        available = null
+        downloaded = new Deferred<UpdateInfo>()
     })
     autoUpdater.on('checking-for-update', () => {
         status = 'checking'
@@ -18,27 +21,29 @@ export function newUpdater() {
         downloadProgress = 0
     })
     autoUpdater.on('update-available', info => {
-        newVersion.resolve(info)
+        available = info
     })
     autoUpdater.on('update-not-available', () => {
-        status = 'idle'
+        status = 'none'
     })
     autoUpdater.on('download-progress', info => {
         status = 'downloading'
         downloadProgress = info.percent
     })
-    autoUpdater.on('update-downloaded', () => {
+    autoUpdater.on('update-downloaded', info => {
         status = 'downloaded'
+        downloaded.resolve(info)
     })
 
     autoUpdater.autoInstallOnAppQuit = true
     autoUpdater.autoDownload = true
 
     return {
+        get status() { return status },
         get downloadProgress() { return downloadProgress },
         get error() { return error },
-        get newVersion() { return newVersion },
-        get status() { return status },
+        get available() { return available },
+        get downloaded() { return downloaded },
 
         check() { return autoUpdater.checkForUpdates().then(r => r.updateInfo) },
         quitAndInstall() { autoUpdater.quitAndInstall() }

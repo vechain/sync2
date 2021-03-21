@@ -61,6 +61,14 @@ export default Vue.extend({
     created() {
         console.log(`[Sync2] v${process.env.APP_VERSION} (${process.env.APP_BUILD})`)
         this.externalSignHandlerLoop()
+
+        // to watch available update for electron build only
+        // the approach for the PWA mode is in src-pwa/register-service-worker.js
+        if (process.env.MODE === 'electron') {
+            require('@electron/remote').app.updater.downloaded.then(() => {
+                this.$state.app.updateAvailable = true
+            })
+        }
     }
 })
 </script>
