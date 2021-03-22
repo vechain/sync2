@@ -297,7 +297,7 @@ module.exports = configure(function (/* ctx */) {
           entitlementsInherit: "build/entitlements.mac.plist",
           target: {
             arch: ['x64', 'arm64'],
-            target: 'dmg'
+            target: 'default'
           }
         }
       },
