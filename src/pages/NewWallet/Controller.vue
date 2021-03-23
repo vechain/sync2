@@ -72,6 +72,7 @@ import PopSheets, { Sheet } from 'src/components/PopSheets.vue'
 import PageContent from 'src/components/PageContent.vue'
 import PageAction from 'src/components/PageAction.vue'
 import { Account } from '@vechain/hw-app-vet'
+import * as Ledger from 'src/utils/ledger'
 
 const defaultGid = genesises.main.id
 
@@ -90,7 +91,7 @@ export default Vue.extend({
     },
     computed: {
         isSupport(): boolean {
-            return !this.$q.platform.is.electron && !!(window.navigator && 'hid' in window.navigator)
+            return Ledger.supported
         },
         optionSheets(): Sheet[] {
             return this.gids.map<Sheet>(gid => {
