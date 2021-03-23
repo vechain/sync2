@@ -5,7 +5,7 @@ const Fragment = require('vue-fragment')
 import VueGtag from 'vue-gtag'
 
 export function boot() {
-    Vue.use(AsyncComputed, { errorHandler: false } as never)
+    Vue.use(AsyncComputed)
     Vue.use(Fragment.Plugin)
     Vue.use(VueGtag, {
         config: { id: 'G-6QEHC6TLQV' },
