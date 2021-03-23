@@ -14,10 +14,12 @@
   },
   "dependencies": {
     "electron-context-menu": "^2.5.0",
-    "electron-updater": "^4.3.5"
+    "electron-updater": "^4.3.5",
+    "node-hid": "^2.1.1"
   },
   "devDependencies": {
-    "@ledgerhq/hw-transport-webhid": "^5.45.0",
+    "@ledgerhq/hw-transport-node-hid-noevents": "^5.46.0",
+    "@ledgerhq/hw-transport-webhid": "^5.46.0",
     "@types/ledgerhq__hw-transport": "^4.21.3",
     "@vechain/hw-app-vet": "^0.2.0",
     "@electron/remote": "^1.0.4",
