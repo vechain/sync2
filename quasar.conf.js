@@ -151,6 +151,12 @@ module.exports = configure(function (/* ctx */) {
           ...cfg.resolve.alias,
           core: path.resolve(__dirname, './src/core'),
         }
+
+        if(cfg.target === 'electron-renderer') {
+          cfg.externals = cfg.externals || {}
+          cfg.externals['node-hid'] = 'commonjs node-hid'
+        }
+
         if (process.env.NODE_ENV === 'production') {
           // linting is slow in TS projects, we execute it only for production builds
           cfg.module.rules.push({
@@ -313,7 +319,7 @@ module.exports = configure(function (/* ctx */) {
         // do something with Electron main process Webpack cfg
         // chainWebpack also available besides this extendWebpack
 
-        cfg.resolve.extensions.push('.ts')         
+        cfg.resolve.extensions.push('.ts')
         cfg.module.rules.push({
           test: /\.ts$/,
           use :{
