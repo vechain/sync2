@@ -41,7 +41,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { QDialog } from 'quasar'
-import TransportWebHID from '@ledgerhq/hw-transport-webhid'
+import * as Ledger from 'src/utils/ledger'
 import Vet, { Account } from '@vechain/hw-app-vet'
 import PromptDialogToolbar from 'src/components/PromptDialogToolbar.vue'
 
@@ -84,7 +84,7 @@ export default Vue.extend({
             let tr
             do {
                 try {
-                    tr = await TransportWebHID.create()
+                    tr = await Ledger.connect()
                     this.step = Status.connected
                     const vet = new Vet(tr)
                     try {
