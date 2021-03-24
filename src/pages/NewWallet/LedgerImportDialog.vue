@@ -94,7 +94,8 @@ export default Vue.extend({
                     } catch (error) {
                         this.step = Status.connected
                     }
-                } catch {
+                } catch (err) {
+                    console.warn(err)
                     this.step = Status.waiting
                     this.condition = false
                     this.hide()
