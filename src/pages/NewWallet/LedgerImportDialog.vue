@@ -45,8 +45,6 @@ import * as Ledger from 'src/utils/ledger'
 import Vet, { Account } from '@vechain/hw-app-vet'
 import PromptDialogToolbar from 'src/components/PromptDialogToolbar.vue'
 
-// eslint-disable-next-line quotes
-const Path = `44'/818'/0'/0`
 enum Status {
     waiting,
     connected,
@@ -88,7 +86,7 @@ export default Vue.extend({
                     this.step = Status.connected
                     const vet = new Vet(tr)
                     try {
-                        this.account = await vet.getAccount(Path, false, true)
+                        this.account = await vet.getAccount(Ledger.path, false, true)
                         this.step = Status.done
                         this.condition = false
                     } catch (error) {
