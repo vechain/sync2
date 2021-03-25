@@ -17,6 +17,9 @@ const connector: { connect(): Promise<Transport> } | null = (() => {
 
 export const supported = !!connector
 
+// eslint-disable-next-line quotes
+export const path = `44'/818'/0'/0`
+
 export function connect() {
     if (!connector) {
         throw new Error('unsupported')
