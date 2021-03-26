@@ -84,10 +84,9 @@ import { estimateGas, EstimateGasResult, calcFee, decodeAsTokenTransferClause } 
 import PrioritySelector from './PrioritySelector.vue'
 import GasFeeBar from './GasFeeBar.vue'
 import ClauseCard from './ClauseCard'
-import { Transaction, secp256k1 } from 'thor-devkit'
+import { Transaction } from 'thor-devkit'
 import { BigNumber } from 'bignumber.js'
 import { randomBytes } from 'crypto'
-import { Vault } from 'src/core/vault'
 import ErrorTip from './ErrorTip.vue'
 import WarningListDialog from './WarningListDialog.vue'
 import InspectClauseDialog from './InspectClauseDialog.vue'
@@ -233,58 +232,54 @@ export default Common.extend({
                 })
             }
 
-            const umk = await this.$authenticate()
+            let tx!: Transaction
+            let delegatorSig: Buffer | undefined
 
-            // compose the tx body
-            const txBody: Transaction.Body = {
-                chainTag: Number.parseInt(this.thor.genesis.id.slice(-2), 16),
-                blockRef: this.thor.status.head.id.slice(0, 18),
-                expiration: 18, // about 3 mins
-                clauses: this.req.message.map(item => {
-                    return {
-                        to: item.to,
-                        value: '0x' + new BigNumber(item.value).toString(16),
-                        data: item.data || '0x'
-                    }
-                }),
-                gasPriceCoef: this.gasPriceCoef,
-                gas: est.gas,
-                dependsOn: this.req.options.dependsOn || null,
-                nonce: '0x' + randomBytes(8).toString('hex')
-            }
-
-            const delegator = this.req.options.delegator
-            const tx = await this.$loading(async () => {
-                let tx
-                let delegatorSig
-                if (delegator) {
-                    tx = new Transaction({ ...txBody, reserved: { features: 1 /* VIP191 bit */ } })
-                    try {
-                        const resp = await this.$axios.post(delegator.url, {
-                            raw: '0x' + tx.encode().toString('hex'),
-                            origin: signer
-                        }, { transformResponse: data => JSON.parse(data), headers: { 'content-type': 'application/json' } })
-                        delegatorSig = Buffer.from(resp.data.signature.slice(2), 'hex')
-                    } catch (err) {
-                        this.$q.notify({
-                            type: 'negative',
-                            message: this.$t('sign.msg_delegation_failed').toString()
-                        })
-                        // rethrow to end the process
-                        throw err
-                    }
-                } else {
-                    tx = new Transaction(txBody)
+            const originSig = await this.signTx(wallet, signer, () => {
+                // compose the tx body
+                const txBody: Transaction.Body = {
+                    chainTag: Number.parseInt(this.thor.genesis.id.slice(-2), 16),
+                    blockRef: this.thor.status.head.id.slice(0, 18),
+                    expiration: 18, // about 3 mins
+                    clauses: this.req.message.map(item => {
+                        return {
+                            to: item.to,
+                            value: '0x' + new BigNumber(item.value).toString(16),
+                            data: item.data || '0x'
+                        }
+                    }),
+                    gasPriceCoef: this.gasPriceCoef,
+                    gas: est.gas,
+                    dependsOn: this.req.options.dependsOn || null,
+                    nonce: '0x' + randomBytes(8).toString('hex')
                 }
 
-                const vault = Vault.decode(wallet.vault)
-                const node = vault.derive(wallet.meta.addresses.indexOf(signer))
-                const sk = node.unlock(umk)
-
-                const originSig = secp256k1.sign(tx.signingHash(), sk)
-                tx.signature = delegatorSig ? Buffer.concat([originSig, delegatorSig]) : originSig
-                return tx
+                return this.$loading(async () => {
+                    const delegator = this.req.options.delegator
+                    if (delegator) {
+                        tx = new Transaction({ ...txBody, reserved: { features: 1 /* VIP191 bit */ } })
+                        try {
+                            const resp = await this.$axios.post(delegator.url, {
+                                raw: '0x' + tx.encode().toString('hex'),
+                                origin: signer
+                            }, { transformResponse: data => JSON.parse(data), headers: { 'content-type': 'application/json' } })
+                            delegatorSig = Buffer.from(resp.data.signature.slice(2), 'hex')
+                        } catch (err) {
+                            this.$q.notify({
+                                type: 'negative',
+                                message: this.$t('sign.msg_delegation_failed').toString()
+                            })
+                            // rethrow to end the process
+                            throw err
+                        }
+                    } else {
+                        tx = new Transaction(txBody)
+                    }
+                    return tx
+                })
             })
+
+            tx.signature = delegatorSig ? Buffer.concat([originSig, delegatorSig]) : originSig
 
             const encoded = '0x' + tx.encode().toString('hex')
             this.$svc.bc(this.gid).commitTx(encoded)
