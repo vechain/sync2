@@ -98,6 +98,7 @@ module.exports = configure(function (/* ctx */) {
         "QTabPanel",
         "QToggle",
         "QSpinnerDots",
+        "QSpinner",
         "QInfiniteScroll",
         "QChip",
         "QCarousel",
