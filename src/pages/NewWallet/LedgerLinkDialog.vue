@@ -6,7 +6,7 @@
         :no-backdrop-dismiss="!$q.screen.xs"
     >
         <q-card class="full-width">
-            <prompt-dialog-toolbar>Import from ledger</prompt-dialog-toolbar>
+            <prompt-dialog-toolbar>Link to ledger</prompt-dialog-toolbar>
             <q-card-section>
                 <q-item
                     v-for="(s, i) in steps"
@@ -49,7 +49,7 @@
                     :disable="!account"
                     unelevated
                     color="primary"
-                    label="Import"
+                    label="Link"
                     @click="onSubmit()"
                 />
             </q-card-actions>
