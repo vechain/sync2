@@ -26,3 +26,5 @@ export function connect() {
     }
     return connector.connect()
 }
+
+export { default as App, Account } from '@vechain/hw-app-vet'
