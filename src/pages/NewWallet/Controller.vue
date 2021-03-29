@@ -55,8 +55,8 @@
                 v-if="isSupport"
                 unelevated
                 flat
-                @click="newWallet('importLedger')"
-            >Ledger user? Import now</q-btn>
+                @click="newWallet('linkLedger')"
+            >Ledger user? Link now</q-btn>
         </page-action>
     </div>
 </template>
@@ -67,7 +67,7 @@ import { genesises } from 'src/consts'
 import { unique } from 'src/utils/array'
 import { Vault } from 'src/core/vault'
 import MnemonicInputDialog from './MnemonicInputDialog.vue'
-import LedgerImportDialog from './LedgerImportDialog.vue'
+import LedgerLinkDialog from './LedgerLinkDialog.vue'
 import PopSheets, { Sheet } from 'src/components/PopSheets.vue'
 import PageContent from 'src/components/PageContent.vue'
 import PageAction from 'src/components/PageAction.vue'
@@ -145,10 +145,10 @@ export default Vue.extend({
         }
     },
     methods: {
-        async importLedger() {
+        async linkLedger() {
             try {
                 const account = await this.$dialog<Account>({
-                    component: LedgerImportDialog
+                    component: LedgerLinkDialog
                 })
                 try {
                     await this.$loading(async () => {
@@ -172,7 +172,7 @@ export default Vue.extend({
                 }
             } catch { }
         },
-        async newWallet(type: 'generate' | 'import' | 'importLedger', wordsCount = 12) {
+        async newWallet(type: 'generate' | 'import' | 'linkLedger', wordsCount = 12) {
             // reset error
             this.error = ''
             await this.$nextTick()
@@ -183,9 +183,9 @@ export default Vue.extend({
                 return
             }
 
-            if (type === 'importLedger') {
+            if (type === 'linkLedger') {
                 try {
-                    await this.importLedger()
+                    await this.linkLedger()
                 } catch { }
                 return
             }
