@@ -99,7 +99,6 @@ export default Vue.extend({
                     this.status = 'done'
                     return
                 }
-                await new Promise(resolve => setTimeout(resolve, 2000))
             } catch (err) {
                 console.warn(err)
                 if (process.env.MODE === 'spa' || process.env.MODE === 'pwa') {
@@ -107,6 +106,7 @@ export default Vue.extend({
                     return
                 }
             }
+            await new Promise(resolve => setTimeout(resolve, 2000))
         }
     },
     beforeDestroy() {
