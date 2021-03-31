@@ -8,38 +8,58 @@
         <q-card class="full-width">
             <prompt-dialog-toolbar>{{title}}</prompt-dialog-toolbar>
             <q-card-section>
+                <q-item>
+                    <q-item-section class="flex-center">
+                        <q-img width="60%" src="~assets/ledger-device.svg" />
+                    </q-item-section>
+                </q-item>
                 <transition-group
                     tag="div"
                     name="q-transition--jump-down"
                     class="column q-gutter-y-md no-wrap"
                 >
                     <template v-for="(s, index) in summary">
-                        <div
+                        <q-item
+                            dense
                             :key="s"
                             v-if="step >= index"
                             :class="{'text-grey-7': step > index}"
                         >
-                            {{s}}
-                        </div>
+                            <q-item-section avatar>
+                                <template v-if="index === (step - 1)">
+                                    <q-icon
+                                        v-if="error"
+                                        name="error"
+                                        size="xs"
+                                        class="text-negative"
+                                    />
+                                    <q-spinner v-else />
+                                </template>
+                                <q-icon
+                                    v-else-if="step > index"
+                                    size="xs"
+                                    name="done"
+                                />
+                            </q-item-section>
+                            <q-item-section>
+                                <q-item-label
+                                    caption
+                                    class="text-negative"
+                                    v-if="index === (step - 1) && error"
+                                >
+                                    {{error}}
+                                </q-item-label>
+                                <q-item-label
+                                    v-else-if="step > index"
+                                    :class="{'text-grey': step > index}"
+                                >
+                                    {{s}}
+                                </q-item-label>
+                            </q-item-section>
+                        </q-item>
                     </template>
                 </transition-group>
-                <div
-                    v-if="!!error"
-                    class="text-negative"
-                >
-                    {{error}}
-                </div>
             </q-card-section>
-            <q-card-actions>
-                <q-btn
-                    v-if="error"
-                    v-disableFocusHelper
-                    class="w40 q-mx-auto"
-                    color="primary"
-                    label="Close"
-                    @click="hide()"
-                />
-            </q-card-actions>
         </q-card>
     </q-dialog>
 </template>
