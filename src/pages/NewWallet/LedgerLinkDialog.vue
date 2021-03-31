@@ -8,6 +8,11 @@
         <q-card class="full-width">
             <prompt-dialog-toolbar>Link to ledger</prompt-dialog-toolbar>
             <q-card-section>
+                <q-item>
+                    <q-item-section>
+                        <q-img width="60%" src="~assets/ledger-device.svg" />
+                    </q-item-section>
+                </q-item>
                 <q-item
                     v-for="(s, i) in steps"
                     :key="i"
