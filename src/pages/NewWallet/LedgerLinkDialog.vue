@@ -6,23 +6,27 @@
         :no-backdrop-dismiss="!$q.screen.xs"
     >
         <q-card class="full-width">
-            <prompt-dialog-toolbar>Link to ledger</prompt-dialog-toolbar>
+            <prompt-dialog-toolbar>Ledger</prompt-dialog-toolbar>
             <q-card-section>
                 <q-item>
-                    <q-item-section>
-                        <q-img width="60%" src="~assets/ledger-device.svg" />
+                    <q-item-section class="flex-center">
+                        <q-img
+                            width="60%"
+                            src="~assets/ledger-device.svg"
+                        />
                     </q-item-section>
                 </q-item>
+                <!-- steps -->
                 <q-item
                     v-for="(s, i) in steps"
                     :key="i"
                     :class="{invisible: i > currentStepNum}"
-                    dense
                 >
                     <q-item-section avatar>
                         <template v-if="i === currentStepNum">
                             <q-icon
                                 v-if="error"
+                                size="xs"
                                 name="error"
                             />
                             <q-spinner v-else />
@@ -34,15 +38,25 @@
                         />
                     </q-item-section>
                     <q-item-section>
-                        <q-item-label :class="{'text-grey': i < currentStepNum}">
+                        <q-item-label :class="{'text-grey': i >= currentStepNum}">
                             {{s.text}}
                         </q-item-label>
+                    </q-item-section>
+                </q-item>
+                <!-- hint -->
+                <q-item>
+                    <q-item-section>
                         <q-item-label
-                            v-if="i === currentStepNum && error"
-                            caption
+                            v-if="!!error"
                             class="text-negative"
                         >
                             {{error.message}}
+                        </q-item-label>
+                        <q-item-label v-else-if="currentStepNum<steps.length">
+                            {{steps[currentStepNum].hint}}
+                        </q-item-label>
+                        <q-item-label v-else>
+                            All looks good
                         </q-item-label>
                     </q-item-section>
                 </q-item>
@@ -66,9 +80,15 @@ import Vue from 'vue'
 import { QDialog } from 'quasar'
 import * as Ledger from 'src/utils/ledger'
 import PromptDialogToolbar from 'src/components/PromptDialogToolbar.vue'
+import Deferred from 'src/utils/deferred'
+import { sleep } from 'src/utils/sleep'
 
-type Status = 'connected' | 'handshaked' | 'done'
-type Step = { status: Status, text: string }
+type Status = 'connected' | 'done'
+type Step = {
+    status: Status
+    text: string
+    hint: string
+}
 
 export default Vue.extend({
     components: {
@@ -78,16 +98,22 @@ export default Vue.extend({
         return {
             status: null as Status | null,
             account: null as Ledger.Account | null,
-            error: null as Error | null,
-            destroyed: false
+            error: null as Error | null
         }
     },
     computed: {
         steps(): Step[] {
             return [
-                { status: 'connected', text: 'Connect to Ledger' },
-                { status: 'handshaked', text: 'Enter VeChain App' },
-                { status: 'done', text: 'Read account' }
+                {
+                    status: 'connected',
+                    text: 'Connecting',
+                    hint: 'Plug and unlock your Ledger'
+                },
+                {
+                    status: 'done',
+                    text: 'Reading data',
+                    hint: 'Navigate to VeChain App'
+                }
             ]
         },
         currentStepNum(): number {
@@ -95,10 +121,15 @@ export default Vue.extend({
         }
     },
     async mounted() {
-        while (!this.destroyed) {
+        const signal = new Deferred<never>()
+        this.$once('hook:beforeDestroy', () => {
+            signal.reject(new Error('interrupted'))
+        })
+
+        for (; ;) {
             try {
-                const acc = await this.readAccount()
-                this.status = 'connected'
+                this.status = null
+                const acc = await this.readAccount(signal)
                 if (acc) {
                     this.account = acc
                     this.status = 'done'
@@ -111,11 +142,8 @@ export default Vue.extend({
                     return
                 }
             }
-            await new Promise(resolve => setTimeout(resolve, 2000))
+            await Promise.race([sleep(2000), signal])
         }
-    },
-    beforeDestroy() {
-        this.destroyed = true
     },
     methods: {
         // method is REQUIRED by $q.dialog
@@ -127,19 +155,24 @@ export default Vue.extend({
             this.hide()
         },
         // read out account from ledger
-        async readAccount() {
+        async readAccount(signal: Promise<never>) {
             let tr
             try {
                 tr = await Ledger.connect()
-                // eslint-disable-next-line new-cap
+                this.status = 'connected'
                 const app = new Ledger.App(tr)
                 try {
-                    return await app.getAccount(Ledger.path, false, true)
+                    const acc = await Promise.race([
+                        app.getAccount(Ledger.path, false, true),
+                        signal
+                    ])
+                    return acc
                 } catch {
+                    // not in vechain app
                     return null
                 }
             } finally {
-                tr && tr.close()
+                tr && await tr.close().catch(() => { })
             }
         },
         onSubmit() {
