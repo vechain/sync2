@@ -2,7 +2,7 @@ import Vue from 'vue'
 import { SignerGroup } from './models'
 import { Transaction, secp256k1, Certificate, blake2b256 } from 'thor-devkit'
 import { Vault } from 'src/core/vault'
-import LedgerSignDialog from './LedgerSignDialog.vue'
+import LedgerSignDialog from 'pages/Ledger/SignDialog.vue'
 
 export default Vue.extend({
     props: {

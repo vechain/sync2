@@ -62,15 +62,15 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import PageToolbar from 'src/components/PageToolbar.vue'
+import PageToolbar from 'components/PageToolbar.vue'
 import { genesises } from 'src/consts'
 import { unique } from 'src/utils/array'
 import { Vault } from 'src/core/vault'
 import MnemonicInputDialog from './MnemonicInputDialog.vue'
-import LedgerLinkDialog from './LedgerLinkDialog.vue'
-import PopSheets, { Sheet } from 'src/components/PopSheets.vue'
-import PageContent from 'src/components/PageContent.vue'
-import PageAction from 'src/components/PageAction.vue'
+import LedgerLinkDialog from 'pages/Ledger/LinkDialog.vue'
+import PopSheets, { Sheet } from 'components/PopSheets.vue'
+import PageContent from 'components/PageContent.vue'
+import PageAction from 'components/PageAction.vue'
 import { Account } from '@vechain/hw-app-vet'
 import * as Ledger from 'src/utils/ledger'
 
