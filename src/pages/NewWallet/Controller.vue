@@ -32,6 +32,18 @@
                     style="min-height:0px;max-height:300px;max-width:100%"
                 >
             </div>
+            <div
+                v-if="isSupport"
+                class="row flex-center"
+            >
+                <svg-ledger />
+                Ledger user?
+                <q-btn
+                    color="primary"
+                    flat
+                    @click="newWallet('linkLedger')"
+                >Link Now</q-btn>
+            </div>
         </page-content>
         <page-action>
             <q-btn
@@ -51,12 +63,6 @@
                     context-menu
                 />
             </q-btn>
-            <q-btn
-                v-if="isSupport"
-                unelevated
-                flat
-                @click="newWallet('linkLedger')"
-            >Ledger user? Link now</q-btn>
         </page-action>
     </div>
 </template>
@@ -73,11 +79,12 @@ import PageContent from 'components/PageContent.vue'
 import PageAction from 'components/PageAction.vue'
 import { Account } from '@vechain/hw-app-vet'
 import * as Ledger from 'src/utils/ledger'
+import SvgLedger from 'components/SvgLedger.vue'
 
 const defaultGid = genesises.main.id
 
 export default Vue.extend({
-    components: { PageToolbar, PopSheets, PageContent, PageAction },
+    components: { PageToolbar, PopSheets, PageContent, PageAction, SvgLedger },
     props: {
         defaultGid: String
     },
