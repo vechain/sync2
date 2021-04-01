@@ -37,6 +37,10 @@ jobs:
         with:
           node-version: '12'
 
+      - name: Install libs on ubuntu
+        if: startsWith(matrix.os, 'ubuntu')
+        run: sudo apt install -y libusb-1.0-0-dev libudev-dev
+
       - name: Cache Node.js modules
         uses: actions/cache@v2
         with:
