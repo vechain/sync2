@@ -67,8 +67,7 @@ import PageToolbar from 'src/components/PageToolbar.vue'
 import PageContent from 'src/components/PageContent.vue'
 import PageAction from 'src/components/PageAction.vue'
 import SignerSelector from './SignerSelector.vue'
-import { Certificate, secp256k1, blake2b256 } from 'thor-devkit'
-import { Vault } from 'core/vault'
+import { Certificate, blake2b256 } from 'thor-devkit'
 import ErrorTip from './ErrorTip.vue'
 
 export default Common.extend({
@@ -110,17 +109,7 @@ export default Common.extend({
                 domain: req.domain
             }
 
-            // acquire user password
-            const umk = await this.$authenticate()
-
-            // sign the cert
-            const signature = (() => {
-                const vault = Vault.decode(wallet.vault)
-                const node = vault.derive(wallet.meta.addresses.indexOf(cert.signer))
-                const sk = node.unlock(umk)
-                const unsigned = Certificate.encode(cert)
-                return '0x' + secp256k1.sign(blake2b256(unsigned), sk).toString('hex')
-            })()
+            const signature = '0x' + (await this.signCert(wallet, cert)).toString('hex')
 
             // here cert become signed
             cert.signature = signature

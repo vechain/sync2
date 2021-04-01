@@ -18,6 +18,7 @@ export class Deferred<T> extends Promise<T> {
 
         this.resolve = _resolve!
         this.reject = _reject!
+        this.catch(() => { })
     }
 
     resolve!: (v?: T | PromiseLike<T>) => void
