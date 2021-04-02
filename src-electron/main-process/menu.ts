@@ -10,7 +10,12 @@ export function setupMenu() {
             { role: 'windowMenu' }
         ]))
     } else {
-        Menu.setApplicationMenu(null)
+        Menu.setApplicationMenu(Menu.buildFromTemplate([
+            { role: 'fileMenu' },
+            { role: 'editMenu' },
+            { role: 'viewMenu' },
+            { role: 'windowMenu' }
+        ]))
     }
     contextMenu()
 }
