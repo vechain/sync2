@@ -211,10 +211,10 @@ export default {
         message_ask_create_wallet: '现在创建吗?'
     },
     ledger: {
-        title_connecting: '连接',
-        title_reading_data: '读取数据',
-        title_checking_status: '状态检查',
-        title_signing_data: '数据签名',
+        title_connecting: '连接中',
+        title_reading_data: '正在读取数据',
+        title_checking_status: '正在状态检查',
+        title_signing_data: '正在对数据签名',
         // hints
         msg_connecting: '请连接并解锁您的Ledger',
         msg_checking_status: '进入VeChain App',
