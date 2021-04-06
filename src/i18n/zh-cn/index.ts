@@ -90,7 +90,9 @@ export default {
         action_generate: '生成',
         action_import: '导入',
         label_wallet_name: '钱包名称',
-        label_mnemonic: '请输入您的助记词'
+        label_mnemonic: '请输入您的助记词',
+        label_ledger_user: 'Ledger用户？',
+        action_ledger_link: '现在绑定'
     },
     authenticationDialog: {
         title: '授权',
@@ -207,5 +209,19 @@ export default {
 
         title_ask_create_wallet: '尚无可用钱包',
         message_ask_create_wallet: '现在创建吗?'
+    },
+    ledger: {
+        title_connecting: '连接中',
+        title_reading_data: '正在读取数据',
+        title_checking_status: '正在状态检查',
+        title_signing_data: '正在对数据签名',
+        // hints
+        msg_connecting: '请连接并解锁您的Ledger',
+        msg_checking_status: '进入VeChain App',
+        msg_signing_data: '请在Ledger上确认',
+        // errors
+        msg_wrong_device: '错误设备',
+        msg_unknown_data: '未知数据类型',
+        label_link: '绑定'
     }
 }

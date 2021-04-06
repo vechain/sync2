@@ -91,7 +91,9 @@ export default {
         action_generate: 'Generate',
         action_import: 'Import',
         label_wallet_name: 'Wallet Name',
-        label_mnemonic: 'Please enter your mnemonic words'
+        label_mnemonic: 'Please enter your mnemonic words',
+        label_ledger_user: 'Ledger user?',
+        action_ledger_link: 'Link Now'
     },
     authenticationDialog: {
         title: 'Authenticate',
@@ -208,5 +210,19 @@ export default {
 
         title_ask_create_wallet: 'No wallet',
         message_ask_create_wallet: 'Create now?'
+    },
+    ledger: {
+        title_connecting: 'Connecting',
+        title_reading_data: 'Reading data',
+        title_checking_status: 'Checking status',
+        title_signing_data: 'Signing data',
+        // hints
+        msg_connecting: 'Connect and unlock your Ledger device',
+        msg_checking_status: 'Navigate to VeChain App',
+        msg_signing_data: 'Confirm on your Ledger device',
+        // errors
+        msg_wrong_device: 'Wrong device',
+        msg_unknown_data: 'Unknown data type',
+        label_link: 'Link'
     }
 }

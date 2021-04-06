@@ -58,18 +58,18 @@ export default Vue.extend({
             return [
                 {
                     status: 'connected',
-                    title: 'Connecting',
-                    hint: 'Plug and unlock your Ledger'
+                    title: this.$t('ledger.title_connecting').toString(),
+                    hint: this.$t('ledger.msg_connecting').toString()
                 },
                 {
                     status: 'handshaked',
-                    title: 'Checking status',
-                    hint: 'Navigate to VeChain App'
+                    title: this.$t('ledger.title_checking_status').toString(),
+                    hint: this.$t('ledger.msg_checking_status').toString()
                 },
                 {
                     status: 'signed',
-                    title: 'Signing data',
-                    hint: 'Confirm on your Ledger'
+                    title: this.$t('ledger.title_signing_data').toString(),
+                    hint: this.$t('ledger.msg_signing_data').toString()
                 }
             ]
         },
@@ -120,7 +120,7 @@ export default Vue.extend({
 
                     if (signer.toLowerCase() !== node.address.toLowerCase()) {
                         // not the expected ledger
-                        this.error = new Error('wrong device')
+                        this.error = new Error(this.$t('ledger.msg_wrong_device').toString())
                         break
                     }
                     this.status = 'handshaked'
@@ -152,7 +152,7 @@ export default Vue.extend({
                         await sleep(1000)
                         this.$emit('ok', sig)
                     } else {
-                        this.error = new Error('unknown data type')
+                        this.error = new Error(this.$t('ledger.msg_unknown_data').toString())
                     }
                 } catch (err) {
                     // TODO to check error status code to judge config problem
