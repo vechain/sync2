@@ -23,7 +23,8 @@ export default Vue.extend({
             },
             {
                 label: this.$t('index.action_backup').toString(),
-                action: () => this.$router.push({ name: 'backup', params: { walletId: this.wallet.id.toString() } })
+                action: () => this.$router.push({ name: 'backup', params: { walletId: this.wallet.id.toString() } }),
+                hidden: this.wallet.meta.type === 'ledger'
             },
             {
                 label: this.$t('index.action_rename').toString(),
