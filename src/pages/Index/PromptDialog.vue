@@ -45,7 +45,7 @@ import PromptDialogToolbar from 'src/components/PromptDialogToolbar.vue'
 export type PromptOptions = {
     title: string
     message: string
-    modal: string
+    model: string
     action: {
         label: string
         color: string
@@ -60,7 +60,7 @@ export default Vue.extend({
     },
     data() {
         return {
-            input: this.opts.modal,
+            input: this.opts.model,
             error: ''
         }
     },

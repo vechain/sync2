@@ -22,7 +22,7 @@
                     :disable="!account"
                     unelevated
                     color="primary"
-                    label="Link"
+                    :label= "$t('ledger.label_link')"
                     @click="onSubmit()"
                 />
             </q-card-actions>
@@ -59,13 +59,13 @@ export default Vue.extend({
             return [
                 {
                     status: 'connected',
-                    title: 'Connecting',
-                    hint: 'Plug and unlock your Ledger'
+                    title: this.$t('ledger.title_connecting').toString(),
+                    hint: this.$t('ledger.msg_connecting').toString()
                 },
                 {
                     status: 'done',
-                    title: 'Reading data',
-                    hint: 'Navigate to VeChain App'
+                    title: this.$t('ledger.title_reading_data').toString(),
+                    hint: this.$t('ledger.msg_checking_status').toString()
                 }
             ]
         },

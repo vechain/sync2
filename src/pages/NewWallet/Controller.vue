@@ -37,12 +37,12 @@
                 class="row flex-center"
             >
                 <svg-ledger />
-                Ledger user?
+                {{$t('newWallet.label_ledger_user')}}
                 <q-btn
                     color="primary"
                     flat
                     @click="newWallet('linkLedger')"
-                >Link Now</q-btn>
+                >{{$t('newWallet.action_ledger_link')}}</q-btn>
             </div>
         </page-content>
         <page-action>
