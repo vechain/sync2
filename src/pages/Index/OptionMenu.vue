@@ -66,7 +66,7 @@ export default Vue.extend({
                 const opts: PromptOptions = {
                     title: this.$t('index.action_rename').toString(),
                     message: '',
-                    modal: this.wallet.meta.name,
+                    model: this.wallet.meta.name,
                     action: {
                         label: this.$t('common.ok').toString(),
                         color: 'primary'
@@ -103,7 +103,7 @@ export default Vue.extend({
                 const opts: PromptOptions = {
                     title: this.$t('common.delete').toString(),
                     message: this.$t('index.msg_delete').toString(),
-                    modal: '',
+                    model: '',
                     action: {
                         label: this.$t('common.delete').toString(),
                         color: 'negative'
