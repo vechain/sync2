@@ -12,9 +12,9 @@ Compared to Sync v1, the most significant change is that the built-in dApp brows
 | --- | --- | --- |
 | Browser (nightly/unstable) | | https://lite.sync.vecha.in |
 | Desktop | | |
-| | Windows | WIP |
-| | macOS | WIP |
-| | Linux | WIP |
+| | Windows | [Releases](https://github.com/vechain/sync2/releases/latest) |
+| | macOS | [Releases](https://github.com/vechain/sync2/releases/latest) |
+| | Linux | [Releases](https://github.com/vechain/sync2/releases/latest) |
 | Mobile | | |
 | | Android | WIP |
 | | iOS | WIP |
