@@ -49,6 +49,13 @@
                     :title="$t('settings.action_nodes')"
                     :to="{name: 'nodes-setting'}"
                 />
+                <q-separator inset="item" />
+                <item
+                    icon="menu_book"
+                    :title="$t('settings.action_user_guide')"
+                    clickable
+                    @click="openGuide()"
+                />
             </q-list>
         </page-content>
     </div>
@@ -62,6 +69,7 @@ import LanguageListPopup from 'pages/LanguageListPopup.vue'
 import PageToolbar from 'components/PageToolbar.vue'
 import PageContent from 'src/components/PageContent.vue'
 import { kdfEncrypt } from 'src/core/vault'
+import { openURL } from 'quasar'
 
 export default Vue.extend({
     components: { Item, LanguageListPopup, PageToolbar, PageContent },
@@ -110,6 +118,9 @@ export default Vue.extend({
                     console.error(err)
                 }
             } catch { }
+        },
+        openGuide() {
+            openURL('https://docs.vechain.org/sync2/user-guide/')
         }
     }
 })
