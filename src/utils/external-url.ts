@@ -4,14 +4,19 @@ if (process.env.MODE === 'cordova') {
     // have to setup handler in global scope for cold start up case
     let pending = ''
     let resolver: ((url: string) => void) | undefined
-    window.handleOpenURL = url => {
-        if (resolver) {
-            resolver(url)
-            resolver = undefined
-        } else {
-            pending = url
-        }
-    }
+
+    (async () => {
+        await (await import('src/utils/cordova')).deviceReady
+        window.IonicDeeplink.onDeepLink(a => {
+            if (resolver) {
+                resolver(a.url)
+                resolver = undefined
+            } else {
+                pending = a.url
+            }
+        })
+    })()
+
     cordovaListenOpenUrl = () => {
         return new Promise(resolve => {
             if (pending) {
