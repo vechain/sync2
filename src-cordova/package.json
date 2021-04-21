@@ -16,9 +16,11 @@
   "devDependencies": {
     "cordova-android": "^9.1.0",
     "cordova-ios": "^6.2.0",
+    "cordova-plugin-add-swift-support": "^2.0.2",
     "cordova-plugin-ionic-keyboard": "2.2.0",
     "cordova-plugin-ionic-webview": "^4.1.3",
     "cordova-plugin-keychain-touch-id": "git+https://github.com/qianbin/cordova-plugin-keychain-touch-id.git",
+    "cordova-plugin-qrscanner": "^3.0.1",
     "cordova-plugin-whitelist": "^1.3.4",
     "cordova-sqlite-storage": "^5.0.0",
     "ionic-plugin-deeplinks": "^1.0.22"
@@ -40,7 +42,8 @@
         "DEEPLINK_SCHEME": "https",
         "DEEPLINK_HOST": "lite.sync.vecha.in",
         "ANDROID_PATH_PREFIX": "/"
-      }
+      },
+      "cordova-plugin-qrscanner": {}
     },
     "platforms": [
       "android",

@@ -86,7 +86,14 @@ export default Vue.extend({
         }
     },
     asyncComputed: {
-        hasCamera() { return QrScanner.hasCamera() }
+        hasCamera() {
+            if (process.env.MODE === 'cordova') {
+                // assume all mobile devices have camera
+                return Promise.resolve(true)
+            } else {
+                return QrScanner.hasCamera()
+            }
+        }
     },
     watch: {
         address(v: string) {

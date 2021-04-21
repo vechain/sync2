@@ -1,17 +1,17 @@
 <template>
-    <div class="relative-position">
+    <div class="relative-position bg-black">
         <video
+            v-if="!isCordova"
             ref="vid"
             class="fit"
-        >
-            <q-resize-observer
-                @resize="elemSize.w = $event.width;elemSize.h = $event.height"
-                :debounce="0"
-            />
-        </video>
+        />
         <div
             class="absolute-center"
             :style="scanRegionStyles"
+        />
+        <q-resize-observer
+            @resize="size.w = $event.width;size.h = $event.height"
+            :debounce="0"
         />
     </div>
 </template>
@@ -22,47 +22,72 @@ import { QrScanner } from 'src/utils/qr-scanner'
 export default Vue.extend({
     data: () => {
         return {
-            vidSize: { w: 0, h: 0 },
-            elemSize: { w: 0, h: 0 }
+            size: { w: 0, h: 0 }
         }
     },
     computed: {
         scanRegionStyles() {
-            if (this.vidSize.w > 0 && this.vidSize.h > 0) {
-                const w1 = Math.min(this.vidSize.w, this.vidSize.h) * 2 / 3
-                const w2 = w1 * this.elemSize.w / this.vidSize.w
-                return {
-                    border: '1px solid green',
-                    width: `${w2}px`,
-                    height: `${w2}px`
-                }
+            const { w, h } = this.size
+            const x = Math.min(w, h) * 2 / 3
+            return {
+                border: '1px solid green',
+                width: `${x}px`,
+                height: `${x}px`
             }
-            return {}
+        },
+        isCordova(): boolean {
+            return process.env.MODE === 'cordova'
         }
     },
     mounted() {
-        const video = this.$refs.vid as HTMLVideoElement
-        const scanner = new QrScanner(
-            video,
-            result => {
-                this.$emit('input', result)
-            },
-            () => { },
-            undefined,
-            'environment'
-        )
-        video.addEventListener('loadedmetadata', () => {
-            this.vidSize.w = video.videoWidth
-            this.vidSize.h = video.videoHeight
-        })
+        if (this.isCordova) {
+            const appElem = document.getElementById('q-app')!
+            let destroyed = false
+            this.$once('hook:beforeDestroy', () => {
+                destroyed = true
+                appElem.style.opacity = ''
+                window.QRScanner.hide()
+                window.QRScanner.destroy()
+            })
+            window.QRScanner.prepare((err, status) => {
+                if (err) {
+                    return this.$emit('error', err)
+                }
+                if (!status.authorized) {
+                    return this.$emit('error', new Error('permission denied'))
+                }
+                if (!destroyed) {
+                    appElem.style.opacity = '0';
+                    (this.$el as HTMLElement).classList.remove('bg-black')
+                    window.QRScanner.show()
+                    window.QRScanner.scan((err, result) => {
+                        if (err) {
+                            return this.$emit('error', err)
+                        }
+                        this.$emit('input', result)
+                    })
+                }
+            })
+        } else {
+            const video = this.$refs.vid as HTMLVideoElement
+            const scanner = new QrScanner(
+                video,
+                result => {
+                    this.$emit('input', result)
+                },
+                () => { },
+                undefined,
+                'environment'
+            )
 
-        scanner.start().catch(err => {
-            this.$emit('error', err)
-        })
+            scanner.start().catch(err => {
+                this.$emit('error', err)
+            })
 
-        this.$once('hook:beforeDestroy', () => {
-            scanner.stop()
-        })
+            this.$once('hook:beforeDestroy', () => {
+                scanner.stop()
+            })
+        }
     }
 })
 </script>
