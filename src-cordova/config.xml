@@ -16,13 +16,11 @@
     <allow-intent href="geo:*" />
     <platform name="android">
         <allow-intent href="market:*" />
-        <resource-file src="res/android/colors.xml" target="/app/src/main/res/values/colors.xml" />
-        <icon background="@color/launcher_icon_background" density="ldpi" foreground="res/android/ldpi.png" />
-        <icon background="@color/launcher_icon_background" density="mdpi" foreground="res/android/mdpi.png" />
-        <icon background="@color/launcher_icon_background" density="hdpi" foreground="res/android/hdpi.png" />
-        <icon background="@color/launcher_icon_background" density="xhdpi" foreground="res/android/xhdpi.png" />
-        <icon background="@color/launcher_icon_background" density="xxhdpi" foreground="res/android/xxhdpi.png" />
-        <icon background="@color/launcher_icon_background" density="xxxhdpi" foreground="res/android/xxxhdpi.png" />
+        <icon background="res/android/drawable-mdpi/ic_launcher_background.png" density="mdpi" foreground="res/android/drawable-mdpi/ic_launcher_foreground.png" />
+        <icon background="res/android/drawable-hdpi/ic_launcher_background.png" density="hdpi" foreground="res/android/drawable-hdpi/ic_launcher_foreground.png" />
+        <icon background="res/android/drawable-xhdpi/ic_launcher_background.png" density="xhdpi" foreground="res/android/drawable-xhdpi/ic_launcher_foreground.png" />
+        <icon background="res/android/drawable-xxhdpi/ic_launcher_background.png" density="xxhdpi" foreground="res/android/drawable-xxhdpi/ic_launcher_foreground.png" />
+        <icon background="res/android/drawable-xxxhdpi/ic_launcher_background.png" density="xxxhdpi" foreground="res/android/drawable-xxxhdpi/ic_launcher_foreground.png" />
         <splash density="land-ldpi" src="res/screen/android/splash-land-ldpi.png" />
         <splash density="port-ldpi" src="res/screen/android/splash-port-ldpi.png" />
         <splash density="land-mdpi" src="res/screen/android/splash-land-mdpi.png" />
