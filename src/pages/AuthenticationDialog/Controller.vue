@@ -56,7 +56,6 @@
 <script lang="ts">
 import Vue from 'vue'
 import { QDialog } from 'quasar'
-import { BioPass } from 'src/utils/bio-pass'
 import { kdfDecrypt } from 'src/core/vault'
 import PromptDialogToolbar from 'src/components/PromptDialogToolbar.vue'
 
@@ -67,18 +66,6 @@ export default Vue.extend({
             password: '',
             error: '',
             loading: false
-        }
-    },
-    computed: {
-        bioAuthTypeIcon(): string {
-            return this.bioPass
-                ? (this.bioPass.authType === 'face' ? 'sentiment_satisfied' : 'fingerprint')
-                : ''
-        }
-    },
-    asyncComputed: {
-        bioPass() {
-            return BioPass.open()
         }
     },
     watch: {
@@ -114,19 +101,6 @@ export default Vue.extend({
                 this.error = this.$t('authenticationDialog.msg_password_error').toString()
                 await this.$nextTick()
                 inputEl.focus()
-            }
-        },
-        async recallBioPass() {
-            const bioPass = this.bioPass
-            if (!bioPass) {
-                return
-            }
-
-            try {
-                const umkHex = await bioPass.recall('recall password')
-                this.ok(Buffer.from(umkHex, 'hex'))
-            } catch (err) {
-                console.warn(err)
             }
         }
     }

@@ -32,7 +32,7 @@
                         <q-toggle
                             color="green"
                             :value="bioPassSaved"
-                            :disable="bioPassSaved===null"
+                            :disable="!bioPass"
                             @input="toggleBioPass"
                         />
                     </item>
@@ -68,11 +68,9 @@ export default Vue.extend({
     asyncComputed: {
         bioPass() {
             return BioPass.open()
-        }
-    },
-    computed: {
-        bioPassSaved(): boolean | null {
-            return this.bioPass ? this.bioPass.saved : null
+        },
+        bioPassSaved(): Promise<boolean> {
+            return this.$svc.config.getBioPassOn()
         }
     },
     methods: {
@@ -86,11 +84,11 @@ export default Vue.extend({
             try {
                 if (newVal) {
                     const umk = await this.$authenticate()
-                    await bioPass.save(umk.toString('hex'))
-                } else {
-                    await bioPass.delete()
+                    await bioPass.save(
+                        'Biometric Authentication',
+                        umk.toString('hex'))
                 }
-                this.$asyncComputed.bioPass.update()
+                await this.$svc.config.setBioPassOn(newVal)
             } catch (err) {
                 console.warn(err)
             }

@@ -7,8 +7,6 @@ declare interface Window {
             url: string
         }) => void)
     }
-    plugins: {
-        touchid: any
-    }
+    readonly Fingerprint: Fingerprint
     readonly Keyboard: any
 }

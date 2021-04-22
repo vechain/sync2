@@ -4,6 +4,7 @@ import ModalLoading from 'components/ModalLoading.vue'
 import QRCodeDialog from 'pages/QRCodeDialog.vue'
 import { CertDialog, TxDialog } from 'pages/Sign'
 import { QDialogOptions } from 'quasar'
+import { BioPass } from 'src/utils/bio-pass'
 
 declare module 'vue/types/vue' {
     interface Vue {
@@ -99,7 +100,15 @@ export function boot() {
         $authenticate: {
             get(): Vue['$authenticate'] {
                 const vm = this as Vue
-                return () => {
+                return async () => {
+                    try {
+                        const bioPass = await BioPass.open()
+                        if (bioPass && await vm.$svc.config.getBioPassOn()) {
+                            return Buffer.from(await bioPass.recall('Biometric Authentication'), 'hex')
+                        }
+                    } catch (err) {
+                        console.warn(err)
+                    }
                     return dialog(vm, {
                         component: AuthenticationDialog
                     })
