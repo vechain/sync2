@@ -27,7 +27,7 @@
                 <template v-if="bioPass">
                     <item
                         icon="fingerprint"
-                        :title="$t('settings.action_bio_auth')"
+                        :title="$t('common.bio_auth')"
                     >
                         <q-toggle
                             color="green"
@@ -85,7 +85,8 @@ export default Vue.extend({
                 if (newVal) {
                     const umk = await this.$authenticate()
                     await bioPass.save(
-                        'Biometric Authentication',
+                        this.$t('common.bio_auth').toString(),
+                        this.$t('common.cancel').toString(),
                         umk.toString('hex'))
                 }
                 await this.$svc.config.setBioPassOn(newVal)

@@ -41,13 +41,6 @@
                         color="positive"
                         type="submit"
                     />
-                    <!-- <q-btn
-                        v-if="bioPassSaved"
-                        flat
-                        text-color="primary"
-                        class="q-mt-lg"
-                        :label="$t('authenticationDialog.action_faceID')"
-                    /> -->
                 </q-card-actions>
             </q-form>
         </q-card>

@@ -43,7 +43,8 @@ export default {
         agreement: 'Agreement',
         unknown: 'Unknown',
         sent: 'Sent',
-        received: 'Received'
+        received: 'Received',
+        bio_auth: 'Biometric Authentication'
     },
     disclaimer: {
         msg_unstable_terms: 'Note: You are currently using the unstable version of Sync2. Please avoid using this version to manage any real assets on the mainnet. Unstable version could contain severe bugs and hidden features that may result in serious data loss. The purpose of this version is to allow developers and some users to preview upcoming features and provide feedback for further improvement and development.',
@@ -98,14 +99,12 @@ export default {
     authenticationDialog: {
         title: 'Authenticate',
         msg_password_error: 'Incorrect password',
-        action_faceID: 'Unlock with FaceID',
         action_unlock: 'Unlock',
         label_input_password: 'Enter password to unlock'
     },
     settings: {
         title: 'Settings',
         action_change_password: 'Password',
-        action_bio_auth: 'Biometric Authentication',
         action_token_list: 'Tokens',
         action_nodes: 'Nodes',
         action_language: 'Language',
