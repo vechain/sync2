@@ -75,4 +75,5 @@
     <preference name="DisallowOverscroll" value="true" />
     <preference name="KeyboardResize" value="false" />
     <preference name="SplashMaintainAspectRatio" value="true" />
+    <preference name="ShowSplashScreenSpinner" value="false" />
 </widget>
