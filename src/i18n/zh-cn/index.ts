@@ -43,7 +43,8 @@ export default {
         agreement: '协议',
         unknown: '未知',
         sent: '已发送',
-        received: '已接收'
+        received: '已接收',
+        bio_auth: '生物识别验证'
     },
     disclaimer: {
         msg_unstable_terms: '注意：您当前使用的是非稳定版本的Sync2，请避免使用此版本管理包含主网资产的钱包。非稳定版本可能存在严重的缺陷或包含未开发完成的功能，并可能带来数据丢失的风险。它的目的是为了让开发者和部分用户提前预览新功能，帮助发现问题，以达到持续改进。',
@@ -97,14 +98,12 @@ export default {
     authenticationDialog: {
         title: '授权',
         msg_password_error: '密码错误',
-        action_faceID: '使用 FaceID 解锁',
         action_unlock: '解锁',
         label_input_password: '输入密码以解锁'
     },
     settings: {
         title: '设置',
         action_change_password: '更改密码',
-        action_bio_auth: '生物识别解锁',
         action_token_list: '代币管理',
         action_nodes: '节点设置',
         action_language: '语言偏好',

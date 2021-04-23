@@ -6,10 +6,10 @@ export interface BioPass {
     readonly authType: 'face' | 'finger'
 
     /** save the secret */
-    save(title: string, secret: string): Promise<void>
+    save(title: string, cancelButtonTitle: string, secret: string): Promise<void>
 
     /** recall the saved secret */
-    recall(title: string): Promise<string>
+    recall(title: string, cancelButtonTitle: string): Promise<string>
 }
 
 export namespace BioPass {
@@ -31,19 +31,21 @@ export namespace BioPass {
 
             return {
                 get authType() { return type === 'face' ? 'face' : 'finger' },
-                save: (title, secret) => {
+                save: (title, cancelButtonTitle, secret) => {
                     return new Promise((resolve, reject) => {
                         fp.registerBiometricSecret({
                             title,
+                            cancelButtonTitle,
                             secret,
                             disableBackup: true
                         }, resolve, reject)
                     })
                 },
-                recall: (title) => {
+                recall: (title, cancelButtonTitle) => {
                     return new Promise<string>((resolve, reject) => {
                         fp.loadBiometricSecret({
                             title,
+                            cancelButtonTitle,
                             disableBackup: true
                         }, resolve, reject)
                     })
