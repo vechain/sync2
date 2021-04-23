@@ -107,6 +107,9 @@ export function boot() {
                             return Buffer.from(await bioPass.recall('Biometric Authentication'), 'hex')
                         }
                     } catch (err) {
+                        if (err.code === -108 /* BIOMETRIC_DISMISSED */) {
+                            throw err
+                        }
                         console.warn(err)
                     }
                     return dialog(vm, {

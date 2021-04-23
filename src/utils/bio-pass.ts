@@ -35,14 +35,16 @@ export namespace BioPass {
                     return new Promise((resolve, reject) => {
                         fp.registerBiometricSecret({
                             title,
-                            secret
+                            secret,
+                            disableBackup: true
                         }, resolve, reject)
                     })
                 },
                 recall: (title) => {
                     return new Promise<string>((resolve, reject) => {
                         fp.loadBiometricSecret({
-                            title
+                            title,
+                            disableBackup: true
                         }, resolve, reject)
                     })
                 }
