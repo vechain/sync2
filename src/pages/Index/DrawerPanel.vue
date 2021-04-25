@@ -64,7 +64,7 @@
                     <q-item-label
                         caption
                         class="ellipsis"
-                    >v{{version}} ({{build}})</q-item-label>
+                    >v{{version}} ({{build}})<br><span class="text-capitalize">{{mode}}</span></q-item-label>
                 </q-item-section>
             </q-item>
         </q-list>
@@ -77,7 +77,15 @@ export default Vue.extend({
     computed: {
         distTag(): string { return process.env.DIST_TAG || '' },
         version(): string { return process.env.APP_VERSION || '' },
-        build(): string { return process.env.APP_BUILD || '' }
+        build(): string { return process.env.APP_BUILD || '' },
+        mode(): string {
+            switch (process.env.MODE) {
+                case 'spa':
+                case 'pwa':
+                    return 'lite'
+                default: return process.env.MODE || ''
+            }
+        }
     },
     asyncComputed: {
         ongoingActivitiesCount() {
