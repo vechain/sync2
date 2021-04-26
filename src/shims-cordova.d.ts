@@ -9,4 +9,5 @@ declare interface Window {
     }
     readonly Fingerprint: Fingerprint
     readonly Keyboard: any
+    readonly StatusBar: any
 }
