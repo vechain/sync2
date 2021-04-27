@@ -108,7 +108,8 @@ export default {
         action_token_list: 'Tokens',
         action_nodes: 'Nodes',
         action_language: 'Language',
-        msg_password_changed: 'Password changed'
+        msg_password_changed: 'Password changed',
+        action_user_guide: 'User Guide'
     },
     nodes: {
         title_add_dialog: 'Add Node',

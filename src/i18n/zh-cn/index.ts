@@ -107,7 +107,8 @@ export default {
         action_token_list: '代币管理',
         action_nodes: '节点设置',
         action_language: '语言偏好',
-        msg_password_changed: '密码已修改'
+        msg_password_changed: '密码已修改',
+        action_user_guide: '用户指南'
     },
     nodes: {
         title_add_dialog: '添加节点',
