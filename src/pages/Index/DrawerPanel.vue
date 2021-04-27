@@ -1,6 +1,6 @@
 <template>
     <div
-        class="fit column no-wrap"
+        class="fit column no-wrap drawer-panel"
         style="width: 300px !important;max-width:80vw"
     >
         <!-- drawer content header -->
