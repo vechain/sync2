@@ -11,3 +11,7 @@ declare interface Window {
     readonly Keyboard: any
     readonly StatusBar: any
 }
+
+declare interface CordovaPlugins {
+    clipboard
+}

@@ -121,10 +121,11 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import { copyToClipboard, openURL } from 'quasar'
+import { openURL } from 'quasar'
 import { urls, genesises } from 'src/consts'
 import AddressLabel from 'src/components/AddressLabel.vue'
 import { formatDate } from 'src/utils/format'
+import { copyText } from 'src/utils/clipboard'
 
 export type Entry = {
     gid: string
@@ -194,7 +195,7 @@ export default Vue.extend({
     },
     methods: {
         copy(str: string) {
-            copyToClipboard(str).then(() => {
+            copyText(str).then(() => {
                 this.$q.notify(this.$t('common.copied'))
             }).catch(console.error)
         },
