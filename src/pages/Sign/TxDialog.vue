@@ -116,7 +116,7 @@ export default Common.extend({
         },
         criticalError(): Error | null {
             if (!this.wallet) {
-                return { name: this.$t('common.no_wallet').toString(), message: this.signerGroups.length > 0 ? this.$t('sign.msg_address_not_owned').toString() : this.$t('common.no_wallet').toString() }
+                return { name: this.$t('sign.label_critical_error').toString(), message: this.signerGroups.length > 0 ? this.$t('sign.msg_address_not_owned').toString() : this.$t('common.no_wallet').toString() }
             }
             // test vip191 feature bit when delegator set
             const head = this.thor.status.head
