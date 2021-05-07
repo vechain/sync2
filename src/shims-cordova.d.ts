@@ -2,15 +2,16 @@
 
 declare interface Window {
     readonly sqlitePlugin: any
-    handleOpenURL: ((url: string) => void) | undefined
-    plugins: {
-        touchid: any
+    readonly IonicDeeplink: {
+        onDeepLink(cb: (a: {
+            url: string
+        }) => void)
     }
+    readonly Fingerprint: Fingerprint
     readonly Keyboard: any
+    readonly StatusBar: any
 }
 
-declare var cordova: {
-    InAppBrowser: {
-        open: Window['open']
-    }
+declare interface CordovaPlugins {
+    clipboard
 }

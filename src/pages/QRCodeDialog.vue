@@ -38,8 +38,9 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { copyToClipboard, QDialog } from 'quasar'
+import { QDialog } from 'quasar'
 import QRCode from 'components/QRCode.vue'
+import { copyText } from 'src/utils/clipboard'
 export default Vue.extend({
     components: {
         QRCode
@@ -53,7 +54,7 @@ export default Vue.extend({
         // method is REQUIRED by $q.dialog
         hide() { (this.$refs.dialog as QDialog).hide() },
         onCopy() {
-            copyToClipboard(this.req.content).then(
+            copyText(this.req.content).then(
                 () => {
                     this.$q.notify(this.$t('common.copied'))
                 }

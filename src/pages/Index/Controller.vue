@@ -36,7 +36,7 @@
                 v-if="wallet"
                 ref="list"
                 :wallet="wallet"
-                class="col"
+                class="col address-list"
             />
             <div
                 v-else
@@ -149,3 +149,8 @@ export default Vue.extend({
     }
 })
 </script>
+<style scoped>
+body.q-ios-padding .address-list {
+    margin-bottom: calc(-1 * env(safe-area-inset-bottom));
+}
+</style>

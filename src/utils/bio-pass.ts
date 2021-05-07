@@ -1,68 +1,54 @@
 import { deviceReady } from './cordova'
 
-function promisify<T>(f: (...args: unknown[]) => void, ...args: unknown[]) {
-    return new Promise<T>((resolve, reject) => {
-        args.push((r: T) => {
-            resolve(r)
-        })
-        args.push((e: unknown) => {
-            reject(e)
-        })
-        f(...args)
-    })
-}
-
 /** it provides biometric password saving service */
 export interface BioPass {
     /** type of biometric authentication */
-    readonly authType: 'face' | 'touch'
+    readonly authType: 'face' | 'finger'
 
-    /** the name of the password */
-    readonly name: string
+    /** save the secret */
+    save(title: string, cancelButtonTitle: string, secret: string): Promise<void>
 
-    /** if the password previously saved */
-    readonly saved: boolean
-
-    /** save the password */
-    save(password: string): Promise<void>
-
-    /** delete the saved password */
-    delete(): Promise<void>
-
-    /** recall the saved password */
-    recall(msg: string): Promise<string>
+    /** recall the saved secret */
+    recall(title: string, cancelButtonTitle: string): Promise<string>
 }
 
 export namespace BioPass {
-    export async function open(name = 'main'): Promise<BioPass | null> {
+    export async function open(): Promise<BioPass | null> {
         if (process.env.MODE === 'cordova') {
             await deviceReady
 
-            const touchid = window.plugins.touchid
+            const fp = window.Fingerprint
 
-            let type = ''
-            let saved = false
+            let type: 'face' | 'finger' | 'biometric'
+
             try {
-                type = await promisify<string>(touchid.isAvailable.bind(touchid))
-                saved = await promisify(touchid.has.bind(touchid), name)
-                    .then(() => true)
-                    .catch(() => false)
+                type = await new Promise((resolve, reject) => {
+                    fp.isAvailable(resolve, reject)
+                })
             } catch {
                 return null
             }
 
             return {
-                get authType() { return type === 'face' ? 'face' : 'touch' },
-                get name() { return name },
-                get saved() { return saved },
-                save: (password) => {
-                    return promisify(touchid.save.bind(touchid), name, password, true)
+                get authType() { return type === 'face' ? 'face' : 'finger' },
+                save: (title, cancelButtonTitle, secret) => {
+                    return new Promise((resolve, reject) => {
+                        fp.registerBiometricSecret({
+                            title,
+                            cancelButtonTitle,
+                            secret,
+                            disableBackup: true
+                        }, resolve, reject)
+                    })
                 },
-                delete: () => {
-                    return promisify(touchid.delete.bind(touchid), name)
-                },
-                recall: (msg) => {
-                    return promisify(touchid.verify.bind(touchid), name, msg)
+                recall: (title, cancelButtonTitle) => {
+                    return new Promise<string>((resolve, reject) => {
+                        fp.loadBiometricSecret({
+                            title,
+                            cancelButtonTitle,
+                            disableBackup: true
+                        }, resolve, reject)
+                    })
                 }
             }
         }

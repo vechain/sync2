@@ -66,11 +66,12 @@
 <script lang="ts">
 import Vue from 'vue'
 import AddressLabel from 'src/components/AddressLabel.vue'
-import { copyToClipboard, openURL } from 'quasar'
+import { openURL } from 'quasar'
 import AmountLabel from 'components/AmountLabel.vue'
 import { urls, genesises } from 'src/consts'
 import { TransferLogItem } from './models'
 import { formatDate } from 'src/utils/format'
+import { copyText } from 'src/utils/clipboard'
 
 export default Vue.extend({
     components: {
@@ -126,7 +127,7 @@ export default Vue.extend({
             openURL(`${this.txDetailUrl}${this.log.meta.txID}`)
         },
         copy(str: string) {
-            copyToClipboard(str).then(() => {
+            copyText(str).then(() => {
                 this.$q.notify(this.$t('common.copied'))
             }).catch(console.error)
         }

@@ -24,7 +24,7 @@ export function build(storage: Storage) {
         m => m
     )
     type Key = 'nodes' | 'activeNodeMap' | 'userMasterKeyGlob' |
-        'tokenRegistry' | 'activeTokenSymbols' | 'recentRecipients' | 'language'
+        'tokenRegistry' | 'activeTokenSymbols' | 'recentRecipients' | 'language' | 'bio-pass-on'
 
     const getSubKey = async (key: Key, subKey: string) => {
         const row = (await t.all().where({ key, subKey }).query())[0]
@@ -119,6 +119,12 @@ export function build(storage: Storage) {
         },
         saveLanguage(lang: string) {
             return set('language', lang)
+        },
+        getBioPassOn() {
+            return get('bio-pass-on').then(r => !!r)
+        },
+        setBioPassOn(on: boolean) {
+            return set('bio-pass-on', on ? 't' : '')
         }
     }
 }

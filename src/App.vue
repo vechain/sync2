@@ -68,6 +68,9 @@ export default Vue.extend({
             require('@electron/remote').app.updater.downloaded.then(() => {
                 this.$state.app.updateAvailable = true
             })
+        } else if (process.env.MODE === 'cordova') {
+            window.StatusBar.backgroundColorByName('white')
+            window.StatusBar.styleDefault()
         }
     }
 })

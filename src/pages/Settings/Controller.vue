@@ -27,12 +27,12 @@
                 <template v-if="bioPass">
                     <item
                         icon="fingerprint"
-                        :title="$t('settings.action_bio_auth')"
+                        :title="$t('common.bio_auth')"
                     >
                         <q-toggle
                             color="green"
                             :value="bioPassSaved"
-                            :disable="bioPassSaved===null"
+                            :disable="!bioPass"
                             @input="toggleBioPass"
                         />
                     </item>
@@ -49,6 +49,13 @@
                     :title="$t('settings.action_nodes')"
                     :to="{name: 'nodes-setting'}"
                 />
+                <q-separator inset="item" />
+                <item
+                    icon="menu_book"
+                    :title="$t('settings.action_user_guide')"
+                    clickable
+                    @click="openGuide()"
+                />
             </q-list>
         </page-content>
     </div>
@@ -62,17 +69,16 @@ import LanguageListPopup from 'pages/LanguageListPopup.vue'
 import PageToolbar from 'components/PageToolbar.vue'
 import PageContent from 'src/components/PageContent.vue'
 import { kdfEncrypt } from 'src/core/vault'
+import { openURL } from 'quasar'
 
 export default Vue.extend({
     components: { Item, LanguageListPopup, PageToolbar, PageContent },
     asyncComputed: {
         bioPass() {
             return BioPass.open()
-        }
-    },
-    computed: {
-        bioPassSaved(): boolean | null {
-            return this.bioPass ? this.bioPass.saved : null
+        },
+        bioPassSaved(): Promise<boolean> {
+            return this.$svc.config.getBioPassOn()
         }
     },
     methods: {
@@ -86,11 +92,12 @@ export default Vue.extend({
             try {
                 if (newVal) {
                     const umk = await this.$authenticate()
-                    await bioPass.save(umk.toString('hex'))
-                } else {
-                    await bioPass.delete()
+                    await bioPass.save(
+                        this.$t('common.bio_auth').toString(),
+                        this.$t('common.cancel').toString(),
+                        umk.toString('hex'))
                 }
-                this.$asyncComputed.bioPass.update()
+                await this.$svc.config.setBioPassOn(newVal)
             } catch (err) {
                 console.warn(err)
             }
@@ -110,6 +117,9 @@ export default Vue.extend({
                     console.error(err)
                 }
             } catch { }
+        },
+        openGuide() {
+            openURL('https://docs.vechain.org/sync2/user-guide/')
         }
     }
 })

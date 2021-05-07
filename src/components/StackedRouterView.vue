@@ -13,6 +13,7 @@
             :class="viewClasses(i)"
         >
             <component
+                class="stack-page"
                 :is="entry.component"
                 v-bind="entryToBinds(entry)"
             />
