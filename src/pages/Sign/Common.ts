@@ -97,5 +97,13 @@ export default Vue.extend({
                 throw new Error(`unsupported wallet type '${wallet.meta.type}'`)
             }
         }
+    },
+    beforeMount() {
+        const key = `last-signer-${this.gid}`
+        this.signer = localStorage.getItem(key) || '' // load last signer
+        // save on ok
+        this.$once('ok', () => {
+            localStorage.setItem(key, this.signer)
+        })
     }
 })
