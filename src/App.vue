@@ -14,6 +14,28 @@ import dayjs from 'dayjs'
 // import more locales here
 import 'dayjs/locale/zh-cn'
 
+/**
+ * parse connex request url and return the request src
+ * the incoming url looks like connex:sign?src=xxx, or https://lite.sync.vecha.in/#/sign?src=xxx
+ */
+function parseConnexURL(urlStr: string) {
+    try {
+        // normalize for easily parsing
+        if (urlStr.startsWith('https')) {
+            urlStr = urlStr.replace('/#', '')
+        }
+        const url = new URL(urlStr)
+        if ((url.protocol === 'connex:' && url.pathname === 'sign') ||
+            (url.protocol === 'https:' && url.pathname === '/sign')
+        ) {
+            return url.searchParams.get('src')
+        }
+    } catch (err) {
+        console.warn(err)
+    }
+    return null
+}
+
 export default Vue.extend({
     asyncComputed: {
         lang(): Promise<string> {
@@ -41,19 +63,13 @@ export default Vue.extend({
 
             // eslint-disable-next-line no-unmodified-loop-condition
             while (!destroyed) {
-                try {
-                    // the incoming url looks like connex:sign?src=xxx
-                    const url = new URL(await listen())
-                    if (url.pathname === 'sign' && !destroyed) {
-                        const src = url.searchParams.get('src')
-                        if (this.$route.name === 'sign') {
-                            this.$router.replace({ name: 'sign', query: { src } })
-                        } else {
-                            this.$router.push({ name: 'sign', query: { src } })
-                        }
+                const src = parseConnexURL(await listen())
+                if (src) {
+                    if (this.$route.name === 'sign') {
+                        this.$router.replace({ name: 'sign', query: { src } })
+                    } else {
+                        this.$router.push({ name: 'sign', query: { src } })
                     }
-                } catch (err) {
-                    console.warn(err)
                 }
             }
         }
