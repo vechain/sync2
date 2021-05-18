@@ -16,7 +16,7 @@ Compared to Sync v1, the most significant change is that the built-in dApp brows
 | | macOS | [Releases](https://github.com/vechain/sync2/releases/latest) |
 | | Linux | [Releases](https://github.com/vechain/sync2/releases/latest) |
 | Mobile | | |
-| | Android | WIP |
+| | Android | [Releases](https://github.com/vechain/sync2/releases/latest) |
 | | iOS | WIP |
 
 ## Port dApps to Sync2
