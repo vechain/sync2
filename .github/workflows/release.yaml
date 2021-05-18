@@ -1,4 +1,4 @@
-name: Release electron version
+name: Release native version
 
 on:
   push:
@@ -7,8 +7,8 @@ on:
 
   workflow_dispatch:
 
-env:
-#  DIST_TAG: preview
+# env:
+#   DIST_TAG: preview
 
 jobs:
   create-gh-release:
