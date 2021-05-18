@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  DIST_TAG: preview
+#  DIST_TAG: preview
 
 jobs:
   create-gh-release:
