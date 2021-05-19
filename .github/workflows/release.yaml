@@ -53,7 +53,7 @@ jobs:
         run: npm ci
 
       - name: Setup macOS Notarization env
-        if: startsWith(matrix.os, 'macos')
+        if: contains(matrix.os, 'mac')
         run: |
           rm -fr ~/private_keys && mkdir ~/private_keys
           echo $APPLE_AUTH_PRIVATE_KEY | base64 -D > ~/private_keys/AuthKey_${APPLE_API_KEY}.p8
