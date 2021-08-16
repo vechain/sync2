@@ -97,7 +97,12 @@ jobs:
           key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.OS }}-node-
-      
+
+      - name: Workaround for GH action env(Android build SDK31)
+        run: |
+          SDKMANAGER=$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager
+          echo y | $SDKMANAGER --uninstall "build-tools;31.0.0"
+
       - name: Install Dependencies
         run: npm install -g cordova@10 && npm ci
 
