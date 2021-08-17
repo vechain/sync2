@@ -16,7 +16,7 @@ Compared to Sync v1, the most significant change is that the built-in dApp brows
 | | macOS | [Releases](https://github.com/vechain/sync2/releases/latest) |
 | | Linux | [Releases](https://github.com/vechain/sync2/releases/latest) |
 | Mobile | | |
-| | Android | WIP |
+| | Android | [Releases](https://github.com/vechain/sync2/releases/latest) |
 | | iOS | WIP |
 
 ## Port dApps to Sync2
@@ -59,7 +59,11 @@ npm run lint
 quasar build
 ```
 
-## Release new version
+## Version release flow
+
+<details>
+  <summary>Click to get detail</summary>
+
 
 ### Browser
 
@@ -70,7 +74,8 @@ Browser version will be updated automatically by [Action](./.github/workflows/de
 + Bump `<version>` in [package.json](./package.json)
 + `git tag v<version>`
 + `git push origin v<version>`
-+ See [Action](./.github/workflows/release-desktop.yaml) for more detailed info.
++ Check [Action](./.github/workflows/release.yaml) for more detailed info.
+</details>
 
 ## License
 
