@@ -10,10 +10,20 @@ const presetNodes: M.Node[] = [
         preset: true,
         url: 'https://sync-mainnet.veblocks.net'
     },
+    { // mainnet
+        genesis: genesises.main,
+        preset: true,
+        url: 'https://mainnet.vecha.in'
+    },
     { // testnet
         genesis: genesises.test,
         preset: true,
         url: 'https://sync-testnet.veblocks.net'
+    },
+    { // testnet
+        genesis: genesises.test,
+        preset: true,
+        url: 'https://testnet.vecha.in'
     }
 ]
 
