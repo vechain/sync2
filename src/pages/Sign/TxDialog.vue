@@ -132,7 +132,7 @@ export default Common.extend({
                 if (reverted) {
                     ret.push({
                         name: this.$t('sign.label_vm_error').toString(),
-                        message: `${vmError} ${revertReason}`
+                        message: revertReason ? `${vmError} (${revertReason})` : `${vmError}`
                     })
                 }
             }
