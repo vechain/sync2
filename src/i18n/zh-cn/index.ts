@@ -77,6 +77,7 @@ export default {
         action_upgrade: '立即升级',
         action_backup_now: '立即备份',
         action_settings: '设置',
+        action_ipfs: 'IPFS SERVICE',
         action_activities: '操作记录',
         action_create: '现在创建',
         msg_upgrade: '新版本已经就绪',
@@ -109,6 +110,19 @@ export default {
         action_language: '语言偏好',
         msg_password_changed: '密码已修改',
         action_user_guide: '用户指南'
+    },
+    ipfs: {
+        title: 'IPFS SERVICE',
+        action_ipfs_upload: 'Upload file',
+        action_ipfs_storage: 'Show history uploads',
+        action_images_list: 'Uploaded images to IPFS',
+        start_upload: 'Upload file to IPFS',
+        show_file: 'Show file',
+        delete_file: 'Delete',
+        select_file: 'Select file'
+    },
+    uploadForm: {
+        title: 'Upload file'
     },
     nodes: {
         title_add_dialog: '添加节点',

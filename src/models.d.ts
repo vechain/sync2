@@ -91,4 +91,9 @@ declare namespace M {
         message?: string
         messageClass?: string
     }
+
+    interface IPFSdata {
+        hash: string,
+        url: string
+    }
 }

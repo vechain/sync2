@@ -77,6 +77,7 @@ export default {
         action_upgrade: 'Upgrade Now',
         action_backup_now: 'Backup Now',
         action_settings: 'Settings',
+        action_ipfs: 'IPFS',
         action_activities: 'Activities',
         action_create: 'Create Now',
         msg_upgrade: 'New version is ready :)',
@@ -110,6 +111,19 @@ export default {
         action_language: 'Language',
         msg_password_changed: 'Password changed',
         action_user_guide: 'User Guide'
+    },
+    ipfs: {
+        title: 'IPFS SERVICE',
+        action_ipfs_upload: 'Upload file',
+        action_ipfs_storage: 'Show history uploads',
+        action_images_list: 'Uploaded files to IPFS',
+        start_upload: 'Upload file to IPFS',
+        show_file: 'Show file',
+        delete_file: 'Delete',
+        select_file: 'Select file'
+    },
+    uploadForm: {
+        title: 'Upload file'
     },
     nodes: {
         title_add_dialog: 'Add Node',

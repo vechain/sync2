@@ -8,10 +8,12 @@ import NewWallet from 'pages/NewWallet'
 import Send from 'pages/Send'
 import Settings from 'pages/Settings'
 import TokensSetting from 'pages/TokensSetting.vue'
+import ImageBoard from 'pages/ImageBoard.vue'
 import NodesSetting from 'pages/NodesSetting'
 import Sign from 'pages/Sign'
 import SignSuccess from 'pages/SignSuccess.vue'
 import Activities from 'pages/Activities'
+import Ipfs from 'pages/Ipfs'
 
 const routes: RouteConfig[] = [
     {
@@ -45,6 +47,14 @@ const routes: RouteConfig[] = [
             path: 'settings',
             name: 'settings',
             component: Settings
+        }, {
+            path: 'ipfs',
+            name: 'ipfs',
+            component: Ipfs
+        }, {
+            path: 'image-board',
+            name: 'image-board',
+            component: ImageBoard
         }, {
             path: 'tokens-setting',
             name: 'tokens-setting',
