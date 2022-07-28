@@ -170,7 +170,7 @@ export default Common.extend({
         async energyWarning(): Promise<Error | null> {
             const est = this.estimation
             const fee = this.fee
-            if (!est || !fee) {
+            if (!est || !fee || (this.req.options.delegator && !this.req.options.delegator.signer)) {
                 return null
             }
             const signer = this.signer
