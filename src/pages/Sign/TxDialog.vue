@@ -40,7 +40,7 @@
                         @click="showWarnings()"
                     />
 
-                    <gas-fee-bar :fee="fee">
+                    <gas-fee-bar :fee="fee" :isDelegation="isDelegation">
                         <priority-selector
                             v-model="gasPriceCoef"
                             :calcFee="calcFee"
@@ -138,6 +138,9 @@ export default Common.extend({
             }
             this.energyWarning && ret.push(this.energyWarning)
             return ret
+        },
+        isDelegation(): boolean {
+            return !!this.req.options.delegator
         },
         thor(): Connex.Thor { return this.$svc.bc(this.gid).thor },
         estimation(): EstimateGasResult | null {
