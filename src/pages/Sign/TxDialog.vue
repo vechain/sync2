@@ -40,7 +40,7 @@
                         @click="showWarnings()"
                     />
 
-                    <gas-fee-bar :fee="fee">
+                    <gas-fee-bar :fee="fee" :isDelegation="isDelegation">
                         <priority-selector
                             v-model="gasPriceCoef"
                             :calcFee="calcFee"
@@ -139,6 +139,9 @@ export default Common.extend({
             this.energyWarning && ret.push(this.energyWarning)
             return ret
         },
+        isDelegation(): boolean {
+            return !!this.req.options.delegator
+        },
         thor(): Connex.Thor { return this.$svc.bc(this.gid).thor },
         estimation(): EstimateGasResult | null {
             if (this.delayedEstimation && this.delayedEstimation.caller === this.signer) {
@@ -170,7 +173,7 @@ export default Common.extend({
         async energyWarning(): Promise<Error | null> {
             const est = this.estimation
             const fee = this.fee
-            if (!est || !fee) {
+            if (!est || !fee || (this.req.options.delegator && !this.req.options.delegator.signer)) {
                 return null
             }
             const signer = this.signer

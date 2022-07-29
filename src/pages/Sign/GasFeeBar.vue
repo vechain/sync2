@@ -17,6 +17,7 @@
                 <q-avatar size="1em">
                     <img src="~assets/vtho.svg">
                 </q-avatar>
+                <q-item-label v-if="isDelegation" caption>{{$t('sign.msg_fee_delegation')}}</q-item-label>
             </q-item-label>
         </q-item-section>
         <q-item-section side>
@@ -33,7 +34,8 @@ import AmountLabel from 'src/components/AmountLabel.vue'
 export default Vue.extend({
     components: { AmountLabel },
     props: {
-        fee: String
+        fee: String,
+        isDelegation: Boolean
     }
 })
 </script>
