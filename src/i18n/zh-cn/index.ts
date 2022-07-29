@@ -178,6 +178,7 @@ export default {
         msg_invalid_request: '无效请求',
         msg_fetch_request_failed: '无法获取请求内容',
         msg_request_hash_mismatch: '注意: 请求内容已损坏或者被篡改',
+        msg_fee_delegation: '费用由应用支付', 
 
         // sign success
         title_success: '成功',
