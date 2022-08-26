@@ -128,11 +128,15 @@ jobs:
       - name: Rename file
         run: mv ${{steps.sign_app.outputs.signedReleaseFile}} dist/cordova/android/apk/release/Sync2-android-${{ steps.vars.outputs.tag }}.apk
 
+      - name: Calculate checksum of output file
+        run: shasum -a 512 dist/cordova/android/apk/release/Sync2-android-${{ steps.vars.outputs.tag }}.apk | cut -f1 -d\ | xxd -r -p | base64 > dist/cordova/android/apk/release/Sync2-android-${{ steps.vars.outputs.tag }}-apk-SHASUM
+
       - name: Upload released files
         uses: softprops/action-gh-release@v1
         with:
           draft: true
           files: |
             dist/cordova/android/apk/release/Sync2-android-${{ steps.vars.outputs.tag }}.apk
+            dist/cordova/android/apk/release/Sync2-android-${{ steps.vars.outputs.tag }}-apk-SHASUM
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
