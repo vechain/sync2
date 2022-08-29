@@ -179,6 +179,7 @@ export default {
         msg_invalid_request: 'Invalid request',
         msg_fetch_request_failed: 'Unable to fetch request content',
         msg_request_hash_mismatch: 'CAUTION: the request content is corrupted or tampered',
+        msg_fee_delegation: 'Fee will be paid by dApp',
 
         // sign success
         title_success: 'Success',
