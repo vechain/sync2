@@ -4,6 +4,7 @@ import * as Blockchain from './blockchain'
 import * as Config from './config'
 import * as Wallet from './wallet'
 import * as Activity from './activity'
+import * as IPFS from './ipfs'
 import { groupBy } from 'src/utils/array'
 
 type Service = {
@@ -11,6 +12,7 @@ type Service = {
     config: ReturnType<typeof Config.build>
     wallet: ReturnType<typeof Wallet.build>
     activity: ReturnType<typeof Activity.build>
+    ipfs: ReturnType<typeof IPFS.build>
 }
 
 declare module 'vue/types/vue' {
@@ -25,6 +27,7 @@ export default boot(async ({ Vue }) => {
     const config = Config.build(storage)
     const wallet = Wallet.build(storage)
     const activity = Activity.build(storage)
+    const ipfs = IPFS.build()
 
     const getActiveNodes = async () => {
         const [all, activeMap] = await Promise.all([config.node.all(), config.node.activeMap()])
@@ -59,7 +62,8 @@ export default boot(async ({ Vue }) => {
                     bc,
                     config,
                     wallet,
-                    activity
+                    activity,
+                    ipfs
                 }
             }
         }
