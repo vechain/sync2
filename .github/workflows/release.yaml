@@ -129,7 +129,7 @@ jobs:
         run: mv ${{steps.sign_app.outputs.signedReleaseFile}} dist/cordova/android/apk/release/Sync2-android-${{ steps.vars.outputs.tag }}.apk
 
       - name: Calculate checksum of output file
-        run: shasum -a 512 dist/cordova/android/apk/release/Sync2-android-${{ steps.vars.outputs.tag }}.apk | cut -f1 -d\ | xxd -r -p | base64 > dist/cordova/android/apk/release/Sync2-android-${{ steps.vars.outputs.tag }}-apk-SHASUM
+        run: shasum -a 512 dist/cordova/android/apk/release/Sync2-android-${{ steps.vars.outputs.tag }}.apk | cut -f1 -d\ | xxd -r -p | base64 -w 0 > dist/cordova/android/apk/release/Sync2-android-${{ steps.vars.outputs.tag }}-apk-SHASUM
 
       - name: Upload released files
         uses: softprops/action-gh-release@v1
