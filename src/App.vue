@@ -28,7 +28,13 @@ function parseConnexURL(urlStr: string) {
         if ((url.protocol === 'connex:' && url.pathname === 'sign') ||
             (url.protocol === 'https:' && url.pathname === '/sign')
         ) {
-            return url.searchParams.get('src')
+            return { route: 'sign', query: { src: url.searchParams.get('src') } }
+        }
+
+        if ((url.protocol === 'connex:' && url.pathname === 'fee-delegation-setting') ||
+            (url.protocol === 'https:' && url.pathname === '/fee-delegation-setting')
+        ) {
+            return { route: 'fee-delegation-setting', query: { config: url.searchParams.get('config') } }
         }
     } catch (err) {
         console.warn(err)
@@ -63,12 +69,15 @@ export default Vue.extend({
 
             // eslint-disable-next-line no-unmodified-loop-condition
             while (!destroyed) {
-                const src = parseConnexURL(await listen())
-                if (src) {
-                    if (this.$route.name === 'sign') {
-                        this.$router.replace({ name: 'sign', query: { src } })
-                    } else {
-                        this.$router.push({ name: 'sign', query: { src } })
+                const routing = parseConnexURL(await listen())
+                if (routing) {
+                    const { route, query } = routing
+                    if (['sign', 'fee-delegation-setting'].includes(route)) {
+                        if (this.$route.name === route) {
+                            this.$router.replace({ name: route, query })
+                        } else {
+                            this.$router.push({ name: route, query })
+                        }
                     }
                 }
             }
