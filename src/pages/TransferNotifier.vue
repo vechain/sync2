@@ -173,7 +173,6 @@ export default Vue.extend({
                 message,
                 position: 'top-right',
                 html: true,
-                timeout: 0,
                 group: false,
                 classes: 'transfer-notify_w100',
                 actions: [{

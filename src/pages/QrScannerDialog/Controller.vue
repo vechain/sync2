@@ -1,27 +1,10 @@
 <template>
-    <q-dialog
-        ref="dialog"
-        @hide="$emit('hide')"
-        maximized
-        transition-show="slide-up"
-        transition-hide="slide-down"
-        @show="onShow()"
-    >
+    <q-dialog ref="dialog" @hide="$emit('hide')" maximized transition-show="slide-up" transition-hide="slide-down"
+        @show="onShow()">
         <div class="fit overflow-hidden">
-            <Scanner
-                class="fit"
-                @input="onScanned"
-                @error="onError"
-            />
-            <q-btn
-                flat
-                dense
-                round
-                icon="close"
-                text-color="white"
-                class="absolute-top-left"
-                @click="hide()"
-            />
+            <q-btn size="lg" class="q-ml-md float-left" style="z-index: 1111" flat dense round icon="close"
+                text-color="white" @click="hide()" />
+            <Scanner class="fit" @input="onScanned" @error="onError" />
         </div>
     </q-dialog>
 </template>

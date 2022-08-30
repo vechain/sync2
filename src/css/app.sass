@@ -6,13 +6,12 @@
 .serif
   font-family: Cambria, "Hoefler Text", Utopia, "Liberation Serif", "Nimbus Roman No9 L Regular", Times, "Times New Roman", serif
 
-body.q-ios-padding .stack-page
-  padding-top: env(safe-area-inset-top) !important
-  padding-bottom: env(safe-area-inset-bottom) !important
-
-body.q-ios-padding .drawer-panel
-  padding-top: env(safe-area-inset-top) !important
-  padding-bottom: env(safe-area-inset-bottom) !important
+body.q-ios-padding 
+  .safe-area,
+  .stack-page,
+  .drawer-panel
+    padding-top: env(safe-area-inset-top) !important
+    padding-bottom: env(safe-area-inset-bottom) !important
 
 body.q-ios-padding .q-dialog__inner.q-dialog__inner--maximized
   padding: 0!important
