@@ -113,10 +113,13 @@ export default {
         action_user_guide: 'User Guide'
     },
     feeDelegation: {
+        title: 'Fee Delegation',
         self_sign_on_failure: 'Pay fee if delegation failed',
         default_delegator: 'Default delegator',
         set_default_delegator: 'Set a default delegator',
-        enter_delegator_url: 'Enter Fee Delegation URL'
+        enter_delegator_url: 'Enter Fee Delegation URL',
+        accept_remote_config: 'Do you want to accept the remote configuration?',
+        action_accept: 'Yes'
     },
     nodes: {
         title_add_dialog: 'Add Node',
