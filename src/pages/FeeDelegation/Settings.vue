@@ -4,16 +4,16 @@
         <page-content class="col">
             <q-item>
                 <q-item-section>
-                    <q-item-label>{{ $t('feeDelegation.self_sign_on_failure') }}</q-item-label>
+                    <q-item-label>{{  $t('feeDelegation.self_sign_on_failure')  }}</q-item-label>
                 </q-item-section>
                 <q-toggle color="green" :value="selfSignOnFailure" @input="toggleSelfSignOnFailure" />
             </q-item>
             <q-separator inset="item" />
             <q-item>
                 <q-item-section>
-                    <q-item-label caption>{{$t('feeDelegation.default_delegator')}}</q-item-label>
+                    <q-item-label caption>{{  $t('feeDelegation.default_delegator')  }}</q-item-label>
                     <q-item-label clickable @click="onClickChangeDefaultDelegator()">
-                        {{delegatorTitle}}
+                        {{  delegatorTitle  }}
                     </q-item-label>
                 </q-item-section>
             </q-item>
@@ -34,24 +34,23 @@ export default Vue.extend({
         },
         async onClickChangeDefaultDelegator() {
             try {
-                const defaultDelegatorUrl = await this.$svc.config.getDefaultFeeDelegator()
-                const delegatorUrl = await this.$dialog<string>({
+                const delegator = await this.$svc.config.getDefaultFeeDelegator()
+                const updatedDelegator = await this.$dialog<M.Delegator | undefined>({
                     component: SetDefaultDelegator,
-                    state: { url: defaultDelegatorUrl }
+                    state: { ...delegator }
                 })
-
-                await this.$svc.config.setDefaultFeeDelegator(delegatorUrl)
+                await this.$svc.config.setDefaultFeeDelegator(updatedDelegator)
             } catch { }
         }
     },
     asyncComputed: {
         async delegatorTitle(): Promise<string> {
-            const defaultDelegatorUrl = await this.$svc.config.getDefaultFeeDelegator()
-            if (defaultDelegatorUrl !== "") {
-                return defaultDelegatorUrl
+            const delegator = await this.$svc.config.getDefaultFeeDelegator()
+            if (!delegator) {
+                return this.$t('feeDelegation.set_default_delegator').toString()
             }
 
-            return this.$t('feeDelegation.set_default_delegator').toString()
+            return delegator.url
         },
         selfSignOnFailure(): Promise<boolean> {
             return this.$svc.config.getSelfSignOnFailure()

@@ -139,18 +139,6 @@ export default Common.extend({
             this.energyWarning && ret.push(this.energyWarning)
             return ret
         },
-        async isDelegation(): Promise<boolean> {
-            if (this.req.options.delegator) {
-                return true
-            }
-
-            const defaultDelegatorUrl = await this.$svc.config.getDefaultFeeDelegator()
-            if (defaultDelegatorUrl) {
-                return true
-            }
-
-            return false
-        },
         thor(): Connex.Thor { return this.$svc.bc(this.gid).thor },
         estimation(): EstimateGasResult | null {
             if (this.delayedEstimation && this.delayedEstimation.caller === this.signer) {
@@ -182,7 +170,7 @@ export default Common.extend({
         async energyWarning(): Promise<Error | null> {
             const est = this.estimation
             const fee = this.fee
-            const isDelegation = await this.isDelegation()
+            const isDelegation = await this.hasDelegator()
             if (!est || !fee || isDelegation) {
                 return null
             }
@@ -208,6 +196,9 @@ export default Common.extend({
                 return { name: this.$t('sign.label_insufficient_vtho').toString(), message: this.$t('sign.msg_insufficient_vtho').toString() }
             }
             return null
+        },
+        async isDelegation(): Promise<boolean> {
+            return this.hasDelegator()
         }
     },
     methods: {
@@ -268,12 +259,12 @@ export default Common.extend({
                 }
 
                 return this.$loading(async () => {
-                    const defaultDelegatorUrl = await this.$svc.config.getDefaultFeeDelegator()
+                    const defaultDelegator = await this.$svc.config.getDefaultFeeDelegator()
                     let delegator = this.req.options.delegator
 
                     // set default delegator if defined and no transaction deletator was given
-                    if(!delegator && defaultDelegatorUrl) {
-                        delegator = { url: defaultDelegatorUrl }
+                    if (!delegator && defaultDelegator) {
+                        delegator = defaultDelegator
                     }
 
                     if (delegator) {
@@ -340,6 +331,18 @@ export default Common.extend({
                 index,
                 clause
             })
+        },
+        async hasDelegator(): Promise<boolean> {
+            if (this.req.options.delegator) {
+                return true
+            }
+
+            const defaultDelegator = await this.$svc.config.getDefaultFeeDelegator()
+            if (defaultDelegator) {
+                return true
+            }
+
+            return false
         }
     }
 })

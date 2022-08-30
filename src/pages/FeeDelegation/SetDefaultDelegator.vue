@@ -1,42 +1,18 @@
 <template>
-    <q-dialog
-        ref="dialog"
-        @hide="$emit('hide')"
-        :position="$q.screen.xs ? 'bottom': 'standard'"
-        :no-backdrop-dismiss="!$q.screen.xs"
-    >
+    <q-dialog ref="dialog" @hide="$emit('hide')" :position="$q.screen.xs ? 'bottom' : 'standard'"
+        :no-backdrop-dismiss="!$q.screen.xs">
         <q-card class="full-width">
-            <prompt-dialog-toolbar>{{$t('feeDelegation.set_default_delegator')}}</prompt-dialog-toolbar>
-            <q-form
-                @submit="onSubmit"
-                spellcheck="false"
-            >
+            <prompt-dialog-toolbar>{{  $t('feeDelegation.set_default_delegator')  }}</prompt-dialog-toolbar>
+            <q-form @submit="onSubmit" spellcheck="false">
                 <q-card-section>
-                    <q-item-label header>{{$t('feeDelegation.enter_delegator_url')}}</q-item-label>
-                    <q-input
-                        ref="input"
-                        class="q-mx-sm"
-                        dense
-                        autofocus
-                        outlined
-                        :error="!!error"
-                        :error-message="error"
-                        v-model="state.url"
-                        autocomplete="off"
-                        no-error-icon
-                        :disable="loading"
-                    />
+                    <q-item-label header>{{  $t('feeDelegation.enter_delegator_url')  }}</q-item-label>
+                    <q-input ref="input" class="q-mx-sm" dense autofocus outlined :error="!!error"
+                        :error-message="error" v-model="state.url" autocomplete="off" no-error-icon
+                        :disable="loading" />
                 </q-card-section>
                 <q-card-actions>
-                    <q-btn
-                        v-disableFocusHelper
-                        class="w40 q-mx-auto"
-                        unelevated
-                        color="primary"
-                        type="submit"
-                        :loading="loading"
-                        :label="$t('feeDelegation.set_default_delegator')"
-                    />
+                    <q-btn v-disableFocusHelper class="w40 q-mx-auto" unelevated color="primary" type="submit"
+                        :loading="loading" :label="$t('feeDelegation.set_default_delegator')" />
                 </q-card-actions>
             </q-form>
         </q-card>
@@ -50,7 +26,7 @@ import PromptDialogToolbar from 'src/components/PromptDialogToolbar.vue'
 export default Vue.extend({
     components: { PromptDialogToolbar },
     props: {
-        state: Object as () => { url: string }
+        state: Object as () => { url: string, signer?: string }
     },
     data() {
         return {
@@ -66,8 +42,8 @@ export default Vue.extend({
         show() { (this.$refs.dialog as QDialog).show() },
         // method is REQUIRED by $q.dialog
         hide() { (this.$refs.dialog as QDialog).hide() },
-        ok(result: string) {
-            this.$emit('ok', result)
+        ok(delegator: M.Delegator | undefined) {
+            this.$emit('ok', delegator)
             this.hide()
         },
         async onSubmit() {
@@ -76,7 +52,7 @@ export default Vue.extend({
 
             const url = this.state.url.trim()
             if (url.length === 0) {
-                return this.ok(url)
+                return this.ok({ url: '' })
             }
 
             this.error = ''
@@ -88,7 +64,7 @@ export default Vue.extend({
                     throw new Error('Invalid URL: unsupported protocol')
                 }
 
-                this.ok(url)
+                this.ok({ url })
             } catch (err) {
                 this.error = err.message
                 this.loading = false
