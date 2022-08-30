@@ -114,7 +114,7 @@ export default {
     },
     feeDelegation: {
         title: 'Fee Delegation',
-        self_sign_on_failure: 'Pay fee if delegation failed',
+        self_sign_on_failure: 'Pay fee if delegation fails',
         default_delegator: 'Default delegator',
         set_default_delegator: 'Set a default delegator',
         enter_delegator_url: 'Enter Fee Delegation URL',
