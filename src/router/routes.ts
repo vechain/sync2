@@ -8,6 +8,7 @@ import NewWallet from 'pages/NewWallet'
 import Send from 'pages/Send'
 import Settings from 'pages/Settings'
 import TokensSetting from 'pages/TokensSetting.vue'
+import FeeDelegation from 'src/pages/FeeDelegation/Settings.vue'
 import NodesSetting from 'pages/NodesSetting'
 import Sign from 'pages/Sign'
 import SignSuccess from 'pages/SignSuccess.vue'
@@ -45,6 +46,10 @@ const routes: RouteConfig[] = [
             path: 'settings',
             name: 'settings',
             component: Settings
+        }, {
+            path: 'fee-delegation-setting',
+            name: 'fee-delegation-setting',
+            component: FeeDelegation
         }, {
             path: 'tokens-setting',
             name: 'tokens-setting',

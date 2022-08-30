@@ -34,7 +34,7 @@ export function build(storage: Storage) {
         m => m
     )
     type Key = 'nodes' | 'activeNodeMap' | 'userMasterKeyGlob' |
-        'tokenRegistry' | 'activeTokenSymbols' | 'recentRecipients' | 'language' | 'bio-pass-on'
+        'tokenRegistry' | 'activeTokenSymbols' | 'recentRecipients' | 'language' | 'bio-pass-on' | 'self-sign-on-failure' | 'default-fee-delegator'
 
     const getSubKey = async (key: Key, subKey: string) => {
         const row = (await t.all().where({ key, subKey }).query())[0]
@@ -135,6 +135,18 @@ export function build(storage: Storage) {
         },
         setBioPassOn(on: boolean) {
             return set('bio-pass-on', on ? 't' : '')
+        },
+        getSelfSignOnFailure() {
+            return get('self-sign-on-failure').then(r => !!r)
+        },
+        setSelfSignOnFailure(on: boolean) {
+            return set('self-sign-on-failure', on ? 't' : '')
+        },
+        getDefaultFeeDelegator() {
+            return get('default-fee-delegator')
+        },
+        setDefaultFeeDelegator(delegatorUrl: string) {
+            return set('default-fee-delegator', delegatorUrl)
         }
     }
 }

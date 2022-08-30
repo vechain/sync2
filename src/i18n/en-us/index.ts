@@ -106,10 +106,17 @@ export default {
         title: 'Settings',
         action_change_password: 'Password',
         action_token_list: 'Tokens',
+        action_fee_delegation: 'Fee Delegation',
         action_nodes: 'Nodes',
         action_language: 'Language',
         msg_password_changed: 'Password changed',
         action_user_guide: 'User Guide'
+    },
+    feeDelegation: {
+        self_sign_on_failure: 'Pay fee if delegation failed',
+        default_delegator: 'Default delegator',
+        set_default_delegator: 'Set a default delegator',
+        enter_delegator_url: 'Enter Fee Delegation URL'
     },
     nodes: {
         title_add_dialog: 'Add Node',
