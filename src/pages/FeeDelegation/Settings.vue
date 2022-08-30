@@ -25,6 +25,7 @@ import Vue from 'vue'
 import PageContent from 'components/PageContent.vue'
 import PageToolbar from 'components/PageToolbar.vue'
 import SetDefaultDelegator from './SetDefaultDelegator.vue'
+import ApplyRemoteConfig from './ApplyRemoteConfig.vue'
 
 export default Vue.extend({
     components: { PageContent, PageToolbar },
@@ -55,6 +56,34 @@ export default Vue.extend({
         selfSignOnFailure(): Promise<boolean> {
             return this.$svc.config.getSelfSignOnFailure()
         }
+    },
+    async created() {
+        if (!this.$route.query.config) {
+            return
+        }
+
+        try {
+            const queryConfig = JSON.parse(this.$route.query.config as string)
+            const acceptChanges = await this.$dialog<boolean>({
+                component: ApplyRemoteConfig,
+                state: { ...queryConfig }
+            })
+
+            if (!acceptChanges) {
+                return
+            }
+
+            if (typeof (queryConfig.selfSignOnFailure) !== 'undefined') {
+                this.toggleSelfSignOnFailure(!!queryConfig.selfSignOnFailure)
+            }
+
+            if (typeof (queryConfig.defaultDelegator) === 'object') {
+                this.$svc.config.setDefaultFeeDelegator({
+                    url: queryConfig.defaultDelegator.url,
+                    signer: queryConfig.defaultDelegator.signer
+                })
+            }
+        } catch { }
     }
 })
 </script>
