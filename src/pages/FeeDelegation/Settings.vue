@@ -83,6 +83,8 @@ export default Vue.extend({
                     signer: queryConfig.defaultDelegator.signer
                 })
             }
+
+            this.$router.back()
         } catch { }
     }
 })
