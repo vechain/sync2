@@ -142,11 +142,13 @@ export function build(storage: Storage) {
         setSelfSignOnFailure(on: boolean) {
             return set('self-sign-on-failure', on ? 't' : '')
         },
-        getDefaultFeeDelegator() {
+        getDefaultFeeDelegator(): Promise<M.Delegator | undefined> {
             return get('default-fee-delegator')
+                .then(delegatorJson => JSON.parse(delegatorJson || '{}') as M.Delegator)
+                .then(delegator => delegator?.url ? delegator : undefined)
         },
-        setDefaultFeeDelegator(delegatorUrl: string) {
-            return set('default-fee-delegator', delegatorUrl)
+        setDefaultFeeDelegator(delegator: M.Delegator | undefined) {
+            return set('default-fee-delegator', JSON.stringify(delegator))
         }
     }
 }

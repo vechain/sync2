@@ -1,5 +1,10 @@
 // here define models
 declare namespace M {
+    interface Delegator {
+        url: string
+        signer?: string | undefined
+    }
+
     interface Node {
         genesis: Connex.Thor.Block
         url: string
