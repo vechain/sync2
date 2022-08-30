@@ -12,7 +12,7 @@
                 </q-card-section>
                 <q-card-actions>
                     <q-btn v-disableFocusHelper class="w40 q-mx-auto" unelevated color="primary" type="submit"
-                        :loading="loading" :label="$t('feeDelegation.set_default_delegator')" />
+                        :loading="loading" :label="$t('common.confirm')" />
                 </q-card-actions>
             </q-form>
         </q-card>
