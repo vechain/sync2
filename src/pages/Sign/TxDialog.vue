@@ -139,8 +139,17 @@ export default Common.extend({
             this.energyWarning && ret.push(this.energyWarning)
             return ret
         },
-        isDelegation(): boolean {
-            return !!this.req.options.delegator
+        async isDelegation(): Promise<boolean> {
+            if (this.req.options.delegator) {
+                return true
+            }
+
+            const defaultDelegatorUrl = await this.$svc.config.getDefaultFeeDelegator()
+            if (defaultDelegatorUrl) {
+                return true
+            }
+
+            return false
         },
         thor(): Connex.Thor { return this.$svc.bc(this.gid).thor },
         estimation(): EstimateGasResult | null {
@@ -173,7 +182,8 @@ export default Common.extend({
         async energyWarning(): Promise<Error | null> {
             const est = this.estimation
             const fee = this.fee
-            if (!est || !fee || (this.req.options.delegator && !this.req.options.delegator.signer)) {
+            const isDelegation = await this.isDelegation()
+            if (!est || !fee || isDelegation) {
                 return null
             }
             const signer = this.signer
@@ -258,7 +268,14 @@ export default Common.extend({
                 }
 
                 return this.$loading(async () => {
-                    const delegator = this.req.options.delegator
+                    const defaultDelegatorUrl = await this.$svc.config.getDefaultFeeDelegator()
+                    let delegator = this.req.options.delegator
+
+                    // set default delegator if defined and no transaction deletator was given
+                    if(!delegator && defaultDelegatorUrl) {
+                        delegator = { url: defaultDelegatorUrl }
+                    }
+
                     if (delegator) {
                         tx = new Transaction({ ...txBody, reserved: { features: 1 /* VIP191 bit */ } })
                         try {
@@ -272,8 +289,15 @@ export default Common.extend({
                                 type: 'negative',
                                 message: this.$t('sign.msg_delegation_failed').toString()
                             })
-                            // rethrow to end the process
-                            throw err
+
+                            const selfSignOnFailure = await this.$svc.config.getSelfSignOnFailure()
+                            if (selfSignOnFailure) {
+                                // restore non-VIP191 version if self sign on fee delegation failure is enabled
+                                tx = new Transaction(txBody)
+                            } else {
+                                // rethrow to end the process
+                                throw err
+                            }
                         }
                     } else {
                         tx = new Transaction(txBody)

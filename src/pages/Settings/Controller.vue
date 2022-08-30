@@ -39,6 +39,12 @@
                     <q-separator inset="item" />
                 </template>
                 <item
+                    icon="alt_route"
+                    :title="$t('settings.action_fee_delegation')"
+                    :to="{name: 'fee-delegation-setting'}"
+                />
+                <q-separator inset="item" />
+                <item
                     icon="control_point_duplicate"
                     :title="$t('settings.action_token_list')"
                     :to="{name: 'tokens-setting'}"
