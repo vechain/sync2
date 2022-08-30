@@ -24,27 +24,27 @@ import PageAction from 'src/components/PageAction.vue'
 import PageContent from 'src/components/PageContent.vue'
 
 export default Vue.extend({
-  components: { PageToolbar, PageAction, PageContent },
-  props: {
-    state: Object as () => {}
-  },
-  computed: {
-    configAsText() {
-      if (this.state === undefined) {
-        return ''
-      }
+    components: { PageToolbar, PageAction, PageContent },
+    props: {
+        state: Object as () => {}
+    },
+    computed: {
+        configAsText() {
+            if (this.state === undefined) {
+                return ''
+            }
 
-      return JSON.stringify(this.state, null, 2)
-    }
-  },
-  methods: {
+            return JSON.stringify(this.state, null, 2)
+        }
+    },
+    methods: {
     // method is REQUIRED by $q.dialo
-    show() { (this.$refs.dialog as QDialog).show() },
-    // method is REQUIRED by $q.dialog
-    hide() { (this.$refs.dialog as QDialog).hide() },
-    ok() {
-      this.$emit('ok', true)
+        show() { (this.$refs.dialog as QDialog).show() },
+        // method is REQUIRED by $q.dialog
+        hide() { (this.$refs.dialog as QDialog).hide() },
+        ok() {
+            this.$emit('ok', true)
+        }
     }
-  }
 })
 </script>

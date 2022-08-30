@@ -19,15 +19,15 @@ import 'dayjs/locale/zh-cn'
  * the incoming url looks like connex:sign?src=xxx, or https://lite.sync.vecha.in/#/sign?src=xxx
  */
 function parseConnexURL(urlStr: string) {
-    const supportedPathsAndQueries: {[key: string]: {route: string, queryParam: string}} = { 
-        'sign': {
-            route: 'sign', 
+    const supportedPathsAndQueries: {[key: string]: {route: string, queryParam: string}} = {
+        sign: {
+            route: 'sign',
             queryParam: 'src'
         },
         'fee-delegation-setting': {
-            route: 'fee-delegation-setting', 
+            route: 'fee-delegation-setting',
             queryParam: 'config'
-        },
+        }
     }
     try {
         // normalize for easily parsing
