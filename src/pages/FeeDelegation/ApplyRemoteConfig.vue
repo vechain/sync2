@@ -24,22 +24,22 @@ import PageToolbar from 'components/PageToolbar.vue'
 
 export default Vue.extend({
 
-  components: { PageToolbar },
-  props: {
-    state: Object as () => { }
-  },
-  computed: {
-  },
-  methods: {
+    components: { PageToolbar },
+    props: {
+        state: Object as () => { }
+    },
+    computed: {
+    },
+    methods: {
     // method is REQUIRED by $q.dialog
-    show() { (this.$refs.dialog as QDialog).show() },
-    // method is REQUIRED by $q.dialog
-    hide() { (this.$refs.dialog as QDialog).hide() },
+        show() { (this.$refs.dialog as QDialog).show() },
+        // method is REQUIRED by $q.dialog
+        hide() { (this.$refs.dialog as QDialog).hide() },
 
-    ok() {
-      this.$emit('ok', true)
-      this.hide()
+        ok() {
+            this.$emit('ok', true)
+            this.hide()
+        }
     }
-  }
 })
 </script>

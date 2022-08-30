@@ -19,22 +19,26 @@ import 'dayjs/locale/zh-cn'
  * the incoming url looks like connex:sign?src=xxx, or https://lite.sync.vecha.in/#/sign?src=xxx
  */
 function parseConnexURL(urlStr: string) {
+    const supportedPathsAndQueries: {[key: string]: {route: string, queryParam: string}} = {
+        sign: {
+            route: 'sign',
+            queryParam: 'src'
+        },
+        'fee-delegation-setting': {
+            route: 'fee-delegation-setting',
+            queryParam: 'config'
+        }
+    }
     try {
         // normalize for easily parsing
         if (urlStr.startsWith('https')) {
             urlStr = urlStr.replace('/#', '')
         }
         const url = new URL(urlStr)
-        if ((url.protocol === 'connex:' && url.pathname === 'sign') ||
-            (url.protocol === 'https:' && url.pathname === '/sign')
-        ) {
-            return { route: 'sign', query: { src: url.searchParams.get('src') } }
-        }
-
-        if ((url.protocol === 'connex:' && url.pathname === 'fee-delegation-setting') ||
-            (url.protocol === 'https:' && url.pathname === '/fee-delegation-setting')
-        ) {
-            return { route: 'fee-delegation-setting', query: { config: url.searchParams.get('config') } }
+        const pathname = url.protocol === 'connex:' ? url.pathname : url.pathname.slice(1)
+        const { route, queryParam } = supportedPathsAndQueries[pathname]
+        if (route) {
+            return { route, query: { [queryParam]: url.searchParams.get(queryParam) } }
         }
     } catch (err) {
         console.warn(err)
