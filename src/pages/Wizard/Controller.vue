@@ -1,6 +1,7 @@
 <template>
     <q-carousel
         v-model="slide"
+        class="safe-area"
         transition-prev="slide-down"
         transition-next="slide-up"
         animated
