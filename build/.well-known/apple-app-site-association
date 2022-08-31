@@ -1,18 +1,11 @@
 {
   "applinks": {
+    "apps": [],
     "details": [
       {
-        "appID": [
-          "org.vechain.sync2"
-        ],
-        "components": [
-          {
-            "#": "no_universal_links",
-            "exclude": true
-          },
-          {
-            "/sign": "/sign"
-          }
+        "appID": "GM5L34275W.org.vechain.sync2",
+        "paths": [
+          "*"
         ]
       }
     ]
