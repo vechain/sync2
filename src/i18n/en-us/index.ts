@@ -119,7 +119,8 @@ export default {
         set_default_delegator: 'Set a default delegator',
         enter_delegator_url: 'Enter Fee Delegation URL',
         accept_remote_config: 'Do you want to accept the remote configuration?',
-        action_accept: 'Yes'
+        action_accept: 'Yes',
+        msg_default_delegation_failed: 'Failed to request transaction fee delegation from default delegator. If this keeps happening, you can remove it in the settings at "Fee Delegation".'
     },
     nodes: {
         title_add_dialog: 'Add Node',

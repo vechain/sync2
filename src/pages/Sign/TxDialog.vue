@@ -286,9 +286,10 @@ export default Common.extend({
 
                             delegatorSig = Buffer.from(resp.data.signature.slice(2), 'hex')
                         } catch (err) {
+                            const messageId = !this.req.options.delegator && delegator === defaultDelegator ? 'feeDelegation.msg_default_delegation_failed' : 'sign.msg_delegation_failed'
                             this.$q.notify({
                                 type: 'negative',
-                                message: this.$t('sign.msg_delegation_failed').toString()
+                                message: this.$t(messageId).toString()
                             })
 
                             const selfSignOnFailure = await this.$svc.config.getSelfSignOnFailure()
