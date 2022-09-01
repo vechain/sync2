@@ -274,6 +274,16 @@ export default Common.extend({
                                 raw: '0x' + tx.encode().toString('hex'),
                                 origin: signer
                             }, { transformResponse: data => JSON.parse(data), headers: { 'content-type': 'application/json' } })
+
+                            if (!resp.data.signature && resp.data.message) {
+                                this.$q.notify({
+                                    type: 'warning',
+                                    message: resp.data.message
+                                })
+
+                                throw new Error(resp.data.message)
+                            }
+
                             delegatorSig = Buffer.from(resp.data.signature.slice(2), 'hex')
                         } catch (err) {
                             this.$q.notify({
