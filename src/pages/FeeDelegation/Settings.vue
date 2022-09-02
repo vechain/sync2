@@ -74,11 +74,11 @@ export default Vue.extend({
             }
 
             if (typeof (queryConfig.selfSignOnFailure) !== 'undefined') {
-                this.toggleSelfSignOnFailure(!!queryConfig.selfSignOnFailure)
+                await this.toggleSelfSignOnFailure(!!queryConfig.selfSignOnFailure)
             }
 
             if (typeof (queryConfig.defaultDelegator) === 'object') {
-                this.$svc.config.setDefaultFeeDelegator({
+                await this.$svc.config.setDefaultFeeDelegator({
                     url: queryConfig.defaultDelegator.url,
                     signer: queryConfig.defaultDelegator.signer
                 })
