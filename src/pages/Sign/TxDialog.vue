@@ -286,17 +286,23 @@ export default Common.extend({
 
                             delegatorSig = Buffer.from(resp.data.signature.slice(2), 'hex')
                         } catch (err) {
-                            const messageId = !this.req.options.delegator && delegator === defaultDelegator ? 'feeDelegation.msg_default_delegation_failed' : 'sign.msg_delegation_failed'
-                            this.$q.notify({
-                                type: 'negative',
-                                message: this.$t(messageId).toString()
-                            })
-
                             const selfSignOnFailure = await this.$svc.config.getSelfSignOnFailure()
                             if (selfSignOnFailure) {
                                 // restore non-VIP191 version if self sign on fee delegation failure is enabled
                                 tx = new Transaction(txBody)
+
+                                // actively inform user of the self-pay
+                                this.$q.notify({
+                                    type: 'info',
+                                    message: this.$t('feeDelegation.msg_self_signed_after_failure').toString()
+                                })
                             } else {
+                                const messageId = !this.req.options.delegator && delegator === defaultDelegator ? 'feeDelegation.msg_default_delegation_failed' : 'sign.msg_delegation_failed'
+                                this.$q.notify({
+                                    type: 'negative',
+                                    message: this.$t(messageId).toString()
+                                })
+
                                 // rethrow to end the process
                                 throw err
                             }
