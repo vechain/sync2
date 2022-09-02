@@ -1,19 +1,20 @@
 <template>
     <div class="column fit">
+        <ApplyRemoteConfigSuccess v-if="configApplied" />
         <page-toolbar :title="$t('settings.action_fee_delegation')" />
         <page-content class="col">
             <q-item>
                 <q-item-section>
-                    <q-item-label>{{  $t('feeDelegation.self_sign_on_failure')  }}</q-item-label>
+                    <q-item-label>{{ $t('feeDelegation.self_sign_on_failure') }}</q-item-label>
                 </q-item-section>
                 <q-toggle color="green" :value="selfSignOnFailure" @input="toggleSelfSignOnFailure" />
             </q-item>
             <q-separator inset="item" />
             <q-item>
                 <q-item-section>
-                    <q-item-label caption>{{  $t('feeDelegation.default_delegator')  }}</q-item-label>
+                    <q-item-label caption>{{ $t('feeDelegation.default_delegator') }}</q-item-label>
                     <q-item-label clickable @click="onClickChangeDefaultDelegator()">
-                        {{  delegatorTitle  }}
+                        {{ delegatorTitle }}
                     </q-item-label>
                 </q-item-section>
             </q-item>
@@ -26,9 +27,10 @@ import PageContent from 'components/PageContent.vue'
 import PageToolbar from 'components/PageToolbar.vue'
 import SetDefaultDelegator from './SetDefaultDelegator.vue'
 import ApplyRemoteConfig from './ApplyRemoteConfig.vue'
+import ApplyRemoteConfigSuccess from './ApplyRemoteConfigSuccess.vue'
 
 export default Vue.extend({
-    components: { PageContent, PageToolbar },
+    components: { PageContent, PageToolbar, ApplyRemoteConfigSuccess },
     methods: {
         async toggleSelfSignOnFailure(newVal: boolean) {
             await this.$svc.config.setSelfSignOnFailure(newVal)
@@ -44,6 +46,7 @@ export default Vue.extend({
             } catch { }
         }
     },
+    data: () => ({ configApplied: false }),
     asyncComputed: {
         async delegatorTitle(): Promise<string> {
             const delegator = await this.$svc.config.getDefaultFeeDelegator()
@@ -69,6 +72,8 @@ export default Vue.extend({
                 state: { ...queryConfig }
             })
 
+            this.configApplied = acceptChanges
+            this.$router.replace({ name: 'fee-delegation-setting' })
             if (!acceptChanges) {
                 return
             }
@@ -83,8 +88,6 @@ export default Vue.extend({
                     signer: queryConfig.defaultDelegator.signer
                 })
             }
-
-            this.$router.back()
         } catch { }
     }
 })

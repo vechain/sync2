@@ -10,8 +10,8 @@
         </q-card>
       </page-content>
       <page-action>
-        <q-btn class="full-width" outline color="primary" :label="$t('common.dismiss')" @click="hide()" />
-        <q-btn class="full-width" unelevated color="primary" :label="$t('common.confirm')" @click="ok()" />
+        <q-btn class="full-width" outline color="primary" :label="$t('common.dismiss')" @click="ok(false)" />
+        <q-btn class="full-width" unelevated color="primary" :label="$t('common.confirm')" @click="ok(true)" />
       </page-action>
     </q-card>
   </q-dialog>
@@ -42,8 +42,8 @@ export default Vue.extend({
         show() { (this.$refs.dialog as QDialog).show() },
         // method is REQUIRED by $q.dialog
         hide() { (this.$refs.dialog as QDialog).hide() },
-        ok() {
-            this.$emit('ok', true)
+        ok(accepted: boolean) {
+            this.$emit('ok', accepted)
         }
     }
 })
