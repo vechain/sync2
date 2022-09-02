@@ -120,6 +120,7 @@ export default {
         enter_delegator_url: 'Enter Fee Delegation URL',
         accept_remote_config: 'Do you want to accept the remote configuration?',
         action_accept: 'Yes',
+        msg_remote_config_accepted: 'You\'ve accepted the configuration',
         msg_default_delegation_failed: 'Failed to request transaction fee delegation from default delegator. If this keeps happening, you can remove it in the settings at "Fee Delegation".',
         msg_self_signed_after_failure: 'Fee is paid by you (Delegation failed)'
     },
