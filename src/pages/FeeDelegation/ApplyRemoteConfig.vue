@@ -10,8 +10,8 @@
         </q-card>
       </page-content>
       <page-action>
-        <q-btn class="full-width" outline color="primary" :label="$t('common.dismiss')" @click="hide()" />
-        <q-btn class="full-width" unelevated color="primary" :label="$t('common.confirm')" @click="ok()" />
+        <q-btn class="full-width" outline color="primary" :label="$t('common.dismiss')" @click="ok(false)" />
+        <q-btn class="full-width" unelevated color="primary" :label="$t('common.confirm')" @click="ok(true)" />
       </page-action>
     </q-card>
   </q-dialog>
@@ -24,27 +24,27 @@ import PageAction from 'src/components/PageAction.vue'
 import PageContent from 'src/components/PageContent.vue'
 
 export default Vue.extend({
-  components: { PageToolbar, PageAction, PageContent },
-  props: {
-    state: Object as () => {}
-  },
-  computed: {
-    configAsText() {
-      if (this.state === undefined) {
-        return ''
-      }
+    components: { PageToolbar, PageAction, PageContent },
+    props: {
+        state: Object as () => {}
+    },
+    computed: {
+        configAsText() {
+            if (this.state === undefined) {
+                return ''
+            }
 
-      return JSON.stringify(this.state, null, 2)
-    }
-  },
-  methods: {
+            return JSON.stringify(this.state, null, 2)
+        }
+    },
+    methods: {
     // method is REQUIRED by $q.dialo
-    show() { (this.$refs.dialog as QDialog).show() },
-    // method is REQUIRED by $q.dialog
-    hide() { (this.$refs.dialog as QDialog).hide() },
-    ok() {
-      this.$emit('ok', true)
+        show() { (this.$refs.dialog as QDialog).show() },
+        // method is REQUIRED by $q.dialog
+        hide() { (this.$refs.dialog as QDialog).hide() },
+        ok(accepted: boolean) {
+            this.$emit('ok', accepted)
+        }
     }
-  }
 })
 </script>
