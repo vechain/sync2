@@ -66,7 +66,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import AddressLabel from 'src/components/AddressLabel.vue'
-import { openURL } from 'quasar'
+import { openURL } from 'src/utils/open-url'
 import AmountLabel from 'components/AmountLabel.vue'
 import { urls, genesises } from 'src/consts'
 import { TransferLogItem } from './models'
