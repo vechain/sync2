@@ -19,6 +19,7 @@
     "cordova-ios": "^6.2.0",
     "cordova-plugin-add-swift-support": "^2.0.2",
     "cordova-plugin-fingerprint-aio": "^4.0.2",
+    "cordova-plugin-inappbrowser": "^5.0.0",
     "cordova-plugin-ionic-keyboard": "2.2.0",
     "cordova-plugin-ionic-webview": "^5.0.0",
     "cordova-plugin-qrscanner": "git+https://github.com/qianbin/cordova-plugin-qrscanner.git",
@@ -60,7 +61,8 @@
       },
       "cordova-plugin-statusbar": {},
       "cordova-clipboard": {},
-      "cordova-plugin-qrscanner": {}
+      "cordova-plugin-qrscanner": {},
+      "cordova-plugin-inappbrowser": {}
     },
     "platforms": [
       "android",

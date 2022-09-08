@@ -69,7 +69,7 @@ import LanguageListPopup from 'pages/LanguageListPopup.vue'
 import PageToolbar from 'components/PageToolbar.vue'
 import PageContent from 'src/components/PageContent.vue'
 import { kdfEncrypt } from 'src/core/vault'
-import { openURL } from 'quasar'
+import { openURL } from 'src/utils/open-url'
 
 export default Vue.extend({
     components: { Item, LanguageListPopup, PageToolbar, PageContent },
