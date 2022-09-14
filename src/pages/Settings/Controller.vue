@@ -92,6 +92,12 @@ export default Vue.extend({
             try {
                 if (newVal) {
                     const umk = await this.$authenticate()
+                    if (this.$q.platform.is.ios) {
+                        await bioPass.show(
+                            this.$t('common.bio_auth').toString(),
+                            this.$t('common.cancel').toString()
+                        )
+                    }
                     await bioPass.save(
                         this.$t('common.bio_auth').toString(),
                         this.$t('common.cancel').toString(),
