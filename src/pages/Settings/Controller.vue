@@ -104,8 +104,14 @@ export default Vue.extend({
                         umk.toString('hex'))
                 }
                 await this.$svc.config.setBioPassOn(newVal)
-            } catch (err) {
+            } catch (err: any) {
                 console.warn(err)
+                if (err && err.code === 102) {
+                    this.$q.notify({
+                        type: 'warning',
+                        message: ''
+                    })
+                }
             }
         },
         async onClickChangePassword() {
