@@ -27,7 +27,7 @@
                 <template v-if="bioPass">
                     <item
                         icon="fingerprint"
-                        :title="$t('common.bio_auth')"
+                        :title="$t('bioAuth.title')"
                     >
                         <q-toggle
                             color="green"
@@ -94,22 +94,22 @@ export default Vue.extend({
                     const umk = await this.$authenticate()
                     if (this.$q.platform.is.ios) {
                         await bioPass.show(
-                            this.$t('common.bio_auth').toString(),
+                            this.$t('bioAuth.title').toString(),
                             this.$t('common.cancel').toString()
                         )
                     }
                     await bioPass.save(
-                        this.$t('common.bio_auth').toString(),
+                        this.$t('bioAuth.title').toString(),
                         this.$t('common.cancel').toString(),
                         umk.toString('hex'))
                 }
                 await this.$svc.config.setBioPassOn(newVal)
             } catch (err: any) {
                 console.warn(err)
-                if (err && err.code === 102) {
+                if (err && err.code === -102) {
                     this.$q.notify({
                         type: 'warning',
-                        message: ''
+                        message: this.$t('bioAuth.msg_auth_failed').toString()
                     })
                 }
             }
