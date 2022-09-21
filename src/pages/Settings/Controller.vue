@@ -104,10 +104,13 @@ export default Vue.extend({
                         umk.toString('hex'))
                 }
                 await this.$svc.config.setBioPassOn(newVal)
-            } catch (err: any) {
+            } catch (err) {
                 console.warn(err)
-                if (err && err.code === -102) {
+                const e = err as {code: number, message: string}
+                if (e && e.code === -102) {
                     this.$q.notify({
+                        textColor: 'white',
+                        position: 'top',
                         type: 'warning',
                         message: this.$t('bioAuth.msg_auth_failed').toString()
                     })
