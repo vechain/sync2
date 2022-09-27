@@ -82,6 +82,7 @@
         </config-file>
     </platform>
     <allow-navigation href="about:*" />
+    <preference name="Orientation" value="portrait" />
     <preference name="DisallowOverscroll" value="true" />
     <preference name="KeyboardResize" value="true" />
     <preference name="KeyboardResizeMode" value="native" />

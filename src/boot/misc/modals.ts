@@ -104,7 +104,7 @@ export function boot() {
                     try {
                         const bioPass = await BioPass.open()
                         if (bioPass && await vm.$svc.config.getBioPassOn()) {
-                            return Buffer.from(await bioPass.recall(vm.$t('common.bio_auth').toString(), vm.$t('common.cancel').toString()), 'hex')
+                            return Buffer.from(await bioPass.recall(vm.$t('bioAuth.title').toString(), vm.$t('common.cancel').toString()), 'hex')
                         }
                     } catch (err) {
                         if (err.code === -108 /* BIOMETRIC_DISMISSED */) {
