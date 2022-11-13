@@ -4,19 +4,18 @@
         <page-content padding class="col" innerClass="fit column">
             <q-input bottom-slots filled :label="$t('newWallet.label_wallet_name')" v-model="name" :error="!!error"
                 :error-message="error" no-error-icon />
-            <div class="text-center" v-if="loading">
-                <q-spinner-dots class="text-h2" />
-                <p>{{ $t('newMultiSig.msg_deploying') }}</p>
-            </div>
             <div class="col column no-wrap flex-center">
                 <img src="~assets/vechain-logo-tint.svg" style="min-height:0px;max-height:300px;max-width:100%">
             </div>
         </page-content>
         <page-action>
             <q-btn color="primary" outline :label="$t('newMultiSig.action_import')" @click="newWallet('import')"
-                :disable="loading" />
+                :disable="loading">
+                <q-spinner-dots v-if="loading" />
+            </q-btn>
             <q-btn color="primary" unelevated :label="$t('newMultiSig.action_deploy')" @click="newWallet('generate')"
                 :disable="loading">
+                <q-spinner-dots v-if="loading" />
             </q-btn>
         </page-action>
     </div>
@@ -27,6 +26,8 @@ import PageToolbar from 'components/PageToolbar.vue'
 import { Vault } from 'src/core/vault'
 import PageContent from 'components/PageContent.vue'
 import PageAction from 'components/PageAction.vue'
+import AddressInputDialog from './AddressInputDialog.vue'
+
 import { bytecode } from './contract.json'
 const MAX_DEPLOY_BLOCK_WAIT = 10
 
@@ -37,9 +38,10 @@ export default Vue.extend({
     },
     data() {
         return {
-            loading: false,
+            loading: true,
             name: '',
-            error: ''
+            error: '',
+            importState: { address: '' }
         }
     },
     computed: {
@@ -72,7 +74,9 @@ export default Vue.extend({
         linkMultiSig() {
             this.$router.replace({ name: 'new-multisig' })
         },
-        async newWallet(/* type: 'generate' | 'import' */) {
+        async newWallet(type: 'generate' | 'import') {
+            let contractAddress
+
             // reset error
             this.error = ''
             await this.$nextTick()
@@ -80,6 +84,20 @@ export default Vue.extend({
             // check name
             if (!this.name) {
                 this.error = this.$t('common.required_field').toString()
+                return
+            }
+
+            this.loading = true
+            if (type === 'import') {
+                try {
+                    contractAddress = await this.$dialog<string>({
+                        component: AddressInputDialog,
+                        state: this.importState
+                    })
+                    if (contractAddress) {
+                        await this.addWallet(contractAddress)
+                    }
+                } catch { }
                 return
             }
 
@@ -113,8 +131,7 @@ export default Vue.extend({
                 return
             }
 
-            const umk = await this.$authenticate()
-
+            // build transaction for deployment
             const result = await this.$signTx(this.gid, {
                 message: [msgItem],
                 options: {
@@ -122,9 +139,8 @@ export default Vue.extend({
                 }
             })
 
+            // wait until contract is deployed
             let maxBlockWait = MAX_DEPLOY_BLOCK_WAIT
-            let contractAddress
-            this.loading = true
             do {
                 const tx = this.thor.transaction(result.txid)
                 const receipt = await tx.getReceipt()
@@ -135,29 +151,32 @@ export default Vue.extend({
                     break
                 }
             } while (await this.thor.ticker().next() && --maxBlockWait)
-            this.loading = false
 
+            // create a wallet
             if (contractAddress) {
-                const vault = Vault.createHD(await Vault.generateMnemonic(12 / 3 * 4), umk)
-                await this.$svc.wallet.insert({
-                    gid: this.gid,
-                    vault: vault.encode(),
-                    meta: {
-                        name: this.name,
-                        type: 'multisig',
-                        addresses: [contractAddress],
-                        backedUp: true
-                    }
-                })
-
-                this.$backOrHome()
-                this.$q.notify(this.$t('common.wallet_created'))
+                await this.addWallet(contractAddress)
             } else {
-                this.$q.notify({
-                    type: 'negative',
-                    message: this.$t('newMultiSign.msg_deployment_failed').toString()
-                })
+                this.loading = false
+                this.error = this.$t('newMultiSig.msg_deployment_failed').toString()
             }
+        },
+        async addWallet(contractAddress: string) {
+            const umk = await this.$authenticate()
+            const vault = Vault.createHD(await Vault.generateMnemonic(12 / 3 * 4), umk)
+            await this.$svc.wallet.insert({
+                gid: this.gid,
+                vault: vault.encode(),
+                meta: {
+                    name: this.name,
+                    type: 'multisig',
+                    addresses: [contractAddress],
+                    backedUp: true
+                }
+            })
+
+            this.loading = false
+            this.$backOrHome()
+            this.$q.notify(this.$t('common.wallet_created'))
         }
     }
 })

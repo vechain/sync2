@@ -100,9 +100,12 @@ export default {
         title: 'New Multi-Signature-Wallet',
         baseName: 'New MultiSig',
         action_deploy: 'Deploy',
+        action_import: 'Import',
         tx_deploy_title: 'Deploy new Multi-Signature-Contract',
-        msg_deploying: 'Deploying, please wait…',
-        msg_deployment_failed: 'Deployment failed, please check the deployment transaction'
+        msg_deployment_failed: 'Deployment failed, please check the deployment transaction',
+        label_address: 'Multi-Signature-Address',
+        msg_invalid_address: 'Please enter a valid address',
+        msg_invalid_address_checksum: 'Address checksum failed'
     },
     authenticationDialog: {
         title: 'Authenticate',
