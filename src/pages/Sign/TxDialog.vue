@@ -90,6 +90,7 @@ import { randomBytes } from 'crypto'
 import ErrorTip from './ErrorTip.vue'
 import WarningListDialog from './WarningListDialog.vue'
 import InspectClauseDialog from './InspectClauseDialog.vue'
+import { abi } from '../MultiSig/contract.json'
 
 export default Common.extend({
     components: { PageToolbar, PageContent, PageAction, SignerSelector, PrioritySelector, GasFeeBar, ClauseCard, ErrorTip },
@@ -218,15 +219,34 @@ export default Common.extend({
                 noAction: true
             })
         },
+        async getMultiSigOwner(): Promise<[M.Wallet, string]> {
+            const getOwners = abi.find(({ name }) => name === 'getOwners')
+            const { decoded: { 0: owners } } = await this.thor
+                .account(this.wallet.meta.addresses[0])
+                .method(getOwners)
+                .call()
+
+            const wallets = await this.$svc.wallet.getByGid(this.wallet.gid)
+            let signer
+            const wallet = wallets.find(wallet => {
+                return !!wallet.meta.addresses.find((address: string) => {
+                    if (owners.includes(address)) {
+                        signer = address
+                    }
+                    return true
+                })
+            })
+
+            return [wallet, signer]
+        },
         async onClickSign() {
             const est = this.estimation
-            const wallet = this.wallet
-            const signer = this.signer
-
+            const [wallet, signer] = this.wallet.meta.type === 'multisig' ? await this.getMultiSigOwner() : [this.wallet, this.signer]
             if (!est || !wallet) {
                 return
             }
 
+            // @TODO: favo: estimate based on multi-sig interaction
             if (est.reverted) {
                 await this.$dialog({
                     component: WarningListDialog,
@@ -238,19 +258,34 @@ export default Common.extend({
             let tx!: Transaction
             let delegatorSig: Buffer | undefined
 
+            const clauses = this.req.message.map(item => {
+                const submitTransaction = abi.find(({ name }) => name === 'submitTransaction')
+                const clause = {
+                    to: item.to,
+                    value: '0x' + new BigNumber(item.value).toString(16),
+                    data: item.data || '0x'
+                }
+
+                if (this.wallet.meta.type === 'multisig') {
+                    return {
+                        to: this.wallet.meta.addresses[0],
+                        value: clause.value,
+                        data: this.thor.account(this.wallet.meta.addresses[0])
+                            .method(submitTransaction)
+                            .asClause(clause.to, clause.value, clause.data)
+                            .data
+                    }
+                }
+
+                return clause
+            })
             const originSig = await this.signTx(wallet, signer, () => {
                 // compose the tx body
                 const txBody: Transaction.Body = {
                     chainTag: Number.parseInt(this.thor.genesis.id.slice(-2), 16),
                     blockRef: this.thor.status.head.id.slice(0, 18),
                     expiration: 18, // about 3 mins
-                    clauses: this.req.message.map(item => {
-                        return {
-                            to: item.to,
-                            value: '0x' + new BigNumber(item.value).toString(16),
-                            data: item.data || '0x'
-                        }
-                    }),
+                    clauses,
                     gasPriceCoef: this.gasPriceCoef,
                     gas: est.gas,
                     dependsOn: this.req.options.dependsOn || null,
