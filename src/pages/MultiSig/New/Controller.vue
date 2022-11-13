@@ -38,7 +38,7 @@ export default Vue.extend({
     },
     data() {
         return {
-            loading: true,
+            loading: false,
             name: '',
             error: '',
             importState: { address: '' }

@@ -136,7 +136,8 @@ export default {
     address: {
         title: 'Address',
         label_assets: 'Assets',
-        action_receive: 'Receive'
+        action_receive: 'Receive',
+        label_transactions: 'Transactions'
     },
     asset: {
         title: 'Asset',

@@ -7,6 +7,7 @@ import Backup from 'pages/Backup'
 import NewWallet from 'pages/NewWallet'
 import NewMultiSig from 'pages/MultiSig/New'
 import OwnerMultiSig from 'pages/MultiSig/Owner'
+import TransactionsMultiSig from 'pages/MultiSig/Transactions'
 import Send from 'pages/Send'
 import Settings from 'pages/Settings'
 import TokensSetting from 'pages/TokensSetting.vue'
@@ -76,6 +77,10 @@ const routes: RouteConfig[] = [
             path: 'owner-multisig',
             name: 'owner-multisig',
             component: OwnerMultiSig
+        }, {
+            path: 'transactions-multisig',
+            name: 'transactions-multisig',
+            component: TransactionsMultiSig
         }]
     }
 ]
