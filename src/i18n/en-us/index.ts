@@ -107,6 +107,10 @@ export default {
         msg_invalid_address: 'Please enter a valid address',
         msg_invalid_address_checksum: 'Address checksum failed'
     },
+    ownerMultiSig: {
+        title: 'Owners',
+        action_manage_owner: 'Wallet Owners'
+    },
     authenticationDialog: {
         title: 'Authenticate',
         msg_password_error: 'Incorrect password',

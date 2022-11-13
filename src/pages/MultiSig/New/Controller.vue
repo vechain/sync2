@@ -28,7 +28,7 @@ import PageContent from 'components/PageContent.vue'
 import PageAction from 'components/PageAction.vue'
 import AddressInputDialog from './AddressInputDialog.vue'
 
-import { bytecode } from './contract.json'
+import { bytecode } from '../contract.json'
 const MAX_DEPLOY_BLOCK_WAIT = 10
 
 export default Vue.extend({

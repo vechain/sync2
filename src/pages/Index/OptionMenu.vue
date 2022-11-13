@@ -19,12 +19,17 @@ export default Vue.extend({
             return [{
                 label: this.$t('index.action_new_address').toString(),
                 action: () => this.newAddress(),
-                hidden: this.wallet.meta.addresses.length >= MAX_ADDRESS
+                hidden: this.wallet.meta.addresses.length >= MAX_ADDRESS || this.wallet.meta.type === 'multisig'
             },
             {
                 label: this.$t('index.action_backup').toString(),
                 action: () => this.$router.push({ name: 'backup', params: { walletId: this.wallet.id.toString() } }),
-                hidden: this.wallet.meta.type === 'ledger'
+                hidden: ['ledger', 'multisig'].includes(this.wallet.meta.type)
+            },
+            {
+                label: this.$t('ownerMultiSig.action_manage_owner').toString(),
+                action: () => this.$router.push({ name: 'owner-multisig', params: { walletId: this.wallet.id.toString(), gid: this.wallet.gid } }),
+                hidden: this.wallet.meta.type !== 'multisig'
             },
             {
                 label: this.$t('index.action_rename').toString(),
