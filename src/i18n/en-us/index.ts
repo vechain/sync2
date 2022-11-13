@@ -90,10 +90,19 @@ export default {
         mnemonic_words_count: 'Mnemonic words count',
         action_generate: 'Generate',
         action_import: 'Import',
+        action_multisig: 'Add or import Multi-Signature-Wallet',
         label_wallet_name: 'Wallet Name',
         label_mnemonic: 'Please enter your mnemonic words',
         label_ledger_user: 'Ledger user?',
         action_ledger_link: 'Link Now'
+    },
+    newMultiSig: {
+        title: 'New Multi-Signature-Wallet',
+        baseName: 'New MultiSig',
+        action_deploy: 'Deploy',
+        tx_deploy_title: 'Deploy new Multi-Signature-Contract',
+        msg_deploying: 'Deploying, please wait…',
+        msg_deployment_failed: 'Deployment failed, please check the deployment transaction'
     },
     authenticationDialog: {
         title: 'Authenticate',

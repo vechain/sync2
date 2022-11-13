@@ -44,6 +44,16 @@
                     @click="newWallet('linkLedger')"
                 >{{$t('newWallet.action_ledger_link')}}</q-btn>
             </div>
+            <div
+                v-if="isSupport"
+                class="row flex-center"
+            >
+                <q-btn
+                    color="primary"
+                    flat
+                    @click="linkMultiSig()"
+                >{{$t('newWallet.action_multisig')}}</q-btn>
+            </div>
         </page-content>
         <page-action>
             <q-btn
@@ -152,6 +162,9 @@ export default Vue.extend({
         }
     },
     methods: {
+        linkMultiSig() {
+            this.$router.replace({ name: 'new-multisig', query: { gid: this.gid } })
+        },
         async linkLedger() {
             try {
                 const account = await this.$dialog<Account>({

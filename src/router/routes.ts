@@ -5,6 +5,7 @@ import Address from 'pages/Address'
 import Asset from 'pages/Asset'
 import Backup from 'pages/Backup'
 import NewWallet from 'pages/NewWallet'
+import NewMultiSig from 'pages/MultiSig/New'
 import Send from 'pages/Send'
 import Settings from 'pages/Settings'
 import TokensSetting from 'pages/TokensSetting.vue'
@@ -66,6 +67,10 @@ const routes: RouteConfig[] = [
             path: 'activities',
             name: 'activities',
             component: Activities
+        }, {
+            path: 'new-multisig',
+            name: 'new-multisig',
+            component: NewMultiSig
         }]
     }
 ]
