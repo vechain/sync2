@@ -41,23 +41,23 @@
     </q-item>
     <q-item v-if="!transaction.executed">
       <q-item-section>
-        <q-actions>
+        <div>
           <q-btn class="full-width" color="primary" unelevated
             :label="$t('transactionsMultiSig.action_confirm_transaction')" @click="confirmTransaction"
             v-if="!transaction.isConfirmed" />
           <q-btn class="full-width" color="primary" unelevated
             :label="$t('transactionsMultiSig.action_execute_transaction')" @click="executeTransaction"
             v-if="transaction.numConfirmations >= confirmationsRequired" />
-        </q-actions>
+        </div>
       </q-item-section>
     </q-item>
     <q-item v-if="!transaction.executed && transaction.isConfirmed">
       <q-item-section>
-        <q-actions>
+        <div>
           <q-btn class="full-width" color="negative" outline unelevated
             :label="$t('transactionsMultiSig.action_revoke_confirmation')" @click="revokeConfirmation"
             v-if="transaction.isConfirmed" />
-        </q-actions>
+        </div>
       </q-item-section>
     </q-item>
   </q-expansion-item>
