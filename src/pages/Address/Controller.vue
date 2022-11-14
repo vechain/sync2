@@ -1,9 +1,15 @@
 <template>
     <div class="fit column no-wrap">
-        <page-toolbar :title="$t('address.title')" :gid="wallet && wallet.gid" />
+        <page-toolbar
+            :title="$t('address.title')"
+            :gid="wallet && wallet.gid"
+        />
         <template v-if="wallet">
             <page-content>
-                <head-item :address="address" :name="wallet.meta.name" />
+                <head-item
+                    :address="address"
+                    :name="wallet.meta.name"
+                />
                 <q-btn
                     v-if="wallet.meta.type === 'multisig'" unelevated class="full-width" :to="{
                         name: 'transactions-multisig',
@@ -20,32 +26,58 @@
                 <q-item dense>
                     <q-item-section>
                         <q-item-label header>
-                            {{ $t('address.label_assets') }}
+                            {{$t('address.label_assets')}}
                         </q-item-label>
                     </q-item-section>
                     <q-item-section side>
-                        <q-btn :to="{ name: 'tokens-setting' }" flat round icon="control_point_duplicate" />
+                        <q-btn
+                            :to="{name: 'tokens-setting'}"
+                            flat
+                            round
+                            icon="control_point_duplicate"
+                        />
                     </q-item-section>
                 </q-item>
             </page-content>
             <page-content class="col">
                 <q-list>
-                    <async-resolve v-for="(token, index) in tokenList" tag="div"
-                        :promise="$svc.bc(token.gid).balanceOf(address, token)" v-slot="{ data }" :key="token.symbol">
-                        <q-separator v-if="index !== 0 || wallet.meta.type === 'multisig'" inset="item" />
-                        <token-item :token="token" :balance="data">
-                            <q-btn icon="preview" dense flat :to="{
-                                name: 'asset',
-                                params: {
-                                    walletId: walletId,
-                                    addressIndex: addressIndex,
-                                    symbol: token.symbol
-                                }
-                            }" />
-                            <q-btn icon="send" dense flat :to="{
-                                name: 'send',
-                                query: { wid: walletId, i: addressIndex, symbol: token.symbol }
-                            }" />
+                    <async-resolve
+                        v-for="(token, index) in tokenList"
+                        tag="div"
+                        :promise="$svc.bc(token.gid).balanceOf(address, token)"
+                        v-slot="{data}"
+                        :key="token.symbol"
+                    >
+                        <q-separator
+                            v-if="index !== 0"
+                            inset="item"
+                        />
+                        <token-item
+                            :token="token"
+                            :balance="data"
+                        >
+                            <q-btn
+                                icon="preview"
+                                dense
+                                flat
+                                :to="{
+                                    name: 'asset',
+                                    params: {
+                                        walletId: walletId,
+                                        addressIndex: addressIndex,
+                                        symbol: token.symbol
+                                    }
+                                }"
+                            />
+                            <q-btn
+                                icon="send"
+                                dense
+                                flat
+                                :to="{
+                                    name: 'send',
+                                    query: { wid: walletId, i: addressIndex, symbol: token.symbol }
+                                }"
+                            />
                         </token-item>
                     </async-resolve>
                 </q-list>

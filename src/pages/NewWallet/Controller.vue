@@ -45,7 +45,6 @@
                 >{{$t('newWallet.action_ledger_link')}}</q-btn>
             </div>
             <div
-                v-if="isSupport"
                 class="row flex-center"
             >
                 <q-btn
