@@ -163,7 +163,7 @@ export default Vue.extend({
     },
     methods: {
         linkMultiSig() {
-            this.$router.replace({ name: 'new-multisig', query: { gid: this.gid } })
+            this.$router.replace({ name: 'new-multisig', query: { defaultGid: this.gid } })
         },
         async linkLedger() {
             try {

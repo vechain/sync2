@@ -102,7 +102,9 @@ export default {
         action_deploy: 'Deploy',
         action_import: 'Import',
         tx_deploy_title: 'Deploy new Multi-Signature-Contract',
+        msg_deploying: 'Deploying new Multi-Signature-Wallet',
         msg_deployment_failed: 'Deployment failed, please check the deployment transaction',
+        msg_intro: 'A Multi-Signature-Wallet is a Smart Contract deployed on the network. Initially it will have one owner (the deploying address). You need to add more owners after deployment',
         label_address: 'Multi-Signature-Address',
         msg_invalid_address: 'Please enter a valid address',
         msg_invalid_address_checksum: 'Address checksum failed'
@@ -110,6 +112,12 @@ export default {
     ownerMultiSig: {
         title: 'Owners',
         action_manage_owner: 'Wallet Owners'
+    },
+    transactionsMultiSig: {
+        title: 'Transactions',
+        action_confirm_transaction: 'Confirm Transaction',
+        action_revoke_confirmation: 'Revoke Confirmation',
+        action_execute_transaction: 'Execute Transaction'
     },
     authenticationDialog: {
         title: 'Authenticate',
@@ -137,7 +145,8 @@ export default {
         title: 'Address',
         label_assets: 'Assets',
         action_receive: 'Receive',
-        label_transactions: 'Transactions'
+        label_transactions: 'Transactions',
+        label_multisig_transactions: 'Multi-Sig-Transactions'
     },
     asset: {
         title: 'Asset',

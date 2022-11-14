@@ -74,11 +74,11 @@ const routes: RouteConfig[] = [
             name: 'new-multisig',
             component: NewMultiSig
         }, {
-            path: 'owner-multisig',
+            path: 'wm/:walletId(\\d+)/:addressIndex(\\d+)/owner',
             name: 'owner-multisig',
             component: OwnerMultiSig
         }, {
-            path: 'transactions-multisig',
+            path: 'wm/:walletId(\\d+)/:addressIndex(\\d+)/transactions',
             name: 'transactions-multisig',
             component: TransactionsMultiSig
         }]

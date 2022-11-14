@@ -22,13 +22,12 @@
 import Vue from 'vue'
 import PageContent from 'components/PageContent.vue'
 import PageToolbar from 'components/PageToolbar.vue'
-import { abi } from '../contract.json'
+import Contract from '../const'
 
 export default Vue.extend({
     components: { PageContent, PageToolbar },
     props: {
-        walletId: String,
-        gid: String
+        walletId: String
     },
     data: () => {
         return {
@@ -36,22 +35,21 @@ export default Vue.extend({
         }
     },
     computed: {
-        thor(): Connex.Thor { return this.$svc.bc(this.gid).thor }
+        thor(): Connex.Thor { return this.$svc.bc(this.wallet!.gid).thor }
     },
     asyncComputed: {
         async wallet(): Promise<M.Wallet | null> {
             return this.$svc.wallet.get(parseInt(this.walletId))
         },
         async owners(): Promise<string[]> {
-            const getOwners = abi.find(({ name }) => name === 'getOwners')
-            if (!this.wallet || !getOwners) {
+            if (!this.wallet) {
                 return []
             }
 
             this.loading = true
             const { decoded: { 0: owners } } = await this.thor
                 .account(this.wallet.meta.addresses[0])
-                .method(getOwners)
+                .method(Contract.getOwners)
                 .call()
 
             this.loading = false

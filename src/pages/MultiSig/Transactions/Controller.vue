@@ -8,9 +8,16 @@
             <page-content class="col">
                 <q-list>
                     <async-resolve v-for="(index) in multiSigTransactions" tag="div"
-                        :promise="transactionDataForIndex(index)" v-slot="{data}" :key="index">
+                        :promise="transactionDataForIndex(index)" v-slot="{ data }" :key="index">
                         <q-separator v-if="index !== 0" inset="item" />
-                        <transaction-item :transaction="data" :confirmationsRequired="confirmationsRequired" :index="index"></transaction-item>
+                        <page-content v-if="!data" class="text-center">
+                            <q-spinner-dots />
+                        </page-content>
+                        <transaction-item v-if="data" :transaction="data" :confirmationsRequired="confirmationsRequired"
+                            :index="index" :confirmTransaction="handleConfirmTransaction(index)"
+                            :executeTransaction="handleExecuteTransaction(index)"
+                            :revokeConfirmation="handleRevokeConfirmation(index)"></transaction-item>
+
                     </async-resolve>
                 </q-list>
             </page-content>
@@ -24,7 +31,7 @@ import AsyncResolve from 'components/AsyncResolve'
 import PageToolbar from 'components/PageToolbar.vue'
 import PageContent from 'components/PageContent.vue'
 import TransactionItem from './TransactionItem.vue'
-import { abi } from '../contract.json'
+import Contract from '../const'
 
 export default Vue.extend({
     components: {
@@ -38,20 +45,100 @@ export default Vue.extend({
         walletId: String,
         addressIndex: String
     },
+    data: () => {
+        return {
+            loading: true
+        }
+    },
     methods: {
-        async transactionDataForIndex(index: number): Promise<any> {
-            const transactions = abi.find(({ name }) => name === 'transactions')
-            let thor
-            if (!this.wallet || !transactions || !(thor = this.$svc.bc(this.wallet.gid).thor)) {
-                return []
+        handleConfirmTransaction(index: number): Function {
+            return () => this.confirmTransaction(index)
+        },
+        handleExecuteTransaction(index: number): Function {
+            return () => this.executeTransaction(index)
+        },
+        handleRevokeConfirmation(index: number): Function {
+            return () => this.revokeConfirmation(index)
+        },
+        async transactionDataForIndex(index: number): Promise<object> {
+            if (!this.wallet) {
+                return { to: null, isConfirmed: false, data: null, value: 0 }
             }
 
-            const { decoded } = await thor
+            const { decoded: transaction } = await this.thor
                 .account(this.wallet.meta.addresses[0])
-                .method(transactions)
+                .method(Contract.transactions)
                 .call(index)
 
-            return decoded
+            const { decoded: { 0: isConfirmed } } = await this.thor
+                .account(this.wallet.meta.addresses[0])
+                .method(Contract.isConfirmed)
+                .call(index, this.multiSigOwnerSigner)
+
+            return { ...transaction, isConfirmed }
+        },
+        async confirmTransaction(index: number) {
+            if (!this.multiSigOwnerSigner) {
+                return
+            }
+
+            try {
+                const clause = this.thor.account(this.wallet!.meta.addresses[0])
+                    .method(Contract.confirmTransaction)
+                    .asClause(index)
+
+                await this.$signTx(this.wallet!.gid, {
+                    message: [clause],
+                    options: {
+                        signer: this.multiSigOwnerSigner,
+                        comment: this.$t('transactionsMultiSig.action_confirm_transaction').toString()
+                    }
+                })
+            } catch (err) {
+
+            }
+        },
+        async executeTransaction(index: number) {
+            if (!this.multiSigOwnerSigner) {
+                return
+            }
+
+            try {
+                const clause = this.thor.account(this.wallet!.meta.addresses[0])
+                    .method(Contract.executeTransaction)
+                    .asClause(index)
+
+                await this.$signTx(this.wallet!.gid, {
+                    message: [clause],
+                    options: {
+                        signer: this.multiSigOwnerSigner,
+                        comment: this.$t('transactionsMultiSig.action_execute_transaction').toString()
+                    }
+                })
+            } catch (err) {
+
+            }
+        },
+        async revokeConfirmation(index: number) {
+            if (!this.multiSigOwnerSigner) {
+                return
+            }
+
+            try {
+                const clause = this.thor.account(this.wallet!.meta.addresses[0])
+                    .method(Contract.revokeConfirmation)
+                    .asClause(index)
+
+                await this.$signTx(this.wallet!.gid, {
+                    message: [clause],
+                    options: {
+                        signer: this.multiSigOwnerSigner,
+                        comment: this.$t('transactionsMultiSig.action_revoke_confirmation').toString()
+                    }
+                })
+            } catch (err) {
+
+            }
         }
     },
     asyncComputed: {
@@ -60,15 +147,13 @@ export default Vue.extend({
         },
         multiSigTransactions: {
             async get(): Promise<number[]> {
-                const getTransactionCount = abi.find(({ name }) => name === 'getTransactionCount')
-                let thor
-                if (!this.wallet || !getTransactionCount || !(thor = this.$svc.bc(this.wallet.gid).thor)) {
+                if (!this.wallet) {
                     return []
                 }
 
-                const { decoded: { 0: count } } = await thor
+                const { decoded: { 0: count } } = await this.thor
                     .account(this.wallet.meta.addresses[0])
-                    .method(getTransactionCount)
+                    .method(Contract.getTransactionCount)
                     .call()
 
                 return [...new Array(parseInt(count))].map((_, index) => index).reverse()
@@ -77,40 +162,42 @@ export default Vue.extend({
         },
         confirmationsRequired: {
             async get(): Promise<number> {
-                const numConfirmationsRequired = abi.find(({ name }) => name === 'numConfirmationsRequired')
-                let thor
-                if (!this.wallet || !numConfirmationsRequired || !(thor = this.$svc.bc(this.wallet.gid).thor)) {
-                    return 0
-                }
-
-                const { decoded: { 0: count } } = await thor
-                    .account(this.wallet.meta.addresses[0])
-                    .method(numConfirmationsRequired)
+                const { decoded: { 0: count } } = await this.thor
+                    .account(this.wallet!.meta.addresses[0])
+                    .method(Contract.numConfirmationsRequired)
                     .call()
 
                 return parseInt(count)
             },
-            default: []
+            default: 0
         },
-        tokenList: {
-            async get(): Promise<M.TokenSpec[]> {
-                const wallet = this.wallet
-                if (!wallet) {
-                    return []
+        async multiSigOwnerSigner(): Promise<string> {
+            if (!this.wallet) {
+                return ''
+            }
+
+            const { decoded: { 0: owners } } = await this.thor
+                .account(this.wallet.meta.addresses[0])
+                .method(Contract.getOwners)
+                .call()
+
+            const wallets = await this.$svc.wallet.getByGid(this.wallet.gid)
+            for (const wallet of wallets) {
+                for (const signer of wallet.meta.addresses) {
+                    if (owners.includes(signer)) {
+                        return signer
+                    }
                 }
-                const [tokens, activeSymbols] = await Promise.all([
-                    this.$svc.config.token.all(),
-                    this.$svc.config.token.activeSymbols()
-                ])
-                return tokens.filter(token => token.gid === wallet.gid && (activeSymbols.includes(token.symbol) || token.permanent))
-            },
-            default: []
+            }
+
+            return ''
         }
     },
     computed: {
         address(): string {
             return this.wallet ? this.wallet.meta.addresses[parseInt(this.addressIndex)] : ''
-        }
+        },
+        thor(): Connex.Thor { return this.$svc.bc(this.wallet!.gid).thor }
     }
 })
 </script>
