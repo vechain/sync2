@@ -162,8 +162,12 @@ export default Vue.extend({
         },
         confirmationsRequired: {
             async get(): Promise<number> {
+                if (!this.wallet) {
+                    return 0
+                }
+
                 const { decoded: { 0: count } } = await this.thor
-                    .account(this.wallet!.meta.addresses[0])
+                    .account(this.wallet.meta.addresses[0])
                     .method(Contract.numConfirmationsRequired)
                     .call()
 
