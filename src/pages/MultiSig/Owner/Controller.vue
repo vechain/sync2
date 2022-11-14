@@ -6,11 +6,12 @@
         <page-content class="col">
             <q-list padding>
                 <template v-for="(ownerAddress, index) in owners">
-                    <q-separator v-if="index !== 0" :key="ownerAddress+'sep'" inset="item" />
+                    <q-separator v-if="index !== 0" :key="ownerAddress + 'sep'" inset="item" />
                     <q-item :key="ownerAddress">
                         <q-item-section>
                             <q-item-label lines="1">{{ ownerAddress }}</q-item-label>
                         </q-item-section>
+                        <q-btn @click="handleDelete(ownerAddress)" unelevated color="negative" outline>remove</q-btn>
                     </q-item>
                 </template>
             </q-list>
@@ -73,6 +74,36 @@ export default Vue.extend({
 
                 await this.$signTx(this.wallet!.gid, {
                     message: [addOwnerClause],
+                    options: {
+                        signer: this.wallet!.meta.addresses[0],
+                        comment: this.$t('transactionsMultiSig.action_confirm_transaction').toString()
+                    }
+                })
+            } catch { }
+        },
+        async handleDelete(address: string) {
+            try {
+                await this.$dialog({
+                    focus: 'cancel',
+                    title: this.$t('common.delete').toString(),
+                    message: this.$t('ownerMultiSig.msg_delete').toString(),
+                    ok: {
+                        label: this.$t('common.delete'),
+                        color: 'negative',
+                        outline: true
+                    },
+                    cancel: {
+                        label: this.$t('common.cancel'),
+                        unelevated: true
+                    }
+                })
+
+                const removeOwnerClause = this.thor.account(this.wallet!.meta.addresses[0])
+                    .method(Contract.removeOwner)
+                    .asClause(address)
+
+                await this.$signTx(this.wallet!.gid, {
+                    message: [removeOwnerClause],
                     options: {
                         signer: this.wallet!.meta.addresses[0],
                         comment: this.$t('transactionsMultiSig.action_confirm_transaction').toString()
