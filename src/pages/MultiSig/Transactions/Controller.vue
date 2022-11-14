@@ -31,7 +31,8 @@ import AsyncResolve from 'components/AsyncResolve'
 import PageToolbar from 'components/PageToolbar.vue'
 import PageContent from 'components/PageContent.vue'
 import TransactionItem from './TransactionItem.vue'
-import Contract from '../const'
+import Contract, { Signatures } from '../const'
+import { abi } from 'thor-devkit'
 
 export default Vue.extend({
     components: {
@@ -62,7 +63,7 @@ export default Vue.extend({
         },
         async transactionDataForIndex(index: number): Promise<object> {
             if (!this.wallet) {
-                return { to: null, isConfirmed: false, data: null, value: 0 }
+                return { from: null, to: null, isConfirmed: false, data: null, value: 0 }
             }
 
             const { decoded: transaction } = await this.thor
@@ -74,6 +75,14 @@ export default Vue.extend({
                 .account(this.wallet.meta.addresses[0])
                 .method(Contract.isConfirmed)
                 .call(index, this.multiSigOwnerSigner)
+
+            if (transaction.to === this.wallet.meta.addresses[0]) {
+                const sigHash = transaction.data.slice(0, 10)
+                if (Signatures[sigHash]) {
+                    transaction.decoded = abi.decodeParameters(Signatures[sigHash].inputs, '0x' + transaction.data.slice(10))
+                    transaction.fnName = Signatures[sigHash].name
+                }
+            }
 
             return { ...transaction, isConfirmed }
         },

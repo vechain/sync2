@@ -15,6 +15,14 @@
     </template>
     <q-item>
       <q-item-section>
+        <q-item-label caption>From</q-item-label>
+        <q-item-label style="word-break:break-all">
+          <address-label :addr="transaction.from" full>null</address-label>
+        </q-item-label>
+      </q-item-section>
+    </q-item>
+    <q-item>
+      <q-item-section>
         <q-item-label caption>To</q-item-label>
         <q-item-label style="word-break:break-all">
           <address-label :addr="transaction.to" full>null</address-label>
@@ -33,8 +41,10 @@
       <q-item-section>
         <q-item-label caption>Data</q-item-label>
         <q-item-label>
-          <q-input v-if="transaction.data && transaction.data.length > 2" dense class="monospace" type="textarea"
+          <q-input v-if="!transaction.fnName && transaction.data && transaction.data.length > 2" dense class="monospace" type="textarea"
             standout readonly :value="transaction.data" />
+          <q-input v-else-if="transaction.fnName" dense class="monospace" type="textarea"
+            standout readonly :value="JSON.stringify({[transaction.fnName]: transaction.decoded}, null, 2)" />
           <template v-else>N/A</template>
         </q-item-label>
       </q-item-section>
@@ -72,7 +82,7 @@ export default Vue.extend({
         AmountLabel, AddressLabel
     },
     props: {
-        transaction: Object as () => { to: string, isConfirmed: boolean, executed: boolean, numConfirmations: number, data: string },
+        transaction: Object as () => { from: string, to: string, isConfirmed: boolean, executed: boolean, numConfirmations: number, data: string, value: number, fnName?: string, decoded?: object },
         confirmationsRequired: Number as () => 0,
         index: Number as () => 0,
         confirmTransaction: Function as () => {},

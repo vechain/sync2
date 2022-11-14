@@ -111,7 +111,12 @@ export default {
     },
     ownerMultiSig: {
         title: 'Owners',
-        action_manage_owner: 'Wallet Owners'
+        action_manage_owner: 'Wallet Owners',
+        title_add_dialog: 'Add Owner',
+        msg_owner_added: 'Owner added',
+        msg_owner_deleted: 'Owner deleted',
+        msg_owner_existed: 'Owner already exists',
+        msg_delete: 'Are you sure you want to delete the owner?'
     },
     transactionsMultiSig: {
         title: 'Transactions',
