@@ -151,7 +151,7 @@ export default Vue.extend({
             const msgItem: Connex.Vendor.TxMessage[0] = {
                 to: null,
                 value: 0,
-                comment: this.$t('tx_deploy_title').toString(),
+                comment: this.$t('newMultiSig.tx_deploy_title').toString(),
                 data: MultiSigBytecode
             }
 
@@ -159,7 +159,7 @@ export default Vue.extend({
                 const result = await this.$signTx(this.gid, {
                     message: [msgItem],
                     options: {
-                        comment: this.$t('tx_deploy_title').toString()
+                        comment: this.$t('newMultiSig.tx_deploy_title').toString()
                     }
                 })
 

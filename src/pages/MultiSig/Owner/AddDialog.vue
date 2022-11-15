@@ -21,6 +21,7 @@
 import Vue from 'vue'
 import { QDialog } from 'quasar'
 import PromptDialogToolbar from 'src/components/PromptDialogToolbar.vue'
+import { address } from 'thor-devkit'
 
 export default Vue.extend({
     components: { PromptDialogToolbar },
@@ -45,12 +46,22 @@ export default Vue.extend({
             this.$emit('ok', address)
             this.hide()
         },
+        isAddress: address.test,
+        checkSumAddress(v: string): boolean {
+            return !(v !== v.toLowerCase() && address.toChecksumed(v) !== v)
+        },
+        validate(): boolean {
+            this.error = this.isAddress(this.state.address)
+                ? this.checkSumAddress(this.state.address) ? '' : this.$t('send.msg_invalid_address_checksum').toString()
+                : this.$t('send.msg_invalid_address').toString()
+
+            return !this.error
+        },
         async onSubmit() {
             const inputEl = (this.$refs.input as Vue).$el.getElementsByTagName('input')[0]
             inputEl.focus()
 
-            const address = this.state.address.trim()
-            if (address.length === 0) {
+            if (!this.validate()) {
                 return
             }
 
@@ -59,7 +70,7 @@ export default Vue.extend({
 
             try {
                 this.loading = true
-                this.ok(address)
+                this.ok(this.state.address)
             } catch (err) {
                 this.error = err.message
                 this.loading = false

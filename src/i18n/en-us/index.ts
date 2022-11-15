@@ -110,9 +110,12 @@ export default {
         msg_invalid_address_checksum: 'Address checksum failed'
     },
     ownerMultiSig: {
-        title: 'Owners',
-        action_manage_owner: 'Wallet Owners',
+        title: 'Manage Owners',
+        title_owners: 'List of Owners',
         title_add_dialog: 'Add Owner',
+        title_change_required_confirmations: 'Change required confirmations',
+        required_confirmations: 'Number of owners to required to confirm transactions',
+        action_manage_owner: 'Wallet Owners',
         msg_owner_added: 'Owner added',
         msg_owner_deleted: 'Owner deleted',
         msg_owner_existed: 'Owner already exists',
