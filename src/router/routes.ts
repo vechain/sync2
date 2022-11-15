@@ -8,6 +8,7 @@ import NewWallet from 'pages/NewWallet'
 import NewMultiSig from 'pages/MultiSig/New'
 import OwnerMultiSig from 'pages/MultiSig/Owner'
 import TransactionsMultiSig from 'pages/MultiSig/Transactions'
+import SignSuccessMultiSig from 'pages/MultiSig/SignSuccess.vue'
 import Send from 'pages/Send'
 import Settings from 'pages/Settings'
 import TokensSetting from 'pages/TokensSetting.vue'
@@ -81,6 +82,10 @@ const routes: RouteConfig[] = [
             path: 'wm/:walletId(\\d+)/:addressIndex(\\d+)/transactions',
             name: 'transactions-multisig',
             component: TransactionsMultiSig
+        }, {
+            path: 'sign-success-multisig',
+            name: 'sign-success-multisig',
+            component: SignSuccessMultiSig
         }]
     }
 ]

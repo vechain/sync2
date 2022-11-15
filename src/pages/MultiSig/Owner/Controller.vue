@@ -119,7 +119,7 @@ export default Vue.extend({
                     }
                 })
 
-                this.$router.push({ name: 'transactions-multisig', query: { walletId: this.walletId, addressIndex: '0' } })
+                this.$router.push({ name: 'sign-success-multisig', query: { walletId: this.walletId, addressIndex: '0' } })
             } catch { }
         },
         async onChangeRequiredConfirmations() {
@@ -140,7 +140,7 @@ export default Vue.extend({
                     }
                 })
 
-                this.$router.push({ name: 'transactions-multisig', query: { walletId: this.walletId, addressIndex: '0' } })
+                this.$router.push({ name: 'sign-success-multisig', query: { walletId: this.walletId, addressIndex: '0' } })
             } catch { }
         },
         async handleDelete(address: string) {
@@ -171,7 +171,7 @@ export default Vue.extend({
                     }
                 })
 
-                this.$router.push({ name: 'transactions-multisig', query: { walletId: this.walletId, addressIndex: '0' } })
+                this.$router.push({ name: 'sign-success-multisig', query: { walletId: this.walletId, addressIndex: '0' } })
             } catch { }
         }
     }

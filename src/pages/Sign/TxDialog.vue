@@ -248,14 +248,14 @@ export default Common.extend({
             if (!this.wallet) {
                 return clauses as Transaction.Clause[]
             }
-            return clauses.map(({ to, value, data = '0x' }) => {
+            return clauses.map(({ to, value = 0, data = '0x' }) => {
                 const hexValue = '0x' + new BigNumber(value).toString(16)
                 return {
                     to: this.wallet!.meta.addresses[0],
                     value: 0,
                     data: this.thor.account(this.wallet!.meta.addresses[0])
                         .method(Contract.submitTransaction)
-                        .asClause(to, hexValue, data)
+                        .asClause(to || '0x0000000000000000000000000000000000000000', hexValue, data)
                         .data
                 }
             })

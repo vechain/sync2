@@ -49,7 +49,7 @@
         </q-item-label>
       </q-item-section>
     </q-item>
-    <q-item v-if="!transaction.executed">
+    <q-item v-if="!transaction.executed && transaction.from">
       <q-item-section>
         <div>
           <q-btn class="full-width" color="primary" unelevated

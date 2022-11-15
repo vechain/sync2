@@ -66,30 +66,36 @@ export default Vue.extend({
                 return { from: null, to: null, isConfirmed: false, data: null, value: 0 }
             }
 
-            const { decoded: transaction } = await this.thor
-                .account(this.wallet.meta.addresses[0])
-                .method(Contract.transactions)
-                .call(index)
+            try {
+                const { decoded: transaction } = await this.thor
+                    .account(this.wallet.meta.addresses[0])
+                    .method(Contract.transactions)
+                    .call(index)
 
-            const { decoded: { 0: isConfirmed } } = await this.thor
-                .account(this.wallet.meta.addresses[0])
-                .method(Contract.isConfirmed)
-                .call(index, this.multiSigOwnerSigner)
+                const { decoded: { 0: isConfirmed } } = await this.thor
+                    .account(this.wallet.meta.addresses[0])
+                    .method(Contract.isConfirmed)
+                    .call(index, this.multiSigOwnerSigner)
 
-            if (transaction.to === this.wallet.meta.addresses[0]) {
-                const sigHash = transaction.data.slice(0, 10)
-                if (Signatures[sigHash]) {
-                    const inputParameters = Signatures[sigHash].inputs.map(({ name }) => name)
-                    const parameters = abi.decodeParameters(Signatures[sigHash].inputs, '0x' + transaction.data.slice(10))
-                    transaction.parameters = inputParameters.reduce((map: { [key: string]: string }, name: string) => {
-                        map[name] = parameters[name] || null
-                        return map
-                    }, {})
-                    transaction.fnName = Signatures[sigHash].name
+                if (transaction.to === this.wallet.meta.addresses[0]) {
+                    const sigHash = transaction.data.slice(0, 10)
+                    if (Signatures[sigHash]) {
+                        try {
+                            const inputParameters = Signatures[sigHash].inputs.map(({ name }) => name)
+                            const parameters = abi.decodeParameters(Signatures[sigHash].inputs, '0x' + transaction.data.slice(10))
+                            transaction.parameters = inputParameters.reduce((map: { [key: string]: string }, name: string) => {
+                                map[name] = parameters[name] || null
+                                return map
+                            }, {})
+                            transaction.fnName = Signatures[sigHash].name
+                        } catch { }
+                    }
                 }
-            }
 
-            return { ...transaction, isConfirmed }
+                return { ...transaction, isConfirmed }
+            } catch {
+                return { from: null, to: null, isConfirmed: false, data: null, value: 0 }
+            }
         },
         async confirmTransaction(index: number) {
             if (!this.multiSigOwnerSigner) {
@@ -108,6 +114,8 @@ export default Vue.extend({
                         comment: this.$t('transactionsMultiSig.action_confirm_transaction').toString()
                     }
                 })
+
+                this.$router.push({ name: 'sign-success-multisig', query: { walletId: this.walletId, addressIndex: '0' } })
             } catch (err) {
 
             }
@@ -132,6 +140,8 @@ export default Vue.extend({
             } catch (err) {
 
             }
+
+            this.$router.push({ name: 'sign-success-multisig', query: { walletId: this.walletId, addressIndex: '0' } })
         },
         async revokeConfirmation(index: number) {
             if (!this.multiSigOwnerSigner) {
@@ -150,6 +160,8 @@ export default Vue.extend({
                         comment: this.$t('transactionsMultiSig.action_revoke_confirmation').toString()
                     }
                 })
+
+                this.$router.push({ name: 'sign-success-multisig', query: { walletId: this.walletId, addressIndex: '0' } })
             } catch (err) {
 
             }
