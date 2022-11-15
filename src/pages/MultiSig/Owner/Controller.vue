@@ -11,7 +11,8 @@
                         <q-item-section>
                             <q-item-label lines="1">{{ ownerAddress }}</q-item-label>
                         </q-item-section>
-                        <q-btn @click="handleDelete(ownerAddress)" unelevated color="negative" outline>remove</q-btn>
+                        <q-btn @click="handleDelete(ownerAddress)" unelevated color="secondary" flat round
+                            icon="delete" />
                     </q-item>
                 </template>
             </q-list>
@@ -79,6 +80,8 @@ export default Vue.extend({
                         comment: this.$t('transactionsMultiSig.action_confirm_transaction').toString()
                     }
                 })
+
+                this.$router.push({ name: 'transactions-multisig', query: { walletId: this.walletId, addressIndex: '0' } })
             } catch { }
         },
         async handleDelete(address: string) {
@@ -109,6 +112,8 @@ export default Vue.extend({
                         comment: this.$t('transactionsMultiSig.action_confirm_transaction').toString()
                     }
                 })
+
+                this.$router.push({ name: 'transactions-multisig', query: { walletId: this.walletId, addressIndex: '0' } })
             } catch { }
         }
     }

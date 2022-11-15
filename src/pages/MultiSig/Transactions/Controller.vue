@@ -79,7 +79,12 @@ export default Vue.extend({
             if (transaction.to === this.wallet.meta.addresses[0]) {
                 const sigHash = transaction.data.slice(0, 10)
                 if (Signatures[sigHash]) {
-                    transaction.decoded = abi.decodeParameters(Signatures[sigHash].inputs, '0x' + transaction.data.slice(10))
+                    const inputParameters = Signatures[sigHash].inputs.map(({ name }) => name)
+                    const parameters = abi.decodeParameters(Signatures[sigHash].inputs, '0x' + transaction.data.slice(10))
+                    transaction.parameters = inputParameters.reduce((map: { [key: string]: string }, name: string) => {
+                        map[name] = parameters[name] || null
+                        return map
+                    }, {})
                     transaction.fnName = Signatures[sigHash].name
                 }
             }
