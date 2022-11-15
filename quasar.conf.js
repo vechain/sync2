@@ -131,7 +131,8 @@ module.exports = configure(function (/* ctx */) {
       env: {
           APP_VERSION: JSON.stringify(appVersion),
           APP_BUILD: JSON.stringify(appBuild),
-          DIST_TAG: JSON.stringify(process.env.DIST_TAG)
+          DIST_TAG: JSON.stringify(process.env.DIST_TAG),
+          MULTISIG_DEPLOYMENT_URL: JSON.stringify(process.env.MULTISIG_DEPLOYMENT_URL)
       },
       vueRouterMode: 'hash', // available values: 'hash', 'history'
 

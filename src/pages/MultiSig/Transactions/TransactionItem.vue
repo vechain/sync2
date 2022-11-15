@@ -97,7 +97,7 @@ export default Vue.extend({
             if (this.transaction.fnName) {
                 title.push(this.transaction.fnName)
             } else {
-                title.push(this.transaction.to)
+                title.push(this.$t('common.transaction').toString())
             }
             return title.join(' ')
         }

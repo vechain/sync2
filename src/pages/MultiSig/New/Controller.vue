@@ -43,7 +43,8 @@ import PageContent from 'components/PageContent.vue'
 import PageAction from 'components/PageAction.vue'
 import PopSheets, { Sheet } from 'components/PopSheets.vue'
 import AddressInputDialog from './AddressInputDialog.vue'
-import { bytecode as MultiSigBytecode } from '../contract.json'
+import { openURL } from 'src/utils/open-url'
+import { bytecode as MultiSigBytecode, DeploymentAlternativeUrl } from '../const'
 
 const MAX_DEPLOY_BLOCK_WAIT = 12
 
@@ -145,6 +146,10 @@ export default Vue.extend({
                 }
                 this.loading = false
                 return
+            }
+
+            if (DeploymentAlternativeUrl) {
+                return openURL(DeploymentAlternativeUrl)
             }
 
             // build transaction for deployment

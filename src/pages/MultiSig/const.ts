@@ -51,4 +51,7 @@ export const Signatures: Signatures = {
     '0x20ea8d86': abiByName.revokeConfirmation
 }
 
+export const DeploymentAlternativeUrl = process.env.MULTISIG_DEPLOYMENT_URL
+export const bytecode = contractJson.bytecode
+
 export default abiByName
