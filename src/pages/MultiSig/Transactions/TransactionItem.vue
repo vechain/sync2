@@ -31,9 +31,9 @@
     </q-item>
     <q-item>
       <q-item-section>
-        <q-item-label caption>Value (wei)</q-item-label>
+        <q-item-label caption>Value</q-item-label>
         <q-item-label>
-          <amount-label :value="transaction.value" :fixed="0" />
+          <amount-label :value="transaction.value" decimals="18" />
         </q-item-label>
       </q-item-section>
     </q-item>
