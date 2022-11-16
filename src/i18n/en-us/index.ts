@@ -105,7 +105,7 @@ export default {
         tx_deploy_title: 'Deploy new Multi-Signature-Contract',
         msg_deploying: 'Deploying new Multi-Signature-Wallet',
         msg_deployment_failed: 'Deployment failed, please check the deployment transaction',
-        msg_intro: 'A Multi-Signature-Wallet is a Smart Contract deployed on the network. Initially it will have one owner (the deploying address). You need to add more owners after deployment',
+        msg_intro: 'A Multi-Signature-Wallet is a Smart Contract deployed on the network. Initially it will have one owner (the address you sign the deployment with). You need to add more owners after deployment.',
         label_address: 'Multi-Signature-Address',
         msg_invalid_address: 'Please enter a valid address',
         msg_invalid_address_checksum: 'Address checksum failed'
