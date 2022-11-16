@@ -30,6 +30,11 @@
             </page-content>
             <page-content size="xs">
                 <error-tip
+                        v-if="error"
+                        type="warning"
+                        :error="{name: error}"
+                    />
+                <error-tip
                     v-if="criticalError"
                     :error="criticalError"
                 />
@@ -43,7 +48,7 @@
             </page-content>
             <page-action class="q-mt-lg">
                 <q-btn
-                    v-if="criticalError"
+                    v-if="criticalError || error"
                     outline
                     color="primary"
                     :label="$t('common.close')"
@@ -79,6 +84,12 @@ export default Common.extend({
         criticalError(): Error | null {
             if (!this.wallet) {
                 return { name: this.$t('sign.label_critical_error').toString(), message: this.signerGroups.length > 0 ? this.$t('sign.msg_address_not_owned').toString() : this.$t('common.no_wallet').toString() }
+            }
+            return null
+        },
+        error(): string | null {
+            if (this.wallet && this.wallet.meta.type === 'multisig') {
+                return this.$t('common.no_multisig_support').toString()
             }
             return null
         }

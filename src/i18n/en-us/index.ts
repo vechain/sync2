@@ -28,6 +28,7 @@ export default {
         required_field: 'This field is required',
         something_wrong: 'Something is wrong',
         no_wallet: 'No wallet created yet',
+        no_multisig_support: 'Not supported by Multi-Signature-Wallets',
         invalid_input: 'Invalid input',
 
         // notify
