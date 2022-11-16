@@ -1,4 +1,6 @@
 import contractJson from './contract.json'
+import type { abi } from 'thor-devkit'
+
 interface AbiItem {
     anonymous?: boolean;
     constant?: boolean;
@@ -53,5 +55,43 @@ export const Signatures: Signatures = {
 
 export const DeploymentAlternativeUrl = process.env.MULTISIG_DEPLOYMENT_URL
 export const bytecode = contractJson.bytecode
+
+export const SubmitTransactionEvent: abi.Event.Definition = {
+    anonymous: false,
+    inputs: [
+        {
+            indexed: true,
+            internalType: 'address',
+            name: 'owner',
+            type: 'address'
+        },
+        {
+            indexed: true,
+            internalType: 'uint256',
+            name: 'txIndex',
+            type: 'uint256'
+        },
+        {
+            indexed: true,
+            internalType: 'address',
+            name: 'to',
+            type: 'address'
+        },
+        {
+            indexed: false,
+            internalType: 'uint256',
+            name: 'value',
+            type: 'uint256'
+        },
+        {
+            indexed: false,
+            internalType: 'bytes',
+            name: 'data',
+            type: 'bytes'
+        }
+    ],
+    name: 'SubmitTransaction',
+    type: 'event'
+}
 
 export default abiByName

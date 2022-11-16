@@ -6,20 +6,14 @@
                 <head-item :address="address" :name="wallet.meta.name" />
             </page-content>
             <page-content class="col">
-                <q-list>
-                    <async-resolve v-for="(index) in multiSigTransactions" tag="div"
-                        :promise="transactionDataForIndex(index)" v-slot="{ data }" :key="index">
-                        <q-separator v-if="index !== 0" inset="item" />
-                        <page-content v-if="!data" class="text-center">
-                            <q-spinner-dots />
-                        </page-content>
-                        <transaction-item v-if="data" :transaction="data" :confirmationsRequired="confirmationsRequired"
-                            :index="index" :confirmTransaction="handleConfirmTransaction(index)"
-                            :executeTransaction="handleExecuteTransaction(index)"
-                            :revokeConfirmation="handleRevokeConfirmation(index)"></transaction-item>
-
-                    </async-resolve>
-                </q-list>
+                <Logs
+                    :address="wallet.meta.addresses[0]"
+                    :signer="multiSigOwnerSigner"
+                    :gid="wallet.gid"
+                    :walletId="String(wallet.id)"
+                    :confirmationsRequired="confirmationsRequired"
+                    :pageSize="20"
+                />
             </page-content>
         </template>
     </div>
@@ -27,20 +21,17 @@
 <script lang="ts">
 import Vue from 'vue'
 import HeadItem from './HeadItem.vue'
-import AsyncResolve from 'components/AsyncResolve'
 import PageToolbar from 'components/PageToolbar.vue'
 import PageContent from 'components/PageContent.vue'
-import TransactionItem from './TransactionItem.vue'
-import Contract, { Signatures } from '../const'
-import { abi } from 'thor-devkit'
+import Logs from './Logs.vue'
+import Contract from '../const'
 
 export default Vue.extend({
     components: {
         HeadItem,
-        AsyncResolve,
         PageToolbar,
         PageContent,
-        TransactionItem
+        Logs
     },
     props: {
         walletId: String,
@@ -49,122 +40,6 @@ export default Vue.extend({
     data: () => {
         return {
             loading: true
-        }
-    },
-    methods: {
-        handleConfirmTransaction(index: number): Function {
-            return () => this.confirmTransaction(index)
-        },
-        handleExecuteTransaction(index: number): Function {
-            return () => this.executeTransaction(index)
-        },
-        handleRevokeConfirmation(index: number): Function {
-            return () => this.revokeConfirmation(index)
-        },
-        async transactionDataForIndex(index: number): Promise<object> {
-            if (!this.wallet) {
-                return { from: null, to: null, isConfirmed: false, data: null, value: 0 }
-            }
-
-            try {
-                const { decoded: transaction } = await this.thor
-                    .account(this.wallet.meta.addresses[0])
-                    .method(Contract.transactions)
-                    .call(index)
-
-                const { decoded: { 0: isConfirmed } } = await this.thor
-                    .account(this.wallet.meta.addresses[0])
-                    .method(Contract.isConfirmed)
-                    .call(index, this.multiSigOwnerSigner)
-
-                if (transaction.to === this.wallet.meta.addresses[0]) {
-                    const sigHash = transaction.data.slice(0, 10)
-                    if (Signatures[sigHash]) {
-                        try {
-                            const inputParameters = Signatures[sigHash].inputs.map(({ name }) => name)
-                            const parameters = abi.decodeParameters(Signatures[sigHash].inputs, '0x' + transaction.data.slice(10))
-                            transaction.parameters = inputParameters.reduce((map: { [key: string]: string }, name: string) => {
-                                map[name] = parameters[name] || null
-                                return map
-                            }, {})
-                            transaction.fnName = Signatures[sigHash].name
-                        } catch { }
-                    }
-                }
-
-                return { ...transaction, isConfirmed }
-            } catch {
-                return { from: null, to: null, isConfirmed: false, data: null, value: 0 }
-            }
-        },
-        async confirmTransaction(index: number) {
-            if (!this.multiSigOwnerSigner) {
-                return
-            }
-
-            try {
-                const clause = this.thor.account(this.wallet!.meta.addresses[0])
-                    .method(Contract.confirmTransaction)
-                    .asClause(index)
-
-                await this.$signTx(this.wallet!.gid, {
-                    message: [clause],
-                    options: {
-                        signer: this.multiSigOwnerSigner,
-                        comment: this.$t('transactionsMultiSig.action_confirm_transaction').toString()
-                    }
-                })
-
-                this.$router.push({ name: 'sign-success-multisig', query: { walletId: this.walletId, addressIndex: '0' } })
-            } catch (err) {
-
-            }
-        },
-        async executeTransaction(index: number) {
-            if (!this.multiSigOwnerSigner) {
-                return
-            }
-
-            try {
-                const clause = this.thor.account(this.wallet!.meta.addresses[0])
-                    .method(Contract.executeTransaction)
-                    .asClause(index)
-
-                await this.$signTx(this.wallet!.gid, {
-                    message: [clause],
-                    options: {
-                        signer: this.multiSigOwnerSigner,
-                        comment: this.$t('transactionsMultiSig.action_execute_transaction').toString()
-                    }
-                })
-            } catch (err) {
-
-            }
-
-            this.$router.push({ name: 'sign-success-multisig', query: { walletId: this.walletId, addressIndex: '0' } })
-        },
-        async revokeConfirmation(index: number) {
-            if (!this.multiSigOwnerSigner) {
-                return
-            }
-
-            try {
-                const clause = this.thor.account(this.wallet!.meta.addresses[0])
-                    .method(Contract.revokeConfirmation)
-                    .asClause(index)
-
-                await this.$signTx(this.wallet!.gid, {
-                    message: [clause],
-                    options: {
-                        signer: this.multiSigOwnerSigner,
-                        comment: this.$t('transactionsMultiSig.action_revoke_confirmation').toString()
-                    }
-                })
-
-                this.$router.push({ name: 'sign-success-multisig', query: { walletId: this.walletId, addressIndex: '0' } })
-            } catch (err) {
-
-            }
         }
     },
     asyncComputed: {
