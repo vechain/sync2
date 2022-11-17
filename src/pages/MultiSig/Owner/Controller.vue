@@ -9,7 +9,7 @@
                 <q-item-section side>
                     <q-btn @click="onChangeRequiredConfirmations" flat>
                         {{confirmationsRequired}} / {{owners.length}}
-                        <q-icon name="edit" size="xs" />
+                        <q-icon name="edit" size="xs" style="margin-left: 1rem"/>
                     </q-btn>
                 </q-item-section>
             </q-item>
@@ -28,7 +28,9 @@
                     <q-separator v-if="index !== 0" :key="ownerAddress + 'sep'" inset="item" />
                     <q-item :key="ownerAddress">
                         <q-item-section>
-                            <q-item-label lines="1">{{ ownerAddress }}</q-item-label>
+                            <q-item-label style="word-break:break-all">
+                                <address-label :addr="ownerAddress" full />
+                            </q-item-label>
                         </q-item-section>
                         <q-btn @click="handleDelete(ownerAddress)" unelevated color="secondary" flat round
                             icon="delete" />
@@ -45,12 +47,13 @@
 import Vue from 'vue'
 import PageContent from 'components/PageContent.vue'
 import PageToolbar from 'components/PageToolbar.vue'
+import AddressLabel from 'components/AddressLabel.vue'
 import AddDialog from './AddDialog.vue'
 import ChangeConfirmationsRequiredDialog from './ChangeConfirmationsRequiredDialog.vue'
 import Contract from '../const'
 
 export default Vue.extend({
-    components: { PageContent, PageToolbar },
+    components: { PageContent, PageToolbar, AddressLabel },
     props: {
         walletId: String
     },
