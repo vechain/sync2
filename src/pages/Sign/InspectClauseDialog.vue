@@ -57,7 +57,20 @@
                         </q-item-label>
                     </q-item-section>
                 </q-item>
-
+                <q-item v-if="decodedData">
+                    <q-item-section>
+                        <q-item-label>
+                            <q-input
+                                dense
+                                class="monospace"
+                                type="textarea"
+                                standout
+                                readonly
+                                :value="decodedData"
+                            />
+                        </q-item-label>
+                    </q-item-section>
+                </q-item>
             </q-list>
         </q-card>
     </q-dialog>
@@ -67,6 +80,9 @@ import Vue from 'vue'
 import { QDialog } from 'quasar'
 import AddressLabel from 'src/components/AddressLabel.vue'
 import AmountLabel from 'src/components/AmountLabel.vue'
+import { abi } from 'thor-devkit'
+import axios from 'axios'
+
 export default Vue.extend({
     components: { AddressLabel, AmountLabel },
     props: {
@@ -78,6 +94,33 @@ export default Vue.extend({
         show() { (this.$refs.dialog as QDialog).show() },
         // method is REQUIRED by $q.dialog
         hide() { (this.$refs.dialog as QDialog).hide() }
+    },
+    asyncComputed: {
+        async decodedData(): Promise<string | null> {
+            if (!this.clause.data || this.clause.data.length <= 2) {
+                return null
+            }
+
+            const signature = this.clause.data.slice(0, 10)
+            const data = this.clause.data.slice(10)
+
+            try {
+                const response = await axios.get(`https://b32.vecha.in/q/${signature}.json`, { transformResponse: data => data, timeout: 3 * 1000 })
+                const abis = JSON.parse(response.data)
+
+                // try to decode each abi, it may fail on signature collision
+                // return first match
+                for (const abiItem of abis) {
+                    try {
+                        const decodedData = abi.decodeParameters(abiItem.inputs, `0x${data}`)
+                        const readableInputs = abiItem.inputs.map((input: abi.Function.Definition, index: number) => `(${input.type}) ${input.name} ${decodedData[input.name || String(index)]}`)
+                        return `${abiItem.name} (\n${readableInputs.map((line: string) => `  ${line}`).join(', \n')}\n)`
+                    } catch {}
+                }
+            } catch {}
+
+            return null
+        }
     }
 })
 </script>
