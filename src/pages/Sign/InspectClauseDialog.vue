@@ -112,7 +112,12 @@ export default Vue.extend({
         // method is REQUIRED by $q.dialog
         show() { (this.$refs.dialog as QDialog).show() },
         // method is REQUIRED by $q.dialog
-        hide() { (this.$refs.dialog as QDialog).hide() }
+        hide() { (this.$refs.dialog as QDialog).hide() },
+        decodeDataToReadableString(abiItem: abi.Function.Definition, data: string) {
+            const decodedData = abi.decodeParameters(abiItem.inputs, `0x${data}`)
+            const readableInputs = abiItem.inputs.map((input: abi.Function.Parameter, index: number) => `(${input.type}) ${input.name} ${decodedData[input.name || String(index)]}`)
+            return `${abiItem.name} (\n${readableInputs.map((line: string) => `  ${line}`).join(', \n')}\n)`
+        }
     },
     asyncComputed: {
         async decodedData(): Promise<string | null> {
@@ -123,6 +128,13 @@ export default Vue.extend({
             const signature = this.clause.data.slice(0, 10)
             const data = this.clause.data.slice(10)
 
+            if (this.clause.abi) {
+                try {
+                    return this.decodeDataToReadableString(this.clause.abi as abi.Function.Definition, data)
+                } catch {}
+            }
+
+            // ignore silently missing data on ba32
             try {
                 const response = await axios.get(`https://b32.vecha.in/q/${signature}.json`, { transformResponse: data => data, timeout: 3 * 1000 })
                 const abis = JSON.parse(response.data)
@@ -131,9 +143,7 @@ export default Vue.extend({
                 // return first match
                 for (const abiItem of abis) {
                     try {
-                        const decodedData = abi.decodeParameters(abiItem.inputs, `0x${data}`)
-                        const readableInputs = abiItem.inputs.map((input: abi.Function.Definition, index: number) => `(${input.type}) ${input.name} ${decodedData[input.name || String(index)]}`)
-                        return `${abiItem.name} (\n${readableInputs.map((line: string) => `  ${line}`).join(', \n')}\n)`
+                        return this.decodeDataToReadableString(abiItem, data)
                     } catch {}
                 }
             } catch {}
