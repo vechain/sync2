@@ -42,33 +42,47 @@
                 </q-item>
                 <q-item>
                     <q-item-section>
-                        <q-item-label caption>Data</q-item-label>
-                        <q-item-label>
-                            <q-input
-                                v-if="clause.data && clause.data.length > 2"
-                                dense
-                                class="monospace"
-                                type="textarea"
-                                standout
-                                readonly
-                                :value="clause.data"
-                            />
-                            <template v-else>N/A</template>
-                        </q-item-label>
-                    </q-item-section>
-                </q-item>
-                <q-item v-if="decodedData">
-                    <q-item-section>
-                        <q-item-label>
-                            <q-input
-                                dense
-                                class="monospace"
-                                type="textarea"
-                                standout
-                                readonly
-                                :value="decodedData"
-                            />
-                        </q-item-label>
+                        <q-tabs v-model="dataPanel" no-caps>
+                            <q-tab default name="data" label="Data" />
+                            <q-tab name="decoded" label="Decoded" />
+                            <q-tab name="utf-8" label="UTF-8" />
+                        </q-tabs>
+                        <q-tab-panels animated v-model="dataPanel">
+                            <q-tab-panel name="data">
+                                <q-input
+                                    v-if="clause.data && clause.data.length > 2"
+                                    dense
+                                    class="monospace"
+                                    type="textarea"
+                                    standout
+                                    readonly
+                                    :value="clause.data"
+                                />
+                                <template v-else>N/A</template>
+                            </q-tab-panel>
+                            <q-tab-panel name="decoded">
+                                <q-input
+                                    v-if="decodedData"
+                                    dense
+                                    class="monospace"
+                                    type="textarea"
+                                    standout
+                                    readonly
+                                    :value="decodedData"
+                                />
+                                <template v-else>Unable to decode data</template>
+                            </q-tab-panel>
+                            <q-tab-panel name="utf-8">
+                                <q-input
+                                    dense
+                                    class="monospace"
+                                    type="textarea"
+                                    standout
+                                    readonly
+                                    :value="decodedDataString"
+                                />
+                            </q-tab-panel>
+                        </q-tab-panels>
                     </q-item-section>
                 </q-item>
             </q-list>
@@ -77,17 +91,22 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import { QDialog } from 'quasar'
+import { QDialog, QTabs, QTab, QTabPanels, QTabPanel } from 'quasar'
 import AddressLabel from 'src/components/AddressLabel.vue'
 import AmountLabel from 'src/components/AmountLabel.vue'
 import { abi } from 'thor-devkit'
 import axios from 'axios'
 
 export default Vue.extend({
-    components: { AddressLabel, AmountLabel },
+    components: { AddressLabel, AmountLabel, QTabs, QTab, QTabPanels, QTabPanel },
     props: {
         index: Number,
         clause: Object as () => Connex.Vendor.TxMessage[0]
+    },
+    data() {
+        return {
+            dataPanel: 'data' as 'data' | 'decoded' | 'utf-8'
+        }
     },
     methods: {
         // method is REQUIRED by $q.dialog
@@ -120,6 +139,15 @@ export default Vue.extend({
             } catch {}
 
             return null
+        }
+    },
+    computed: {
+        decodedDataString() {
+            if (!this.clause.data || this.clause.data.length <= 2) {
+                return ''
+            }
+
+            return Buffer.from(this.clause.data.slice(10), 'hex').toString('utf-8')
         }
     }
 })
