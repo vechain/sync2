@@ -42,7 +42,7 @@
                 </q-item>
                 <q-item>
                     <q-item-section>
-                        <q-tabs v-model="dataPanel" no-caps>
+                        <q-tabs class="text-grey" active-color="primary" align="left" dense v-model="dataPanel" no-caps>
                             <q-tab default name="data" label="Data" />
                             <q-tab name="decoded" label="Decoded" />
                             <q-tab name="utf-8" label="UTF-8" />
@@ -91,14 +91,14 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import { QDialog, QTabs, QTab, QTabPanels, QTabPanel } from 'quasar'
+import { QDialog} from 'quasar'
 import AddressLabel from 'src/components/AddressLabel.vue'
 import AmountLabel from 'src/components/AmountLabel.vue'
 import { abi } from 'thor-devkit'
 import axios from 'axios'
 
 export default Vue.extend({
-    components: { AddressLabel, AmountLabel, QTabs, QTab, QTabPanels, QTabPanel },
+    components: { AddressLabel, AmountLabel },
     props: {
         index: Number,
         clause: Object as () => Connex.Vendor.TxMessage[0]
