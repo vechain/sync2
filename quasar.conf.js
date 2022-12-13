@@ -94,6 +94,8 @@ module.exports = configure(function (/* ctx */) {
         "QDialog",
         "QInput",
         "QForm",
+        "QTabs",
+        "QTab",
         "QTabPanels",
         "QTabPanel",
         "QToggle",
