@@ -42,7 +42,7 @@
                 </q-item>
                 <q-item>
                     <q-item-section>
-                        <q-tabs class="text-grey" active-color="primary" align="left" dense v-model="dataPanel" no-caps>
+                        <q-tabs breakpoint="350" class="text-grey" active-color="primary" align="left" dense v-model="dataPanel" no-caps>
                             <q-tab default name="data" label="Data" />
                             <q-tab name="decoded" label="Decoded" />
                             <q-tab name="utf-8" label="UTF-8" />
@@ -50,10 +50,12 @@
                         <q-tab-panels animated v-model="dataPanel">
                             <q-tab-panel name="data">
                                 <q-input
-                                    v-if="clause.data"
+                                    square
+                                    v-if="clause.data && clause.data.length > 2"
                                     dense
                                     class="monospace"
                                     type="textarea"
+                                    :input-style="{height: '146px'}"
                                     standout
                                     readonly
                                     :value="clause.data"
@@ -61,27 +63,20 @@
                                 <template v-else>N/A</template>
                             </q-tab-panel>
                             <q-tab-panel name="decoded">
-                                <q-input
-                                    v-if="decodedObject"
-                                    dense
-                                    class="monospace"
-                                    type="textarea"
-                                    standout
-                                    readonly
-                                    :value="decodedObject"
-                                />
+                                <div v-if="decodedObject"
+                                    class="monospace q-pa-sm tab-content" >
+                                    <strong>function {{decodedObject.name}}({{ decodedObject.params.map(i => i.name + ': ' +i.type).join(', ') }})</strong>
+                                    <div class="q-pt-xs" v-for="p in decodedObject.params" :key="p.name + p.value">
+                                        <span class="text-grey-7">{{p.name}}: </span>
+                                        <span>{{p.value}}</span>
+                                    </div>
+                                </div>
                                 <template v-else>Unable to decode data</template>
                             </q-tab-panel>
                             <q-tab-panel name="utf-8">
-                                <q-input
-                                    v-if="decodedString"
-                                    dense
-                                    class="monospace"
-                                    type="textarea"
-                                    standout
-                                    readonly
-                                    :value="decodedString"
-                                />
+                                <div class="monospace q-pa-sm tab-content"
+                                    v-if="decodedString">{{decodedString}}</div>
+                                <template v-else>N/A</template>
                             </q-tab-panel>
                         </q-tab-panels>
                     </q-item-section>
@@ -97,6 +92,23 @@ import AddressLabel from 'src/components/AddressLabel.vue'
 import AmountLabel from 'src/components/AmountLabel.vue'
 import { abi } from 'thor-devkit'
 import axios from 'axios'
+
+async function queryAbi(signature: string): Promise<abi.Function.Definition | null> {
+    let abi = JSON.parse(localStorage.getItem(signature) || 'null')
+    if (!abi) {
+        try {
+            const response = await axios.get(`https://b32.vecha.in/q/${signature}.json`, { timeout: 3 * 1000 })
+            const abis = response.data
+            localStorage.setItem(signature, JSON.stringify(abis[0]))
+            abi = abis[0]
+        } catch (error) {
+            console.error(error)
+            abi = null
+        }
+    }
+
+    return abi
+}
 
 export default Vue.extend({
     components: { AddressLabel, AmountLabel },
@@ -116,12 +128,20 @@ export default Vue.extend({
         hide() { (this.$refs.dialog as QDialog).hide() },
         decodeDataToReadable(abiItem: abi.Function.Definition, data: string) {
             const decodedData = abi.decodeParameters(abiItem.inputs, `0x${data}`)
-            const readableInputs = abiItem.inputs.map((input: abi.Function.Parameter, index: number) => `(${input.type}) ${input.name} ${decodedData[input.name || String(index)]}`)
-            return `${abiItem.name} (\n${readableInputs.map((line: string) => `  ${line}`).join(', \n')}\n)`
+            return {
+                name: abiItem.name,
+                params: abiItem.inputs.map((p, i) => {
+                    return {
+                        name: p.name,
+                        type: p.type,
+                        value: decodedData[i]
+                    }
+                })
+            }
         }
     },
     asyncComputed: {
-        async decodedObject(): Promise<string | null> {
+        async decodedObject(): Promise<any | null> {
             if (!this.clause.data || this.clause.data.length <= 10) {
                 return null
             }
@@ -132,22 +152,16 @@ export default Vue.extend({
             if (this.clause.abi) {
                 try {
                     return this.decodeDataToReadable(this.clause.abi as abi.Function.Definition, data)
-                } catch {}
+                } catch (e) { console.log(e) }
             }
 
-            // ignore silently missing data on ba32
-            try {
-                const response = await axios.get(`https://b32.vecha.in/q/${signature}.json`, { transformResponse: data => data, timeout: 3 * 1000 })
-                const abis = JSON.parse(response.data)
-
-                // try to decode each abi, it may fail on signature collision
-                // return first match
-                for (const abiItem of abis) {
-                    try {
-                        return this.decodeDataToReadable(abiItem, data)
-                    } catch {}
-                }
-            } catch {}
+            // double check
+            const abiItem = await queryAbi(signature)
+            if (abiItem) {
+                try {
+                    return this.decodeDataToReadable(abiItem, data)
+                } catch (e) { console.log(e) }
+            }
 
             return null
         }
@@ -163,3 +177,15 @@ export default Vue.extend({
     }
 })
 </script>
+<style>
+.tab-content {
+    width: 100%;
+    white-space: break-spaces;
+    word-break: break-all;
+    font-size: 14px;
+    height: 150px;
+    overflow: auto;
+    background-color: #0000000d;
+    border: 1px dashed #b8b8b8;
+}
+</style>
