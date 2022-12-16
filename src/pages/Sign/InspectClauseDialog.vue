@@ -49,14 +49,21 @@
                         </q-tabs>
                         <q-tab-panels animated v-model="dataPanel">
                             <q-tab-panel name="data">
-                                <div v-if="clause.data"
-                                    class="monospace bg-grey-3 q-pa-sm tab-content"
-                                >{{clause.data}}</div>
+                                <q-input
+                                    square
+                                    v-if="clause.data"
+                                    dense
+                                    class="monospace"
+                                    type="textarea"
+                                    standout
+                                    readonly
+                                    :value="clause.data"
+                                />
                                 <template v-else>N/A</template>
                             </q-tab-panel>
                             <q-tab-panel name="decoded">
                                 <div v-if="decodedObject"
-                                    class="monospace bg-grey-3 q-pa-sm tab-content" >
+                                    class="monospace q-pa-sm tab-content" >
                                     <strong>function {{decodedObject.name}}({{ decodedObject.params.map(i => i.name + ': ' +i.type).join(', ') }})</strong>
                                     <div class="q-pt-xs" v-for="p in decodedObject.params" :key="p.name + p.value">
                                         <span class="text-grey-7">{{p.name}}: </span>
@@ -66,7 +73,7 @@
                                 <template v-else>Unable to decode data</template>
                             </q-tab-panel>
                             <q-tab-panel name="utf-8">
-                                <div class="monospace bg-grey-3 q-pa-sm tab-content"
+                                <div class="monospace q-pa-sm tab-content"
                                     v-if="decodedString">{{decodedString}}</div>
                             </q-tab-panel>
                         </q-tab-panels>
@@ -176,6 +183,7 @@ export default Vue.extend({
     font-size: 14px;
     height: 150px;
     overflow: auto;
-    border: 1px dashed #9e9e9e;
+    background-color: #0000000d;
+    border: 1px dashed #b8b8b8;
 }
 </style>
