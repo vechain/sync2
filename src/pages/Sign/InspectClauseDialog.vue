@@ -55,6 +55,7 @@
                                     dense
                                     class="monospace"
                                     type="textarea"
+                                    :input-style="{height: '146px'}"
                                     standout
                                     readonly
                                     :value="clause.data"
