@@ -51,7 +51,7 @@
                             <q-tab-panel name="data">
                                 <q-input
                                     square
-                                    v-if="clause.data"
+                                    v-if="clause.data && clause.data.length > 2"
                                     dense
                                     class="monospace"
                                     type="textarea"
@@ -75,6 +75,7 @@
                             <q-tab-panel name="utf-8">
                                 <div class="monospace q-pa-sm tab-content"
                                     v-if="decodedString">{{decodedString}}</div>
+                                <template v-else>N/A</template>
                             </q-tab-panel>
                         </q-tab-panels>
                     </q-item-section>
