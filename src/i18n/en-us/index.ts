@@ -43,8 +43,7 @@ export default {
         agreement: 'Agreement',
         unknown: 'Unknown',
         sent: 'Sent',
-        received: 'Received',
-        bio_auth: 'Biometric Authentication'
+        received: 'Received'
     },
     disclaimer: {
         msg_unstable_terms: 'Note: You are currently using the unstable version of Sync2. Please avoid using this version to manage any real assets on the mainnet. Unstable version could contain severe bugs and hidden features that may result in serious data loss. The purpose of this version is to allow developers and some users to preview upcoming features and provide feedback for further improvement and development.',
@@ -225,5 +224,9 @@ export default {
         msg_wrong_device: 'Wrong device',
         msg_unknown_data: 'Unknown data type',
         label_link: 'Link'
+    },
+    bioAuth: {
+        title: 'Biometric Authentication',
+        msg_auth_failed: 'Authenticate failed,Please try again'
     }
 }

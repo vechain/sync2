@@ -15,3 +15,7 @@ declare interface Window {
 declare interface CordovaPlugins {
     clipboard
 }
+
+declare interface Cordova {
+    InAppBrowser: InAppBrowser;
+}

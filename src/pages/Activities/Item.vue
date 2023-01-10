@@ -121,7 +121,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import { openURL } from 'quasar'
+import { openURL } from 'src/utils/open-url'
 import { urls, genesises } from 'src/consts'
 import AddressLabel from 'src/components/AddressLabel.vue'
 import { formatDate } from 'src/utils/format'

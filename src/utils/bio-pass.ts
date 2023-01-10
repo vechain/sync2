@@ -10,6 +10,9 @@ export interface BioPass {
 
     /** recall the saved secret */
     recall(title: string, cancelButtonTitle: string): Promise<string>
+
+    /** show authentication dialogue */
+    show(title: string, cancelButtonTitle: string): Promise<void>
 }
 
 export namespace BioPass {
@@ -44,6 +47,15 @@ export namespace BioPass {
                 recall: (title, cancelButtonTitle) => {
                     return new Promise<string>((resolve, reject) => {
                         fp.loadBiometricSecret({
+                            title,
+                            cancelButtonTitle,
+                            disableBackup: true
+                        }, resolve, reject)
+                    })
+                },
+                show: (title, cancelButtonTitle) => {
+                    return new Promise<void>((resolve, reject) => {
+                        fp.show({
                             title,
                             cancelButtonTitle,
                             disableBackup: true

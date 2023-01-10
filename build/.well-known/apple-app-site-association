@@ -1,0 +1,13 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "GM5L34275W.org.vechain.sync2",
+        "paths": [
+          "*"
+        ]
+      }
+    ]
+  }
+}

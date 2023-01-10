@@ -27,7 +27,7 @@
                 <template v-if="bioPass">
                     <item
                         icon="fingerprint"
-                        :title="$t('common.bio_auth')"
+                        :title="$t('bioAuth.title')"
                     >
                         <q-toggle
                             color="green"
@@ -69,7 +69,7 @@ import LanguageListPopup from 'pages/LanguageListPopup.vue'
 import PageToolbar from 'components/PageToolbar.vue'
 import PageContent from 'src/components/PageContent.vue'
 import { kdfEncrypt } from 'src/core/vault'
-import { openURL } from 'quasar'
+import { openURL } from 'src/utils/open-url'
 
 export default Vue.extend({
     components: { Item, LanguageListPopup, PageToolbar, PageContent },
@@ -92,14 +92,30 @@ export default Vue.extend({
             try {
                 if (newVal) {
                     const umk = await this.$authenticate()
+                    if (this.$q.platform.is.ios) {
+                        await bioPass.show(
+                            this.$t('bioAuth.title').toString(),
+                            this.$t('common.cancel').toString()
+                        )
+                    }
                     await bioPass.save(
-                        this.$t('common.bio_auth').toString(),
+                        this.$t('bioAuth.title').toString(),
                         this.$t('common.cancel').toString(),
                         umk.toString('hex'))
                 }
                 await this.$svc.config.setBioPassOn(newVal)
             } catch (err) {
-                console.warn(err)
+                const e = err as {code?: number, message?: string}
+                if (e?.code === -102) { /* BIOMETRIC_AUTHENTICATION_FAILED */
+                    this.$q.notify({
+                        textColor: 'white',
+                        position: 'top',
+                        type: 'warning',
+                        message: this.$t('bioAuth.msg_auth_failed').toString()
+                    })
+                } else {
+                    console.warn(err)
+                }
             }
         },
         async onClickChangePassword() {

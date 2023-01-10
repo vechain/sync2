@@ -43,8 +43,7 @@ export default {
         agreement: '协议',
         unknown: '未知',
         sent: '已发送',
-        received: '已接收',
-        bio_auth: '生物识别验证'
+        received: '已接收'
     },
     disclaimer: {
         msg_unstable_terms: '注意：您当前使用的是非稳定版本的Sync2，请避免使用此版本管理包含主网资产的钱包。非稳定版本可能存在严重的缺陷或包含未开发完成的功能，并可能带来数据丢失的风险。它的目的是为了让开发者和部分用户提前预览新功能，帮助发现问题，以达到持续改进。',
@@ -224,5 +223,9 @@ export default {
         msg_wrong_device: '错误设备',
         msg_unknown_data: '未知数据类型',
         label_link: '绑定'
+    },
+    bioAuth: {
+        title: '生物识别验证',
+        msg_auth_failed: '身份验证失败,请重试'
     }
 }
