@@ -105,7 +105,8 @@ module.exports = configure(function (/* ctx */) {
         "QChip",
         "QCarousel",
         "QCarouselSlide",
-        "QCheckbox"
+        "QCheckbox",
+        "QOptionGroup"
       ],
       directives: [
         "TouchPan",
