@@ -93,7 +93,7 @@ export default Vue.extend({
             name: '',
             gid: this.defaultGid || defaultGid,
             error: '',
-            importState: { words: '' }
+            importState: { words: '', path: '' }
         }
     },
     computed: {
@@ -198,10 +198,11 @@ export default Vue.extend({
             }
 
             let words: string[] | undefined
+            let path: string
             if (type === 'import') {
-                // get user input words
+                // get user input words and path
                 try {
-                    words = await this.$dialog<string[]>({
+                    [words, path] = await this.$dialog<[string[], string]>({
                         component: MnemonicInputDialog,
                         state: this.importState
                     })
@@ -216,6 +217,7 @@ export default Vue.extend({
                     await this.$loading(async () => {
                         const vault = Vault.createHD(
                             words || await Vault.generateMnemonic(wordsCount / 3 * 4),
+                            path,
                             umk)
                         const node0 = vault.derive(0)
                         await this.$svc.wallet.insert({

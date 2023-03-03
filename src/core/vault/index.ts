@@ -1,5 +1,6 @@
-import { HDNode, mnemonic, secp256k1 } from 'thor-devkit'
+import { mnemonic, secp256k1 } from 'thor-devkit'
 import { newVault } from './vault'
+import { fromMnemonic } from './rcMnemonic'
 import { encrypt, secureRNG } from './cipher'
 
 export * from './cipher'
@@ -65,8 +66,8 @@ export namespace Vault {
      * @param words mnemonic words
      * @param key the cipher key
      */
-    export function createHD(words: string[], key: Buffer): Vault {
-        const root = HDNode.fromMnemonic(words)
+    export function createHD(words: string[], path: string, key: Buffer): Vault {
+        const root = fromMnemonic(words, path)
         // be aware that hd key is utf-8 encoded
         const clearText = Buffer.from(words.join(' '), 'utf8')
         const glob = encrypt(clearText, key)
