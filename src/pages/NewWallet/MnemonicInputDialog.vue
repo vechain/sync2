@@ -19,23 +19,23 @@
                     :error-message="error"
                     no-error-icon
                 />
-                <q-expansion-item label="Advance" dense>
+                <q-expansion-item :label="$t('newWallet.label_advance')" dense>
                     <q-card class="q-gutter-sm">
                         <q-card-section>
                             <q-option-group class="q-mb-md" dense @input="onPathTypeChange" inline v-model="pathType" :options="options" />
                             <q-input
                                 outlined
                                 v-model.trim="state.path"
-                                label="Derivation path"
+                                :label= "$t('newWallet.label_path')"
                                 stack-label
-                                :readonly="pathType != 'custom'"
+                                :readonly="pathType !== 'custom'"
                                 type="text"
                                 ref="inputPath"
                                 :prefix="prefix"
                                 :error="!!pathError"
                                 :error-message="pathError"
                                 placeholder="0'/0'/0"
-                                :hint=" pathType === 'custom' ? `example: m/44'/818'/0'/0` : '' ">
+                                :hint=" pathType === 'custom' ? `${this.$t('newWallet.msg_example')}: m/44'/818'/0'/0` : '' ">
                             </q-input>
                         </q-card-section>
                     </q-card>
@@ -79,20 +79,7 @@ export default Vue.extend({
             },
             prefix: PREFIX,
             pathType: 'vet' as 'vet' | 'eth' | 'custom',
-            options: [
-                {
-                    label: 'VeChain',
-                    value: 'vet'
-                },
-                {
-                    label: 'Eth Ledger',
-                    value: 'eth'
-                },
-                {
-                    label: 'Custom',
-                    value: 'custom'
-                }
-            ],
+            options: null as unknown as any[],
             error: '',
             pathError: ''
         }
@@ -104,6 +91,20 @@ export default Vue.extend({
     },
     created() {
         this.state.path = VET_DERIVATION_PATH
+        this.options = [
+                {
+                    label: 'VeChain',
+                    value: 'vet'
+                },
+                {
+                    label: 'Eth Ledger',
+                    value: 'eth'
+                },
+                {
+                    label: this.$t('newWallet.action_custom_path').toString(),
+                    value: 'custom'
+                }
+            ]
     },
     methods: {
         // method is REQUIRED by $q.dialog
@@ -116,8 +117,13 @@ export default Vue.extend({
         },
         onPathTypeChange(v: 'vet' | 'eth' | 'custom') {
             if (v === 'custom') {
-                this.state.path = ``
-                this.$refs.inputPath.focus()
+                this.state.path = ``;
+                const input = (this.$refs.inputPath as Vue).$el.getElementsByTagName('input')[0]
+                this.$nextTick(
+                    () => {
+                        input.focus()
+                    }
+                )
             } else {
                 this.state.path = this.paths[v]
             }
@@ -153,8 +159,7 @@ export default Vue.extend({
                 if (error.message === 'm') {
                     this.error = this.$t('newWallet.msg_mnemonic_error').toString()
                 } else if (error.message === 'p') {
-                    // TODO error msg
-                    this.pathError = this.$t('invalid path').toString()
+                    this.pathError = this.$t('newWallet.msg_invalid_path').toString()
                 }
             }
         }

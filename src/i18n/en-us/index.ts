@@ -92,6 +92,11 @@ export default {
         action_import: 'Import',
         label_wallet_name: 'Wallet Name',
         label_mnemonic: 'Please enter your mnemonic words',
+        label_advance: 'Advance',
+        action_custom_path: 'Custom',
+        label_path: 'Path',
+        msg_example: 'Example',
+        msg_invalid_path: 'Invalid Path',
         label_ledger_user: 'Ledger user?',
         action_ledger_link: 'Link Now'
     },
