@@ -141,7 +141,7 @@ export default Vue.extend({
         }
     },
     asyncComputed: {
-        async decodedObject(): Promise<any | null> {
+        async decodedObject(): Promise<object|null> {
             if (!this.clause.data || this.clause.data.length <= 10) {
                 return null
             }
