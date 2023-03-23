@@ -217,8 +217,8 @@ export default Vue.extend({
                     await this.$loading(async () => {
                         const vault = Vault.createHD(
                             words || await Vault.generateMnemonic(wordsCount / 3 * 4),
-                            path,
-                            umk)
+                            umk,
+                            path)
                         const node0 = vault.derive(0)
                         await this.$svc.wallet.insert({
                             gid: this.gid,
