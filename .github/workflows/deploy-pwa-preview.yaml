@@ -37,9 +37,6 @@ jobs:
       - name: Build Application
         run: npx quasar build -m pwa
 
-      - name: Copy .well-known folder to web root
-        run: cp -r build/.well-known dist/pwa/
-
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
