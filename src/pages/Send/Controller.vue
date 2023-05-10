@@ -160,8 +160,14 @@ export default Vue.extend({
             return !(v !== v.toLowerCase() && address.toChecksumed(v) !== v)
         },
         balanceCheck(v: string): boolean {
-            const regexp = new RegExp(`^(([1-9]{1}\\d*)|(0{1}))(\\.\\d{1,${this.currentToken!.decimals}})?$`)
-            return regexp.test(v)
+            let pattern = '^(([1-9]{1}\\d*)|(0{1}))'
+            if (this.currentToken!.decimals > 0) {
+                pattern += `(\\.\\d{1,${this.currentToken!.decimals}})?$`
+            } else {
+                pattern += '$'
+            }
+            const regexp = new RegExp(pattern)
+            return regexp.test(v) ? parseFloat(v) > 0 : false
         },
         validate(): boolean {
             this.errors.to = this.isAddress(this.to)
