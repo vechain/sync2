@@ -1,6 +1,6 @@
 {
   "name": "org.vechain.sync2",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "description": "VeChain Sync2",
   "productName": "Sync2",
   "cordovaId": "org.vechain.sync2",
