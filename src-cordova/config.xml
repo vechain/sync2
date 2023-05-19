@@ -88,4 +88,5 @@
     <preference name="KeyboardResizeMode" value="native" />
     <preference name="SplashMaintainAspectRatio" value="true" />
     <preference name="ShowSplashScreenSpinner" value="false" />
+    <preference name="AndroidInsecureFileModeEnabled" value="true" />
 </widget>
