@@ -22,21 +22,17 @@
     "cordova-plugin-ionic-keyboard": "2.2.0",
     "cordova-plugin-ionic-webview": "^5.0.0",
     "cordova-plugin-qrscanner": "git+https://github.com/qianbin/cordova-plugin-qrscanner.git",
-    "cordova-plugin-splashscreen": "^6.0.0",
     "cordova-plugin-statusbar": "^2.4.3",
-    "cordova-plugin-whitelist": "^1.3.4",
     "cordova-sqlite-storage": "^5.0.0",
     "ionic-plugin-deeplinks": "git+https://github.com/libotony/ionic-plugin-deeplinks.git"
   },
   "cordova": {
     "plugins": {
-      "cordova-plugin-whitelist": {},
       "cordova-plugin-ionic-webview": {
         "ANDROID_SUPPORT_ANNOTATIONS_VERSION": "27.+"
       },
       "cordova-sqlite-storage": {},
       "cordova-plugin-ionic-keyboard": {},
-      "cordova-plugin-splashscreen": {},
       "ionic-plugin-deeplinks": {
         "URL_SCHEME": "connex",
         "DEEPLINK_SCHEME": "https",
