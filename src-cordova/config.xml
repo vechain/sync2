@@ -20,18 +20,8 @@
         <icon background="res/android/drawable-xhdpi/ic_launcher_background.png" density="xhdpi" foreground="res/android/drawable-xhdpi/ic_launcher_foreground.png" />
         <icon background="res/android/drawable-xxhdpi/ic_launcher_background.png" density="xxhdpi" foreground="res/android/drawable-xxhdpi/ic_launcher_foreground.png" />
         <icon background="res/android/drawable-xxxhdpi/ic_launcher_background.png" density="xxxhdpi" foreground="res/android/drawable-xxxhdpi/ic_launcher_foreground.png" />
-        <splash density="land-ldpi" src="res/screen/android/splash-land-ldpi.png" />
-        <splash density="port-ldpi" src="res/screen/android/splash-port-ldpi.png" />
-        <splash density="land-mdpi" src="res/screen/android/splash-land-mdpi.png" />
-        <splash density="port-mdpi" src="res/screen/android/splash-port-mdpi.png" />
-        <splash density="land-hdpi" src="res/screen/android/splash-land-hdpi.png" />
-        <splash density="port-hdpi" src="res/screen/android/splash-port-hdpi.png" />
-        <splash density="land-xhdpi" src="res/screen/android/splash-land-xhdpi.png" />
-        <splash density="port-xhdpi" src="res/screen/android/splash-port-xhdpi.png" />
-        <splash density="land-xxhdpi" src="res/screen/android/splash-land-xxhdpi.png" />
-        <splash density="port-xxhdpi" src="res/screen/android/splash-port-xxhdpi.png" />
-        <splash density="land-xxxhdpi" src="res/screen/android/splash-land-xxxhdpi.png" />
-        <splash density="port-xxxhdpi" src="res/screen/android/splash-port-xxxhdpi.png" />
+        <preference name="AndroidWindowSplashScreenAnimatedIcon" value="res/screen/android/splash.xml" />
+        <preference name="AndroidWindowSplashScreenBackground" value="#0047AB" />
     </platform>
     <platform name="ios">
         <allow-intent href="itms:*" />
@@ -85,7 +75,6 @@
     <preference name="DisallowOverscroll" value="true" />
     <preference name="KeyboardResize" value="true" />
     <preference name="KeyboardResizeMode" value="native" />
-    <preference name="SplashMaintainAspectRatio" value="true" />
     <preference name="ShowSplashScreenSpinner" value="false" />
     <preference name="AndroidInsecureFileModeEnabled" value="true" />
 </widget>
