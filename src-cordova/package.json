@@ -21,10 +21,10 @@
     "cordova-plugin-inappbrowser": "^5.0.0",
     "cordova-plugin-ionic-keyboard": "2.2.0",
     "cordova-plugin-ionic-webview": "^5.0.0",
-    "cordova-plugin-qrscanner": "git+https://github.com/qianbin/cordova-plugin-qrscanner.git",
+    "cordova-plugin-qrscanner": "github:vechain/cordova-plugin-qrscanner",
     "cordova-plugin-statusbar": "^2.4.3",
     "cordova-sqlite-storage": "^5.0.0",
-    "ionic-plugin-deeplinks": "git+https://github.com/libotony/ionic-plugin-deeplinks.git"
+    "ionic-plugin-deeplinks": "github:vechain/ionic-plugin-deeplinks"
   },
   "cordova": {
     "plugins": {
@@ -44,8 +44,8 @@
       },
       "cordova-plugin-statusbar": {},
       "cordova-clipboard": {},
-      "cordova-plugin-qrscanner": {},
-      "cordova-plugin-inappbrowser": {}
+      "cordova-plugin-inappbrowser": {},
+      "cordova-plugin-qrscanner": {}
     },
     "platforms": [
       "android",
