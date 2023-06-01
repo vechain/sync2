@@ -83,35 +83,70 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Build
-        run: npx quasar build -m android
-        
+      - name: Build bundle
+        run: npx quasar build -m android -- -- --packageType=bundle
+
+      - name: Copy built aab file
+        run: |
+          mkdir -p dist/android/bundle
+          cp dist/cordova/android/bundle/release/*.aab dist/android/bundle/
+
+      - name: Build apk
+        run: npx quasar build -m android -- -- --packageType=apk
+
+      - name: Copy built apk file
+        run: |
+          mkdir -p dist/android/apk
+          cp dist/cordova/android/apk/release/*.apk dist/android/apk/
+
       - uses: r0adkll/sign-android-release@v1
         name: Sign APK
-        id: sign_app
+        id: sign_apk
         with:
-          releaseDirectory: dist/cordova/android/apk/release
+          releaseDirectory: dist/android/apk
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
+        env:
+          BUILD_TOOLS_VERSION: "32.0.0"
+
+      - uses: r0adkll/sign-android-release@v1
+        name: Sign Bundle
+        id: sign_bundle
+        with:
+          releaseDirectory: dist/android/bundle
+          signingKeyBase64: ${{ secrets.UPLOAD_KEY }}
+          alias: ${{ secrets.UPLOAD_KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.UPLOAD_KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.UPLOAD_KEY_PASSWORD }}
+        env:
+          BUILD_TOOLS_VERSION: "32.0.0"
 
       - name: Set up variable
         id: vars
         run: echo "tag=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
           
-      - name: Rename file
-        run: mv ${{steps.sign_app.outputs.signedReleaseFile}} dist/cordova/android/apk/release/Sync2-android-${{ steps.vars.outputs.tag }}.apk
+      - name: Rename apk file
+        run: mv ${{steps.sign_apk.outputs.signedReleaseFile}} dist/android/apk/Sync2-android-${{ steps.vars.outputs.tag }}.apk
+      
+      - name: Rename bundle file
+        run: mv ${{steps.sign_bundle.outputs.signedReleaseFile}} dist/android/bundle/Sync2-android-${{ steps.vars.outputs.tag }}.aab
 
       - name: Calculate checksum of output file
-        run: shasum -a 512 dist/cordova/android/apk/release/Sync2-android-${{ steps.vars.outputs.tag }}.apk | cut -f1 -d\ | xxd -r -p | base64 -b 0 > dist/cordova/android/apk/release/Sync2-android-${{ steps.vars.outputs.tag }}-apk-SHASUM
+        run: shasum -a 512 dist/android/apk/Sync2-android-${{ steps.vars.outputs.tag }}.apk | cut -f1 -d\ | xxd -r -p | base64 -b 0 > dist/android/apk/Sync2-android-${{ steps.vars.outputs.tag }}-apk-SHASUM
 
-      - name: Upload released files
+      - name: Upload apk to GH release
         uses: softprops/action-gh-release@v1
         with:
           draft: true
           files: |
-            dist/cordova/android/apk/release/Sync2-android-${{ steps.vars.outputs.tag }}.apk
-            dist/cordova/android/apk/release/Sync2-android-${{ steps.vars.outputs.tag }}-apk-SHASUM
+            dist/android/apk/Sync2-android-${{ steps.vars.outputs.tag }}.apk
+            dist/android/apk/Sync2-android-${{ steps.vars.outputs.tag }}-apk-SHASUM
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload aab to artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          path: dist/android/bundle/Sync2-android-${{ steps.vars.outputs.tag }}.aab
