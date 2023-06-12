@@ -91,6 +91,11 @@ export default {
         action_import: '导入',
         label_wallet_name: '钱包名称',
         label_mnemonic: '请输入您的助记词',
+        label_advance: '高级模式',
+        action_custom_path: '自定义',
+        label_path: '路径',
+        msg_example: '示例',
+        msg_invalid_path: '无效助记词路径',
         label_ledger_user: 'Ledger用户？',
         action_ledger_link: '现在绑定'
     },
