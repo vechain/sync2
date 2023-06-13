@@ -73,7 +73,8 @@ export namespace Vault {
         return newVault({
             pub: root.publicKey.toString('hex'),
             chainCode: root.chainCode.toString('hex'),
-            cipherGlob: JSON.stringify(glob)
+            cipherGlob: JSON.stringify(glob),
+            path,
         })
     }
 

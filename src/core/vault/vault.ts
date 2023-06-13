@@ -6,6 +6,7 @@ export type Entity = {
     pub: string
     chainCode?: string
     cipherGlob?: string
+    path?: string
 }
 
 export function newVault(entity: Entity): Vault {
