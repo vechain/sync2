@@ -60,9 +60,11 @@ import { QDialog } from 'quasar'
 import { mnemonic } from 'thor-devkit'
 import PromptDialogToolbar from 'src/components/PromptDialogToolbar.vue'
 
-
+// eslint-disable-next-line quotes
 const VET_DERIVATION_PATH = `818'/0'/0`
+// eslint-disable-next-line quotes
 const ETH_DERIVATION_PATH = `60'/0'/0`
+// eslint-disable-next-line quotes
 const PREFIX = `m/44'/`
 
 export default Vue.extend({
@@ -79,7 +81,7 @@ export default Vue.extend({
             },
             prefix: PREFIX,
             pathType: 'vet' as 'vet' | 'eth' | 'custom',
-            options: null as unknown as any[],
+            options: null as unknown as { label: string, value: string }[],
             error: '',
             pathError: ''
         }
@@ -99,19 +101,19 @@ export default Vue.extend({
     created() {
         this.state.path = VET_DERIVATION_PATH
         this.options = [
-                {
-                  label: this.$t('newWallet.action_vet_path').toString(),
-                    value: 'vet'
-                },
-                {
-                    label: this.$t('newWallet.action_eth_path').toString(),
-                    value: 'eth'
-                },
-                {
-                    label: this.$t('newWallet.action_custom_path').toString(),
-                    value: 'custom'
-                }
-            ]
+            {
+                label: this.$t('newWallet.action_vet_path').toString(),
+                value: 'vet'
+            },
+            {
+                label: this.$t('newWallet.action_eth_path').toString(),
+                value: 'eth'
+            },
+            {
+                label: this.$t('newWallet.action_custom_path').toString(),
+                value: 'custom'
+            }
+        ]
     },
     methods: {
         // method is REQUIRED by $q.dialog
@@ -124,7 +126,7 @@ export default Vue.extend({
         },
         onPathTypeChange(v: 'vet' | 'eth' | 'custom') {
             if (v === 'custom') {
-                this.state.path = ``;
+                this.state.path = ''
                 const input = (this.$refs.inputPath as Vue).$el.getElementsByTagName('input')[0]
                 this.$nextTick(
                     () => {
@@ -162,7 +164,7 @@ export default Vue.extend({
                 }
 
                 this.ok(array, PREFIX + this.state.path)
-            } catch (error: any) {
+            } catch (error) {
                 if (error.message === 'm') {
                     this.error = this.$t('newWallet.msg_mnemonic_error').toString()
                 } else if (error.message === 'p') {
