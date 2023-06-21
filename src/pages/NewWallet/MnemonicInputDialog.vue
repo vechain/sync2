@@ -151,7 +151,7 @@ export default Vue.extend({
             await this.$nextTick()
 
             try {
-                const reg = /^m\/44'\/\d+'\/\d+'\/\d+$/
+                const reg = /^m\/44'\/\d+'\/\d+'(\/\d+)?$/
                 const array = words.split(/\s+/)
                 if (array.length < 12 || !mnemonic.validate(array)) {
                     throw new Error('m')
