@@ -77,12 +77,11 @@ import Vue from 'vue'
 import FeatureSlides from './FeatureSlides.vue'
 import Progress from './Progress.vue'
 import NewPasswordDialog from 'pages/NewPasswordDialog'
-import { Vault } from 'core/vault'
 import { genesises } from 'src/consts'
 import LanguageListPopup from 'pages/LanguageListPopup.vue'
 import PageContent from 'src/components/PageContent.vue'
 import PageAction from 'src/components/PageAction.vue'
-import { secureRNG, kdfEncrypt } from 'src/core/vault'
+import { secureRNG, kdfEncrypt, Vault } from 'src/core/vault'
 
 async function randomDelay<T>(p: () => Promise<T>, aboutSeconds: number) {
     const [r] = await Promise.all<T, unknown>([
