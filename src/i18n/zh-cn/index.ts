@@ -93,6 +93,8 @@ export default {
         label_mnemonic: '请输入您的助记词',
         label_advance: '高级模式',
         action_custom_path: '自定义',
+        action_vet_path: 'Vechain',
+        action_eth_path: 'Ethereum',
         label_path: '路径',
         msg_example: '示例',
         msg_invalid_path: '无效助记词路径',

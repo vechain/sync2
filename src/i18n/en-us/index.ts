@@ -94,6 +94,8 @@ export default {
         label_mnemonic: 'Please enter your mnemonic words',
         label_advance: 'Advance',
         action_custom_path: 'Custom',
+        action_vet_path: 'Vechain',
+        action_eth_path: 'Ethereum',
         label_path: 'Path',
         msg_example: 'Example',
         msg_invalid_path: 'Invalid Path',

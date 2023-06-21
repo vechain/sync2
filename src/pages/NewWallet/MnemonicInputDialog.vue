@@ -100,11 +100,11 @@ export default Vue.extend({
         this.state.path = VET_DERIVATION_PATH
         this.options = [
                 {
-                    label: 'VeChain',
+                  label: this.$t('newWallet.action_vet_path').toString(),
                     value: 'vet'
                 },
                 {
-                    label: 'Eth Ledger',
+                    label: this.$t('newWallet.action_eth_path').toString(),
                     value: 'eth'
                 },
                 {
