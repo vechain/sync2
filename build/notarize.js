@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { notarize } = require('electron-notarize')
+const { notarize } = require('@electron/notarize')
 
 exports.default = async function notarizing(context) {
     const { electronPlatformName, appOutDir } = context
@@ -8,10 +8,10 @@ exports.default = async function notarizing(context) {
         return
     }
 
-    if (!(process.env.APPLE_API_KEY && process.env.APPLE_API_ISSUER)) {
+    if (!(process.env.APPLE_API_KEY_ID && process.env.APPLE_API_ISSUER)) {
         console.warn(
             'Skipping macOS app notarization.' +
-            ' Missing one or more environment vars (APPLE_API_KEY, APPLE_API_ISSUER).'
+            ' Missing one or more environment vars (APPLE_API_KEY_ID, APPLE_API_ISSUER).'
         )
         return
     }
@@ -19,9 +19,10 @@ exports.default = async function notarizing(context) {
     const appName = context.packager.appInfo.productFilename
 
     return await notarize({
-        appBundleId: 'org.vechain.sync',
+        tool: 'notarytool',
         appPath: `${appOutDir}/${appName}.app`,
-        appleApiKey: process.env.APPLE_API_KEY,
+        appleApiKey: `~/private_keys/AuthKey_${process.env.APPLE_API_KEY_ID}.p8`,
+        appleApiKeyId: process.env.APPLE_API_KEY_ID,
         appleApiIssuer: process.env.APPLE_API_ISSUER
     })
 }
