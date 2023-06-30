@@ -315,6 +315,7 @@ module.exports = configure(function (ctx) {
         },
         afterSign: "build/notarize.js",
         mac: {
+          hardenedRuntime: true,
           entitlements: "build/entitlements.mac.plist",
           entitlementsInherit: "build/entitlements.mac.plist",
           target: {
