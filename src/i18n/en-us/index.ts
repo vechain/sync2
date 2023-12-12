@@ -81,7 +81,7 @@ export default {
         msg_upgrade: 'New version is ready :)',
         // request user to enter "ok" to confirm
         msg_delete: 'Please enter "ok" to delete wallet. This cannot be undone. Unless you have backed up your wallet beforehand.',
-        msg_backup: 'Wallet not backed up! Backup your wallet keep your assets safe.',
+        msg_backup: 'Wallet not backed up! Backup your wallet to keep your assets safe.',
         label_wallets: 'Wallets'
     },
     newWallet: {
@@ -216,7 +216,11 @@ export default {
         op_contract_creation: 'Contract Creation',
 
         title_ask_create_wallet: 'No wallet',
-        message_ask_create_wallet: 'Create now?'
+        message_ask_create_wallet: 'Create now?',
+
+        // backup wallet
+        title_ask_backup_wallet: 'Backup Required',
+        message_ask_backup_wallet: 'Backup your wallet to keep your assets safe.'
     },
     ledger: {
         title_connecting: 'Connecting',

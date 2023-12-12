@@ -215,7 +215,11 @@ export default {
         op_contract_creation: '合约创建',
 
         title_ask_create_wallet: '尚无可用钱包',
-        message_ask_create_wallet: '现在创建吗?'
+        message_ask_create_wallet: '现在创建吗?',
+
+        // backup wallet
+        title_ask_backup_wallet: '请备份钱包',
+        message_ask_backup_wallet: '备份钱包以保障资产安全。'
     },
     ledger: {
         title_connecting: '连接中',

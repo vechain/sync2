@@ -99,6 +99,28 @@ export default Common.extend({
                 return
             }
 
+            if (process.env.MODE === 'spa' || process.env.MODE === 'pwa') {
+                if (wallet.meta.type === 'hd' && !wallet.meta.backedUp) {
+                    try {
+                        await this.$dialog({
+                            title: this.$t('sign.title_ask_backup_wallet').toString(),
+                            message: this.$t('sign.message_ask_backup_wallet').toString(),
+                            ok: {
+                                label: this.$t('common.ok'),
+                                unelevated: true,
+                                color: 'primary'
+                            },
+                            cancel: this.$t('common.cancel').toString()
+                        })
+                        this.$router.push({
+                            name: 'backup',
+                            query: { walletId: wallet.id.toString() }
+                        })
+                    } catch { }
+                    return
+                }
+            }
+
             const req = this.req
             // build the cert (unsigned)
             const cert: Certificate = {
