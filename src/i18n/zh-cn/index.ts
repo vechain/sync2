@@ -170,7 +170,10 @@ export default {
         msg_backup_tips_1: '请按照顺序抄写',
         msg_backup_tips_2: '请确保存放于安全的地方',
         msg_backup_tips_3: '请勿截图或录制屏幕',
-        label_your_mnemonic: '抄写您的助记词'
+        label_your_mnemonic: '抄写您的助记词',
+
+        // notify
+        msg_wallet_not_found: '找不到钱包'
     },
     sign: {
         title: '签名',
