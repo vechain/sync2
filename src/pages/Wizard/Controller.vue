@@ -82,6 +82,7 @@ import LanguageListPopup from 'pages/LanguageListPopup.vue'
 import PageContent from 'src/components/PageContent.vue'
 import PageAction from 'src/components/PageAction.vue'
 import { secureRNG, kdfEncrypt, Vault } from 'src/core/vault'
+import { BackupDialog } from '../Backup'
 
 async function randomDelay<T>(p: () => Promise<T>, aboutSeconds: number) {
     const [r] = await Promise.all<T, unknown>([
@@ -135,22 +136,38 @@ export default Vue.extend({
 
             // save the wallet
             this.progressStr = this.$t('wizard.msg_init_animation_s5').toString()
+
+            let walletID = -1
+            let meta: M.Wallet.Meta | null = null
             await randomDelay(async () => {
                 const node0 = vault.derive(0)
-                await this.$svc.wallet.insert({
+                meta = {
+                    name: 'My Wallet',
+                    type: 'hd',
+                    addresses: [node0.address],
+                    backedUp: false
+                }
+                walletID = await this.$svc.wallet.insert({
                     gid: genesises.main.id,
                     vault: vault.encode(),
-                    meta: {
-                        name: 'My Wallet',
-                        type: 'hd',
-                        addresses: [node0.address],
-                        backedUp: false
-                    }
+                    meta: meta
                 })
             }, 0.2)
 
             this.progressStr = ''
             this.finished = true
+
+            // backup in lite mode
+            if (process.env.MODE === 'spa' || process.env.MODE === 'pwa') {
+                try {
+                    await this.$dialog({
+                        component: BackupDialog,
+                        walletId: walletID,
+                        meta: meta,
+                        words: words
+                    })
+                } catch { }
+            }
         }
     }
 })
