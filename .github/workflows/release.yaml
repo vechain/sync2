@@ -112,7 +112,7 @@ jobs:
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
         env:
-          BUILD_TOOLS_VERSION: "32.0.0"
+          BUILD_TOOLS_VERSION: "33.0.2"
 
       - uses: r0adkll/sign-android-release@v1
         name: Sign Bundle
@@ -124,7 +124,7 @@ jobs:
           keyStorePassword: ${{ secrets.UPLOAD_KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.UPLOAD_KEY_PASSWORD }}
         env:
-          BUILD_TOOLS_VERSION: "32.0.0"
+          BUILD_TOOLS_VERSION: "33.0.2"
 
       - name: Set up variable
         id: vars
