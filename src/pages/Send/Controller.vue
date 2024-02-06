@@ -13,6 +13,7 @@
             <To
                 v-model="to"
                 class="q-mx-md"
+                :gid="wallet && wallet.gid"
                 :wallets="toWallets"
                 :error-message="errors.to"
                 :error="!!errors.to"
