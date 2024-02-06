@@ -7,13 +7,11 @@
         dense
         placeholder="0x"
         clearable
-        v-model.lazy="to"
+        v-model.lazy="input"
         spellcheck="false"
+        :hint="resolvedHint"
     >
-        <template
-            v-if="isAddress(to)"
-            v-slot:prepend
-        >
+        <template v-if="isAddress(to)" v-slot:prepend>
             <AddressAvatar :addr="to" />
         </template>
         <template v-slot:append>
@@ -26,19 +24,12 @@
                 @click.stop="onClickScan"
             />
         </template>
-        <q-popup-proxy
-            :no-parent-event="!!to"
-            position="bottom"
-            fit
-        >
+        <q-popup-proxy :no-parent-event="!!to" position="bottom" fit>
             <q-card>
                 <q-list padding>
                     <template v-for="(group, gi) in wallets">
-                        <q-item-label
-                            :key="gi"
-                            header
-                        >
-                            {{group.name}}
+                        <q-item-label :key="gi" header>
+                            {{ group.name }}
                         </q-item-label>
                         <template v-for="(addr, ai) in group.list">
                             <AddressItem
@@ -78,11 +69,28 @@ export default Vue.extend({
             type: Array as () => AddressGroup[],
             default: []
         },
-        address: String
+        address: String,
+        gid: String
     },
     data() {
         return {
-            to: this.address
+            input: this.address,
+            resolvedName: '',
+            resolvedAddress: ''
+        }
+    },
+    computed: {
+        to(): string {
+            return this.resolvedAddress || this.input
+        },
+        resolvedHint(): string {
+            if (this.resolvedName) {
+                return this.resolvedName
+            } else if (this.resolvedAddress) {
+                return this.resolvedAddress
+            } else {
+                return ''
+            }
         }
     },
     asyncComputed: {
@@ -93,11 +101,44 @@ export default Vue.extend({
             } else {
                 return QrScanner.hasCamera()
             }
+        },
+        resolvedAddress: {
+            async get(): Promise<string> {
+                if (!this.input || !this.input.includes('.') || !this.gid) {
+                    return ''
+                }
+
+                const [address] = await this.$svc.bc(this.gid).vetDomainsAddressesOf([this.input])
+                if (!address || address === '0x0000000000000000000000000000000000000000') {
+                    return ''
+                }
+
+                return address
+            },
+            default: ''
+        },
+        resolvedName: {
+            async get(): Promise<string> {
+                if (!this.input || !this.isAddress(this.input) || !this.gid) {
+                    return ''
+                }
+
+                const [name] = await this.$svc.bc(this.gid).vetDomainsNamesOf([this.input])
+                if (!name || name === '') {
+                    return ''
+                }
+
+                return name
+            },
+            default: ''
         }
     },
     watch: {
         address(v: string) {
-            this.to = v
+            if (v === this.resolvedAddress) {
+                return
+            }
+            this.input = v
         },
         to(v: string) {
             this.$emit('change', v)
@@ -106,11 +147,11 @@ export default Vue.extend({
     methods: {
         isAddress: address.test,
         onSelectAddress(addr: string) {
-            this.to = address.toChecksumed(addr)
+            this.input = address.toChecksumed(addr)
         },
         async onClickScan() {
             try {
-                this.to = await this.$dialog<string>({ component: QrScannerDialog })
+                this.input = await this.$dialog<string>({ component: QrScannerDialog })
             } catch { }
         }
     }
