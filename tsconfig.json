@@ -4,6 +4,7 @@
     "baseUrl": ".",
     "experimentalDecorators": true,
     "skipLibCheck": true,
+    "types": ["node", "connex"],
     "paths": {
       "src/*": ["src/*"],
       "app/*": ["*"],
